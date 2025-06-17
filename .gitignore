@@ -1,0 +1,13 @@
+# R specific files to ignore
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.DS_store
+.here
+
+# Directories with large data files
+scratch/*
+data/raw/*
+data/processed/*
+output/*
