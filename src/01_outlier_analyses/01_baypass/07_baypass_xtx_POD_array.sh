@@ -26,7 +26,7 @@
 #SBATCH --array=1-5
 
 # Name output of this job using %x=job-name and %j=job-id
-#SBATCH --output=./slurmOutput/%x.%j.out # Standard output
+#SBATCH --output=./slurmOutput/%x.%A_%a.out # Standard output
 
 # Receive emails when job begins and ends or fails
 #SBATCH --mail-type=ALL
@@ -70,14 +70,14 @@ fi
 #--------------------------------------------------------------------------------
 
 # Change directory 
-cd $WORKING_FOLDER/outlier_analyses/baypass/POD
+cd $WORKING_FOLDER/data/processed/outlier_analyses/baypass/POD/POD_${SLURM_ARRAY_TASK_ID}
 
 # Run baypass on POD
 $baypass -npop 19 \
--gfile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/G.NC.baypass.sim \
+-gfile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/G.NC.baypass.${SLURM_ARRAY_TASK_ID}.sim \
 -poolsizefile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/poolsize \
 -omegafile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/omega/NC_baypass_mat_omega.out \
 -d0yij 4 \
--outprefix NC_baypass_POD \
+-outprefix NC_baypass_POD_${SLURM_ARRAY_TASK_ID} \
 -nthreads 20
 
