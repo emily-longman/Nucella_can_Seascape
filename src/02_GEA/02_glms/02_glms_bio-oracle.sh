@@ -14,7 +14,7 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=1:00:00 
+#SBATCH --time=2:00:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
 #SBATCH --mem=100G 
@@ -23,7 +23,7 @@
 #SBATCH --cpus-per-task=8
 
 # Submit job array
-#SBATCH --array=999 #0-999%50
+#SBATCH --array=998-999 #0-999%50
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -34,7 +34,8 @@
 
 #--------------------------------------------------------------------------------
 
-# This script will run the accompanying 02_glms_bio-oracle.R script. This will run glms on the 
+# This script will run the accompanying 02_glms_bio-oracle.R script. 
+# This will run glms and look at the association of the allele frequencies of the outlier SNPs and the Bio-oracle environmental data.
 
 # Load modules 
 module load gcc/13.3.0
@@ -45,16 +46,17 @@ module load R/4.4.1
 # Define important file locations
 
 # WORKING_FOLDER is the core folder where this pipeline is being run.
-WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Pop_Genomics
+WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 # Script folder.
-SCRIPT_FOLDER=$WORKING_FOLDER/src/05_GEA/02_glms
+SCRIPT_FOLDER=$WORKING_FOLDER/src/02_GEA/02_glms
 
 #--------------------------------------------------------------------------------
 
 # Input files
 chunk=1
-array=$((${SLURM_ARRAY_TASK_ID}+1))
+array=$((${SLURM_ARRAY_TASK_ID}+1)) 
+# NOTE: can only specify the array from 0-999 for the VACC, so need to add 1 to define an array from 1-1,000
 
 echo "I am running chunk:" ${chunk} "and array:" ${array}
 
