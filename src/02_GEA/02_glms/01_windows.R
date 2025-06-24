@@ -55,8 +55,8 @@ snp.dt <- data.table(
 # ================================================================================== #
 
 # Define window and step size
-win.bp = 5e4
-step.bp = win.bp+1
+win.bp = 1e5
+step.bp = 5e4
 
 # Generate windows (if a contig is less that the specified window size, the if statement, includes it)
 wins <- foreach(chr.i=unique(snp.dt$chr),
