@@ -22,6 +22,9 @@
 # Request CPU
 #SBATCH --cpus-per-task=20
 
+# Submit job array
+#SBATCH --array=1-5
+
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%j.out # Standard output
 
@@ -42,19 +45,26 @@ baypass=/gpfs1/home/e/l/elongman/software/baypass_public/sources/g_baypass
 # Define important file locations
 
 # WORKING_FOLDER is the core folder where this pipeline is being run.
-WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Pop_Genomics/data/processed
+WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 #--------------------------------------------------------------------------------
 
 # Generate Folders and files
 
 # Move to working directory
-cd $WORKING_FOLDER/outlier_analyses/baypass
+cd $WORKING_FOLDER/data/processed/outlier_analyses/baypass
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
 if [ -d "POD" ]
 then echo "Working POD folder exist"; echo "Let's move on."; date
-else echo "Working POD folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/outlier_analyses/baypass/POD; date
+else echo "Working POD folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/outlier_analyses/baypass/POD; date
+fi
+
+cd $WORKING_FOLDER/data/processed/outlier_analyses/baypass/POD
+
+if [ -d "POD_${SLURM_ARRAY_TASK_ID}" ]
+then echo "Working POD folder exist"; echo "Let's move on."; date
+else echo "Working POD folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/outlier_analyses/baypass/POD/POD_${SLURM_ARRAY_TASK_ID}; date
 fi
 
 #--------------------------------------------------------------------------------
@@ -64,9 +74,9 @@ cd $WORKING_FOLDER/outlier_analyses/baypass/POD
 
 # Run baypass on POD
 $baypass -npop 19 \
--gfile $WORKING_FOLDER/outlier_analyses/baypass/G.NC.baypass.sim \
--poolsizefile $WORKING_FOLDER/outlier_analyses/baypass/poolsize \
--omegafile $WORKING_FOLDER/outlier_analyses/baypass/omega/NC_baypass_mat_omega.out \
+-gfile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/G.NC.baypass.sim \
+-poolsizefile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/poolsize \
+-omegafile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/omega/NC_baypass_mat_omega.out \
 -d0yij 4 \
 -outprefix NC_baypass_POD \
 -nthreads 20

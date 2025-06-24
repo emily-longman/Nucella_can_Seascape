@@ -5,7 +5,7 @@
 # Define important file locations
 
 # WORKING_FOLDER is the core folder where this pipeline is being run.
-WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Pop_Genomics
+WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 # PROTEIN_FILE is the N. canaliculata protein file generated from the gff
 PROTEIN_FILE=/netfiles/pespenilab_share/Nucella/processed/N.canaliculata_snpeff_March_2025/protein.fa

@@ -42,31 +42,31 @@ baypass=/gpfs1/home/e/l/elongman/software/baypass_public/sources/g_baypass
 # Define important file locations
 
 # WORKING_FOLDER is the core folder where this pipeline is being run.
-WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Pop_Genomics/data/processed
+WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 #--------------------------------------------------------------------------------
 
 # Generate Folders and files
 
 # Move to working directory
-cd $WORKING_FOLDER/outlier_analyses/baypass
+cd $WORKING_FOLDER/data/processed/outlier_analyses/baypass
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
 if [ -d "xtx" ]
 then echo "Working xtx folder exist"; echo "Let's move on."; date
-else echo "Working xtx folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/outlier_analyses/baypass/xtx; date
+else echo "Working xtx folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/outlier_analyses/baypass/xtx; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Change directory 
-cd $WORKING_FOLDER/outlier_analyses/baypass/xtx
+cd $WORKING_FOLDER/data/processed/outlier_analyses/baypass/xtx
 
 # Run baypass in xtx mode
 $baypass -npop 19 \
--gfile $WORKING_FOLDER/outlier_analyses/baypass/genobaypass \
--poolsizefile $WORKING_FOLDER/outlier_analyses/baypass/poolsize \
--omegafile $WORKING_FOLDER/outlier_analyses/baypass/omega/NC_baypass_mat_omega.out \
+-gfile $WORKING_FOLDE/data/processedR/outlier_analyses/baypass/genobaypass \
+-poolsizefile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/poolsize \
+-omegafile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/omega/NC_baypass_mat_omega.out \
 -d0yij 4 \
 -outprefix NC_baypass_core \
 -nthreads 20

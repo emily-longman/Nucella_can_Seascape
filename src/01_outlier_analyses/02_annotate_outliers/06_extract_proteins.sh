@@ -39,7 +39,7 @@ ncbi=/gpfs1/home/e/l/elongman/software/ncbi-blast-2.16.0+/bin
 # Define important file locations
 
 # WORKING_FOLDER is the core folder where this pipeline is being run.
-WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Pop_Genomics
+WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 #--------------------------------------------------------------------------------
 

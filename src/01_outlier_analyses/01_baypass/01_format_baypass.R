@@ -23,8 +23,16 @@ library(poolfstat)
 
 # ================================================================================== #
 
+# Generate Folders and files
+
+# Make output directory
+data_processed_outlier="data/processed/outlier_analyses"
+if (!dir.exists(data_processed_outlier)) {dir.create(data_processed_outlier)}
+
+# ================================================================================== #
+
 # Read in population names
-pops <- read.table("data/processed/fastq_to_vcf/guide_files/N.canaliculata_pops.vcf_pop_names.txt", header=F)
+pops <- read.table("data/raw/vcf_clean/N.canaliculata_pops.vcf_pop_names.txt", header=F)
 
 # ================================================================================== #
 
@@ -32,7 +40,7 @@ pops <- read.table("data/processed/fastq_to_vcf/guide_files/N.canaliculata_pops.
 # Note: 20 individuals per pool. N. canaliculata is a diploid species. So haploid size = 40 for most pools
 
 # Read in data and filter
-pooldata <-vcf2pooldata(vcf.file="data/processed/fastq_to_vcf/vcf_clean/N.canaliculata_pops_filter_minQ60_maxmissing1.0.recode.vcf", 
+pooldata <-vcf2pooldata(vcf.file="data/raw/vcf_clean/N.canaliculata_pops_filter_minQ60_maxmissing1.0.recode.vcf", 
 poolsizes=rep(40,19), poolnames=pops$V1, 
 min.cov.per.pool = 20, min.rc = 5, max.cov.per.pool = 120, min.maf = 0.01, nlines.per.readblock = 1e+06)
 

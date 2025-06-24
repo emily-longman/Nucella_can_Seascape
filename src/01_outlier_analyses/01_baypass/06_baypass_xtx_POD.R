@@ -37,7 +37,11 @@ beta_params <- read.table("xtx/NC_baypass_core_summary_beta_params.out", header=
 # Extract posterior means of a_pi and b_pi
 beta_params_mean <- beta_params$Mean
 
-# Create the POD
-sim.NC <- simulate.baypass(omega.mat=NC.omega, nsnp=8277206, sample.size=NC.genobaypass$NN, beta.pi=beta_params_mean, pi.maf=0, suffix="NC.baypass.sim")
+# Create the POD - do 5 iterations
+sim.NC.1 <- simulate.baypass(omega.mat=NC.omega, nsnp=8277206, sample.size=NC.genobaypass$NN, beta.pi=beta_params_mean, pi.maf=0, suffix="NC.baypass.1.sim")
+sim.NC.2 <- simulate.baypass(omega.mat=NC.omega, nsnp=8277206, sample.size=NC.genobaypass$NN, beta.pi=beta_params_mean, pi.maf=0, suffix="NC.baypass.2.sim")
+sim.NC.3 <- simulate.baypass(omega.mat=NC.omega, nsnp=8277206, sample.size=NC.genobaypass$NN, beta.pi=beta_params_mean, pi.maf=0, suffix="NC.baypass.3.sim")
+sim.NC.4 <- simulate.baypass(omega.mat=NC.omega, nsnp=8277206, sample.size=NC.genobaypass$NN, beta.pi=beta_params_mean, pi.maf=0, suffix="NC.baypass.4.sim")
+sim.NC.5 <- simulate.baypass(omega.mat=NC.omega, nsnp=8277206, sample.size=NC.genobaypass$NN, beta.pi=beta_params_mean, pi.maf=0, suffix="NC.baypass.5.sim")
 
-# NOTE: the above code produces a simulated gfile (G.NC.baypass.sim) in the current folder.
+# NOTE: the above code produces a simulated gfile (G.NC.baypass.#.sim) in the current folder.

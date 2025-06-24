@@ -43,32 +43,32 @@ baypass=/gpfs1/home/e/l/elongman/software/baypass_public/sources/g_baypass
 # Define important file locations
 
 # WORKING_FOLDER is the core folder where this pipeline is being run.
-WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Pop_Genomics/data/processed
+WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 #--------------------------------------------------------------------------------
 
 # Generate Folders and files
 
 # Move to working directory
-cd $WORKING_FOLDER/outlier_analyses/baypass
+cd $WORKING_FOLDER/data/processed/outlier_analyses/baypass
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
 if [ -d "C2" ]
 then echo "Working C2 folder exist"; echo "Let's move on."; date
-else echo "Working C2 folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/outlier_analyses/baypass/C2; date
+else echo "Working C2 folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/outlier_analyses/baypass/C2; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Change directory 
-cd $WORKING_FOLDER/GEA/baypass/C2
+cd $WORKING_FOLDER/data/processed/GEA/baypass/C2
 
 # Run baypass in C2 mode with a contrast file
 $baypass -npop 19 \
--gfile $WORKING_FOLDER/outlier_analyses/baypass/genobaypass \
--poolsizefile $WORKING_FOLDER/outlier_analyses/baypass/poolsize \
--omegafile $WORKING_FOLDER/outlier_analyses/baypass/omega/NC_baypass_mat_omega.out \
--contrastfile $WORKING_FOLDER/outlier_analyses/guide_files/NC.baypass.C2_guide.file_no_PGP.txt \
+-gfile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/genobaypass \
+-poolsizefile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/poolsize \
+-omegafile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/omega/NC_baypass_mat_omega.out \
+-contrastfile $WORKING_FOLDER/data/processed/outlier_analyses/guide_files/NC.baypass.C2_guide.file_no_PGP.txt \
 -d0yij 4 \
 -outprefix NC_baypass_C2_no_PGP \
 -nthreads 20

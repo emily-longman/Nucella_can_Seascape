@@ -38,10 +38,10 @@ module load snpeff/5.2c
 # Define important file locations
 
 # WORKING_FOLDER is the core folder where this pipeline is being run.
-WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Pop_Genomics
+WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 # VCF is the input vcf file
-VCF=$WORKING_FOLDER/data/processed/fastq_to_vcf/vcf_clean/N.canaliculata_pops_filter_minQ60_maxmissing1.0.recode.vcf
+VCF=$WORKING_FOLDER/data/raw/vcf_clean/N.canaliculata_pops_filter_minQ60_maxmissing1.0.recode.vcf
 
 # This is the location where the snpeff directory was built.
 DATA_DIR=/netfiles/pespenilab_share/Nucella/processed
