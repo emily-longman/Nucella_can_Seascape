@@ -47,7 +47,7 @@ k = as.numeric(args[2]) # Array: this is a specific window within a given chunk 
 # Load data
 
 # Load SNPs of interest (baypass POD outlier SNPs - 320,742 SNPs)
-baypass_POD_sig_SNPs <- read.table("data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs", header=T)
+baypass_POD_sig_SNPs <- read.table("data/processed/outlier_analyses/baypass/POD_test/baypass_POD_sig_SNPs", header=T)
 
 # Load bio-oracle environmental data
 bio_oracle_sites_2010 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", header=T)
