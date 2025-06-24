@@ -18,7 +18,7 @@ raw_data_path_from_root <- find_root_file("data", "raw", "Bio-oracle", criterion
 setwd(raw_data_path_from_root)
 
 # Specify output directory
-out_dir <- "/Users/emilylongman/Documents/GitHub/Nucella_can_Pop_Genomics/data/raw/Bio-oracle"
+out_dir <- "/Users/emilylongman/Documents/GitHub/Nucella_can_Seascape/data/raw/Bio-oracle"
 
 # ================================================================================== #
 
