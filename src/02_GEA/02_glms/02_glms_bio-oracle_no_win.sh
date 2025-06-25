@@ -85,4 +85,4 @@ fi
 
 # Run R script
 
-Rscript $SCRIPT_FOLDER/02_glms_bio-oracle.R "$chunk" "$array"
+Rscript $SCRIPT_FOLDER/02_glms_bio-oracle.R
