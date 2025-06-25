@@ -237,7 +237,7 @@ glm.model.output =
 # Generate folders and save output
 
 # Folder name for chunk c
-folder_name <- paste("data/processed/GEA/glms/glms_no_window", c, sep = "")
+folder_name <- paste("data/processed/GEA/glms/glms_no_window")
 
 # Save file for window k in chunk y
 file_name <- paste("GLM_100perm_Bio-Oracle_output")

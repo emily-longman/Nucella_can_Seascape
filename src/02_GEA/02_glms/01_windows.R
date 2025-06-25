@@ -55,7 +55,7 @@ snp.dt <- data.table(
 # ================================================================================== #
 
 # Define window and step size (note genome is: 1,585,293,896 bp) --- the problem might be that the genome is frag so it can't get less than 19 chunks despite having bigger window
-# E.g. 19 chunks for win.bp = 1e6 and step.bp = 1e5 and for win.bp = 1e7 and step.bp = 1e6
+# E.g. 19 chunks for win.bp = 1e6 and step.bp = 1e5 and for win.bp = 1e7 and step.bp = 1e6 and for win.bp = 5e7 and step.bp = 5e6
 win.bp = 1e6 
 step.bp = 1e5 
 
