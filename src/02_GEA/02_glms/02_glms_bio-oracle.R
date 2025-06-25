@@ -104,7 +104,6 @@ anovaFun <- function(m1, m2) {
 # Filter snp.dt for a given window - i.e., identify all of the sig SNPs on 19 scaffolds
 snp.dt %>% filter(snp.dt$chr %in% scaffold.names) -> data_chunk
 
-data_chunk <- data_chunk[1:5,]
 # ================================================================================== #
 
 glm.model.output =
@@ -240,7 +239,7 @@ glm.model.output =
 folder_name <- paste("data/processed/GEA/glms/glms_window_analysis")
 
 # Save file for window k in chunk y
-file_name <- paste("GLM_100perm_Bio-Oracle_chunk_", c, sep = "")
+file_name <- paste("GLM_100perm_Bio-Oracle_chunk_", w, sep = "")
 save(glm.model.output, file = paste(folder_name, "/" , file_name, ".Rdata", sep = "") )
 
 message("done")
