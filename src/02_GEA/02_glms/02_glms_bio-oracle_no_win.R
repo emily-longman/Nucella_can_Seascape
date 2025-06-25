@@ -38,9 +38,9 @@ library(SeqArray)
 # ================================================================================== #
 
 # Specify arguments
-args = commandArgs(trailingOnly=TRUE)
-c = as.numeric(args[1]) # Chunk: this is the chunk of 1000 windows  (total of 32 chunks)
-k = as.numeric(args[2]) # Array: this is a specific window within a given chunk (1000 windows in each chunk)
+#args = commandArgs(trailingOnly=TRUE)
+#c = as.numeric(args[1]) # Chunk: this is the chunk of 1000 windows  (total of 32 chunks)
+#k = as.numeric(args[2]) # Array: this is a specific window within a given chunk (1000 windows in each chunk)
 
 # ================================================================================== #
 
@@ -102,53 +102,15 @@ anovaFun <- function(m1, m2) {
   1-pchisq(chisq, parameter)
     }
 
+
+sub.snp.dt.sig <- snp.dt.sig[1:5,]
 # ================================================================================== #
-# ================================================================================== #
-
-# Split windows up into chunks
-
-# Define window and step size
-win.bp = 5e7 
-step.bp = 1e7 
-
-# Specify chunk size
-chunk_size <- 1000
-
-# Create list with chunks of 1000 windows
-split(wins$i, ceiling(seq_along(wins$i) / chunk_size)) -> subdivision_list
-
-# Check number of elements/chunks in list (total number of chunks: 31)
-length(subdivision_list)
-
-# ================================================================================== #
-# ================================================================================== #
-
-# Get data for a specified window
-
-# To do so, specify a given chunk ('c'), then a given window ('k' array)
-message(paste("I am doing chunk number c =", c, "and array number k =", k,  sep = " "))
-
-# Get window list for chunk c
-chunk_of_choice <- subdivision_list[[c]]
-
-# Check number of elements/windows in chunk
-message(paste("Chunk", c, "has", length(chunk_of_choice), "windows",  sep = " "))
-
-# Get windows for chunk 'c'
-wins %>% filter(i %in% chunk_of_choice) -> wins.c
-
-# Filter snp.dt for a given window "k" in chunk "c" - i.e., identify all of the sig SNPs in a given window
-snp.dt %>%
-filter(chr == wins.c$chr[k]) %>%
-filter(pos > wins.c$start[k] & pos < wins.c$end[k]) -> 
-data_win
-
 # ================================================================================== #
 
 glm.model.output =
 
-  # For each SNP in a given window k extract allele freq then run model with bio-oracle data
-  foreach(i=1:dim(data_win)[1], .combine = "rbind")%do%{
+  # For each SNP 
+  foreach(i=1:dim(sub.snp.dt.sig)[1], .combine = "rbind")%do%{
     
     # Reset filter
     seqResetFilter(genofile)
@@ -275,10 +237,10 @@ glm.model.output =
 # Generate folders and save output
 
 # Folder name for chunk c
-folder_name <- paste("data/processed/GEA/glms/glms_window_analysis/GLM_100perm_Bio-Oracle_chunk_", c, sep = "")
+folder_name <- paste("data/processed/GEA/glms/glms_no_window", c, sep = "")
 
 # Save file for window k in chunk y
-file_name <- paste("GLM_100perm_Bio-Oracle_chunk", c, "chr", wins$chr[k], "start", wins$start[k], "stop", wins$end[k], sep = "_")
+file_name <- paste("GLM_100perm_Bio-Oracle_output")
 save(glm.model.output, file = paste(folder_name, "/" , file_name, ".Rdata", sep = "") )
 
 message("done")

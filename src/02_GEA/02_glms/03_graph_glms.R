@@ -63,3 +63,22 @@ glm.model.output.all <- bind_rows(all_data)
 
 
 str(glm.model.output.all)
+
+
+
+
+
+
+#load important libraries  
+library(tidyverse)  
+library(foreach)
+  
+#use a loading loop with system to read all the files  
+command = paste("ls | grep 'output2' " )  
+files_o = system(command, intern = TRUE )  
+  
+collated.files =  
+foreach(i=files_o, .combine="rbind")%do%{  
+message(i)  
+o = get(load(i))  #add mutate(...) to add new column with RData object name
+} 
