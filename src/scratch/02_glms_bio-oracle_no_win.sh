@@ -23,7 +23,7 @@
 #SBATCH --cpus-per-task=8
 
 # Name output of this job using %x=job-name and %j=job-id
-#SBATCH --output=./slurmOutput/%x.j.out
+#SBATCH --output=./slurmOutput/%x.%j.out
 
 # Receive emails when job begins and ends or fails
 #SBATCH --mail-type=ALL

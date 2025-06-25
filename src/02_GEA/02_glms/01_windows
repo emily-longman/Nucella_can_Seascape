@@ -1,0 +1,29 @@
+# Interactive session 
+
+#--------------------------------------------------------------------------------
+
+# This script will create a file with the names of the contigs/scaffolds.
+
+#--------------------------------------------------------------------------------
+
+# Define important file locations
+
+# WORKING_FOLDER is the core folder where this pipeline is being run.
+WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
+
+# This is the location where the reference genome is stored.
+REFERENCE_FOLDER=/netfiles/pespenilab_share/Nucella/processed/Base_Genome/Base_Genome_Oct2024/Crassostrea_softmask
+
+# This is the path to the reference genome.
+REFERENCE=$REFERENCE_FOLDER/N.canaliculata_assembly.fasta.softmasked.fa
+
+#--------------------------------------------------------------------------------
+
+# Change directory
+cd $WORKING_FOLDER/guide_files
+
+# Get all of the scaffold names 
+grep ">" $REFERENCE > scaffold_names.txt
+
+# Get rid of the ">"
+sed -i 's/>//g' scaffold_names.txt

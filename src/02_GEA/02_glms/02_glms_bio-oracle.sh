@@ -23,7 +23,7 @@
 #SBATCH --cpus-per-task=8
 
 # Submit job array
-#SBATCH --array=0-999%50
+#SBATCH --array=1 #1-999%50
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -53,12 +53,32 @@ SCRIPT_FOLDER=$WORKING_FOLDER/src/02_GEA/02_glms
 
 #--------------------------------------------------------------------------------
 
-# Input files
-chunk=1
-array=$((${SLURM_ARRAY_TASK_ID}+1)) 
-# NOTE: can only specify the array from 0-999 for the VACC, so need to add 1 to define an array from 1-1,000
+# Guide file 
+guide_file=$WORKING_FOLDER/guide_files/scaffold_names_guide_file_array.txt
 
-echo "I am running chunk:" ${chunk} "and array:" ${array}
+#Example: -- the headers are just for descriptive purposes. The actual file has no headers. (dimensions: 18919, 2; 999 partitions each with 19 scaffold names)
+# Scaffold name         # Partition/array
+# Backbone_10001              1
+# Backbone_10003              1
+# Backbone_10004              1
+# Backbone_10005              1
+# ....
+
+#--------------------------------------------------------------------------------
+
+# Determine partition to process 
+
+# Change directory
+cd $WORKING_FOLDER/data/processed/GEA/glms
+
+# Echo slurm array task ID
+echo ${SLURM_ARRAY_TASK_ID}
+
+# Using the guide file, extract the scaffold names associated based on the Slurm array task ID for a given partition
+awk '$2=='${SLURM_ARRAY_TASK_ID}'' $guide_file | awk '{print $1}' > scaffold.names.${SLURM_ARRAY_TASK_ID}.txt
+
+# List scaffold names
+cat scaffold.names.${SLURM_ARRAY_TASK_ID}.txt
 
 #--------------------------------------------------------------------------------
 
@@ -73,16 +93,8 @@ then echo "Working glms_window_analysis folder exist"; echo "Let's move on."; da
 else echo "Working glms_window_analysis folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_window_analysis; date
 fi
 
-# Change directory
-cd $WORKING_FOLDER/data/processed/GEA/glms/glms_window_analysis
-
-if [ -d "GLM_100perm_Bio-Oracle_chunk_${chunk}" ]
-then echo "Working GLM_100perm_Bio-Oracle_chunk_${chunk} folder exist"; echo "Let's move on."; date
-else echo "Working GLM_100perm_Bio-Oracle_chunk_${chunk} folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_window_analysis/GLM_100perm_Bio-Oracle_chunk_${chunk}; date
-fi
-
 #--------------------------------------------------------------------------------
 
 # Run R script
 
-Rscript $SCRIPT_FOLDER/02_glms_bio-oracle.R "$chunk" "$array"
+Rscript $SCRIPT_FOLDER/02_glms_bio-oracle.R "${SLURM_ARRAY_TASK_ID}"

@@ -39,15 +39,12 @@ library(SeqArray)
 
 # Specify arguments
 args = commandArgs(trailingOnly=TRUE)
-w = as.numeric(args[1]) # Chunk: this is the chunk (1000 chunks each with 19 scaffolds in it)
+c = as.numeric(args[1]) # Chunk: this is the chunk of 1000 windows  (total of 32 chunks)
+k = as.numeric(args[2]) # Array: this is a specific window within a given chunk (1000 windows in each chunk)
 
 # ================================================================================== #
 
 # Load data
-
-# Load txt file with scaffold names
-scaffold.names.df <- read.csv(paste("data/processed/GEA/glms/scaffold.names", w, "txt", sep = "."), sep = " ", header=F)
-scaffold.names <- scaffold.names.df$V1
 
 # Load SNPs of interest (baypass POD outlier SNPs - 320,742 SNPs)
 baypass_POD_sig_SNPs <- read.table("data/processed/outlier_analyses/baypass/POD_test/baypass_POD_sig_SNPs", header=T)
@@ -75,6 +72,10 @@ names(bio_oracle_sites_2010)[names(bio_oracle_sites_2010) == "location"] <- "sam
 # Join bio-oracle dataframe and PCA dataframe
 bio_oracle_sites_2010 <- dplyr::left_join(bio_oracle_sites_2010, pca.df, by = "sampleId")
 
+# Create demography column based on genetic clustering - North, South and Admix
+#bio_oracle_sites_2010$demography <- ifelse(bio_oracle_sites_2010$sampleId == "PL" | bio_oracle_sites_2010$sampleId == "SBR", "Admix", 
+#ifelse(bio_oracle_sites_2010$latitude >= 36.8, "North", "South"))
+
 # Create SNP_id column for outlier SNP list
 baypass_POD_sig_SNPs <- baypass_POD_sig_SNPs %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 
@@ -86,6 +87,9 @@ snp.dt <- data.table(
         variant.id=seqGetData(genofile, "variant.id"),
         allele=seqGetData(genofile, "allele")) %>%
     mutate(SNP_id = paste(chr, pos, sep = "_"))
+
+# Filter for only outlier SNPs (NOTE: somehow getting one less SNP than in baypass_POD_sig_SNPs)
+snp.dt.sig <- snp.dt %>% filter(snp.dt$SNP_id %in% baypass_POD_sig_SNPs$SNP_id)
 
 # ================================================================================== #
 
@@ -101,16 +105,50 @@ anovaFun <- function(m1, m2) {
 # ================================================================================== #
 # ================================================================================== #
 
-# Filter snp.dt for a given window - i.e., identify all of the sig SNPs on 19 scaffolds
-snp.dt %>% filter(snp.dt$chr %in% scaffold.names) -> data_chunk
+# Split windows up into chunks
 
-data_chunk <- data_chunk[1:5,]
+# Define window and step size
+win.bp = 5e7 
+step.bp = 1e7 
+
+# Specify chunk size
+chunk_size <- 1000
+
+# Create list with chunks of 1000 windows
+split(wins$i, ceiling(seq_along(wins$i) / chunk_size)) -> subdivision_list
+
+# Check number of elements/chunks in list (total number of chunks: 31)
+length(subdivision_list)
+
+# ================================================================================== #
+# ================================================================================== #
+
+# Get data for a specified window
+
+# To do so, specify a given chunk ('c'), then a given window ('k' array)
+message(paste("I am doing chunk number c =", c, "and array number k =", k,  sep = " "))
+
+# Get window list for chunk c
+chunk_of_choice <- subdivision_list[[c]]
+
+# Check number of elements/windows in chunk
+message(paste("Chunk", c, "has", length(chunk_of_choice), "windows",  sep = " "))
+
+# Get windows for chunk 'c'
+wins %>% filter(i %in% chunk_of_choice) -> wins.c
+
+# Filter snp.dt for a given window "k" in chunk "c" - i.e., identify all of the sig SNPs in a given window
+snp.dt %>%
+filter(chr == wins.c$chr[k]) %>%
+filter(pos > wins.c$start[k] & pos < wins.c$end[k]) -> 
+data_win
+
 # ================================================================================== #
 
 glm.model.output =
 
-  # For each SNP in a given window c extract allele freq then run model with bio-oracle data
-  foreach(i=1:dim(data_chunk)[1], .combine = "rbind")%do%{
+  # For each SNP in a given window k extract allele freq then run model with bio-oracle data
+  foreach(i=1:dim(data_win)[1], .combine = "rbind")%do%{
     
     # Reset filter
     seqResetFilter(genofile)
@@ -118,7 +156,7 @@ glm.model.output =
     ###############################################################
 
     # Calculate allele frequency for SNP i in window k in chunk c
-    seqSetFilter(genofile, variant.id=data_chunk$variant.id[i], verbose = T)
+    seqSetFilter(genofile, variant.id=data_win$variant.id[i], verbose = T)
 
     # Extract allele depth ('ad') of alternate allele for SNP i
     ad_i <- seqGetData(genofile, "annotation/format/AD") %>% .$data %>% .[,2]
@@ -193,8 +231,8 @@ glm.model.output =
         # Extract data for 'j' environmental variable
         gathered_data %>% filter(enviro_var == j) -> inner.tmp.shuffle
 
-          # Do 100 permutations --- test with 10
-          foreach(l=1:10, .combine = "rbind")%do%{
+          # Do 100 permutations
+          foreach(l=1:100, .combine = "rbind")%do%{
             set.seed(l)
             
             # Shuffle enviro data for 'j' enviro variable
@@ -237,10 +275,10 @@ glm.model.output =
 # Generate folders and save output
 
 # Folder name for chunk c
-folder_name <- paste("data/processed/GEA/glms/glms_window_analysis")
+folder_name <- paste("data/processed/GEA/glms/glms_window_analysis/GLM_100perm_Bio-Oracle_chunk_", c, sep = "")
 
 # Save file for window k in chunk y
-file_name <- paste("GLM_100perm_Bio-Oracle_chunk_", c, sep = "")
+file_name <- paste("GLM_100perm_Bio-Oracle_chunk", c, "chr", wins$chr[k], "start", wins$start[k], "stop", wins$end[k], sep = "_")
 save(glm.model.output, file = paste(folder_name, "/" , file_name, ".Rdata", sep = "") )
 
 message("done")
