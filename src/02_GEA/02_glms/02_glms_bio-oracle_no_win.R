@@ -56,7 +56,7 @@ bio_oracle_sites_2010 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio
 genofile <- seqOpen("data/processed/outlier_analyses/snpeff/N.canaliculata_SNPs.annotate.gds")
 
 # Reload windows (generated on previous script - 01_windows.R)
-load("data/processed/GEA/glms/glms_windows.RData")
+#load("data/processed/GEA/glms/glms_windows.RData")
 
 # Load PCA data for demography
 pca.df <- read.csv("data/processed/outlier_analyses/pca.csv")
@@ -103,7 +103,7 @@ anovaFun <- function(m1, m2) {
     }
 
 
-sub.snp.dt.sig <- snp.dt.sig[1:5,]
+sub.snp.dt.sig <- snp.dt.sig[1:15,]
 # ================================================================================== #
 # ================================================================================== #
 
@@ -118,7 +118,7 @@ glm.model.output =
     ###############################################################
 
     # Calculate allele frequency for SNP i in window k in chunk c
-    seqSetFilter(genofile, variant.id=data_win$variant.id[i], verbose = T)
+    seqSetFilter(genofile, variant.id=sub.snp.dt.sig$variant.id[i], verbose = T)
 
     # Extract allele depth ('ad') of alternate allele for SNP i
     ad_i <- seqGetData(genofile, "annotation/format/AD") %>% .$data %>% .[,2]
