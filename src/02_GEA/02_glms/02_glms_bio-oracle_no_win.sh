@@ -22,11 +22,8 @@
 # Request CPU
 #SBATCH --cpus-per-task=8
 
-# Submit job array
-#SBATCH --array=0-999%50
-
 # Name output of this job using %x=job-name and %j=job-id
-#SBATCH --output=./slurmOutput/%x.%A_%a.out
+#SBATCH --output=./slurmOutput/%x.j.out
 
 # Receive emails when job begins and ends or fails
 #SBATCH --mail-type=ALL
@@ -50,15 +47,6 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 # Script folder.
 SCRIPT_FOLDER=$WORKING_FOLDER/src/02_GEA/02_glms
-
-#--------------------------------------------------------------------------------
-
-# Input files
-chunk=1
-array=$((${SLURM_ARRAY_TASK_ID}+1)) 
-# NOTE: can only specify the array from 0-999 for the VACC, so need to add 1 to define an array from 1-1,000
-
-echo "I am running chunk:" ${chunk} "and array:" ${array}
 
 #--------------------------------------------------------------------------------
 
