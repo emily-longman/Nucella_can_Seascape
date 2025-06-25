@@ -85,4 +85,4 @@ fi
 
 # Run R script
 
-Rscript $SCRIPT_FOLDER/02_glms_bio-oracle.R
+Rscript $SCRIPT_FOLDER/02_glms_bio-oracle_no_win.R
