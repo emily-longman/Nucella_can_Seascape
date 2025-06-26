@@ -117,7 +117,7 @@ glm.model.output =
     ###############################################################
 
     # Calculate allele frequency for SNP i in window k in chunk c
-    seqSetFilter(genofile, variant.id=data_chunk$variant.id[i], verbose = T)
+    seqSetFilter(genofile, variant.id=data_chunk$variant.id[i], verbose = F)
 
     # Extract allele depth ('ad') of alternate allele for SNP i
     ad_i <- seqGetData(genofile, "annotation/format/AD") %>% .$data %>% .[,2]
@@ -192,7 +192,7 @@ glm.model.output =
         # Extract data for 'j' environmental variable
         gathered_data %>% filter(enviro_var == j) -> inner.tmp.shuffle
 
-          # Do 100 permutations --- test with 10
+          # Do 100 permutations --- FOR TESTING PURPOSES START WITH 10 !!!!!!!!!!!!!!!!!!!!!!!!!!!
           foreach(l=1:10, .combine = "rbind")%do%{
             set.seed(l)
             
