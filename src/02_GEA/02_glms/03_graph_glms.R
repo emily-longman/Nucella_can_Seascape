@@ -26,7 +26,7 @@ library(ggplot2)
 
 # ================================================================================== #
 
-# Generate output directory
+# Generate output directories
 
 out_dir <- paste("data/processed/GEA/glms/glms_output")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
@@ -59,20 +59,31 @@ save(glm.model.collated, file = "data/processed/GEA/glms/glms_output/glm.model.c
 # Add SNP_id column
 glm.model.collated %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 
-
 # ================================================================================== #
 
 # Graph results
-pdf("output/figures/GEA/glms/glm_perm.pdf", width = 8, height = 8)
-ggplot(data=glm.model.collated, aes(x=variable, y=-log10(p_lrt), group=perm, color = perm)) + 
-geom_boxplot()
-dev.off()
+#pdf("output/figures/GEA/glms/glm_perm.pdf", width = 8, height = 8)
+#ggplot(data=glm.model.collated, aes(x=variable, y=-log10(p_lrt), group=perm, color = perm)) + 
+#geom_boxplot()
+#dev.off()
+
+#pdf("output/figures/GEA/glms/glm_perm.pdf", width = 8, height = 8)
+#ggplot(data=glm.model.collated[glm.model.collated$data == "real"], aes(x=-log10(p_lrt), y=N, group=perm, color=as.factor(perm!=0))) + 
+#geom_line()
+#dev.off()
+
 
 pdf("output/figures/GEA/glms/glm_perm.pdf", width = 8, height = 8)
-ggplot(data=glm.model.collated[glm.model.collated$data == "real"], aes(x=-log10(p_lrt), y=N, group=perm, color=as.factor(perm!=0))) + 
-geom_line()
+glm.model.collated %>%
+  group_by(data=="real", variant.id) %>%
+  summarise(uci = quantile(p_lrt, 0.1, na.rm = T)) %>%
+  separate(variant.id, remove = F, into = c("chr", "pos"), sep = "_" ) %>%
+  ggplot(aes(
+    x=as.numeric(pos),
+    y=-log10(uci),
+    color=`perm == 0`
+  )) + geom_line()
 dev.off()
-
 
 
 # not finished - took from JCBN code
