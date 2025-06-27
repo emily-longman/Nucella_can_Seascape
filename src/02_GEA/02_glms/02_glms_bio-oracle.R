@@ -50,16 +50,13 @@ scaffold.names.df <- read.csv(paste("data/processed/GEA/glms/scaffold.names", w,
 scaffold.names <- scaffold.names.df$V1
 
 # Load SNPs of interest (baypass POD outlier SNPs - 320,742 SNPs)
-baypass_POD_sig_SNPs <- read.table("data/processed/outlier_analyses/baypass/POD_test/baypass_POD_sig_SNPs", header=T)
+baypass_POD_sig_SNPs <- read.table("data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs", header=T)
 
 # Load bio-oracle environmental data
 bio_oracle_sites_2010 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", header=T)
 
 # Open the GDS file
 genofile <- seqOpen("data/processed/outlier_analyses/snpeff/N.canaliculata_SNPs.annotate.gds")
-
-# Reload windows (generated on previous script - 01_windows.R)
-load("data/processed/GEA/glms/glms_windows.RData")
 
 # Load PCA data for demography
 pca.df <- read.csv("data/processed/outlier_analyses/pca.csv")
@@ -138,7 +135,7 @@ glm.model.output =
     af_i_snp[,nEff:=round((dp*2*nSnail)/(2*nSnail+dp-1))]
     # Calculate the effective allele freq
     af_i_snp[,af_nEff:=round(af*nEff)/nEff]
-
+  
     ###############################################################
 
     # Join with bio-oracle environmental data
@@ -177,6 +174,7 @@ glm.model.output =
           missing=seqMissing(genofile),
           perm = NA,
           data = "real",
+          af_nEff=inner.tmp$af_nEff,
           AIC=c(AIC(t1.dem.env)),
           b_enviro=last(t1.dem.env$coef),
           se_enviro=last(t1.dem.env$se),
@@ -218,6 +216,7 @@ glm.model.output =
                   missing=seqMissing(genofile),
                   perm = l,
                   data = "permutation",
+                  af_nEff=inner.tmp$af_nEff,
                   AIC=c(AIC(t1.dem.env.perm)),
                   b_enviro=last(t1.dem.env.perm$coef),
                   se_enviro=last(t1.dem.env.perm$se),
