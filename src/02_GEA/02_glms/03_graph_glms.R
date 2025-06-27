@@ -81,7 +81,7 @@ glm.model.collated %>%
   ggplot(aes(
     x=as.numeric(pos),
     y=-log10(uci),
-    color=`perm == 0`
+    color=`data=="real"`
   )) + geom_line()
 dev.off()
 
