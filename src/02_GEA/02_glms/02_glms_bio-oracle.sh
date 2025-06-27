@@ -98,3 +98,10 @@ fi
 # Run R script
 
 Rscript $SCRIPT_FOLDER/02_glms_bio-oracle.R "${SLURM_ARRAY_TASK_ID}"
+
+#--------------------------------------------------------------------------------
+
+rm scaffold.names.${SLURM_ARRAY_TASK_ID}.txt
+
+# Say done
+echo "done"

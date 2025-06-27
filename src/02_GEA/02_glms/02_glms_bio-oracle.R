@@ -171,14 +171,14 @@ glm.model.output =
           chr = unique(inner.tmp$chr),
           pos = unique(inner.tmp$pos),
           variable = j,
-          missing=seqMissing(genofile),
+          missing = seqMissing(genofile),
           perm = NA,
           data = "real",
-          af_nEff=inner.tmp$af_nEff,
-          AIC=c(AIC(t1.dem.env)),
-          b_enviro=last(t1.dem.env$coef),
-          se_enviro=last(t1.dem.env$se),
-          p_lrt=anovaFun(t1.dem, t1.dem.env))
+          af_nEff = inner.tmp$af_nEff,
+          AIC = c(AIC(t1.dem.env)),
+          b_enviro = last(t1.dem.env$coef),
+          se_enviro = last(t1.dem.env$se),
+          p_lrt = anovaFun(t1.dem, t1.dem.env))
       } # End for enviro var
 
       ###############################################################
@@ -213,14 +213,14 @@ glm.model.output =
                   chr = unique(inner.tmp.shuffle$chr),
                   pos = unique(inner.tmp.shuffle$pos),
                   variable = j,
-                  missing=seqMissing(genofile),
+                  missing = seqMissing(genofile),
                   perm = l,
                   data = "permutation",
-                  af_nEff=inner.tmp$af_nEff,
-                  AIC=c(AIC(t1.dem.env.perm)),
-                  b_enviro=last(t1.dem.env.perm$coef),
-                  se_enviro=last(t1.dem.env.perm$se),
-                  p_lrt=anovaFun(t1.dem.perm, t1.dem.env.perm))
+                  af_nEff = inner.tmp$af_nEff,
+                  AIC = c(AIC(t1.dem.env.perm)),
+                  b_enviro = last(t1.dem.env.perm$coef),
+                  se_enviro = last(t1.dem.env.perm$se),
+                  p_lrt = anovaFun(t1.dem.perm, t1.dem.env.perm))
 
               } # End for perm
             } # End for enviro var
