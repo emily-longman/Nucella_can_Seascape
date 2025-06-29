@@ -138,6 +138,19 @@ plot(SNP.XtX.dt$M_XtX, xlab="Position", col=ifelse(SNP.XtX.dt$M_XtX >= pod.thres
 abline(h=pod.thres.99, lty=2, col='red') 
 dev.off()
 
+
+# Add the threshold to the actual XtX plot
+pdf("output/figures/outlier_analyses/POD/Baypass_xtx_POD_thres_simp_0.9999.pdf", width = 10, height = 5)
+plot(SNP.XtX.dt$M_XtX, xlab="Position", pch=19)
+abline(h=pod.thres.9999, lty=2, col='red') 
+dev.off()
+
+# Color by significance
+pdf("output/figures/outlier_analyses/POD/Baypass_xtx_POD_thres_0.9999.pdf", width = 10, height = 5)
+plot(SNP.XtX.dt$M_XtX, xlab="Position", col=ifelse(SNP.XtX.dt$M_XtX >= pod.thres.99, "#bebebe93", "black"), pch=19)
+abline(h=pod.thres.99999, lty=2, col='red') 
+dev.off()
+
 # ================================================================================== #
 
 # Write file of POD significant SNPs
