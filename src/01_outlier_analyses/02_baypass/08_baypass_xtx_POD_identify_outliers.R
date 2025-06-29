@@ -90,7 +90,41 @@ pod.5.thres.99=quantile(XtX.POD.5$M_XtX, probs=0.99)
 pod.thres.99 <- mean(c(pod.1.thres.99, pod.2.thres.99, pod.3.thres.99, pod.4.thres.99, pod.5.thres.99))
 
 # Identify outliers -- 318,349 SNPs
-baypass_POD_sig_SNPs <- SNP.XtX.dt[which(SNP.XtX.dt$M_XtX >= pod.thres.99),]
+baypass_POD_sig_SNPs_threshold_1 <- SNP.XtX.dt[which(SNP.XtX.dt$M_XtX >= pod.thres.99),]
+
+# ================================================================================== #
+
+# Compute the 0.01% threshold (i.e., identify SNPs where the xtx values are above the 99.99% significance threshold from the POD)
+pod.1.thres.9999=quantile(XtX.POD.1$M_XtX, probs=0.9999)
+pod.2.thres.9999=quantile(XtX.POD.2$M_XtX, probs=0.9999)
+pod.3.thres.9999=quantile(XtX.POD.3$M_XtX, probs=0.9999)
+pod.4.thres.9999=quantile(XtX.POD.4$M_XtX, probs=0.9999)
+pod.5.thres.9999=quantile(XtX.POD.5$M_XtX, probs=0.9999)
+
+# Take the mean of the 5 runs to determine the pod threshold 
+pod.thres.9999 <- mean(c(pod.1.thres.9999, pod.2.thres.9999, pod.3.thres.9999, pod.4.thres.9999, pod.5.thres.9999))
+
+# Identify outliers -- 3,095 SNPs
+baypass_POD_sig_SNPs_threshold_0.01 <- SNP.XtX.dt[which(SNP.XtX.dt$M_XtX >= pod.thres.9999),]
+
+
+# ================================================================================== #
+
+# Compute the 0.001% threshold (i.e., identify SNPs where the xtx values are above the 99.999% significance threshold from the POD)
+pod.1.thres.99999=quantile(XtX.POD.1$M_XtX, probs=0.99999)
+pod.2.thres.99999=quantile(XtX.POD.2$M_XtX, probs=0.99999)
+pod.3.thres.99999=quantile(XtX.POD.3$M_XtX, probs=0.99999)
+pod.4.thres.99999=quantile(XtX.POD.4$M_XtX, probs=0.99999)
+pod.5.thres.99999=quantile(XtX.POD.5$M_XtX, probs=0.99999)
+
+# Take the mean of the 5 runs to determine the pod threshold 
+pod.thres.99999 <- mean(c(pod.1.thres.99999, pod.2.thres.99999, pod.3.thres.99999, pod.4.thres.99999, pod.5.thres.99999))
+
+# Identify outliers -- 339 SNPs
+baypass_POD_sig_SNPs_threshold_0.001 <- SNP.XtX.dt[which(SNP.XtX.dt$M_XtX >= pod.thres.99999),]
+
+
+# ================================================================================== #
 
 # Add the threshold to the actual XtX plot
 pdf("output/figures/outlier_analyses/POD/Baypass_xtx_POD_thres_simp.pdf", width = 10, height = 5)
@@ -107,4 +141,6 @@ dev.off()
 # ================================================================================== #
 
 # Write file of POD significant SNPs
-write.table(baypass_POD_sig_SNPs, "data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs", sep = "\t", row.names=FALSE)
+write.table(baypass_POD_sig_SNPs_threshold_1, "data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs_threshold_1", sep = "\t", row.names=FALSE)
+write.table(baypass_POD_sig_SNPs_threshold_0.01, "data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs_threshold_0.01", sep = "\t", row.names=FALSE)
+write.table(baypass_POD_sig_SNPs_threshold_0.001, "data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs_threshold_0.001", sep = "\t", row.names=FALSE)

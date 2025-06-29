@@ -75,13 +75,13 @@ glm.model.collated %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 pdf("output/figures/GEA/glms/glm_perm.pdf", width = 8, height = 8)
 glm.model.collated %>%
-  group_by(data=="real", variant.id) %>%
+  group_by(perm == 0, variant.id) %>%
   summarise(uci = quantile(p_lrt, 0.1, na.rm = T)) %>%
   separate(variant.id, remove = F, into = c("chr", "pos"), sep = "_" ) %>%
   ggplot(aes(
     x=as.numeric(pos),
     y=-log10(uci),
-    color=`data=="real"`
+    color=`perm == 0`
   )) + geom_line()
 dev.off()
 
