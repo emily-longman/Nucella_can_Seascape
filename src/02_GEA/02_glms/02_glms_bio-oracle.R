@@ -191,8 +191,8 @@ glm.model.output =
         # Extract data for 'j' environmental variable
         gathered_data %>% filter(enviro_var == j) -> inner.tmp.shuffle
 
-          # Do 100 permutations --- FOR TESTING PURPOSES START WITH 10 !!!!!!!!!!!!!!!!!!!!!!!!!!!
-          foreach(l=1:10, .combine = "rbind")%do%{
+          # Do 100 permutations 
+          foreach(l=1:100, .combine = "rbind")%do%{
             set.seed(l)
             
             # Shuffle enviro data for 'j' enviro variable

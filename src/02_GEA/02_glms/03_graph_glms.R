@@ -39,8 +39,8 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 # Load data
 
 # Create list of file names
-file_names = as.list(dir(path = 'data/processed/GEA/glms/glms_window_analysis/', pattern = "GLM_100perm_Bio-Oracle_chunk_*"))
-file_names = lapply(file_names, function(x) paste0('data/processed/GEA/glms/glms_window_analysis/', x))
+file_names = as.list(dir(path = 'data/processed/GEA/glms/glms_window_analysis_test/', pattern = "GLM_100perm_Bio-Oracle_chunk_*"))
+file_names = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/GEA/glms/glms_window_analysis_test/', x))))
 
 # Read all the files and add a column with the chunk
 glm.model.collated =  
@@ -48,18 +48,28 @@ foreach(i=file_names, .combine="rbind")%do%{
 message(i) 
 chunk = i
 o = get(load(i))
-o %>% mutate(chunk = file_names) %>% mutate(chunk = str_remove(chunk, pattern = "data/processed/GEA/glms/glms_window_analysis/GLM_100perm_Bio-Oracle_"))
+o %>% mutate(chunk = file_names) %>% mutate(chunk = str_remove(chunk, pattern = "data/processed/GEA/glms/glms_window_analysis_test/GLM_100perm_Bio-Oracle_"))
 } 
 
 # Save merged data
 save(glm.model.collated, file = "data/processed/GEA/glms/glms_output/glm.model.collated.Rdata")
 
+#load("data/processed/GEA/glms/glms_output/glm.model.collated.Rdata")
+
 # ================================================================================== #
 
 # Add SNP_id column
-glm.model.collated %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
+glm.model.collated <- glm.model.collated %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 # ================================================================================== #
+
+# Split data by environmental var
+
+# Get list of environmental var names
+unique(glm.model.collated$variable) -> enviro_vars_names
+
+# ================================================================================== #
+
 
 # Graph results
 #pdf("output/figures/GEA/glms/glm_perm.pdf", width = 8, height = 8)
@@ -75,37 +85,12 @@ glm.model.collated %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 pdf("output/figures/GEA/glms/glm_perm.pdf", width = 8, height = 8)
 glm.model.collated %>%
-  group_by(perm == 0, variant.id) %>%
+  group_by(perm == 0, SNP_id) %>%
   summarise(uci = quantile(p_lrt, 0.1, na.rm = T)) %>%
-  separate(variant.id, remove = F, into = c("chr", "pos"), sep = "_" ) %>%
+  separate(SNP_id, remove = F, into = c("chr", "pos"), sep = "_" ) %>%
   ggplot(aes(
-    x=as.numeric(pos),
+    x=chr,
     y=-log10(uci),
     color=`perm == 0`
   )) + geom_line()
 dev.off()
-
-
-# not finished - took from JCBN code
-
-pdf("output/figures/morphology/GLM.pdf", width = 6, height = 6)
-GLM_test %>%
-  group_by(perm==0, variant.id) %>%
-  summarise( uci = quantile(p_lrt, 0.1, na.rm = T)) %>%
-  separate(variant.id, remove = F, into = c("chr_Or", "chr_id", "pos"), sep = "_" ) %>%
-  ggplot(aes(
-    x=as.numeric(pos),
-    y=-log10(uci),
-    color=`perm == 0`
-  )) + geom_line()
-dev.off()
-
-GLM_test %>%
-  group_by(perm==0, variant.id) %>%
-  summarise( uci = quantile(p_lrt, 0.1, na.rm = T)) %>%
-  separate(variant.id, remove = F, into = c("chr_Or", "chr_id", "pos"), sep = "_" ) %>%
-  dcast(variant.id+chr_Or+chr_id+pos~`perm == 0`) %>%
-  mutate(test = `TRUE`<`FALSE`) %>%
-  filter(test == "TRUE")
-
-
