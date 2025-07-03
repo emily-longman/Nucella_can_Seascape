@@ -149,6 +149,36 @@ dev.off()
 # Write summary table
 write.csv(swath_filt_sum, "data/processed/GEA/enviro_data/MARINe/swath_filt_sum.csv")
 
+
+# ================================================================================== #
+# ================================================================================== #
+
+# Use just M. californianus data/ Pisaster data to look at temporal trend
+
+# Extract M cali data
+point_contact_filt_M.cali <- point_contact_filt %>% filter(species_lump == "Mytilus californianus")
+
+point_contact_filt_M.cali$year <- as.numeric(point_contact_filt_M.cali$year)
+
+# Temporal trend of M. californianus
+pdf("output/figures/GEA/enviro/MARINe/MARINe_prey_perc_cov_mussel_temporal_trend.pdf", width = 16, height = 10)
+ggplot(data = point_contact_filt_M.cali, aes(x=year, y=percent_cover, group=marine_site_name, color=marine_site_name)) + geom_point(size=2.5) + 
+geom_line() +
+xlab("Year") + ylab("M. californianus Percent cover") +
+theme_bw(base_size = 16) 
+dev.off()
+
+# Extract Pisaster data
+swath_filt_pisaster <- swath_filt  %>% filter(species_lump == "Pisaster ochraceus")
+
+# Temporal trend of M. californianus
+pdf("output/figures/GEA/enviro/MARINe/MARINe_pisaster_density_temporal_trend.pdf", width = 16, height = 10)
+ggplot(data = swath_filt_pisaster, aes(x=year, y=density_per_m2, group=marine_site_name, color=marine_site_name)) + geom_point(size=2.5) + 
+geom_line() +
+xlab("Year") + ylab("Pisaster density") +
+theme_bw(base_size = 16) 
+dev.off()
+
 # ================================================================================== #
 # ================================================================================== #
 
