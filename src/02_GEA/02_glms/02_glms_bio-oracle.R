@@ -49,7 +49,7 @@ w = as.numeric(args[1]) # Chunk: this is the chunk (1000 chunks each with 19 sca
 scaffold.names.df <- read.csv(paste("data/processed/GEA/glms/scaffold.names", w, "txt", sep = "."), sep = " ", header=F)
 scaffold.names <- scaffold.names.df$V1
 
-# Load SNPs of interest (baypass POD outlier SNPs - 320,742 SNPs)
+# Load SNPs of interest (baypass POD outlier SNPs - 3,095 SNPs SNPs)
 #baypass_POD_sig_SNPs <- read.table("data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs", header=T)
 baypass_POD_sig_SNPs <- read.table("data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs_threshold_0.01", header=T)
 #baypass_POD_sig_SNPs <- read.table("data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs_threshold_0.001", header=T)
@@ -100,7 +100,7 @@ anovaFun <- function(m1, m2) {
 # ================================================================================== #
 # ================================================================================== #
 
-# Filter snp.dt for a given window - i.e., identify all of the sig SNPs on 19 scaffolds
+# Filter snp.dt for a given window - i.e., identify all of the sig SNPs in a given set of scaffold names
 snp.dt %>% filter(snp.dt$chr %in% scaffold.names) -> data_chunk
 
 # ================================================================================== #
