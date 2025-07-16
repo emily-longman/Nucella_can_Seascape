@@ -54,7 +54,7 @@ o %>% mutate(chunk = file_names) %>% mutate(chunk = str_remove(chunk, pattern = 
 # Save merged data
 save(glm.model.collated, file = "data/processed/GEA/glms/glms_output/glm.model.collated.Rdata")
 
-#load("data/processed/GEA/glms/glms_output/glm.model.collated.Rdata")
+load("data/processed/GEA/glms/glms_output/glm.model.collated.Rdata")
 
 # ================================================================================== #
 
@@ -63,10 +63,47 @@ glm.model.collated <- glm.model.collated %>% mutate(SNP_id = paste(chr, pos, sep
 
 # ================================================================================== #
 
-# Split data by environmental var
+# Split data by environmental variable
 
 # Get list of environmental var names
 unique(glm.model.collated$variable) -> enviro_vars_names
+
+# Group by environmental variable
+glm.model.collated.group <- glm.model.collated %>% group_by(variable)
+
+# Split by environmental variable
+glm.model.collated.split <- group_split(glm.model.collated.group)
+
+# Extract environmental var names
+group_keys(glm.model.collated.group) -> enviro_vars_names
+
+# ================================================================================== #
+
+# Extract real data and permutation data
+real_data <- glm.model.collated %>% filter(perm == 0)
+perm_data <- glm.model.collated %>% filter(perm > 0)
+
+
+# How do I summarize the permutation data - mean of p_lrt? quantiles? Then how do I compare this to the real data?
+
+# Not correct below
+ratios <- perm_data %>%
+left_join(real_data, by = "variable", suffix = c("_perm", "_real")) %>%
+mutate(rr_ratio = rr_real / rr_perm) %>%
+select(variable, test_code_perm, rr_ratio)
+
+# Summarize
+summary <- glm.model.collated %>% group_by(variable) %>% 
+summarise(mean = mean(p_lrt),
+            sd = sd(p_lrt),
+            n = n(),  # Number of observations
+            se = sd / sqrt(n),  # Calculate standard error
+            ci_low = mean - 1.96 * se,
+            ci_high = mean + 1.96 * se,
+            quantile_0.05 = quantile(p_lrt, 0.05),
+            quantile_0.95 = quantile(p_lrt, 0.95),
+            quantile_0.5 = quantile(p_lrt, 0.5))
+
 
 # ================================================================================== #
 
@@ -84,7 +121,7 @@ unique(glm.model.collated$variable) -> enviro_vars_names
 
 
 pdf("output/figures/GEA/glms/glm_perm.pdf", width = 8, height = 8)
-glm.model.collated %>%
+glm.model.collated.split[1] %>%
   group_by(perm == 0, SNP_id) %>%
   summarise(uci = quantile(p_lrt, 0.1, na.rm = T)) %>%
   separate(SNP_id, remove = F, into = c("chr", "pos"), sep = "_" ) %>%

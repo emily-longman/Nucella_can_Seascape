@@ -152,7 +152,7 @@ str(bio_oracle_ssp585_sites)
 
 # ================================================================================== #
 
-# Extract only the last decade of data (i.e., )
+# Extract only the last decade of data (i.e., 2080-2909)
 bio_oracle_sites_ssp585_2090 <- bio_oracle_ssp585_sites %>% 
 filter(time == "2090-01-01T00:00:00Z")
 

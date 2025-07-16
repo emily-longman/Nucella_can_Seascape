@@ -48,7 +48,7 @@ library(SeqArray)
 out_dir <- paste("data/processed/genomic_offset")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
-out_fig_dir <- paste("output/figures/GEA/genomic_offset")
+out_fig_dir <- paste("output/figures/genomic_offset")
 if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 
 # ================================================================================== #
@@ -92,7 +92,7 @@ bio_oracle_sites_2010_sub <- bio_oracle_sites_2010[, c(4:12)]
 # ================================================================================== #
 # ================================================================================== #
 
-# Alternate way to get allele frequencies
+# Calculate allele frequencies
 
 # Subset pooldata for Baypass outlier SNPs
 
@@ -198,6 +198,9 @@ nEff <- round((cov_t*2*nSnail)/(cov_t+2*nSnail-1))
 # Calculate the effective allele freq
 af_nEff <- round((afs_t*nEff)/nEff)
 
+# Check for NAs -- gradient forest can't run if the data includes NAs
+which(is.na(af_nEff))
+
 # Join datasets
 #left_join(covs.id.melt, afs.id.melt, by = join_by(SNP_id, Site)) -> afs.cov.id
 
@@ -222,67 +225,57 @@ lev <- floor(log2(nSites * 0.368/2))
 
 # Run gradient forest
 gf <- gradientForest(cbind(af_nEff, bio_oracle_sites_2010_sub), predictor.vars=colnames(bio_oracle_sites_2010_sub),
-                                  response.vars=colnames(af_nEff), ntree=500, 
+                                  response.vars=colnames(af_nEff), ntree=5000, 
                                   maxLevel=lev, trace=T, corr.threshold=0.5)
 # Note: Filter by correlation threshold of 0.5
-# Note: FOR TESTING STARTED WITH 500 ntree, later increase to 5000
-#### Q! Got warnings saying 
-#In randomForest.default(x = X, y = spec_vec, maxLevel = maxLevel,  ... :
-#  The response has five or fewer unique values.  Are you sure you want to do regression?
+#### Q! Got warnings saying:
+# In randomForest.default(x = X, y = spec_vec, maxLevel = maxLevel,  ... :
+# The response has five or fewer unique values.  Are you sure you want to do regression?
 
 gf
+# Important variables:
+# [1] thetao_min   thetao_range thetao_mean  thetao_max   ph_mean
 
 # ================================================================================== #
 
 # Graphing
 
-# Graph predictor importance
-pdf("output/figures/GEA/genomic_offset/predict_importance.pdf", width = 8, height = 8)
+# Graph predictor importance (This show the mean accuracy importance and the mean importance weighted by species R2)
+pdf("output/figures/genomic_offset/predict_importance.pdf", width = 8, height = 8)
 plot(gf, plot.type = "O")
 dev.off()
-# Note: This show the mean accuracy importance and the mean importance weighted by species R2
-
-####
 
 # Extract most important variables
 most_important <- names(importance(gf))[1:5]
 
-# Splits density plot
-pdf("output/figures/GEA/genomic_offset/splits_density.pdf", width = 8, height = 8)
+# Splits density plot (This shows binned split importance and location on each gradient (spikes), kernel density of splits (black lines), of observations
+# (red lines) and of splits standardised by observations density (blue lines). These show where important changes in the abundance of multiple species are occurring along the gradient
+pdf("output/figures/genomic_offset/splits_density.pdf", width = 8, height = 8)
 plot(gf, plot.type = "S", imp.vars = most_important, leg.posn = "topleft", cex.legend = 0.8, cex.axis = 0.6,
 cex.lab = 0.7, line.ylab = 0.9, par.args = list(mgp = c(1.5, 0.5, 0), mar = c(3.1, 1.5, 0.1, 1)))
 dev.off()
-# Note: shows binned split importance and location on each gradient (spikes), kernel density of splits (black lines), of observations
-# (red lines) and of splits standardised by observations density (blue lines)
-# These show where important changes in the abundance of multiple species are occurring along the gradient;
-
 # Error:
-#In density.default(splits, weight = w/sum(w), from = rX[1], to = rX[2]) :
-#  Selecting bandwidth *not* using 'weights'
+# Error in integrate(approxfun(d, rule = 2), lower = min(d$x), upper = max(d$x)) : 
+# roundoff error was detected
+# In density.default(splits, weight = w/sum(w), from = rX[1], to = rX[2]) :
+# Selecting bandwidth *not* using 'weights'
 
-####
-
-# Species cumulative plot
-pdf("output/figures/GEA/genomic_offset/species_cumulative_plot.pdf", width = 8, height = 8)
+# Species cumulative plot (For each species shows cumulative importance distributions of splits improvement scaled by R2 weighted importance, and standardised by density of observations)
+pdf("output/figures/genomic_offset/species_cumulative_plot.pdf", width = 8, height = 8)
 plot(gf, plot.type = "C", imp.vars = most_important, show.overall = F, legend = T, leg.posn = "topleft",
 leg.nspecies = 5, cex.lab = 0.7, cex.legend = 0.4, cex.axis = 0.6, line.ylab = 0.9, 
 par.args = list(mgp = c(1.5, 0.5, 0), mar = c(2.5, 1, 0.1, 0.5), omi = c(0,0.3, 0, 0)))
 dev.off()
-# Note: For each species shows cumulative importance distributions of splits improvement scaled by R2 weighted importance, 
-# and standardised by density of observations
-
 
 # Predictor cumulative plot (common.scale=T ensures that plots for all predictors have the same y-scale)
-pdf("output/figures/GEA/genomic_offset/predictor_cumulative_plot.pdf", width = 8, height = 8)
+# (For each predictor shows cumulative importance distributions of splits improvement scaled by R2 weighted importance, and standardised by density of observations, averaged over all species.)
+pdf("output/figures/genomic_offset/predictor_cumulative_plot.pdf", width = 8, height = 8)
 plot(gf, plot.type = "C", imp.vars = most_important, show.species = F, common.scale = T, 
 cex.axis = 0.6, cex.lab = 0.7, line.ylab = 0.9, par.args = list(mgp = c(1.5, 0.5, 0), mar = c(2.5, 1, 0.1, 0.5), omi = c(0, 0.3, 0, 0)))
 dev.off()
-# Note: For each predictor shows cumulative importance distributions of splits improvement scaled by
-# R2 weighted importance, and standardised by density of observations, averaged over all species.
-
 
 # Fit of Random Forest
-pdf("output/figures/GEA/genomic_offset/grad_forest_fit.pdf", width = 8, height = 8)
+pdf("output/figures/genomic_offset/grad_forest_fit.pdf", width = 8, height = 8)
 plot(gf, plot.type = "P", show.names = T, horizontal = F, cex.axis = 1, cex.labels = 0.7, line = 2.5)
 dev.off()
 
@@ -290,7 +283,7 @@ dev.off()
 
 # Extract gradient forest results and graph
 
-# Extract overall importance
+# Extract overall importance - (accuracy importance)
 overall.imp <- as.data.frame(gf$overall.imp)
 # Rename column
 names(overall.imp)[1] <- "Importance"
@@ -298,7 +291,7 @@ names(overall.imp)[1] <- "Importance"
 overall.imp <- tibble::rownames_to_column(overall.imp, "Variable")
 
 # Re-graph accuracy importance
-pdf("output/figures/GEA/genomic_offset/accuracy_importance_ggplot.pdf", width = 8, height = 8)
+pdf("output/figures/genomic_offset/accuracy_importance_ggplot.pdf", width = 8, height = 8)
 ggplot(data=overall.imp, aes(x=reorder(Variable, Importance),y=(Importance))) + 
 geom_bar(stat="identity", colour="black", width=0.8) +
 theme_bw() +
@@ -313,7 +306,17 @@ dev.off()
 
 # ================================================================================== #
 
+# Gradient Forest Predictions
 
+# Transform present data
+predOUT_present <- predict(gf, bio_oracle_sites_2010_sub)
+predOUT_present
+
+# ================================================================================== #
+
+###read in future data
+bio_oracle_sites_ssp585_2090 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_ssp585_2090.csv")
+rownames(bio_oracle_ssp585_sites) <- rownames(indmeta)
 
 
 
