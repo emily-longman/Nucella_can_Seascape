@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_bio-oracle_rerun1
+#SBATCH --job-name=glms_bio-oracle_rerun5
 
 # Specify partition
 #SBATCH --partition=week
@@ -23,7 +23,7 @@
 #SBATCH --cpus-per-task=8
 
 # Submit job array
-#SBATCH --array=4,14,16,17,19,23,27,37,39,44,45,53,56,67,69,74,76,95,120,123,193,216,273,523,526,527,528,529,530,531,533,534,535,537,541,542,543,544,545,548,549,550%20
+#SBATCH --array=751,753,754,755,756,757,758,759,760,761,762,763,764,765,766,767,768,769,770,771,772,773,774,775,776,777,778,779,780,781,782,783,784,785,786,787,788,789,790,791,792,793,794,795,796,797,798,799,800%20
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
