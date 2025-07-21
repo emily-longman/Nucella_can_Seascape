@@ -100,14 +100,14 @@ anovaFun <- function(m1, m2) {
 # ================================================================================== #
 # ================================================================================== #
 
-# Filter snp.dt for a given window - i.e., identify all of the sig SNPs in a given set of scaffold names
+# Filter snp.dt for a given chunk - i.e., identify all of the sig SNPs in a given set of scaffold names
 snp.dt %>% filter(snp.dt$chr %in% scaffold.names) -> data_chunk
 
 # ================================================================================== #
 
 glm.model.output =
 
-  # For each SNP in a given window c extract allele freq then run model with bio-oracle data
+  # For each SNP in a given chunk w extract allele freq then run model with bio-oracle data
   foreach(i=1:dim(data_chunk)[1], .combine = "rbind")%do%{
     
     # Reset filter
@@ -115,7 +115,7 @@ glm.model.output =
 
     ###############################################################
 
-    # Calculate allele frequency for SNP i in window k in chunk c
+    # Calculate allele frequency for SNP i in chunk w 
     seqSetFilter(genofile, variant.id=data_chunk$variant.id[i], verbose = F)
 
     # Extract allele depth ('ad') of alternate allele for SNP i
@@ -237,9 +237,9 @@ glm.model.output =
 # Generate folders and save output
 
 # Folder name for chunk c
-folder_name <- paste("data/processed/GEA/glms/glms_window_analysis")
+folder_name <- paste("data/processed/GEA/glms/glms_chunk_analysis")
 
-# Save file for window k in chunk y
+# Save file for chunk w
 file_name <- paste("GLM_100perm_Bio-Oracle_chunk_", w, sep = "")
 save(glm.model.output, file = paste(folder_name, "/" , file_name, ".Rdata", sep = "") )
 

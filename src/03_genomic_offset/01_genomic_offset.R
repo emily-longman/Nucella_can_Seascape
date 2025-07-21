@@ -56,8 +56,11 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 # Load SNPs of interest (baypass POD outlier SNPs - 3,095 SNPs SNPs)
 baypass_POD_sig_SNPs <- read.table("data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs_threshold_0.01", header=T)
 
-# Load bio-oracle environmental data
+# Load bio-oracle environmental data - present (2000-2010)
 bio_oracle_sites_2010 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", header=T)
+
+# Load bio-oracle environmental data - future (2080-2090)
+bio_oracle_sites_ssp585_2090 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_ssp585_2090.csv")
 
 # Open the GDS file
 genofile <- seqOpen("data/processed/outlier_analyses/snpeff/N.canaliculata_SNPs.annotate.gds")
@@ -219,7 +222,7 @@ nSites <- dim(bio_oracle_sites_2010_sub)[1]
 nSpec <- dim(af_nEff)[2]
 
 # Calc maximum number of splits for conditional permutation
-lev <- floor(log2(nSites * 0.368/2))
+lev <- log2(nSites * 0.368/2)
 # Note: For conditional permutation, the predictor to be assessed is permuted only within blocks of the dataset defined by splits in the given tree
 # on any other predictors correlated above a certain threshold and up to a maximum number of splits set by the maxLevel option 
 
@@ -234,7 +237,7 @@ gf <- gradientForest(cbind(af_nEff, bio_oracle_sites_2010_sub), predictor.vars=c
 
 gf
 # Important variables:
-# [1] thetao_min   thetao_range thetao_mean  thetao_max   ph_mean
+# [1] thetao_min   thetao_range thetao_mean  thetao_max   ph_mean 
 
 # ================================================================================== #
 
@@ -254,11 +257,13 @@ pdf("output/figures/genomic_offset/splits_density.pdf", width = 8, height = 8)
 plot(gf, plot.type = "S", imp.vars = most_important, leg.posn = "topleft", cex.legend = 0.8, cex.axis = 0.6,
 cex.lab = 0.7, line.ylab = 0.9, par.args = list(mgp = c(1.5, 0.5, 0), mar = c(3.1, 1.5, 0.1, 1)))
 dev.off()
+# Note error message. However, mostly just relate to graphing and this figure isn't needed.
 # Error:
 # Error in integrate(approxfun(d, rule = 2), lower = min(d$x), upper = max(d$x)) : 
 # roundoff error was detected
 # In density.default(splits, weight = w/sum(w), from = rX[1], to = rX[2]) :
 # Selecting bandwidth *not* using 'weights'
+# ERROR: THIS WONT GRAPH
 
 # Species cumulative plot (For each species shows cumulative importance distributions of splits improvement scaled by R2 weighted importance, and standardised by density of observations)
 pdf("output/figures/genomic_offset/species_cumulative_plot.pdf", width = 8, height = 8)
@@ -281,7 +286,10 @@ dev.off()
 
 # ================================================================================== #
 
-# Extract gradient forest results and graph
+# Extract gradient forest results and graph accuracy importance
+
+# Accuracy importance is a measure of how much worse the model gets (in terms of mean square prediction error, MSPE) 
+# when the values of a given predictor are randomly permuted among the training data
 
 # Extract overall importance - (accuracy importance)
 overall.imp <- as.data.frame(gf$overall.imp)
@@ -297,7 +305,7 @@ geom_bar(stat="identity", colour="black", width=0.8) +
 theme_bw() +
 geom_hline(yintercept = 0) +
 coord_flip() +
-theme(panel.grid.major = element_blank(), legend.position=c(0.8,0.3),legend.key.size = unit(1, 'lines'),
+theme(panel.grid.major = element_blank(), legend.position.inside=c(0.8,0.3),legend.key.size = unit(1, 'lines'),
         legend.title = element_blank(), panel.border = element_blank(),axis.ticks.y = element_blank(),
         legend.text = element_text(size = 12), axis.line.x = element_line(colour="black"), 
         panel.grid.minor = element_blank(),axis.text.x = element_text(size = 12),axis.text.y=element_text(size = 12),axis.title=element_text(size=14,color="black"),
@@ -306,17 +314,117 @@ dev.off()
 
 # ================================================================================== #
 
-# Gradient Forest Predictions
+# Gradient Forest Predictions - present data
 
-# Transform present data
+# Transform present data with gradient forest model
 predOUT_present <- predict(gf, bio_oracle_sites_2010_sub)
 predOUT_present
 
 # ================================================================================== #
 
-###read in future data
-bio_oracle_sites_ssp585_2090 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_ssp585_2090.csv")
-rownames(bio_oracle_ssp585_sites) <- rownames(indmeta)
+# Gradient Forest Predictions - future data
+
+# Rename rows of future data as sites
+rownames(bio_oracle_sites_ssp585_2090) <- rownames(bio_oracle_sites_2010_sub)
+
+# Subset bio-oracle data so just environmental variables
+bio_oracle_sites_ssp585_2090_sub <- bio_oracle_sites_ssp585_2090[, c(4:12)]
+
+# Tranform future data with gradient forest model
+predOUT_2090 <- predict(gf, bio_oracle_sites_ssp585_2090_sub)
+predOUT_2090
+
+# ================================================================================== #
+
+# Calculate offset
+
+# Calculate offset for each environmental variable (predOUT_2090 - predOUT_present)
+df_diff_squared <- data.frame(
+  lapply(1:ncol(predOUT_2090), function(i) {
+    (predOUT_2090[,i] - predOUT_present[,i])^2
+  })
+)
+
+# Rename columns
+colnames(df_diff_squared) <- colnames(predOUT_2090)
+
+# Extract r squared
+check_rsq <- gf$res
+mean(check_rsq$rsq)
+
+# Reformat data
+
+# Change to data frame
+df_diff_squared <- as.data.frame(df_diff_squared)
+
+# Add column with site names
+df_diff_squared$Site <- rownames(predOUT_2090)
+
+# Change to long format
+df_long <- df_diff_squared %>%
+  pivot_longer(cols = -Site,  # Convert all columns except Location
+    names_to = "Variable",
+    values_to = "Value")
+
+df_long
+
+# ================================================================================== #
+
+# Graph offset
+
+# Change Site to a factor and order N to S 
+df_long$Site <- factor(df_long$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+
+# Color palette 
+nb.cols <- 19
+mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
+
+# Graph offset
+pdf("output/figures/genomic_offset/genomic_offset.pdf", width = 12, height = 8)
+ggplot(df_long, aes(x = Site, y = Value, fill = as.factor(Site))) + geom_col() +  
+facet_wrap(~ Variable, scales = "free_y") +
+scale_fill_manual(values = mycolors) +
+xlab("Site") + ylab("Genomic offset") +
+theme_minimal() +
+theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
+theme(strip.text = element_text(face = "bold", size = 16)) +
+guides(fill = "none")
+dev.off()
+
+
+# Rename variables
+df_filtered <- df_long %>% 
+  filter(grepl("po4|ph|o2|phyc|si|sws|swd", Variable)) %>%
+  mutate(
+    Variable = case_when(
+      grepl("o2", Variable)   ~ "O2 (range)",
+      grepl("ph", Variable)  ~ "pH (mean)",
+      grepl("phyc", Variable)   ~ "Phytoplankton count (range)",
+      grepl("PO4", Variable)~ "PO4 (range)",
+      grepl("si", Variable)~ "Silicon content (range)",
+      grepl("swd", Variable)~ "Wind direction (range)",
+      grepl("sws_max", Variable)~ "Wind Speed (max)",
+      grepl("sws_min", Variable)~ "Wind Speed (min)",
+      grepl("sws_range", Variable)~ "Wind Speed (range)",
+      
+      TRUE ~ Variable  # Keep unchanged if not in the list
+    )
+  )
+df_filtered
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
