@@ -41,9 +41,18 @@ file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/proc
 # Read all the files and add a column with the chunk
 glm.model.collated =  
 foreach(i=file_names_v, .combine="rbind")%do%{  
-message(i)
-o = get(load(i))
-o %>% mutate(chunk = i) %>% mutate(chunk = str_remove(chunk, pattern = "data/processed/GEA/glms/glms_chunk_analysis_test/GLM_100perm_Bio-Oracle_"))
+    # State which file loading
+    message(i)
+    # Load file
+    o = get(load(i))
+    # Remove af_nEff column
+    o.sub <- subset(o, select=-c(af_nEff))
+
+    # Remove duplicated rows - since every model is duplicated 19 times since I included af_nEff
+    o.unique <- o.sub %>% distinct()
+
+    # Add column with identifier
+    o.unique %>% mutate(chunk = i) %>% mutate(chunk = str_remove(chunk, pattern = "data/processed/GEA/glms/glms_chunk_analysis_test/GLM_100perm_Bio-Oracle_"))
 } 
 
 # ================================================================================== #
