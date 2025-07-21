@@ -17,7 +17,7 @@
 #SBATCH --time=00:20:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=10G 
+#SBATCH --mem=80G 
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%j.out

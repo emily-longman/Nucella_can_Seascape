@@ -28,23 +28,13 @@ library(ggplot2)
 
 # Generate output directories
 
-out_dir <- paste("data/processed/GEA/glms/glms_output")
-if (!dir.exists(out_dir)) {dir.create(out_dir)}
-
 out_fig_dir <- paste("output/figures/GEA/glms")
 if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 
 # ================================================================================== #
 
 # Load data
-
-
-
-
-
-
-
-
+load("data/processed/GEA/glms/glms_output/glm.model.collated.Rdata")
 
 # ================================================================================== #
 
