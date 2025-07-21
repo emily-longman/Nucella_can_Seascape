@@ -50,5 +50,3 @@ o = get(load(i))
 
 # Save merged data
 save(glm.model.collated, file = "data/processed/GEA/glms/glms_output/glm.model.collated.Rdata")
-
-load("data/processed/GEA/glms/glms_output/glm.model.collated.Rdata")
