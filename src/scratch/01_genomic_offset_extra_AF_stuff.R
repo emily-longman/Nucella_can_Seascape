@@ -94,12 +94,6 @@ row.names(bio_oracle_sites_2010) <- bio_oracle_sites_2010$Site
 # Subset bio-oracle data so just environmental variables
 bio_oracle_sites_2010_sub <- bio_oracle_sites_2010[, c(4:12)]
 
-# Rename rows of future data as sites
-rownames(bio_oracle_sites_ssp585_2090) <- rownames(bio_oracle_sites_2010_sub)
-
-# Subset bio-oracle data so just environmental variables
-bio_oracle_sites_ssp585_2090_sub <- bio_oracle_sites_ssp585_2090[, c(4:12)]
-
 # ================================================================================== #
 # ================================================================================== #
 
@@ -148,13 +142,26 @@ snp.info.subset %>% mutate(SNP_id = paste(chr, pos, sep = "_")) -> snp.info.subs
 ref_count <- pooldata_subset@refallele.readcount
 coverage <- pooldata_subset@readcoverage
 
-# Change to data frame
+# Extract and manipulate coverage for SNPs of interest
 coverage %>% as.data.frame -> cov
+
 # Rename columns (19 sites)
 names(cov) = c(pooldata_subset@poolnames)
 
 # Transpose coverage
 cov_t <- t(cov)
+
+# Extract and manipulate coverage for SNPs of interest
+#coverage %>%
+#  as.data.frame %>%
+#  mutate(SNP_id = snp.info.subset$SNP_id) ->
+#  covs.id
+
+# Rename columns (19 sites plus SNP_id)
+#names(covs.id) = c(pooldata_subset@poolnames, "SNP_id")
+
+# Restructure data so long format
+#reshape2::melt(covs.id, id = "SNP_id", variable.name = "Site", value.name = "COV") -> covs.id.melt
 
 # ================================================================================== #
 
@@ -163,8 +170,9 @@ cov_t <- t(cov)
 # Calculate allele frequency for SNPs
 allele_freqs <- ref_count/coverage
 
-# Change to data frame
+# Extract and manipulate allele freq for SNPs of interest
 allele_freqs %>% as.data.frame -> afs
+
 # Rename columns (19 sites plus SNP_id)
 names(afs) = c(pooldata_subset@poolnames)
 
@@ -173,6 +181,18 @@ afs_t <- t(afs)
 
 # Rename columns as SNP id
 colnames(afs_t) <- snp.info.subset$SNP_id
+
+# Extract allele freq for SNPs of interest
+#allele_freqs %>%
+#  as.data.frame %>%
+#  mutate(SNP_id = snp.info.subset$SNP_id) ->
+#  afs.id
+
+# Rename columns (19 sites and snp_id)
+#names(afs.id) = c(pooldata_subset@poolnames, "SNP_id")
+
+# Restructure data so long format
+#reshape2::melt(afs.id, id = "SNP_id", variable.name = "Site", value.name = "AF") -> afs.id.melt
 
 # ================================================================================== #
 
@@ -187,29 +207,36 @@ af_nEff <- round((afs_t*nEff)/nEff)
 # Check for NAs -- gradient forest can't run if the data includes NAs
 which(is.na(af_nEff))
 
+# Join datasets
+#left_join(covs.id.melt, afs.id.melt, by = join_by(SNP_id, Site)) -> afs.cov.id
+
+# Calculate mean effective coverage ('nEff')
+#afs.cov.id %>% mutate(nEff:=round((COV*2*nSnail)/(COV+2*nSnail-1))) %>%
+#  mutate(af_nEff:=round(AF*nEff)/nEff) ->
+#  afs.cov.id
+
+# ================================================================================== #
 # ================================================================================== #
 # ================================================================================== #
 
 # Run gradient forest
 
-# Check size of input data
-nSites <- dim(bio_oracle_sites_2010_sub)[1] #19
-nSpec <- dim(af_nEff)[2] #3095
+nSites <- dim(bio_oracle_sites_2010_sub)[1]
+nSpec <- dim(af_nEff)[2]
 
 # Calc maximum number of splits for conditional permutation
-maxLevel <- log2(nSites * 0.368/2)
+lev <- log2(nSites * 0.368/2)
 # Note: For conditional permutation, the predictor to be assessed is permuted only within blocks of the dataset defined by splits in the given tree
 # on any other predictors correlated above a certain threshold and up to a maximum number of splits set by the maxLevel option 
 
 # Run gradient forest
-gf <- gradientForest(cbind(af_nEff, bio_oracle_sites_2010_sub), predictor.vars = colnames(bio_oracle_sites_2010_sub),
-                                  response.vars = colnames(af_nEff), ntree = 5000, 
-                                  maxLevel = maxLevel, trace = T, corr.threshold = 0.5)
+gf <- gradientForest(cbind(af_nEff, bio_oracle_sites_2010_sub), predictor.vars=colnames(bio_oracle_sites_2010_sub),
+                                  response.vars=colnames(af_nEff), ntree=5000, 
+                                  maxLevel=lev, trace=T, corr.threshold=0.5)
 # Note: Filter by correlation threshold of 0.5
-## Warnings:
+#### Q! Got warnings saying:
 # In randomForest.default(x = X, y = spec_vec, maxLevel = maxLevel,  ... :
 # The response has five or fewer unique values.  Are you sure you want to do regression?
-
 
 gf
 # Important variables:
@@ -217,7 +244,7 @@ gf
 
 # ================================================================================== #
 
-# Graph Gradient Forest Results
+# Graphing
 
 # Graph predictor importance (This show the mean accuracy importance and the mean importance weighted by species R2)
 pdf("output/figures/genomic_offset/predict_importance.pdf", width = 8, height = 8)
@@ -231,7 +258,7 @@ most_important <- names(importance(gf))[1:5]
 # (red lines) and of splits standardised by observations density (blue lines). These show where important changes in the abundance of multiple species are occurring along the gradient
 pdf("output/figures/genomic_offset/splits_density.pdf", width = 8, height = 8)
 plot(gf, plot.type = "S", imp.vars = most_important, leg.posn = "topleft", cex.legend = 0.8, cex.axis = 0.6,
-cex.lab = 1, line.ylab = 0.9, par.args = list(mgp = c(1.5, 0.5, 0), mar = c(3.1, 1.5, 0.1, 1)))
+cex.lab = 0.7, line.ylab = 0.9, par.args = list(mgp = c(1.5, 0.5, 0), mar = c(3.1, 1.5, 0.1, 1)))
 dev.off()
 # Warning messages:
 # 1: In density.default(splits, weight = w/sum(w), from = rX[1], to = rX[2]) :
@@ -240,7 +267,7 @@ dev.off()
 # Species cumulative plot (For each species shows cumulative importance distributions of splits improvement scaled by R2 weighted importance, and standardised by density of observations)
 pdf("output/figures/genomic_offset/species_cumulative_plot.pdf", width = 8, height = 8)
 plot(gf, plot.type = "C", imp.vars = most_important, show.overall = F, legend = T, leg.posn = "topleft",
-leg.nspecies = 5, cex.lab = 1.5, cex.legend = 0.4, cex.axis = 1, line.ylab = 0.9, 
+leg.nspecies = 5, cex.lab = 0.7, cex.legend = 0.4, cex.axis = 0.6, line.ylab = 0.9, 
 par.args = list(mgp = c(1.5, 0.5, 0), mar = c(2.5, 1, 0.1, 0.5), omi = c(0, 0.3, 0, 0)))
 dev.off()
 
@@ -248,7 +275,7 @@ dev.off()
 # (For each predictor shows cumulative importance distributions of splits improvement scaled by R2 weighted importance, and standardised by density of observations, averaged over all species.)
 pdf("output/figures/genomic_offset/predictor_cumulative_plot.pdf", width = 8, height = 8)
 plot(gf, plot.type = "C", imp.vars = most_important, show.species = F, common.scale = T, 
-cex.axis = 1, cex.lab = 1.5, line.ylab = 0.9, par.args = list(mgp = c(1.5, 0.5, 0), mar = c(2.5, 1, 0.1, 0.5), omi = c(0, 0.3, 0, 0)))
+cex.axis = 0.6, cex.lab = 0.7, line.ylab = 0.9, par.args = list(mgp = c(1.5, 0.5, 0), mar = c(2.5, 1, 0.1, 0.5), omi = c(0, 0.3, 0, 0)))
 dev.off()
 
 # Fit of Random Forest
@@ -285,19 +312,30 @@ theme(panel.grid.major = element_blank(), legend.position.inside=c(0.8,0.3),lege
 dev.off()
 
 # ================================================================================== #
-# ================================================================================== #
 
-# Gradient Forest Predictions - using entire model
+# Gradient Forest Predictions - present data
 
 # Transform present data with gradient forest model
 predOUT_present <- predict(gf, bio_oracle_sites_2010_sub)
-
-# Transform future data with gradient forest model
-predOUT_2090 <- predict(gf, bio_oracle_sites_ssp585_2090_sub)
+predOUT_present
 
 # ================================================================================== #
 
-# Calculate Offset
+# Gradient Forest Predictions - future data
+
+# Rename rows of future data as sites
+rownames(bio_oracle_sites_ssp585_2090) <- rownames(bio_oracle_sites_2010_sub)
+
+# Subset bio-oracle data so just environmental variables
+bio_oracle_sites_ssp585_2090_sub <- bio_oracle_sites_ssp585_2090[, c(4:12)]
+
+# Tranform future data with gradient forest model
+predOUT_2090 <- predict(gf, bio_oracle_sites_ssp585_2090_sub)
+predOUT_2090
+
+# ================================================================================== #
+
+# Calculate offset
 
 # Calculate offset for each environmental variable (predOUT_2090 - predOUT_present)
 df_diff_squared <- data.frame(
@@ -305,31 +343,37 @@ df_diff_squared <- data.frame(
     (predOUT_2090[,i] - predOUT_present[,i])^2
   })
 )
+
 # Rename columns
 colnames(df_diff_squared) <- colnames(predOUT_2090)
 
 # Extract r squared
 check_rsq <- gf$res
-
-# Summarize R2
 # Mean R2 of the individual SNP models can serve as a measure of deviance explained
-mean(check_rsq$rsq)*100 #18.58943
-range(check_rsq$rsq)*100 #0.3465249 66.1185934
+mean(check_rsq$rsq) #0.1847998
+range(check_rsq$rsq) #0.002882097 0.660488660
 
 # ================================================================================== #
 
-# Change data to long format
+# Reformat data
+
+# Change to data frame
+df_diff_squared <- as.data.frame(df_diff_squared)
 
 # Add column with site names
 df_diff_squared$Site <- rownames(predOUT_2090)
 
 # Change to long format
 df_long <- df_diff_squared %>%
-  pivot_longer(cols = -Site, names_to = "Variable", values_to = "Value")
+  pivot_longer(cols = -Site,  # Convert all columns except Location
+    names_to = "Variable",
+    values_to = "Value")
+
+df_long
 
 # ================================================================================== #
 
-# Graph offset by site and environmental variable
+# Graph offset
 
 # Rename variables
 df_long <- df_long %>% 
@@ -353,6 +397,7 @@ df_long$Site <- factor(df_long$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "
 # Change Enviro var to a factor and order by importance
 df_long$Variable <- factor(df_long$Variable, levels=c("Temperature (min)", "Temperature (mean)", "Temperature (range)", "Temperature (max)", 
 "pH (mean)", "O2 (mean)", "Salinity (mean)", "Chlorophyll (mean)", "pH (min)"))
+
 
 # Color palette 
 nb.cols <- 19
@@ -384,10 +429,10 @@ df_diff_squared$Site <- factor(df_diff_squared$Site, levels=c("FC", "SLR", "SH",
 pdf("output/figures/genomic_offset/genomic_offset_diff_sq.pdf", width = 12, height = 8)
 ggplot(df_diff_squared, aes(x = Site, y = sum_all_columns, fill = Site)) +
   geom_col() +  # Use geom_col() for bar plot, or geom_point() for scatter
-  theme_minimal(base_size=16) +
+  theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  # Rotate x-axis labels
   labs(x = "Site", y = "Genomic offset")+
-  scale_fill_manual(values = mycolors) + guides(fill = "none")
+  scale_fill_manual(values = mycolors)
   dev.off()
 
 # ================================================================================== #
@@ -437,6 +482,7 @@ pcaToRaster <- function(snpPreds, rast, mapCells){
   return(outRast)
 }
 
+
 # Function to map difference between spatial genetic predictions
 # predMap1 = dataframe of transformed variables from gf or gdm model for first set of SNPs
 # predMap2 = dataframe of transformed variables from gf or gdm model for second set of SNPs
@@ -455,13 +501,16 @@ RGBdiffMap <- function(predMap1, predMap2, rast, mapCells){
 
 # ================================================================================== #
 
+
 # Create empty raster template
 
 # Set geographic constraints
 latitude_range <- c(34, 45)
 longitude_range <- c(-125, -120)
+
 # Set study extent
 study_extent <- extent(longitude_range[1], longitude_range[2], latitude_range[1], latitude_range[2])
+
 # Raster resolution (focal cells of bio-oracle data are at 0.05 degree resolution)
 raster_resolution <- 0.05
 
@@ -476,7 +525,7 @@ pdf("output/figures/genomic_offset/Raster_template.pdf", width = 5, height = 5)
 plot(study_raster, main = "West Coast Raster Template")
 dev.off()
 
-# Rename study raster to "mask" to match genomic offset functions
+# Rename to match genomic offset format
 mask <- study_raster
 
 # ================================================================================== #
@@ -486,73 +535,57 @@ mask <- study_raster
 # Script assumes:
 # (1) a dataframe named env_trns containing extracted raster data (w/ cell IDs)
 # and env. variables used in the models & with columns as follows: cell, bio1, bio2, etc.
+
 # (2) a raster mask of the study region to which the RGB data will be written
 
-# Change raster stack to data frame with lat and long
+# Change to data frame
 env_df <- as.data.frame(env_stack_present, xy = TRUE, cell = TRUE)
 env_df_fut <- as.data.frame(env_stack_ssp585, xy = TRUE, cell = TRUE)
 
-# Create cell ID column
+# Create cell column
 env_df$cell <- cellFromXY(env_stack_present, env_df[, c("x", "y")])
 env_df_fut$cell <- cellFromXY(env_stack_ssp585, env_df_fut[, c("x", "y")])
 
-# Reorder columns to place "cell" first to match format in graphing functions
+# Reorder columns to place "cell" first
 env_df <- env_df %>% dplyr::select(cell, everything())
 env_df_fut <- env_df_fut %>% dplyr::select(cell, everything())
 
-# Omit missing data
+# Omit missing
 env_df <- na.omit(env_df)
 env_df_fut <- na.omit(env_df_fut)
 
-# Select just the environmental variables for graphing functions
+# Select just the enviro var
 env_df_sub <- env_df %>% dplyr::select("chl_mean":"thetao_range")
 env_df_fut_sub <- env_df_fut %>% dplyr::select("chl_mean":"thetao_range")
 
-# ================================================================================== #
-
-# Transform env using gf models
+# Transform based on full range
 predRefind <- predict(gf, env_df_sub)
 predRefindfut <- predict(gf, env_df_fut_sub)
 
 # ================================================================================== #
 
-# Graph maps
+# Graph
 
 # Present data map
-present_RGBmap <- pcaToRaster(predRefind, mask, env_df$cell)
-# Graph
-pdf("output/figures/genomic_offset/present_RGBmap.pdf", width = 8, height = 6)
-plotRGB(present_RGBmap)
-dev.off()
-# Write Raster
-writeRaster(present_RGBmap, filename = "output/figures/genomic_offset/present_RGBmap.tif", format = "GTiff")
+present_raster <- pcaToRaster(predRefind, mask, env_df$cell)
+plotRGB(present_raster)
+writeRaster(present_raster, filename = "output/figures/genomic_offset/present_raster.tif", format = "GTiff")
+
 
 # Future data map
-future_RGBmap <- pcaToRaster(predRefindfut, mask, env_df_fut$cell)
-# Graph
-pdf("output/figures/genomic_offset/future_RGBmap.pdf", width = 8, height = 6)
-plotRGB(future_RGBmap)
-dev.off()
-# Write Raster
-writeRaster(future_RGBmap, filename = "output/figures/genomic_offset/future_RGBmap.tif", format="GTiff", overwrite=TRUE)
+future_raster <- pcaToRaster(predRefindfut, mask, env_df_fut$cell)
+plotRGB(future_raster)
+writeRaster(future_raster, filename = "output/figures/genomic_offset/future_raster.tif", format="GTiff", overwrite=TRUE)
 
-# Difference between maps (future and present)
-diff_RGBmap <- RGBdiffMap(predRefind, predRefindfut, rast=mask, mapCells=env_df$cell)
-# Graph
+
+# Difference between maps (future and present) 
+diff_raster <- RGBdiffMap(predRefind, predRefindfut, rast=mask, mapCells=env_df$cell)
+plot(diff_raster[[2]])
+writeRaster(diff_raster[[2]], filename = "output/figures/genomic_offset/diff_raster.tif", format="GTiff", overwrite=TRUE)
+
 pdf("output/figures/genomic_offset/diff_raster.pdf", width = 8, height = 6)
-plot(diff_RGBmap[[2]])
+plot(diff_raster[[2]])
 dev.off()
-# Write Raster
-writeRaster(diff_RGBmap[[2]], filename = "output/figures/genomic_offset/diff_RGBmap.tif", format="GTiff", overwrite=TRUE)
-
-# ================================================================================== #
-
-# Calculate and map genomic offset 
-
-# Script assumes:
-# (1) a dataframe of transformed env. variables for CURRENT climate.
-# (2) a dataframe named env_trns_future containing extracted raster data of 
-# env. variables for FUTURE a climate scenario, same structure as env_trns
 
 # Calculate euclidean distance between current and future genetic spaces  
 genOffset <- sqrt((predRefindfut[,1]-predRefind[,1])^2+(predRefindfut[,2]-predRefind[,2])^2
@@ -561,60 +594,58 @@ genOffset <- sqrt((predRefindfut[,1]-predRefind[,1])^2+(predRefindfut[,2]-predRe
                      +(predRefindfut[,7]-predRefind[,7])^2)
 
 
-# Assign gen offset to mask - can be tricky if current/future climate rasters are not identical in terms of # cells, extent, etc.
+# Assign gen offset to mask
 mask[env_df_fut$cell] <- genOffset
 
 # Graph genomic offset
-pdf("output/figures/genomic_offset/genomic_offset_map.pdf", width = 8, height = 6)
+pdf("output/figures/genomic_offset/gen_offset_map.pdf", width = 8, height = 6)
 plot(mask)
 dev.off()
 
-# ================================================================================== #
-
-# Graph map with ggplot
 
 # Convert raster to a dataframe for ggplot
 mask_df <- as.data.frame(rasterToPoints(mask))
-colnames(mask_df) <- c("Longitude", "Latitude", "Genomic_Offset")
+colnames(mask_df) <- c("Longitude", "Latitude", "GenOffset")
 
-# Graph with ggplot2
+
+# Create a better plot with ggplot2
 pdf("output/figures/genomic_offset/genomic_offset_ggplot.pdf", width = 8, height = 6)
-ggplot(mask_df, aes(x = Longitude, y = Latitude, fill = Genomic_Offset)) +
+ggplot(mask_df, aes(x = Longitude, y = Latitude, fill = GenOffset)) +
   geom_raster() +
-  scale_fill_viridis(option = "inferno", na.value = "transparent", name = "Genomic Offset") + 
+  scale_fill_viridis(option = "magma", na.value = "transparent", name = "Genomic Offset") + 
   theme_minimal() +
   coord_fixed() +  # Keeps aspect ratio
-  xlab("Longitude") + ylab("Latitude") + 
-  theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title = element_text(size = 10), axis.text = element_text(size = 10))
+  labs(title = "Genomic Offset Map", 
+       x = "Longitude", 
+       y = "Latitude") +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+    axis.title = element_text(size = 12),
+    axis.text = element_text(size = 10)
+  )
 dev.off()
 
-# Make better resolution - increase resolution to 2x
-mask_highres <- disaggregate(mask, fact = 2) 
-mask_highres <- as.data.frame(rasterToPoints(mask_highres))
-colnames(mask_highres) <- c("Longitude", "Latitude", "Genomic_Offset")
 
-# Graph with ggplot2
-# Note: Use geom_tile instead of geom_raster for higher res
+# Make better resolution
+mask_highres <- disaggregate(mask, fact = 2)  # Increase resolution 2x
+mask_df <- as.data.frame(rasterToPoints(mask_highres))
+
 pdf("output/figures/genomic_offset/genomic_offset_ggplot2_viridis.pdf", width = 8, height = 6)
-ggplot(mask_highres, aes(x = Longitude, y = Latitude, fill = Genomic_Offset)) +
-  geom_tile() +
+ggplot(mask_df, aes(x = x, y = y, fill = layer)) +
+  geom_tile() +  # Instead of geom_raster()
   scale_fill_viridis(option = "inferno", na.value = "transparent", name = "Genomic Offset") + 
   theme_minimal() +
   coord_fixed() +
-  xlab("Longitude") + ylab("Latitude") + 
-  theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title = element_text(size = 10), axis.text = element_text(size = 10))
+  labs(title = "Genomic Offset Map", x = "Longitude", y = "Latitude")
 dev.off()
 
-# Graph with ggplot2
-# Note: Use geom_tile instead of geom_raster for higher res
 pdf("output/figures/genomic_offset/genomic_offset_ggplot2_brewer.pdf", width = 8, height = 6)
-ggplot(mask_highres, aes(x = Longitude, y = Latitude, fill = Genomic_Offset)) +
-  geom_tile() +
-  scale_fill_distiller(palette = "RdGy") +
+ggplot(mask_df, aes(x = x, y = y, fill = layer)) +
+  geom_tile() +  # Instead of geom_raster()
+  scale_fill_distiller(palette = "Spectral") + 
   theme_minimal() +
   coord_fixed() +
-  xlab("Longitude") + ylab("Latitude") + 
-  theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title = element_text(size = 10), axis.text = element_text(size = 10))
+  labs(title = "Genomic Offset Map", x = "Longitude", y = "Latitude")
 dev.off()
 
 
