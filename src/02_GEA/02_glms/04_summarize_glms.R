@@ -1,4 +1,4 @@
-# Merge glms output
+# Summarize glms output
 
 # Clear memory
 rm(list=ls())
@@ -31,16 +31,15 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # ================================================================================== #
 
-# Load
-load("data/processed/GEA/glms/glms_output/glm.model.collated.Rdata")
-#load("data/processed/GEA/glms/glms_chunk_analysis/GLM_100perm_Bio-Oracle_chunk_1.Rdata") # Load just one chunk to test
+# Load GLM data
+load("data/processed/GEA/glms/glms_output/glm.model.collated.test.Rdata")
 
 # Load bio-oracle environmental data
 bio_oracle_sites_2010 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", header=T)
 
 # ================================================================================== #
 
-# Formatting
+# Format data
 
 # Get names of enviro variables
 names(bio_oracle_sites_2010)[4:12] -> enviro_vars_names
@@ -50,48 +49,35 @@ glm.model.collated <- glm.model.collated %>% mutate(SNP_id = paste(chr, pos, sep
 
 # ================================================================================== #
 
-# Test purposes
-glm.model.collated <- glm.model.collated[which(glm.model.collated$chunk =="chunk_1.Rdata"),]
+# Graph pval distribution
+pdf("output/figures/GEA/glms/glm_pval_dist.pdf", width = 8, height = 8)
+ggplot(glm.model.collated, aes(x=p_lrt, group=factor(perm), color=factor(perm))) + geom_density() +
+facet_wrap(~variable) + 
+scale_color_manual(values = c("red", rep("grey", 10))) +
+xlab("GLM P-values") + ylab("Number of SNPs") +
+theme_bw() + theme(legend.position = "none")
+dev.off()
+
+# ================================================================================== #
 
 # Create separate dataframes for the real data the permutation data
-real_data <- glm.model.collated %>% filter(perm == 0) #62,118
-perm_data <- glm.model.collated %>% filter(perm > 0) #621,180
+real_data <- glm.model.collated %>% filter(perm == 0) #969705
+perm_data <- glm.model.collated %>% filter(perm > 0) #9697050 - makes sense bc did 10 permutations for these test runs
 
-perm_data_sum <- foreach(i:length(enviro_vars_names), .combine="rbind")%do%{
-    # Get variable name
-    var <- enviro_vars_names[i]
+
+# Summarize across the environmental variables
+glm_all_sum <- foreach(i=enviro_vars_names, .combine="rbind")%do%{
+    # State variable name
+    message(i)
     # Filter model output for just that model
-    tmp <- perm_data %>% filter(variable == var)
-    tmp_sum <- tmp %>% group_by(SNP_id) %>% 
-            reframe(
-            SNP_id=SNP_id,
-            chr=chr,
-            pos=pos,
-            variable=variable,
-            mean.AIC=mean(AIC),
-            prop.perm.mu=mean(p_lrt),
-            prop.perm.lci=quantile(p_lrt, .01),
-            prop.perm.uci_0.95=quantile(p_lrt, .95),
-            prop.perm.uci_0.99=quantile(p_lrt, .99),
-            prop.perm.med=median(p_lrt)) %>% as.data.frame() %>% distinct()
-}
-
-# Join summary of perm data with real data
-data_sum <- left_join(real_data, perm_data_sum, by = join_by(chr, pos, variable, SNP_id))
-
-
-# ALTERNATE
-glm_all_sum <- foreach(i:length(enviro_vars_names), .combine="rbind")%do%{
-    # Get variable name
-    var <- enviro_vars_names[i]
-    # Filter model output for just that model
-    tmp <- glm.model.collated %>% filter(variable == var)
-    tmp_sum <- tmp %>% group_by(SNP_id, data) %>% 
+    glm.model.collated %>% filter(variable == i) -> tmp
+    tmp %>% group_by(SNP_id, data) %>% 
             reframe(
             SNP_id=SNP_id,
             chr=chr,
             pos=pos,
             data=data,
+            n=n(),
             variable=variable,
             mean.AIC=mean(AIC),
             mu=mean(p_lrt),
@@ -101,9 +87,45 @@ glm_all_sum <- foreach(i:length(enviro_vars_names), .combine="rbind")%do%{
             med=median(p_lrt)) %>% as.data.frame() %>% distinct()
 }
 
+#######
 
+# Alternate way to summarize
+# Summarize across the environmental variables
+perm_sum <- foreach(i=enviro_vars_names, .combine="rbind")%do%{
+    # State variable name
+    message(i)
+    # Filter model output for just that model
+    perm_data %>% filter(variable == i) -> tmp_perm
+    tmp_perm %>% group_by(SNP_id) %>% 
+            reframe(
+            SNP_id=SNP_id,
+            chr=chr,
+            pos=pos,
+            data=data,
+            variable=variable,
+            perm_n=n(),
+            mean.AIC=mean(AIC),
+            perm.mu=mean(p_lrt),
+            perm.lci_0.01=quantile(p_lrt, .01),
+            perm.uci_0.95=quantile(p_lrt, .95),
+            perm.uci_0.99=quantile(p_lrt, .99),
+            perm.med=median(p_lrt)) %>% as.data.frame() %>% distinct()
+}
+
+# Join real data and summary of permutations
+summary <- left_join(real_data, perm_sum, by = join_by(chr, pos, variable, SNP_id))
+
+# Does the real data beat permutations?
+# T vs F
+summary <- summary %>% mutate(beat_perm = summary$p_lrt <= summary$perm.lci_0.01)
+summary <- summary %>% mutate(beat_perm_num = if_else(p_lrt <= perm.lci_0.01, 1, 0))
+
+# Check to see how many beat perm
+length(which(summary$beat_perm))
 
 # ================================================================================== #
+
+# Graph
 
 # Create unique Chr number
 chr.unique <- unique(glm_all_sum$chr)
@@ -114,7 +136,14 @@ data_sum_all_temp <- glm_all_sum %>% filter(variable == "thetao_max")
 
 # Graph - test
 pdf("output/figures/GEA/glms/glm_perm_test.pdf", width = 8, height = 8)
-ggplot(data_sum_all_temp, aes(x=chr.unique, y=-log(lci_0.01), color=data)) + geom_point() +
+ggplot(data_sum_all_temp, aes(x=chr.unique, y=-log(mu), color=data)) + geom_point() +
 geom_hline(yintercept = -log10(0.01)) +
 theme_bw()
 dev.off()
+
+# ================================================================================== #
+
+# Compare the environmental variables
+
+# Count how many SNPs beat permutations for each env var
+env_sum <- summary %>% group_by(variable) %>% summarize(num_beat_perm = sum(beat_perm_num))
