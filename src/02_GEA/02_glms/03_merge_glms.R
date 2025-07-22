@@ -35,8 +35,8 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 # Load and merge data
 
 # Create list of file names
-file_names = as.list(dir(path = 'data/processed/GEA/glms/glms_chunk_analysis_test/', pattern = "GLM_100perm_Bio-Oracle_chunk_*"))
-file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/GEA/glms/glms_chunk_analysis_test/', x))))
+file_names = as.list(dir(path = 'data/processed/GEA/glms/glms_chunk_analysis_10perm/', pattern = "GLM_100perm_Bio-Oracle_chunk_*"))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/GEA/glms/glms_chunk_analysis_10perm/', x))))
 
 # Read all the files and add a column with the chunk
 glm.model.collated =  
@@ -52,7 +52,7 @@ foreach(i=file_names_v, .combine="rbind")%do%{
     o.unique <- o.sub %>% distinct()
 
     # Add column with identifier
-    o.unique %>% mutate(chunk = i) %>% mutate(chunk = str_remove(chunk, pattern = "data/processed/GEA/glms/glms_chunk_analysis_test/GLM_100perm_Bio-Oracle_"))
+    o.unique %>% mutate(chunk = i) %>% mutate(chunk = str_remove(chunk, pattern = "data/processed/GEA/glms/glms_chunk_analysis_10perm/GLM_100perm_Bio-Oracle_"))
 } 
 
 # ================================================================================== #
