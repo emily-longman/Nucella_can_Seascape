@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_bio-oracle_rerun6
+#SBATCH --job-name=glms_bio-oracle_rerun3
 
 # Specify partition
 #SBATCH --partition=week
@@ -23,7 +23,7 @@
 #SBATCH --cpus-per-task=8
 
 # Submit job array
-#SBATCH --array=801,802,803,804,805,806,807,808,809,810,811,812,813,814,815,816,817,818,819,820,821,822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,837,838,839,840,841,842,843,844,845,846,847,848,849,850,851,852,853,854,855,856,857,858,859,860,861,862,863,864,865,866,867,868,869,870,871,872,873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893,894,895,896,897,898,899,900%20
+#SBATCH --array=601,604,605,610,611,612,614,615,618,619,622,628,629,633,634,635,636,637,640,641,642,645,659,662,664,667,669,670,673,675,676,681,683,684,685,689,690,693,698%20
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -50,7 +50,7 @@ module load R/4.4.1
 WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 # Script folder.
-SCRIPT_FOLDER=$WORKING_FOLDER/src/02_GEA/02_glms
+SCRIPT_FOLDER=$WORKING_FOLDER/src/02_GEA/02_glms/01_run_glms
 
 #--------------------------------------------------------------------------------
 

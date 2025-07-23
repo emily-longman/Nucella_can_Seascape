@@ -35,7 +35,6 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 load("data/processed/GEA/glms/glms_output/glm.model.collated.Rdata")
 #load("data/processed/GEA/glms/glms_output/glm.model.collated.test.Rdata")
 
-
 # Load bio-oracle environmental data
 bio_oracle_sites_2010 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", header=T)
 

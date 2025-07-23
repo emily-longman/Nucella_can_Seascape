@@ -41,61 +41,15 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 load("data/processed/GEA/glms/glms_output/glm.model.collated.Rdata")
 #load("data/processed/GEA/glms/glms_output/glm.model.collated.test.Rdata")
 
+# Load windows
+load("data/processed/GEA/glms/glms_window_summary/windows.RData")
+
 # ================================================================================== #
 
 # Format data
 
 # Create SNP_id column
 glm.model.collated <- glm.model.collated %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
-
-# ================================================================================== #
-
-# Create windows
-
-# Define window and step size
-win.bp <- 1e5
-step.bp <- 5e8
-
-# How many SNPs are on each contig:
-SNPS_density <- glm.model.collated %>% group_by(chr) %>% summarize(n=n())
-# Graph
-pdf("output/figures/GEA/glms/glms_window_summary/glm_pval_density.pdf", width = 8, height = 8)
-ggplot(SNPS_density, aes(x=n))+ geom_density()
-dev.off()
-# Use this information to determine level to filter for number of SNPs in a given window
-
-# Generate windows (note: only windows with the number of SNPs in that window >= 5)
-wins <- foreach(chr.i=unique(glm.model.collated$chr),
-                .combine="rbind", 
-                .errorhandling="remove")%do%{
-                  
-                  message(chr.i)
-                  
-                  tmp <- glm.model.collated %>%
-                    filter(chr == chr.i)
-                  
-                  nSNPs=dim(tmp)[1]
-                  
-                  if(nSNPs >= 5){
-                    o =
-                      data.table(chr=chr.i,
-                                 nSNPs=dim(tmp)[1],
-                                 start=seq(from=min(tmp$pos), to=max(tmp$pos)-win.bp, by=step.bp),
-                                 end=seq(from=min(tmp$pos), to=max(tmp$pos)-win.bp, by=step.bp) + win.bp)
-                    return(o)
-                    
-                  }   
-                  else {message("fails nSNPs filter")}
-                }
-
-# Add window index
-wins[,i:=1:dim(wins)[1]]
-
-# Check dimensions
-dim(wins)
-
-# Save windows
-save(wins, file="data/processed/GEA/glms/glms_window_summary/windows.RData")
 
 # ================================================================================== #
 
@@ -118,8 +72,7 @@ real_data_rank <- foreach(var.i=unique(real_data$variable),.combine="rbind", .er
 
 # ================================================================================== #
 
-
-# Window summarization for each  environmental var
+# Window summarization for each environmental var
 real_data_win_sum <- foreach(var.i=unique(real_data$variable),.combine="rbind", .errorhandling="remove")%do%{ 
     
     # Filter for just one environmental var
@@ -162,3 +115,8 @@ real_data_win_sum <- foreach(var.i=unique(real_data$variable),.combine="rbind", 
             )  -> win.out
     }
 }
+
+# ================================================================================== #
+
+# Save glm rnp for windows
+save(real_data_win_sum, file="data/processed/GEA/glms/glms_window_summary/glm_windows_output.RData")

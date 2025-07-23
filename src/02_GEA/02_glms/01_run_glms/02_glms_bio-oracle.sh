@@ -5,25 +5,25 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_bio-oracle_rerun5
+#SBATCH --job-name=glms_bio-oracle
 
 # Specify partition
-#SBATCH --partition=week
+#SBATCH --partition=general
 
 # Request nodes
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=3-00:00:00
+#SBATCH --time=30:00:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=300G
+#SBATCH --mem=60G 
 
 # Request CPU
 #SBATCH --cpus-per-task=8
 
 # Submit job array
-#SBATCH --array=751,753,754,755,756,757,758,759,760,761,762,763,764,765,766,767,768,769,770,771,772,773,774,775,776,777,778,779,780,781,782,783,784,785,786,787,788,789,790,791,792,793,794,795,796,797,798,799,800%20
+#SBATCH --array=1-999%50
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -36,7 +36,6 @@
 
 # This script will run the accompanying 02_glms_bio-oracle.R script. 
 # This will run glms and look at the association of the allele frequencies of the outlier SNPs and the Bio-oracle environmental data.
-# Note: Several glms required more than the 30 hours originally allotted. Thus, those array IDs were rerun in two sets.
 
 # Load modules 
 module load gcc/13.3.0
@@ -50,7 +49,7 @@ module load R/4.4.1
 WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 # Script folder.
-SCRIPT_FOLDER=$WORKING_FOLDER/src/02_GEA/02_glms
+SCRIPT_FOLDER=$WORKING_FOLDER/src/02_GEA/02_glms/01_run_glms
 
 #--------------------------------------------------------------------------------
 
