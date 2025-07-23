@@ -1,4 +1,4 @@
-# Summarize glms output
+# Summarize glms output and compare across the environmental variables
 
 # Clear memory
 rm(list=ls())
@@ -17,22 +17,24 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'foreach'))
+#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr'))
 library(data.table)
 library(tidyverse)
 library(foreach)
+library(dplyr)
 
 # ================================================================================== #
 
 # Generate output directories
-
-out_dir <- paste("data/processed/GEA/glms/glms_output_by_model")
+out_dir <- paste("data/processed/GEA/glms/glms_summary")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # ================================================================================== #
 
 # Load GLM data
-load("data/processed/GEA/glms/glms_output/glm.model.collated.test.Rdata")
+load("data/processed/GEA/glms/glms_output/glm.model.collated.Rdata")
+#load("data/processed/GEA/glms/glms_output/glm.model.collated.test.Rdata")
+
 
 # Load bio-oracle environmental data
 bio_oracle_sites_2010 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", header=T)
@@ -61,36 +63,10 @@ dev.off()
 # ================================================================================== #
 
 # Create separate dataframes for the real data the permutation data
-real_data <- glm.model.collated %>% filter(perm == 0) #969705
+real_data <- glm.model.collated %>% filter(perm == 0) #969705 (i.e., 9 * length(unique(real_data$SNP_id)))
 perm_data <- glm.model.collated %>% filter(perm > 0) #9697050 - makes sense bc did 10 permutations for these test runs
 
-
-# Summarize across the environmental variables
-glm_all_sum <- foreach(i=enviro_vars_names, .combine="rbind")%do%{
-    # State variable name
-    message(i)
-    # Filter model output for just that model
-    glm.model.collated %>% filter(variable == i) -> tmp
-    tmp %>% group_by(SNP_id, data) %>% 
-            reframe(
-            SNP_id=SNP_id,
-            chr=chr,
-            pos=pos,
-            data=data,
-            n=n(),
-            variable=variable,
-            mean.AIC=mean(AIC),
-            mu=mean(p_lrt),
-            lci_0.01=quantile(p_lrt, .01),
-            uci_0.95=quantile(p_lrt, .95),
-            uci_0.99=quantile(p_lrt, .99),
-            med=median(p_lrt)) %>% as.data.frame() %>% distinct()
-}
-
-#######
-
-# Alternate way to summarize
-# Summarize across the environmental variables
+# Summarize the permutation data across the environmental variables
 perm_sum <- foreach(i=enviro_vars_names, .combine="rbind")%do%{
     # State variable name
     message(i)
@@ -107,21 +83,41 @@ perm_sum <- foreach(i=enviro_vars_names, .combine="rbind")%do%{
             mean.AIC=mean(AIC),
             perm.mu=mean(p_lrt),
             perm.lci_0.01=quantile(p_lrt, .01),
+            perm.lci_0.05=quantile(p_lrt, .05),
             perm.uci_0.95=quantile(p_lrt, .95),
             perm.uci_0.99=quantile(p_lrt, .99),
             perm.med=median(p_lrt)) %>% as.data.frame() %>% distinct()
 }
 
 # Join real data and summary of permutations
-summary <- left_join(real_data, perm_sum, by = join_by(chr, pos, variable, SNP_id))
+summary <- left_join(real_data, perm_sum, by = join_by(chr, pos, variable, SNP_id)) %>% select(!c(data.x, data.y))
 
 # Does the real data beat permutations?
 # T vs F
 summary <- summary %>% mutate(beat_perm = summary$p_lrt <= summary$perm.lci_0.01)
+# 1 vs 0 
 summary <- summary %>% mutate(beat_perm_num = if_else(p_lrt <= perm.lci_0.01, 1, 0))
 
 # Check to see how many beat perm
 length(which(summary$beat_perm))
+
+# ================================================================================== #
+
+# Compare the environmental variables
+
+# Count how many SNPs beat permutations for each env var
+env_sum <- foreach(i=enviro_vars_names, .combine="rbind")%do%{
+    message(i)
+
+# Filter model output for just that model
+    summary %>% filter(variable == i) %>%
+            reframe(
+                variable=variable,
+                nSNPs=n(),
+                num_beat_perm = sum(beat_perm_num), 
+                binom.p = c(binom.test(num_beat_perm, nSNPs, p=0.5)$p.value)) %>% distinct()
+}
+
 
 # ================================================================================== #
 
@@ -143,7 +139,38 @@ dev.off()
 
 # ================================================================================== #
 
-# Compare the environmental variables
 
-# Count how many SNPs beat permutations for each env var
-env_sum <- summary %>% group_by(variable) %>% summarize(num_beat_perm = sum(beat_perm_num))
+
+
+
+
+
+
+
+
+
+
+
+# Summarize across the environmental variables
+#glm_all_sum <- foreach(i=enviro_vars_names, .combine="rbind")%do%{
+#    # State variable name
+#    message(i)
+#    # Filter model output for just that model
+#    glm.model.collated %>% filter(variable == i) -> tmp
+#    tmp %>% group_by(SNP_id, data) %>% 
+#            reframe(
+#            SNP_id=SNP_id,
+#            chr=chr,
+#            pos=pos,
+#            data=data,
+#            n=n(),
+#            variable=variable,
+#            mean.AIC=mean(AIC),
+#            mu=mean(p_lrt),
+#            lci_0.01=quantile(p_lrt, .01),
+#            uci_0.95=quantile(p_lrt, .95),
+#            uci_0.99=quantile(p_lrt, .99),
+#            med=median(p_lrt)) %>% as.data.frame() %>% distinct()
+#}
+
+#######
