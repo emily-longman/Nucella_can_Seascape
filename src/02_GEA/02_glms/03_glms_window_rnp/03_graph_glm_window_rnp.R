@@ -17,12 +17,13 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'ggplot2))
+#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'ggplot2', 'RColorBrewer'))
 library(data.table)
 library(tidyverse)
 library(foreach)
 library(dplyr)
 library(ggplot2)
+library(RColorBrewer)
 
 # ================================================================================== #
 
@@ -43,5 +44,32 @@ load("data/processed/GEA/glms/glms_window_summary/glm_windows_output.RData")
 
 # Load windows
 load("data/processed/GEA/glms/glms_window_summary/windows.RData")
+
+# ================================================================================== #
+
+# Graph rnp p
+
+# Create unique Chromosome number 
+chr.unique <- unique(data_win_sum$chr)
+data_win_sum$chr.unique <- as.numeric(factor(real_data_win_sum$chr, levels = chr.unique))
+
+# Graph rnp 
+pdf("output/figures/GEA/glms/glms_window_summary/glm_window_rnp_0.01_geompoint.pdf", width = 8, height = 8)
+ggplot(data_win_sum, aes(y=-log10(rnp.binom.p.0.01), x=chr.unique, col=factor(perm))) + 
+  geom_point(alpha=0.8, size=1.3) + 
+  scale_color_manual(values = c("black", rep("grey", 10))) +
+  geom_hline(yintercept = -log10(0.001), color="red") +
+  facet_wrap(~variable) +
+  theme_bw()
+dev.off()
+
+pdf("output/figures/GEA/glms/glms_window_summary/glm_window_rnp_0.01_geomline.pdf", width = 8, height = 8)
+ggplot(data_win_sum, aes(y=-log10(rnp.binom.p.0.01), x=chr.unique, col=factor(perm))) + 
+  geom_line( ) + 
+  scale_color_manual(values = c("black", rep("grey", 10))) +
+  geom_hline(yintercept = -log10(0.001), color="red") +
+  facet_wrap(~variable) +
+  theme_bw()
+dev.off()
 
 # ================================================================================== #

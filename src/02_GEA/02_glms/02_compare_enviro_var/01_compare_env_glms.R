@@ -114,7 +114,7 @@ env_sum <- foreach(i=enviro_vars_names, .combine="rbind")%do%{
                 variable=variable,
                 nSNPs=n(),
                 num_beat_perm = sum(beat_perm_num), 
-                binom.p = c(binom.test(num_beat_perm, nSNPs, p=0.5)$p.value)) %>% distinct()
+                binom.p = c(binom.test(num_beat_perm, nSNPs, p=0.05)$p.value)) %>% distinct()
 }
 
 
