@@ -51,13 +51,13 @@ glm.model.collated <- glm.model.collated %>% mutate(SNP_id = paste(chr, pos, sep
 # ================================================================================== #
 
 # Graph pval distribution
-pdf("output/figures/GEA/glms/glm_pval_dist.pdf", width = 8, height = 8)
-ggplot(glm.model.collated, aes(x=p_lrt, group=factor(perm), color=factor(perm))) + geom_density() +
-facet_wrap(~variable) + 
-scale_color_manual(values = c("red", rep("grey", 10))) +
-xlab("GLM P-values") + ylab("Number of SNPs") +
-theme_bw() + theme(legend.position = "none")
-dev.off()
+#pdf("output/figures/GEA/glms/glm_pval_dist.pdf", width = 8, height = 8)
+#ggplot(glm.model.collated, aes(x=p_lrt, group=factor(perm), color=factor(perm))) + geom_density() +
+#facet_wrap(~variable) + 
+#scale_color_manual(values = c("red", rep("grey", 10))) +
+#xlab("GLM P-values") + ylab("Number of SNPs") +
+#theme_bw() + theme(legend.position = "none")
+#dev.off()
 
 # ================================================================================== #
 
