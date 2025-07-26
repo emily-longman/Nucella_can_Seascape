@@ -8,7 +8,7 @@
 #SBATCH --job-name=generate_windows
 
 # Specify partition
-#SBATCH --partition=233k
+#SBATCH --partition=week
 
 # Request nodes
 #SBATCH --nodes=1 
