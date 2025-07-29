@@ -42,7 +42,7 @@ load("data/processed/GEA/glms/glms_output/glm.model.collated.Rdata")
 #load("data/processed/GEA/glms/glms_output/glm.model.collated.test.Rdata")
 
 # Load windows
-load("data/processed/GEA/glms/glms_window_summary/windows.RData")
+load("data/processed/GEA/glms/glms_window_summary/windows_SNPs_threshold_0.01.RData")
 
 # ================================================================================== #
 
