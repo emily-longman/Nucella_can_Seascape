@@ -41,7 +41,7 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 load("data/processed/GEA/glms/glms_output/glm.model.collated.Rdata")
 #load("data/processed/GEA/glms/glms_output/glm.model.collated.test.Rdata")
 
-# Load windows
+# Load windows - #335 windows for the 3,095 outlier SNPs
 load("data/processed/GEA/glms/glms_window_summary/windows_SNPs_threshold_0.01.RData")
 
 # ================================================================================== #

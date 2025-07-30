@@ -100,6 +100,8 @@ summary <- summary %>% mutate(beat_perm_num = if_else(p_lrt <= perm.lci_0.01, 1,
 # Check to see how many beat perm
 length(which(summary$beat_perm))
 
+save(summary, file="data/processed/GEA/glms/glms_summary/summary.RData")
+
 # ================================================================================== #
 
 # Compare the environmental variables
@@ -121,7 +123,9 @@ env_sum <- foreach(i=enviro_vars_names, .combine="rbind")%do%{
 
 # Save summary
 save(env_sum, file="data/processed/GEA/glms/glms_summary/env_sum.RData")
+load("data/processed/GEA/glms/glms_summary/env_sum.RData")
 
+# Problem - all are producing the same binomial p value
 
 # ================================================================================== #
 
