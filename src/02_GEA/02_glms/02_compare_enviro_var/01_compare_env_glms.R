@@ -101,6 +101,9 @@ summary <- summary %>% mutate(beat_perm_num = if_else(p_lrt <= perm.lci_0.01, 1,
 length(which(summary$beat_perm))
 
 save(summary, file="data/processed/GEA/glms/glms_summary/summary.RData")
+load("data/processed/GEA/glms/glms_summary/summary.RData")
+
+# The dimensions of this table seem off - it should be the same size as real_data (i.e., 969705), but instead its 134077212
 
 # ================================================================================== #
 
