@@ -7,7 +7,7 @@ rm(list=ls())
 
 # Set path as main Github repo
 # Install and load package
-#install.packages(c('rprojroot'))
+install.packages(c('rprojroot'))
 library(rprojroot)
 # Specify root path
 root_path <- find_root_file(criterion = has_file("README.md"))
@@ -17,7 +17,7 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr'))
+install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr'))
 library(data.table)
 library(tidyverse)
 library(foreach)
@@ -50,15 +50,45 @@ glm.model.collated <- glm.model.collated %>% mutate(SNP_id = paste(chr, pos, sep
 
 # ================================================================================== #
 
-# Graph pval distribution
-#pdf("output/figures/GEA/glms/glm_pval_dist.pdf", width = 8, height = 8)
-#ggplot(glm.model.collated, aes(x=p_lrt, group=factor(perm), color=factor(perm))) + geom_density() +
-#facet_wrap(~variable) + 
-#scale_color_manual(values = c("red", rep("grey", 10))) +
-#xlab("GLM P-values") + ylab("Number of SNPs") +
-#theme_bw() + theme(legend.position = "none")
-#dev.off()
 
+# Graph pval distribution
+pdf("output/figures/GEA/glms/glm_pval_dist.pdf", width = 8, height = 8)
+ggplot(glm.model.collated, aes(x=p_lrt, group=factor(perm), color=factor(perm))) + geom_density() +
+facet_wrap(~variable) + 
+scale_color_manual(values = c("red", rep("grey", 10))) +
+xlab("GLM P-values") + ylab("Number of SNPs") +
+theme_bw() + theme(legend.position = "none")
+dev.off()
+
+# ================================================================================== #
+
+# Model enrichment
+
+# Summarize the permutation data across the environmental variables
+perm_sum <- foreach(i=enviro_vars_names, .combine="rbind")%do%{
+    # State variable name
+    message(i)
+    # Filter model output for just that model
+    glm.model.collated %>% filter(variable == i) -> tmp_glm
+
+    # Number of permutations
+    n_perm = unique(tmp_glm$perm[which(tmp_glm$perm>0)])
+
+    # Calculate the number of SNPs where each model was found as the best model for the real data and each permutation
+    aic_sum <- tmp_glm %>% group_by(perm) %>% mutate()
+
+    # Calculate relative rate (rr) of model enrichment
+    tmp_glm %>% group_by(perm)
+}
+
+
+
+
+
+
+
+# ================================================================================== #
+# ================================================================================== #
 # ================================================================================== #
 
 # Create separate dataframes for the real data the permutation data
