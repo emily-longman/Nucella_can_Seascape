@@ -17,10 +17,10 @@
 #SBATCH --time=3-00:00:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=200G 
+#SBATCH --mem=50G 
 
 # Request CPU
-#SBATCH --cpus-per-task=5
+#SBATCH --cpus-per-task=2
 
 # Submit job array
 #SBATCH --array=851,860,863,864,865,866,867,868,869,870,871,872,873,874,875,876,877,878,879,880
