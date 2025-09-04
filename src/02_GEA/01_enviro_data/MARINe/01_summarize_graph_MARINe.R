@@ -222,7 +222,7 @@ marine_sum_SSWD <- rbind(point_contact_filt_sum[,-14], quadrat_filt_sum, swath_f
 
 # Write summary table
 write.csv(marine_sum, "data/processed/GEA/enviro_data/MARINe/marine_sum.csv", row.names=F)
-write.csv(marine_sum, "data/processed/GEA/enviro_data/MARINe/marine_sum.csv", row.names=F)
+write.csv(marine_sum_SSWD, "data/processed/GEA/enviro_data/MARINe/marine_sum_SSWD.csv", row.names=F)
 
 # ================================================================================== #
 
@@ -238,6 +238,8 @@ marine_sum_means <- marine_sum_subset %>% group_by(species_lump) %>% mutate(row 
 
 # Join with metadata
 marine_sum_means <- left_join(point_contact_filt_sum[,1:5], marine_sum_means, by = join_by(marine_site_name))
+
+write.csv(marine_sum_means, "data/processed/GEA/enviro_data/MARINe/marine_sum_means_wide.csv", row.names=F)
 
 # ================================================================================== #
 # ================================================================================== #
