@@ -159,6 +159,9 @@ glm.model.output =
         # Extract data for 'j' environmental variable
         gathered_data %>% filter(enviro_var == j) -> inner.tmp
         
+        # Remove rows when MARINe data is NA
+        inner.tmp <- inner.tmp[!is.na(inner.tmp$value)]
+
         # Model allele freq
         # Generate 3 models - a null model (t0), a model with just demography (t1.dem) and a model with demography and "j" enviro var (t1.dem.env)
         y <- inner.tmp$af_nEff
@@ -194,14 +197,17 @@ glm.model.output =
         # Extract data for 'j' environmental variable
         gathered_data %>% filter(enviro_var == j) -> inner.tmp.shuffle
 
+          # Remove rows when MARINe data is NA
+          inner.tmp.shuffle <- inner.tmp.shuffle[!is.na(inner.tmp.shuffle$value)]
+          
           # Do 100 permutations - 50 at a time to make things run faster (1:50 and 51:100)
           foreach(l=1:50, .combine = "rbind")%do%{
             set.seed(l)
-            
+
             # Shuffle enviro data for 'j' enviro variable
             #inner.tmp.perm %>% mutate(shuffle_value = sample(value)) -> inner.tmp.shuffle
             inner.tmp.shuffle$shuffle_value <- sample(inner.tmp.shuffle$value)
-
+            
             # Model allele freq
             # Generate 3 models - a null model (t0), a model with just demography (t1.dem) and a model with demography and "j" enviro var (t1.dem.env)
             y.perm <- inner.tmp.shuffle$af_nEff
