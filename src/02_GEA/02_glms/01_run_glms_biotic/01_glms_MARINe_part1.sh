@@ -88,9 +88,9 @@ cat scaffold.names.${SLURM_ARRAY_TASK_ID}.txt
 cd $WORKING_FOLDER/data/processed/GEA/glms
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "glms_chunk_analysis_biotic" ]
-then echo "Working glms_chunk_analysis_biotic folder exist"; echo "Let's move on."; date
-else echo "Working glms_chunk_analysis_biotic folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_chunk_analysis_biotic; date
+if [ -d "glms_chunk_analysis_marine" ]
+then echo "Working glms_chunk_analysis_marine folder exist"; echo "Let's move on."; date
+else echo "Working glms_chunk_analysis_marine folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_chunk_analysis_marine; date
 fi
 
 #--------------------------------------------------------------------------------
