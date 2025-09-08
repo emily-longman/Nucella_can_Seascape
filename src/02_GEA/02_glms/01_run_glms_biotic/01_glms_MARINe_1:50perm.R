@@ -149,7 +149,7 @@ glm.model.output =
     
     # Get names of environmental variables
     unique(gathered_data$enviro_var) -> enviro_vars_names
-      
+    
     ###############################################################
   
     # Run model for each variable
@@ -160,22 +160,22 @@ glm.model.output =
         gathered_data %>% filter(enviro_var == j) -> inner.tmp
         
         # Remove rows when MARINe data is NA
-        inner.tmp <- inner.tmp[!is.na(inner.tmp$value)]
+        inner.tmp.sub <- inner.tmp[!is.na(inner.tmp$value),]
 
         # Model allele freq
         # Generate 3 models - a null model (t0), a model with just demography (t1.dem) and a model with demography and "j" enviro var (t1.dem.env)
-        y <- inner.tmp$af_nEff
-        X.null <- model.matrix(~1, inner.tmp)
-        X.dem <- model.matrix(~PC1, inner.tmp)
-        X.dem.env <- model.matrix(~PC1+value, inner.tmp)
-        t0 <- fastglm(x=X.null, y=y, family=binomial(), weights=inner.tmp$nEff, method=0)
-        t1.dem <- fastglm(x=X.dem, y=y, family=binomial(), weights=inner.tmp$nEff, method=0)
-        t1.dem.env <- fastglm(x=X.dem.env, y=y, family=binomial(), weights=inner.tmp$nEff, method=0)
+        y <- inner.tmp.sub$af_nEff
+        X.null <- model.matrix(~1, inner.tmp.sub)
+        X.dem <- model.matrix(~PC1, inner.tmp.sub)
+        X.dem.env <- model.matrix(~PC1+value, inner.tmp.sub)
+        t0 <- fastglm(x=X.null, y=y, family=binomial(), weights=inner.tmp.sub$nEff, method=0)
+        t1.dem <- fastglm(x=X.dem, y=y, family=binomial(), weights=inner.tmp.sub$nEff, method=0)
+        t1.dem.env <- fastglm(x=X.dem.env, y=y, family=binomial(), weights=inner.tmp.sub$nEff, method=0)
         
         # Generate output table with t1.dem.env model information and model comparison info for each variable
         data.frame(
-          chr = unique(inner.tmp$chr),
-          pos = unique(inner.tmp$pos),
+          chr = unique(inner.tmp.sub$chr),
+          pos = unique(inner.tmp.sub$pos),
           variable = j,
           missing = seqMissing(genofile),
           perm = 0,
@@ -198,30 +198,30 @@ glm.model.output =
         gathered_data %>% filter(enviro_var == j) -> inner.tmp.shuffle
 
           # Remove rows when MARINe data is NA
-          inner.tmp.shuffle <- inner.tmp.shuffle[!is.na(inner.tmp.shuffle$value)]
+          inner.tmp.shuffle.sub <- inner.tmp.shuffle[!is.na(inner.tmp.shuffle$value),]
           
           # Do 100 permutations - 50 at a time to make things run faster (1:50 and 51:100)
-          foreach(l=1:50, .combine = "rbind")%do%{
+          foreach(l=1:2, .combine = "rbind")%do%{
             set.seed(l)
 
             # Shuffle enviro data for 'j' enviro variable
             #inner.tmp.perm %>% mutate(shuffle_value = sample(value)) -> inner.tmp.shuffle
-            inner.tmp.shuffle$shuffle_value <- sample(inner.tmp.shuffle$value)
+            inner.tmp.shuffle.sub$shuffle_value <- sample(inner.tmp.shuffle.sub$value)
             
             # Model allele freq
             # Generate 3 models - a null model (t0), a model with just demography (t1.dem) and a model with demography and "j" enviro var (t1.dem.env)
-            y.perm <- inner.tmp.shuffle$af_nEff
-            X.null.perm <- model.matrix(~1, inner.tmp.shuffle)
-            X.dem.perm <- model.matrix(~PC1, inner.tmp.shuffle)
-            X.dem.env.perm <- model.matrix(~PC1+shuffle_value, inner.tmp.shuffle)
-            t0.perm <- fastglm(x=X.null.perm, y=y.perm, family=binomial(), weights=inner.tmp.shuffle$nEff, method=0)
-            t1.dem.perm <- fastglm(x=X.dem.perm, y=y.perm, family=binomial(), weights=inner.tmp.shuffle$nEff, method=0)
-            t1.dem.env.perm <- fastglm(x=X.dem.env.perm, y=y.perm, family=binomial(), weights=inner.tmp.shuffle$nEff, method=0)
+            y.perm <- inner.tmp.shuffle.sub$af_nEff
+            X.null.perm <- model.matrix(~1, inner.tmp.shuffle.sub)
+            X.dem.perm <- model.matrix(~PC1, inner.tmp.shuffle.sub)
+            X.dem.env.perm <- model.matrix(~PC1+shuffle_value, inner.tmp.shuffle.sub)
+            t0.perm <- fastglm(x=X.null.perm, y=y.perm, family=binomial(), weights=inner.tmp.shuffle.sub$nEff, method=0)
+            t1.dem.perm <- fastglm(x=X.dem.perm, y=y.perm, family=binomial(), weights=inner.tmp.shuffle.sub$nEff, method=0)
+            t1.dem.env.perm <- fastglm(x=X.dem.env.perm, y=y.perm, family=binomial(), weights=inner.tmp.shuffle.sub$nEff, method=0)
                   
                 # Generate output table with t1.dem.env model information and model comparison info for each variable
                 data.frame(
-                  chr = unique(inner.tmp.shuffle$chr),
-                  pos = unique(inner.tmp.shuffle$pos),
+                  chr = unique(inner.tmp.shuffle.sub$chr),
+                  pos = unique(inner.tmp.shuffle.sub$pos),
                   variable = j,
                   missing = seqMissing(genofile),
                   perm = l,

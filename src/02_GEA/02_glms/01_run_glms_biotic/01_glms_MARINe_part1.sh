@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_marine_1:50_perm
+#SBATCH --job-name=glms_marine_1:50perm
 
 # Specify partition
 #SBATCH --partition=general
