@@ -201,7 +201,7 @@ glm.model.output =
           inner.tmp.shuffle.sub <- inner.tmp.shuffle[!is.na(inner.tmp.shuffle$value),]
           
           # Do 100 permutations - 50 at a time to make things run faster (1:50 and 51:100)
-          foreach(l=1:2, .combine = "rbind")%do%{
+          foreach(l=1:50, .combine = "rbind")%do%{
             set.seed(l)
 
             # Shuffle enviro data for 'j' enviro variable
