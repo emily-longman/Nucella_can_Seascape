@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_marine_1:50perm_part1
+#SBATCH --job-name=glms_marine_real
 
 # Specify partition
 #SBATCH --partition=general
@@ -93,11 +93,20 @@ then echo "Working glms_chunk_analysis_marine folder exist"; echo "Let's move on
 else echo "Working glms_chunk_analysis_marine folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_chunk_analysis_marine; date
 fi
 
+# Change directory
+cd $WORKING_FOLDER/data/processed/GEA/glms/glms_chunk_analysis_marine
+
+# Create folder
+if [ -d "real" ]
+then echo "Working real folder exist"; echo "Let's move on."; date
+else echo "Working real folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_chunk_analysis_marine/real; date
+fi
+
 #--------------------------------------------------------------------------------
 
 # Run R script
 
-Rscript $SCRIPT_FOLDER/01_glms_MARINe_1:50perm.R "${SLURM_ARRAY_TASK_ID}"
+Rscript $SCRIPT_FOLDER/01_glms_MARINe_real.R "${SLURM_ARRAY_TASK_ID}"
 
 #--------------------------------------------------------------------------------
 
