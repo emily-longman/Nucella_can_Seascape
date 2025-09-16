@@ -138,6 +138,12 @@ glm.model.output =
   
     ###############################################################
 
+    # Remove the two populations that are not in the MARINe database from af_i_snp
+    af_i_snp <- af_i_snp[-which(af_i_snp$sampleId =="VD"),]
+    af_i_snp <- af_i_snp[-which(af_i_snp$sampleId == "OCT" ),]
+
+    ###############################################################
+
     # Join with bio-oracle environmental data
     left_join(af_i_snp, MARINe_data, by ="sampleId") -> af_i_snp_enviro
     
