@@ -83,6 +83,9 @@ swath_filt$marine_site_name <- factor(swath_filt$marine_site_name,
 
 # Prey percent cover
 
+# Remove Pollicipes polymerus
+point_contact_filt <- point_contact_filt[which(point_contact_filt$species_lump !="Pollicipes polymerus"),]
+
 # Summarize for multiple years of surveys
 point_contact_filt_sum <- point_contact_filt %>% 
     group_by(marine_site_name, latitude, longitude, georegion, state_province, species_lump) %>%
@@ -136,6 +139,9 @@ dev.off()
 
 # Competitor density
 
+# Remove Nucella lamellosa
+quadrat_filt <- quadrat_filt[which(quadrat_filt$species_lump !="Nucella lamellosa"),]
+
 # Summarize for multiple years of surveys
 quadrat_filt_sum <- quadrat_filt %>% 
     group_by(marine_site_name, latitude, longitude, georegion, state_province, species_lump) %>%
@@ -149,33 +155,6 @@ write.csv(quadrat_filt_sum, "data/processed/GEA/enviro_data/MARINe/quadrat_filt_
 
 # ================================================================================== #
 
-# Create new group for congeners
-quadrat_filt_cong <- quadrat_filt %>%
-  mutate(species_lump2 = case_when(
-    species_lump == "Nucella emarginata/ostrina" | species_lump == "Nucella lamellosa" ~ "Nucella congeners",
-    species_lump == "Nucella canaliculata" ~ "Nucella canaliculata",
-    TRUE ~ as.character(species_lump) # Handles any other unexpected groups
-  ))
-
-# Summarize data - bc density, need to sum total count divided by area
-quadrat_filt_cong_2 <- quadrat_filt_cong %>%
-    group_by(marine_site_name, latitude, longitude, georegion, state_province, species_lump2, survey_rep, year) %>%
-    reframe(total_count_lump = sum(total_count), total_area_sampled_m2_lump = sum(total_area_sampled_m2), 
-    density_per_m2 = total_count_lump/total_area_sampled_m2_lump) %>% as.data.frame() 
-
-# Summarize for multiple years of surveys - N. can and congers
-quadrat_filt_cong_2_sum <- quadrat_filt_cong_2 %>% 
-    group_by(marine_site_name, latitude, longitude, georegion, state_province, species_lump2) %>%
-    reframe(num_years=n(), mean = mean(density_per_m2), 
-    sd = sd(density_per_m2), se = sd/sqrt(num_years), 
-    min = range(density_per_m2)[1], max = range(density_per_m2)[2], harm_mean = harmonic.mean(density_per_m2), 
-    metric = "density") %>% as.data.frame() %>% distinct()
-
-# Write summary table
-write.csv(quadrat_filt_cong_2_sum, "data/processed/GEA/enviro_data/MARINe/quadrat_filt_cong_sum.csv", row.names=F)
-
-# ================================================================================== #
-
 # Graph competitor density
 
 # Opposite order for levels
@@ -185,7 +164,7 @@ quadrat_filt_sum$marine_site_name <- factor(quadrat_filt_sum$marine_site_name,
     "Coquille Point", "Cape Arago", "Bob Creek", "Seal Rock", "Fogarty Creek"))
 
 # Graph summary of competitor density
-pdf("output/figures/GEA/enviro/MARINe/MARINe_competitor_density_all.pdf", width = 10, height = 10)
+pdf("output/figures/GEA/enviro/MARINe/MARINe_competitor_density.pdf", width = 10, height = 10)
 ggplot(data = quadrat_filt_sum, aes(x=mean, y=marine_site_name, fill = species_lump, colour=species_lump)) + geom_point(size=3) + 
 geom_errorbar(aes(xmin=mean-se, xmax=mean+se), width=.2) +
 scale_fill_manual(values=mycolors_comp) +
@@ -194,36 +173,11 @@ xlab(bquote("Density/ m"^2)) + ylab("") +
 theme_bw(base_size = 16)
 dev.off()
 
-# Opposite order for levels
-quadrat_filt_cong_2_sum$marine_site_name <- factor(quadrat_filt_cong_2_sum$marine_site_name, 
-    levels = c("Stairs", "Hazards", "Piedras Blancas", "Point Sierra Nevada", "Garrapata", "Point Lobos", 
-    "Pigeon Point","Bodega","Windermere Point", "Kibesillah Hill", "Shelter Cove", "Point Saint George", 
-    "Coquille Point", "Cape Arago", "Bob Creek", "Seal Rock", "Fogarty Creek"))
-
-# Graph just N. can and congers
-pdf("output/figures/GEA/enviro/MARINe/MARINe_competitor_density.pdf", width = 10, height = 10)
-ggplot(data = quadrat_filt_cong_2_sum, aes(x=mean, y=rev(marine_site_name), fill = species_lump2, colour=species_lump2)) + geom_point(size=3) + 
-geom_errorbar(aes(xmin=mean-se, xmax=mean+se), width=.2) +
-scale_fill_manual(values=mycolors_comp) +
-scale_colour_manual(values=mycolors_comp) +
-xlab(bquote("Density/ m"^2)) + ylab("") +
-theme_bw(base_size = 16)
-dev.off()
-
 # Temporal trend of competitors
-pdf("output/figures/GEA/enviro/MARINe/MARINe_competitors_density_temporal_trend_all.pdf", width = 16, height = 8)
+pdf("output/figures/GEA/enviro/MARINe/MARINe_competitors_density_temporal_trend.pdf", width = 16, height = 8)
 ggplot(data = quadrat_filt, aes(x=year, y=density_per_m2, group=marine_site_name, color=marine_site_name)) + 
 geom_point(size=2.5) + 
 geom_line() + scale_color_manual(values=mycolors) + facet_wrap(~species_lump) +
-xlab("Year") + ylab("Density per m2") +
-theme_bw(base_size = 16) 
-dev.off()
-
-# Temporal trend of competitors - grouped
-pdf("output/figures/GEA/enviro/MARINe/MARINe_competitors_density_temporal_trend.pdf", width = 16, height = 8)
-ggplot(data = quadrat_filt_cong_2, aes(x=year, y=density_per_m2, group=marine_site_name, color=marine_site_name)) + 
-geom_point(size=2.5) + 
-geom_line() + scale_color_manual(values=mycolors) + facet_wrap(~species_lump2) +
 xlab("Year") + ylab("Density per m2") +
 theme_bw(base_size = 16) 
 dev.off()
@@ -249,21 +203,21 @@ write.csv(swath_filt_sum, "data/processed/GEA/enviro_data/MARINe/swath_filt_sum.
 # Alternative summarization to look pre and post sea star wasting disease
 
 # Create column with pre, during and post SSWD
-swath_filt_SSWD <- swath_filt %>% 
-    mutate(SSWD_period = case_when(
-        year < 2013 ~ "pre_SSWD", 
-        year >= 2013 & year <= 2015 ~ "during_SSWD",
-        year > 2015 ~ "post_SSWD"))
+#swath_filt_SSWD <- swath_filt %>% 
+#    mutate(SSWD_period = case_when(
+#        year < 2013 ~ "pre_SSWD", 
+#        year >= 2013 & year <= 2015 ~ "during_SSWD",
+#        year > 2015 ~ "post_SSWD"))
 
 # Summarize for multiple years of surveys - pre, during and post SSWD
-swath_filt_sum_SSWD <- swath_filt_SSWD %>% 
-    group_by(marine_site_name, latitude, longitude, georegion, state_province, species_lump, SSWD_period) %>%
-    reframe(num_years=n(), mean = mean(density_per_m2), 
-    sd = sd(density_per_m2), se = sd/sqrt(num_years), 
-    min = range(density_per_m2)[1], max = range(density_per_m2)[2], metric = "density") %>% as.data.frame() %>% distinct()
+#swath_filt_sum_SSWD <- swath_filt_SSWD %>% 
+#    group_by(marine_site_name, latitude, longitude, georegion, state_province, species_lump, SSWD_period) %>%
+#    reframe(num_years=n(), mean = mean(density_per_m2), 
+#    sd = sd(density_per_m2), se = sd/sqrt(num_years), 
+#    min = range(density_per_m2)[1], max = range(density_per_m2)[2], metric = "density") %>% as.data.frame() %>% distinct()
 
 # Create species lump names base on SSWD
-swath_filt_sum_SSWD$species_lump <- paste(swath_filt_sum_SSWD$species_lump, swath_filt_sum_SSWD$SSWD_period, sep = " ")
+#swath_filt_sum_SSWD$species_lump <- paste(swath_filt_sum_SSWD$species_lump, swath_filt_sum_SSWD$SSWD_period, sep = " ")
 
 # Note - while useful to look at, breaking up into pre, during and post wasting is not helpful becuase many sites don't have data from each time period, so analyses wont be comparable
 
@@ -299,30 +253,13 @@ dev.off()
 # Join the datasets
 
 # Rename species lump for quadrat_filt_cong_2_sum
-colnames(quadrat_filt_cong_2_sum)[6] <- "species_lump"
+colnames(quadrat_filt_sum)[6] <- "species_lump"
 
 # Join the 3 datasets - remove prey_species column from point_contact_filt_sum
-marine_sum <- rbind(point_contact_filt_sum[,-15], quadrat_filt_cong_2_sum, swath_filt_sum)
+marine_sum <- rbind(point_contact_filt_sum[,-15], quadrat_filt_sum, swath_filt_sum)
 
 # Write summary table
 write.csv(marine_sum, "data/processed/GEA/enviro_data/MARINe/marine_sum.csv", row.names=F)
-
-# ================================================================================== #
-
-# Pivot wide - create table of just means
-
-# Subset data
-marine_sum_subset <- marine_sum[,c(1,6,8)]
-# Change species lump to factor
-marine_sum_subset$species_lump <- factor(marine_sum_subset$species_lump)
-
-# Pivot wide
-marine_sum_means <- marine_sum_subset %>% group_by(species_lump) %>% mutate(row = row_number()) %>% tidyr::pivot_wider(names_from = species_lump, values_from = mean) %>% as.data.frame() %>% select(-row)
-
-# Join with metadata
-marine_sum_means <- left_join(point_contact_filt_sum[,1:5], marine_sum_means, by = join_by(marine_site_name))
-
-write.csv(marine_sum_means, "data/processed/GEA/enviro_data/MARINe/marine_sum_means_wide.csv", row.names=F)
 
 # ================================================================================== #
 # ================================================================================== #
