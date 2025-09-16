@@ -64,6 +64,9 @@ guide_file=$WORKING_FOLDER/guide_files/scaffold_names_guide_file_array.txt
 # Backbone_10005              1
 # ....
 
+# Specify if analyzing the real data or doing permutations
+data=real
+
 #--------------------------------------------------------------------------------
 
 # Determine partition to process 
@@ -106,7 +109,7 @@ fi
 
 # Run R script
 
-Rscript $SCRIPT_FOLDER/01_glms_MARINe_real.R "${SLURM_ARRAY_TASK_ID}"
+Rscript $SCRIPT_FOLDER/01_glms_MARINe_test.R "${SLURM_ARRAY_TASK_ID}" "$data"
 
 #--------------------------------------------------------------------------------
 
