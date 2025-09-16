@@ -259,7 +259,7 @@ colnames(quadrat_filt_sum)[6] <- "species_lump"
 marine_sum <- rbind(point_contact_filt_sum[,-15], quadrat_filt_sum, swath_filt_sum)
 
 # Write summary table
-write.csv(marine_sum, "data/processed/GEA/enviro_data/MARINe/marine_sum.csv", row.names=F)
+write.csv(marine_sum, "data/processed/GEA/enviro_data/MARINe/marine_long_sum.csv", row.names=F)
 
 # ================================================================================== #
 # ================================================================================== #
