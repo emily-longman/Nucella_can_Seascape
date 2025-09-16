@@ -17,7 +17,7 @@
 #SBATCH --time=00:10#30:00:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=100G 
+#SBATCH --mem=1 #100G 
 
 # Request CPU
 #SBATCH --cpus-per-task=1 #5
@@ -100,9 +100,9 @@ fi
 cd $WORKING_FOLDER/data/processed/GEA/glms/glms_chunk_analysis_marine
 
 # Create folder
-if [ -d "real" ]
-then echo "Working real folder exist"; echo "Let's move on."; date
-else echo "Working real folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_chunk_analysis_marine/real; date
+if [ -d "${data}" ]
+then echo "Working ${data} folder exist"; echo "Let's move on."; date
+else echo "Working ${data} folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_chunk_analysis_marine/${data}; date
 fi
 
 #--------------------------------------------------------------------------------
