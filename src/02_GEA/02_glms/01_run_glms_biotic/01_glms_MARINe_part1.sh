@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_marine_real
+#SBATCH --job-name=glms_marine
 
 # Specify partition
 #SBATCH --partition=general
@@ -14,13 +14,13 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=00:10#30:00:00 
+#SBATCH --time=30:00:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=1 #100G 
+#SBATCH --mem=100G 
 
 # Request CPU
-#SBATCH --cpus-per-task=1 #5
+#SBATCH --cpus-per-task=5
 
 # Submit job array
 #SBATCH --array=1 #1-500%50
@@ -34,8 +34,8 @@
 
 #--------------------------------------------------------------------------------
 
-# This script will run the accompanying 02_glms_bio-oracle.R script. 
-# This will run glms and look at the association of the allele frequencies of the outlier SNPs and the Bio-oracle environmental data.
+# This script will run the accompanying 02_glms_MARINe.R script. 
+# This will run glms and look at the association of the allele frequencies of the outlier SNPs and the Marine biotic data.
 
 # Load modules 
 module load gcc/13.3.0
@@ -63,9 +63,6 @@ guide_file=$WORKING_FOLDER/guide_files/scaffold_names_guide_file_array.txt
 # Backbone_10004              1
 # Backbone_10005              1
 # ....
-
-# Specify if analyzing the real data or doing permutations
-data=real
 
 #--------------------------------------------------------------------------------
 
@@ -96,20 +93,11 @@ then echo "Working glms_chunk_analysis_marine folder exist"; echo "Let's move on
 else echo "Working glms_chunk_analysis_marine folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_chunk_analysis_marine; date
 fi
 
-# Change directory
-cd $WORKING_FOLDER/data/processed/GEA/glms/glms_chunk_analysis_marine
-
-# Create folder
-if [ -d "${data}" ]
-then echo "Working ${data} folder exist"; echo "Let's move on."; date
-else echo "Working ${data} folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_chunk_analysis_marine/${data}; date
-fi
-
 #--------------------------------------------------------------------------------
 
 # Run R script
 
-Rscript $SCRIPT_FOLDER/01_glms_MARINe_test.R "${SLURM_ARRAY_TASK_ID}" "$data"
+Rscript $SCRIPT_FOLDER/01_glms_MARINe_real.R "${SLURM_ARRAY_TASK_ID}"
 
 #--------------------------------------------------------------------------------
 
