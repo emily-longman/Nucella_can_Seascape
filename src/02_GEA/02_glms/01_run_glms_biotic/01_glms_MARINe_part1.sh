@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_marine
+#SBATCH --job-name=glms_marine_part1
 
 # Specify partition
 #SBATCH --partition=general
@@ -14,16 +14,16 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=5:00:00 #30:00:00 
+#SBATCH --time=30:00:00 #5:00:00 for real
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=10G 
+#SBATCH --mem=40G 
 
 # Request CPU
 #SBATCH --cpus-per-task=5
 
 # Submit job array
-#SBATCH --array=1-500%50
+#SBATCH --array=1 #1-500%50
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -97,7 +97,8 @@ fi
 
 # Run R script
 
-Rscript $SCRIPT_FOLDER/01_glms_MARINe_real.R "${SLURM_ARRAY_TASK_ID}"
+#Rscript $SCRIPT_FOLDER/01_glms_MARINe_real.R "${SLURM_ARRAY_TASK_ID}"
+Rscript $SCRIPT_FOLDER/01_glms_MARINe_perm1:25.R "${SLURM_ARRAY_TASK_ID}"
 
 #--------------------------------------------------------------------------------
 
