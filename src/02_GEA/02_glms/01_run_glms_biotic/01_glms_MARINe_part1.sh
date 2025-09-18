@@ -14,16 +14,16 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=30:00:00 #5:00:00 for real
+#SBATCH --time=10:00:00 #5:00:00 for real
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=40G 
+#SBATCH --mem=30G 
 
 # Request CPU
 #SBATCH --cpus-per-task=5
 
 # Submit job array
-#SBATCH --array=1 #1-500%50
+#SBATCH --array=1-500%50
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
