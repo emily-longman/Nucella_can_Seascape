@@ -23,7 +23,7 @@
 #SBATCH --cpus-per-task=5
 
 # Submit job array
-#SBATCH --array=728,865,867,869,873,880,923,954,955,956 #501-999%50
+#SBATCH --array=728,741
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -98,7 +98,8 @@ fi
 # Run R script
 
 #Rscript $SCRIPT_FOLDER/01_glms_MARINe_real.R "${SLURM_ARRAY_TASK_ID}"
-Rscript $SCRIPT_FOLDER/01_glms_MARINe_perm1:25.R "${SLURM_ARRAY_TASK_ID}"
+#Rscript $SCRIPT_FOLDER/01_glms_MARINe_perm1:25.R "${SLURM_ARRAY_TASK_ID}"
+Rscript $SCRIPT_FOLDER/01_glms_MARINe_perm26:50.R "${SLURM_ARRAY_TASK_ID}"
 
 #--------------------------------------------------------------------------------
 
