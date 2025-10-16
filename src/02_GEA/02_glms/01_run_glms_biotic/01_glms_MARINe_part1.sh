@@ -100,7 +100,8 @@ fi
 #Rscript $SCRIPT_FOLDER/01_glms_MARINe_real.R "${SLURM_ARRAY_TASK_ID}"
 #Rscript $SCRIPT_FOLDER/01_glms_MARINe_perm1:25.R "${SLURM_ARRAY_TASK_ID}"
 #Rscript $SCRIPT_FOLDER/01_glms_MARINe_perm26:50.R "${SLURM_ARRAY_TASK_ID}"
-Rscript $SCRIPT_FOLDER/01_glms_MARINe_perm51:75.R "${SLURM_ARRAY_TASK_ID}"
+#Rscript $SCRIPT_FOLDER/01_glms_MARINe_perm51:75.R "${SLURM_ARRAY_TASK_ID}"
+Rscript $SCRIPT_FOLDER/01_glms_MARINe_perm76:100.R "${SLURM_ARRAY_TASK_ID}"
 
 #--------------------------------------------------------------------------------
 
