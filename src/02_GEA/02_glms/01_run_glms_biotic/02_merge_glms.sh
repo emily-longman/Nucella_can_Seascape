@@ -48,7 +48,8 @@ SCRIPT_FOLDER=$WORKING_FOLDER/src/02_GEA/02_glms/01_run_glms_biotic
 
 # Run R script
 
-Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_perm_1:25.R
+Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_real.R
+#Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_perm_1:25.R
 # The --vanilla option prevents restoring or saving workspaces
 
 #--------------------------------------------------------------------------------
