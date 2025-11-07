@@ -1,151 +1,77 @@
-# ------------------------------------------------------------------------------
-# Mussel collections estimate:  
-# Determine the number of mussels and size dist needed to get a representative sample
-# Emily K. Longman
-# ------------------------------------------------------------------------------
+# Summarize mussel shell thickness data
 
-# Load libraries
-library(ggplot2)
-library(dplyr)
+# Clear memory
+rm(list=ls()) 
+
+# ================================================================================== #
+
+# Set path as main Github repo
+install.packages(c('rprojroot'))
+library(rprojroot)
+
+# List all files and directories below the root
+dir(find_root_file(criterion = has_file("README.md")))
+root_path <- find_root_file(criterion = has_file("README.md"))
+# Set working directory as path from root
+setwd(root_path)
+
+# ================================================================================== #
+
+# Load packages
+install.packages(c('data.table', 'tidyverse', 'ggplot2', 'RColorBrewer'))
+library(data.table)
 library(tidyverse)
-library(here)
+library(ggplot2)
+library(RColorBrewer)
 
-# Load data --------------------------------------------------------------------
-mussels <- read.csv(here::here("data/raw/enviro/M.cali.thk/Mcal_shell_thickness_2019.csv"))
-mussels$Thk.length <- mussels$Ave.thk.1.3/ mussels$Shell.Length
-str(mussels)
+# ================================================================================== #
+# ================================================================================== #
 
-# Look at all data -------------------------------------------------------------
+# Load data
 
-# Graph all mussels
-ggplot(mussels, aes(Shell.Length, Ave.thk.1.3)) + geom_point()
+# Read in mussel shell data
+Mcali <- read.csv("data/raw/M.cali.thk/Mcali_shell_thk.csv", header=T)
 
-#Linear regression
-mussel.mod <- lm(Ave.thk.1.3 ~ Shell.Length, mussels)
-plot(mussel.mod)
-summary(mussel.mod)
+# ================================================================================== #
 
-#calc thickness/ length ratio
-mean(mussels$Thk.length) #0.02117015
+# Create bin column
+Mcali <- Mcali %>% mutate(
+        value_bin = case_when(
+          Length.L..mm. <= 20 ~ "10",
+          Length.L..mm. > 20 & Length.L..mm. <= 30 ~ "20",
+          Length.L..mm. > 30 & Length.L..mm. <= 40 ~ "30",
+          Length.L..mm. > 40 & Length.L..mm. <= 50 ~ "40",
+          Length.L..mm. > 50 & Length.L..mm. <= 60 ~ "50",
+          Length.L..mm. > 60 & Length.L..mm. <= 70 ~ "60",
+          Length.L..mm. > 70 & Length.L..mm. <= 80 ~ "70",
+          Length.L..mm. > 80 & Length.L..mm. <= 90 ~ "80",
+          Length.L..mm. > 90 & Length.L..mm. <= 100 ~ "90",
+          Length.L..mm. > 100 & Length.L..mm. <= 110 ~ "100",
+          Length.L..mm. > 110 & Length.L..mm. <= 120 ~ "110",
+          Length.L..mm. > 120 & Length.L..mm. <= 130 ~ "120",
+          Length.L..mm. > 130 & Length.L..mm. <= 140 ~ "130",
+          Length.L..mm. > 140 & Length.L..mm. <= 150 ~ "140",
+          Length.L..mm. > 150 ~ "150",
+          TRUE ~ "Other" # Catch-all for values not fitting previous conditions
+        )
+      )
 
-#Just Bodega Mussels -----------------------------------------------------------
-mussels.BMR <- mussels[which(mussels$Site.Code == "BH"),]
+# ================================================================================== #
 
-length(mussels.BMR) #101 mussels
+# Summarize for total number of mussel collected
+Mcali.sum.collected <- Mcali %>% group_by(Site.Code, value_bin) %>% summarize(count=n())
 
-#calc thickness/ length ratio
-mean(mussels.BMR$Thk.length) #0.02124721
+# Write table
+write.csv(Mcali.sum.collected, "data/raw/M.cali.thk/Mcali.sum.collected.csv", row.names=FALSE)
 
-ggplot(mussels.BMR, 
-       aes(Shell.Length, Ave.thk.1.3)) + geom_point()
+# ================================================================================== #
 
-mussel.mod.BMR <- lm(Ave.thk.1.3 ~ Shell.Length, mussels.BMR)
-summary(mussel.mod.BMR)
+# Filter for only mussels that have done ImageJ on
+Mcali.data <- Mcali %>% filter(!is.na(Segment.Area))
 
-#Sample just 50 BMR mussels across all sizes 100 times 
-mussels.BMR.sample = NULL
-for (i in 1:100) {
-  s = sample(mussels.BMR$Thk.length, 50, replace=TRUE)
-  m = mean(s)
-  mussels.BMR.sample<- c(mussels.BMR.sample, m)
-  }
-hist(mussels.BMR.sample)
-abline(v = 0.02124721, col= 2)
+# Summarize for total number of mussel collected
+Mcali.data.sum <- Mcali.data %>% group_by(Site.Code, value_bin) %>% summarize(count=n())
 
-range(mussels.BMR.sample)
-
-
-#Sample 50 BMR mussels that are less than 120mm 100 times 
-mussels.BMR.less.120 <- mussels.BMR[which(mussels.BMR$Shell.Length < 120),]
-
-mussels.BMR.less.120.sample = NULL
-for (i in 1:100) {
-  s = sample(mussels.BMR.less.120$Thk.length, 50, replace=TRUE)
-  m = mean(s)
-  mussels.BMR.less.120.sample<- c(mussels.BMR.less.120.sample, m)
-  }
-hist(mussels.BMR.less.120.sample)
-abline(v = 0.02124721, col= 2)
-
-range(mussels.BMR.less.120.sample)
-
-
-# Just Strawberry Hill Mussels -------------------------------------------------
-mussels.SH <- mussels[which(mussels$Site.Code == "SH"),]
-
-dim(mussels.SH) #108 mussels
-mean(mussels.SH$Ave.thk.1.3/ mussels.SH$Shell.Length) #0.02396629
-
-ggplot(mussels.SH, 
-       aes(Shell.Length, Ave.thk.1.3)) + geom_point()
-
-mussel.mod.SH <- lm(Ave.thk.1.3 ~ Shell.Length, mussels.SH)
-plot(mussel.mod.SH)
-summary(mussel.mod.SH)
-
-#Sample just 50 SH mussels across all sizes 100 times 
-mussels.SH.sample = NULL
-for (i in 1:100) {
-  s = sample(mussels.SH$Thk.length, 50, replace=TRUE)
-  m = mean(s)
-  mussels.SH.sample<- c(mussels.SH.sample, m)
-  }
-hist(mussels.SH.sample)
-abline(v = 0.02396629, col= 2)
-
-range(mussels.SH.sample) #0.02275464 0.02591909
-
-#Sample 50 SH mussels that are less than 120mm and greater than 40mm 100 times 
-mussels.SH.less.120 <- mussels.SH[which(mussels.SH$Shell.Length < 120 & mussels.SH$Shell.Length > 40),]
-mussels.SH.less.120.sample = NULL
-for (i in 1:100) {
-  s = sample(mussels.SH.less.120$Thk.length, 50, replace=TRUE)
-  m = mean(s)
-  mussels.SH.less.120.sample<- c(mussels.SH.less.120.sample, m)
-  }
-hist(mussels.SH.less.120.sample)
-abline(v = 0.02396629, col= 2)
-
-range(mussels.SH.less.120.sample)
-
-# Just Fogarty Creek Mussels ---------------------------------------------------
-mussels.FC <- mussels[which(mussels$Site.Code == "FC"),]
-
-dim(mussels.FC) #108 mussels
-mean(mussels.FC$Ave.thk.1.3/ mussels.FC$Shell.Length) #0.01994755
-
-ggplot(mussels.FC, 
-       aes(Shell.Length, Ave.thk.1.3)) + geom_point()
-
-mussel.mod.FC <- lm(Ave.thk.1.3 ~ Shell.Length, mussels.FC)
-plot(mussel.mod.FC)
-summary(mussel.mod.FC)
-
-#Sample just 50 SH mussels across all sizes 100 times 
-mussels.FC.sample = NULL
-for (i in 1:100) {
-  s = sample(mussels.FC$Thk.length, 55, replace=TRUE)
-  m = mean(s)
-  mussels.FC.sample<- c(mussels.FC.sample, m)
-  }
-hist(mussels.FC.sample)
-abline(v = 0.01994755, col= 2)
-
-range(mussels.FC.sample) 
-
-#Sample just 50 SH mussels that are <120 and greater than 40mm all sizes 100 times 
-mussels.FC.less.120.great.40 <- mussels.FC[which(mussels.FC$Shell.Length < 120 
-                                                 & mussels.FC$Shell.Length > 40),]
-mussels.FC.less.120.great.40.sample = NULL
-for (i in 1:100) {
-  s = sample(mussels.FC.less.120.great.40$Thk.length, 55, replace=TRUE)
-  m = mean(s)
-  mussels.FC.less.120.great.40.sample<- c(mussels.FC.less.120.great.40.sample, m)
-  }
-hist(mussels.FC.less.120.great.40.sample)
-abline(v = 0.01994755, col= 2)
-
-range(mussels.FC.less.120.great.40.sample) 
-
-
+# Write table
+write.csv(Mcali.data.sum, "data/raw/M.cali.thk/Mcali.data.sum.csv", row.names=FALSE)
 

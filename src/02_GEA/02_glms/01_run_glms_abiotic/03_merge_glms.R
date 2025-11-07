@@ -52,7 +52,7 @@ foreach(i=file_names_v, .combine="rbind")%do%{
     o.unique <- o.sub %>% distinct()
 
     # Add column with identifier
-    o.unique %>% mutate(chunk = i) %>% mutate(chunk = str_remove(chunk, pattern = "data/processed/GEA/glms/glms_chunk_analysis_10perm/GLM_100perm_Bio-Oracle_"))
+    o.unique %>% mutate(chunk = i) %>% mutate(chunk = str_remove(chunk, pattern = "data/processed/GEA/glms/glms_chunk_analysis/GLM_100perm_Bio-Oracle_"))
 } 
 
 # ================================================================================== #
