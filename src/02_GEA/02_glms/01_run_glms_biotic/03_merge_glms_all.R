@@ -27,7 +27,7 @@ library(foreach)
 
 # Generate output directories
 
-out_dir <- paste("data/processed/GEA/glms/glms_chunk_analysis_marine")
+out_dir <- paste("data/processed/GEA/glms/glms_output_marine")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # ================================================================================== #
@@ -35,8 +35,8 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 # Load and merge data
 
 # Create list of file names
-file_names = as.list(dir(path = 'data/processed/GEA/glms/glms_chunk_analysis_marine/real/', pattern = "GLM_MARINe_chunk_*"))
-file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/GEA/glms/glms_chunk_analysis_marine/real/', x))))
+file_names = as.list(dir(path = 'data/processed/GEA/glms/glms_chunk_analysis_marine/', pattern = "glm.model.collated.*"))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/GEA/glms/glms_chunk_analysis_marine/', x))))
 
 # Read all the files and add a column with the chunk
 glm.model.collated =  
@@ -45,15 +45,9 @@ foreach(i=file_names_v, .combine="rbind")%do%{
     message(i)
     # Load file
     o = get(load(i))
-
-    # Remove duplicated rows - since every model is duplicated 19 times since I included af_nEff
-    o.unique <- o %>% distinct()
-
-    # Add column with identifier
-    o.unique %>% mutate(chunk = i) %>% mutate(chunk = str_remove(chunk, pattern = "data/processed/GEA/glms/glms_chunk_analysis_marine/real/GLM_MARINe_chunk_"))
 } 
 
 # ================================================================================== #
 
 # Save merged data
-save(glm.model.collated, file = "data/processed/GEA/glms/glms_chunk_analysis_marine/glm.model.collated.real.Rdata")
+save(glm.model.collated, file = "data/processed/GEA/glms/glms_output_marine/glm.model.collated.marine.Rdata")

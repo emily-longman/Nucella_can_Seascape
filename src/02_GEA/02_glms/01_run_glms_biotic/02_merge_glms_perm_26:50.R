@@ -45,11 +45,9 @@ foreach(i=file_names_v, .combine="rbind")%do%{
     message(i)
     # Load file
     o = get(load(i))
-    # Remove af_nEff column - removed this during the biotic glms
-    #o.sub <- subset(o, select=-c(af_nEff))
 
     # Remove duplicated rows - since every model is duplicated 19 times since I included af_nEff
-    o.unique <- o.sub %>% distinct()
+    o.unique <- o %>% distinct()
 
     # Add column with identifier
     o.unique %>% mutate(chunk = i) %>% mutate(chunk = str_remove(chunk, pattern = "data/processed/GEA/glms/glms_chunk_analysis_marine/perm_26_50/GLM_MARINe_chunk_"))

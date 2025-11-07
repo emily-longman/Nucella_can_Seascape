@@ -14,7 +14,7 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=5:00:00 
+#SBATCH --time=30:00:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
 #SBATCH --mem=900G 
@@ -48,11 +48,7 @@ SCRIPT_FOLDER=$WORKING_FOLDER/src/02_GEA/02_glms/01_run_glms_biotic
 
 # Run R script
 
-Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_real.R
-#Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_perm_1:25.R
-#Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_perm_26:50.R
-#Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_perm_51:75.R
-#Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_perm_76:100.R
+Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_all.R
 # The --vanilla option prevents restoring or saving workspaces
 
 #--------------------------------------------------------------------------------
