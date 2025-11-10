@@ -27,7 +27,7 @@ library(foreach)
 
 # Generate output directories
 
-out_dir <- paste("data/processed/GEA/glms/glms_output")
+out_dir <- paste("data/processed/GEA/glms/glms_chunk_analysis_bio-oracle")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # ================================================================================== #
@@ -45,17 +45,12 @@ foreach(i=file_names_v, .combine="rbind")%do%{
     message(i)
     # Load file
     o = get(load(i))
-    # Remove af_nEff column
-    o.sub <- subset(o, select=-c(af_nEff))
-
-    # Remove duplicated rows - since every model is duplicated 19 times since I included af_nEff
-    o.unique <- o.sub %>% distinct()
 
     # Add column with identifier
-    o.unique %>% mutate(chunk = i) %>% mutate(chunk = str_remove(chunk, pattern = "data/processed/GEA/glms/glms_chunk_analysis/GLM_100perm_Bio-Oracle_"))
-} 
+    o %>% mutate(chunk = i) %>% mutate(chunk = str_remove(chunk, pattern = "data/processed/GEA/glms/glms_chunk_analysis/GLM_MARINe_chunk_"))
+}
 
 # ================================================================================== #
 
 # Save merged data
-save(glm.model.collated, file = "data/processed/GEA/glms/glms_output/glm.model.collated.Rdata")
+save(glm.model.collated, file = "data/processed/GEA/glms/glms_chunk_analysis_bio-oracle/glm.model.collated.Rdata")

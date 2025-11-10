@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=merge_glms
+#SBATCH --job-name=merge_glms_abiotic
 
 # Specify partition
 #SBATCH --partition=general
