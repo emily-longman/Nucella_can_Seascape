@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=merge_glms_biotic_real
+#SBATCH --job-name=merge_glms_biotic_1:25
 
 # Specify partition
 #SBATCH --partition=general
@@ -48,8 +48,8 @@ SCRIPT_FOLDER=$WORKING_FOLDER/src/02_GEA/02_glms/01_run_glms_biotic
 
 # Run R script
 
-Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_real.R
-#Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_perm_1:25.R
+#Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_real.R
+Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_perm_1:25.R
 #Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_perm_26:50.R
 #Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_perm_51:75.R
 #Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_perm_76:100.R
