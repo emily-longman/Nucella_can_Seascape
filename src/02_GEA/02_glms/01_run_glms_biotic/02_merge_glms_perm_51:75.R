@@ -40,7 +40,7 @@ file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/proc
 
 # Read all the files and add a column with the chunk
 glm.model.collated =  
-foreach(i=file_names_v, .combine="rbind")%do%{  
+foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
     # State which file loading
     message(i)
     # Load file
