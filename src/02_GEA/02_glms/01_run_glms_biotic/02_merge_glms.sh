@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=merge_glms_biotic_51:75
+#SBATCH --job-name=merge_glms_biotic_76:100
 
 # Specify partition
 #SBATCH --partition=general
@@ -14,7 +14,7 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=5:00:00 
+#SBATCH --time=8:00:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
 #SBATCH --mem=900G 
@@ -51,8 +51,8 @@ SCRIPT_FOLDER=$WORKING_FOLDER/src/02_GEA/02_glms/01_run_glms_biotic
 #Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_real.R
 #Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_perm_1:25.R
 #Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_perm_26:50.R
-Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_perm_51:75.R
-#Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_perm_76:100.R
+#Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_perm_51:75.R
+Rscript --vanilla $SCRIPT_FOLDER/02_merge_glms_perm_76:100.R
 # The --vanilla option prevents restoring or saving workspaces
 
 #--------------------------------------------------------------------------------
