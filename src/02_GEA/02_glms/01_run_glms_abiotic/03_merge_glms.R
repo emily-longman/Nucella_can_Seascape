@@ -37,12 +37,12 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 # Create list of file names
 file_names = as.list(dir(path = 'data/processed/GEA/glms/glms_chunk_analysis/', pattern = "GLM_100perm_Bio-Oracle_chunk_*"))
 file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/GEA/glms/glms_chunk_analysis/', x))))
-file_names_v_subset = file_names_v[501:995] #file_names_v[1:500]
+file_names_v_subset =  file_names_v[1:500] #file_names_v[501:995]
 
 
 # Read all the files and add a column with the chunk
 glm.model.collated =  
-foreach(i=file_names_v_subset, .combine="rbind")%do%{  
+foreach(i=file_names_v_subset, .combine="rbind", .errorhandling = "remove")%do%{  
     # State which file loading
     message(i)
     # Load file
