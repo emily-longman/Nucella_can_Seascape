@@ -27,7 +27,7 @@ library(foreach)
 
 # Generate output directories
 
-out_dir <- paste("data/processed/GEA/glms/glms_chunk_analysis_bio-oracle")
+out_dir <- paste("data/processed/GEA/glms/glms_summary")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # ================================================================================== #
@@ -37,8 +37,7 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 # Create list of file names
 file_names = as.list(dir(path = 'data/processed/GEA/glms/glms_chunk_analysis/', pattern = "GLM_100perm_Bio-Oracle_chunk_*"))
 file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/GEA/glms/glms_chunk_analysis/', x))))
-file_names_v_subset = file_names_v[751:995] #file_names_v[501:750]  #file_names_v[1:500]
-
+file_names_v_subset = file_names_v[751:996] #file_names_v[501:750]  #file_names_v[1:500]
 
 # Read all the files and add a column with the chunk
 glm.model.collated =  
@@ -55,4 +54,4 @@ foreach(i=file_names_v_subset, .combine="rbind", .errorhandling = "remove")%do%{
 # ================================================================================== #
 
 # Save merged data
-save(glm.model.collated, file = "data/processed/GEA/glms/glms_chunk_analysis_bio-oracle/glm.model.collated.subset3.Rdata")
+save(glm.model.collated, file = "data/processed/GEA/glms/glms_summary-oracle/glm.model.collated.subset3.Rdata")
