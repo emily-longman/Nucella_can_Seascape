@@ -7,7 +7,7 @@ rm(list=ls())
 
 # Set path as main Github repo
 # Install and load package
-install.packages(c('rprojroot'))
+#install.packages(c('rprojroot'))
 library(rprojroot)
 # Specify root path
 root_path <- find_root_file(criterion = has_file("README.md"))
@@ -17,7 +17,7 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr'))
+#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr'))
 library(data.table)
 library(tidyverse)
 library(foreach)
