@@ -44,7 +44,7 @@ file_names = as.list(dir(path = 'data/processed/GEA/glms/glms_chunk_analysis/', 
 file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/GEA/glms/glms_chunk_analysis/', x))))
 
 # Read all the files and add a column with the chunk
-foreach(w=file_names_v_sub, .errorhandling = "remove")%do%{  
+foreach(w=file_names_v, .errorhandling = "remove")%do%{  
     # State which file loading
     message(w)
     # Load file
