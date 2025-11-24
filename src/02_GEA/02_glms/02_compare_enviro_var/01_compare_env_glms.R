@@ -140,7 +140,7 @@ pdf("output/figures/GEA/glms/glm_biotic_rr_sum.pdf", width = 8, height = 8)
 ggplot(summary, aes(x = reorder(variable, mean), y = mean)) + 
   geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd))+ 
   geom_point()+ 
-  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +  # Reference line at 0? Danny had it at 1
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +  
   labs(title = "",
        x = "Group",
        y = "Value") +
@@ -154,7 +154,7 @@ pdf("output/figures/GEA/glms/glm_biotic_rr_sum_CI.pdf", width = 8, height = 8)
 ggplot(summary, aes(x = reorder(variable, mean), y = mean)) +
   geom_errorbar(aes(ymin = ci_low, ymax = ci_high)) +  # Use 95% CI
   geom_point() +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +  
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
   labs(title = "Mean ± 95% CI Plot",
        x = "Group",
        y = "Value") +
