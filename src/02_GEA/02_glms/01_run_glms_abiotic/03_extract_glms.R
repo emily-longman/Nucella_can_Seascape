@@ -66,6 +66,6 @@ foreach(w=file_names_v, .errorhandling = "remove")%do%{
     save(tmp_env, file = paste(out_dir, "/glm_", env_var, "_", c, ".Rdata", sep = "") )
 
     # Clear load
-    rm(list = ls())
+    #rm(list = ls())
 }
 
