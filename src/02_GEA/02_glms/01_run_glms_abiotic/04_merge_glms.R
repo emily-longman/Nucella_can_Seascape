@@ -44,6 +44,10 @@ path <- paste("data/processed/GEA/glms/glms_per_env_var/glms_", env_var, "/", se
 file_names = as.list(dir(path = path, pattern = "glm_*"))
 file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("data/processed/GEA/glms/glms_per_env_var/glms_", env_var, "/", sep = ""), x))))
 
+file_names_v <- file_names_v[1:20]
+# Check number of files
+length(file_names_v)
+
 # Read all the files and add a column with the chunk
 glm.model.collated =  
 foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
@@ -52,6 +56,9 @@ foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{
     # Load file
     o = get(load(i))
 }
+
+# Check structure
+str(glm.model.collated)
 
 # ================================================================================== #
 
