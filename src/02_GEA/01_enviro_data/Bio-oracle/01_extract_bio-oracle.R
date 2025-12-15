@@ -1,7 +1,8 @@
 # Download Bio-Oracle data (https://www.bio-oracle.org/index.php )
 # Use R package biooracler to access the Bio-Oracle dataset via ERDDAP server (https://github.com/bio-oracle/biooracler)
-
-# Note: need to run this script on my computer rather than the VACC because incompatibilities with R version and some of the programs
+# Note: prior to running the R script, need to load R and GDAL module on the VACC
+# module load R/4.4.1
+# module load gdal
 
 # Clear memory
 rm(list=ls()) 
@@ -13,12 +14,21 @@ rm(list=ls())
 install.packages(c('rprojroot'))
 library(rprojroot)
 # Specify root path
-raw_data_path_from_root <- find_root_file("data", "raw", "Bio-oracle", criterion = has_file("README.md"))
+root_path <- find_root_file(criterion = has_file("README.md"))
+# Set working directory as path from root
+setwd(root_path)
+#raw_data_path_from_root <- find_root_file("data", "raw", "Bio-oracle", criterion = has_file("README.md"))
 # Set working directory as path from root
 setwd(raw_data_path_from_root)
 
-# Specify output directory
-out_dir <- "/Users/emilylongman/Documents/GitHub/Nucella_can_Seascape/data/raw/Bio-oracle"
+# ================================================================================== #
+
+# Generate output directories
+out_dir_present <- paste("data/raw/Bio-oracle/present")
+if (!dir.exists(out_dir_present)) {dir.create(out_dir_present)}
+
+out_dir_future <- paste("data/raw/Bio-oracle/future")
+if (!dir.exists(out_dir_future)) {dir.create(out_dir_future)}
 
 # ================================================================================== #
 
@@ -66,15 +76,15 @@ sal_Present<-"so_baseline_2000_2019_depthsurf"
 # Specify datasets and summary statistics to download 
 datasets <- list(
   list(dataset_id = SST_Present, variables = c("thetao_max","thetao_min", "thetao_range", "thetao_mean"),
-       constraints = constraints, fmt = "csv", directory = out_dir),
+       constraints = constraints, fmt = "csv", directory = out_dir_present),
   list(dataset_id = pH_Present, variables = c("ph_min", "ph_mean"),
-       constraints = constraints, fmt = "csv", directory = out_dir),
+       constraints = constraints, fmt = "csv", directory = out_dir_present),
   list(dataset_id = Chl_Present, variables = c("chl_mean"),
-       constraints = constraints, fmt = "csv", directory = out_dir),
+       constraints = constraints, fmt = "csv", directory = out_dir_present),
   list(dataset_id = O2_Present, variables = c("o2_mean"),
-       constraints = constraints, fmt = "csv", directory = out_dir),
+       constraints = constraints, fmt = "csv", directory = out_dir_present),
   list(dataset_id = sal_Present, variables = c("so_mean"),
-       constraints = constraints, fmt = "csv", directory = out_dir))
+       constraints = constraints, fmt = "csv", directory = out_dir_present))
 
 
 # Download datasets using for loop
@@ -85,17 +95,17 @@ for (dataset in datasets) {
   constraints <- dataset$constraints
   
   # List files before downloading
-  files_before <- list.files(out_dir, full.names = TRUE)
+  files_before <- list.files(out_dir_present, full.names = TRUE)
   # Download dataset
-  download_layers(dataset_id, variables = variables, constraints = constraints, fmt = "csv", directory = out_dir)
+  download_layers(dataset_id, variables = variables, constraints = constraints, fmt = "csv", directory = out_dir_present)
   # List files after downloading
-  files_after <- list.files(out_dir, full.names = TRUE)
+  files_after <- list.files(out_dir_present, full.names = TRUE)
   # Identify the newly downloaded file
   new_file <- setdiff(files_after, files_before)
   
   # Rename the file to match the dataset ID
   if (length(new_file) == 1) {
-    new_name <- file.path(out_dir, paste0(dataset_id, ".csv"))
+    new_name <- file.path(out_dir_present, paste0(dataset_id, ".csv"))
     file.rename(new_file, new_name)
     message("Rename ", new_file, " to ", new_name)
   } else {
@@ -105,7 +115,7 @@ for (dataset in datasets) {
 
 
 # Check list of files in output directory
-list.files(out_dir)
+list.files(out_dir_present)
 
 # Note: upload these files to the appropriate folder on the VACC
 
@@ -138,15 +148,15 @@ sal_SSP585 <- "so_ssp585_2020_2100_depthsurf"
 # Specify datasets and summary statistics to download 
 datasets <- list(
   list(dataset_id = SST_SSP585, variables = c("thetao_max","thetao_min", "thetao_range", "thetao_mean"),
-       constraints = constraints, fmt = "csv", directory = out_dir),
+       constraints = constraints, fmt = "csv", directory = out_dir_future),
   list(dataset_id = pH_SSP585, variables = c("ph_min", "ph_mean"),
-       constraints = constraints, fmt = "csv", directory = out_dir),
+       constraints = constraints, fmt = "csv", directory = out_dir_future),
   list(dataset_id = Chl_SSP585, variables = c("chl_mean"),
-       constraints = constraints, fmt = "csv", directory = out_dir),
+       constraints = constraints, fmt = "csv", directory = out_dir_future),
   list(dataset_id = O2_SSP585, variables = c("o2_mean"),
-       constraints = constraints, fmt = "csv", directory = out_dir),
+       constraints = constraints, fmt = "csv", directory = out_dir_future),
   list(dataset_id = sal_SSP585, variables = c("so_mean"),
-       constraints = constraints, fmt = "csv", directory = out_dir))
+       constraints = constraints, fmt = "csv", directory = out_dir_future))
 
 
 # Download datasets using for loop
@@ -157,17 +167,17 @@ for (dataset in datasets) {
   constraints <- dataset$constraints
   
   # List files before downloading
-  files_before <- list.files(out_dir, full.names = TRUE)
+  files_before <- list.files(out_dir_future, full.names = TRUE)
   # Download dataset
-  download_layers(dataset_id, variables = variables, constraints = constraints, fmt = "csv", directory = out_dir)
+  download_layers(dataset_id, variables = variables, constraints = constraints, fmt = "csv", directory = out_dir_future)
   # List files after downloading
-  files_after <- list.files(out_dir, full.names = TRUE)
+  files_after <- list.files(out_dir_future, full.names = TRUE)
   # Identify the newly downloaded file
   new_file <- setdiff(files_after, files_before)
   
   # Rename the file to match the dataset ID
   if (length(new_file) == 1) {
-    new_name <- file.path(out_dir, paste0(dataset_id, ".csv"))
+    new_name <- file.path(out_dir_future, paste0(dataset_id, ".csv"))
     file.rename(new_file, new_name)
     message("Rename ", new_file, " to ", new_name)
   } else {
@@ -179,4 +189,3 @@ for (dataset in datasets) {
 # Check list of files in output directory
 list.files(out_dir)
 
-# Note: upload these files to the appropriate folder on the VACC

@@ -31,14 +31,14 @@ library(raster)
 # ================================================================================== #
 
 # Read in Bio-oracle present data
-bio_oracle <- read.csv("data/processed/GEA/data/bio_oracle.csv", header=T)
+bio_oracle <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle.csv", header=T)
 
 # Extract the most recent data (i.e., 2010-01-01T00:00:00Z, which represents 2010-2020)
 bio_oracle_2010 <- bio_oracle %>% 
   filter(time == "2010-01-01T00:00:00Z")
 
 # Read in Bio-oracle future data
-bio_oracle_ssp585 <- read.csv("data/processed/GEA/data/bio_oracle_ssp585.csv", header=T)
+bio_oracle_ssp585 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_ssp585.csv", header=T)
 
 # Extract only the last decade of data (i.e., )
 bio_oracle_ssp585_2090 <- bio_oracle_ssp585 %>% 
