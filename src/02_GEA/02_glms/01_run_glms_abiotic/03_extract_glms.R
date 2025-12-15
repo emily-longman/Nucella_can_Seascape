@@ -37,7 +37,7 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # ================================================================================== #
 
-# Load and merge data
+# Extract glm chunk for each environmental variable
 
 # Create list of file names
 file_names = as.list(dir(path = 'data/processed/GEA/glms/glms_chunk_analysis/', pattern = "GLM_100perm_Bio-Oracle_chunk_*"))

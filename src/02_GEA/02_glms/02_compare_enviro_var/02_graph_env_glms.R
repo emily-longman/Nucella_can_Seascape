@@ -75,7 +75,7 @@ ggplot(summary, aes(x = reorder(variable, mean), y = mean)) +
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") +  
   labs(title = "Mean ± SD",
        x = "Environmental Variable",
-       y = "Value") +
+       y = "Relative rate of model enrichment") +
   theme_minimal()+
   coord_flip()+
   theme_bw()
@@ -89,7 +89,7 @@ ggplot(summary, aes(x = reorder(variable, mean), y = mean)) +
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
   labs(title = "Mean ± 95% CI Plot",
        x = "Group",
-       y = "Value") +
+       y = "Relative rate of model enrichment") +
   theme_minimal() +
   coord_flip()
 dev.off()

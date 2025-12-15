@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=extract_glms_abiotic
+#SBATCH --job-name=extract_glms_biotic
 
 # Specify partition
 #SBATCH --partition=general
@@ -20,7 +20,7 @@
 #SBATCH --mem=100G 
 
 # Submit job array
-#SBATCH --array=1-9
+#SBATCH --array=1-14
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -47,19 +47,24 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 #--------------------------------------------------------------------------------
 
 # Guide file 
-guide_file=$WORKING_FOLDER/guide_files/Bio-oracle_enviro_vars_names.txt
+guide_file=$WORKING_FOLDER/guide_files/MARINe_vars_names.txt
 
-#Example: -- the headers are just for descriptive purposes. The actual file has no headers.
+#Example: -- the headers are just for descriptive purposes. The actual file has no headers. 
 # Env variable name   
-# thetao_max
-# thetao_min
-# thetao_range
-# thetao_mean
-# chl_mean
-# o2_mean
-# ph_min
-# ph_mean
-# so_mean        
+# B.gland_m
+# B.gland_hm
+# C.dalli_m
+# C.dalli_hm
+# M.cali_m
+# M.cali_hm
+# M.tross_m
+# M.tross_hm
+# N.can_m
+# N.can_hm
+# N.ost_m
+# N.ost_hm
+# P.och_m
+# P.och_hm     
 
 #--------------------------------------------------------------------------------
 
@@ -99,7 +104,7 @@ fi
 
 # Run R script
 
-Rscript --vanilla $WORKING_FOLDER/src/02_GEA/02_glms/01_run_glms_abiotic/03_extract_glms.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/02_GEA/02_glms/01_run_glms_biotic/02_extract_glms.R "${i}"
 # The --vanilla option prevents restoring or saving workspaces
 
 #--------------------------------------------------------------------------------
