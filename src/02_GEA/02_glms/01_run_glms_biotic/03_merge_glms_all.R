@@ -25,9 +25,14 @@ library(foreach)
 
 # ================================================================================== #
 
-# Generate output directories
+# Specify arguments
+args = commandArgs(trailingOnly=TRUE)
+env_var = as.character(args[1]) #Environmental variable
 
-out_dir <- paste("data/processed/GEA/glms/glms_output_marine")
+# ================================================================================== #
+
+# Generate output directories
+out_dir <- paste("data/processed/GEA/glms/glms_per_env_var")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # ================================================================================== #
@@ -35,19 +40,26 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 # Load and merge data
 
 # Create list of file names
-file_names = as.list(dir(path = 'data/processed/GEA/glms/glms_chunk_analysis_marine/', pattern = "glm.model.collated.*"))
-file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/GEA/glms/glms_chunk_analysis_marine/', x))))
+path <- paste("data/processed/GEA/glms/glms_per_env_var/glms_", env_var, "/", sep = "")
+file_names = as.list(dir(path = path, pattern = "glm_*"))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("data/processed/GEA/glms/glms_per_env_var/glms_", env_var, "/", sep = ""), x))))
+
+# Check number of files
+length(file_names_v)
 
 # Read all the files and add a column with the chunk
 glm.model.collated =  
-foreach(i=file_names_v, .combine="rbind")%do%{  
+foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
     # State which file loading
     message(i)
     # Load file
     o = get(load(i))
-} 
+}
+
+# Check structure
+str(glm.model.collated)
 
 # ================================================================================== #
 
 # Save merged data
-save(glm.model.collated, file = "data/processed/GEA/glms/glms_output_marine/glm.model.collated.marine.Rdata")
+save(glm.model.collated, file = paste("data/processed/GEA/glms/glms_per_env_var/glm.collated_", env_var,".Rdata", sep = ""))

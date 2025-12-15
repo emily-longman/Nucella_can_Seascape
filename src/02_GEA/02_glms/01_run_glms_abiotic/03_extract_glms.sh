@@ -44,6 +44,9 @@ module load R/4.4.1
 # WORKING_FOLDER is the core folder where this pipeline is being run.
 WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
+# TMP_FOLDER - path to temporary folder with extra storage
+TMP_FOLDER=/gpfs3/scratch/elongman
+
 #--------------------------------------------------------------------------------
 
 # Guide file 
@@ -87,12 +90,21 @@ then echo "Working glms_per_env_var folder exist"; echo "Let's move on."; date
 else echo "Working glms_per_env_var folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_per_env_var; date
 fi
 
+# Move to working directory
+cd $TMP_FOLDER
+
+# This part of the script will check and generate, if necessary, all of the output folders used in the script
+if [ -d "glms_per_env_var" ]
+then echo "Working glms_per_env_var folder exist"; echo "Let's move on."; date
+else echo "Working glms_per_env_var folder doesnt exist. Let's fix that."; mkdir $TMP_FOLDER/glms_per_env_var; date
+fi
+
 # Change directory
-cd $WORKING_FOLDER/data/processed/GEA/glms/glms_per_env_var
+cd $TMP_FOLDER/glms_per_env_var
 
 if [ -d "glms_${i}" ]
 then echo "Working glms_${i} folder exist"; echo "Let's move on."; date
-else echo "Working glms_${i} folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_per_env_var/glms_${i}; date
+else echo "Working glms_${i} folder doesnt exist. Let's fix that."; mkdir $TMP_FOLDER/glms_per_env_var/glms_${i}; date
 fi
 
 #--------------------------------------------------------------------------------

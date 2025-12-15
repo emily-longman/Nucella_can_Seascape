@@ -8,11 +8,11 @@ rm(list=ls())
 # Set path as main Github repo
 # Install and load package
 #install.packages(c('rprojroot'))
-library(rprojroot)
+#library(rprojroot)
 # Specify root path
-root_path <- find_root_file(criterion = has_file("README.md"))
+#root_path <- find_root_file(criterion = has_file("README.md"))
 # Set working directory as path from root
-setwd(root_path)
+#setwd(root_path)
 
 # ================================================================================== #
 
@@ -32,7 +32,7 @@ env_var = as.character(args[1]) #Environmental variable
 # ================================================================================== #
 
 # Generate output directories
-out_dir <- paste("data/processed/GEA/glms/glms_per_env_var/glms_", env_var, sep = "")
+out_dir <- paste("/gpfs3/scratch/elongman/glms_per_env_var/glms_", env_var, sep = "")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # ================================================================================== #
@@ -40,8 +40,8 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 # Extract glm chunk for each environmental variable
 
 # Create list of file names
-file_names = as.list(dir(path = 'data/processed/GEA/glms/glms_chunk_analysis/', pattern = "GLM_100perm_Bio-Oracle_chunk_*"))
-file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/GEA/glms/glms_chunk_analysis/', x))))
+file_names = as.list(dir(path = '/gpfs2/scratch/elongman/Nucella_can_Seascape/data/processed/GEA/glms/glms_chunk_analysis/', pattern = "GLM_100perm_Bio-Oracle_chunk_*"))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('/gpfs2/scratch/elongman/Nucella_can_Seascape/data/processed/GEA/glms/glms_chunk_analysis/', x))))
 
 # Read all the files and add a column with the chunk
 foreach(w=file_names_v, .errorhandling = "remove")%do%{  
@@ -51,7 +51,7 @@ foreach(w=file_names_v, .errorhandling = "remove")%do%{
     o = get(load(w))
 
     # Add column with identifier
-    o %>% mutate(chunk = w) %>% mutate(chunk = str_remove(chunk, pattern = "data/processed/GEA/glms/glms_chunk_analysis/GLM_100perm_Bio-Oracle_chunk_")) -> tmp
+    o %>% mutate(chunk = w) %>% mutate(chunk = str_remove(chunk, pattern = "/gpfs2/scratch/elongman/Nucella_can_Seascape/data/processed/GEA/glms/glms_chunk_analysis/GLM_100perm_Bio-Oracle_chunk_")) -> tmp
 
     # Remove end of chunk name
     tmp <- tmp %>% mutate(chunk = str_remove(chunk, pattern = ".Rdata"))
@@ -65,7 +65,5 @@ foreach(w=file_names_v, .errorhandling = "remove")%do%{
     # Save subset
     save(tmp_env, file = paste(out_dir, "/glm_", env_var, "_", c, ".Rdata", sep = "") )
 
-    # Clear load
-    #rm(list = ls())
 }
 
