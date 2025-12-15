@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=compare_env_glms
+#SBATCH --job-name=model_envrichment_env_glms
 
 # Specify partition
 #SBATCH --partition=general
