@@ -44,6 +44,9 @@ module load R/4.4.1
 # WORKING_FOLDER is the core folder where this pipeline is being run.
 WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
+# TMP_FOLDER - path to temporary folder with extra storage
+TMP_FOLDER=/gpfs3/scratch/elongman
+
 #--------------------------------------------------------------------------------
 
 # Guide file 
