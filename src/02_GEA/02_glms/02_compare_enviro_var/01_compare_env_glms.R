@@ -17,9 +17,11 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr'))
+#install.packages(c('data.table', 'tidyverse', 'ggplot2', 'RColorBrewer', 'foreach', 'dplyr'))
 library(data.table)
 library(tidyverse)
+library(ggplot2)
+library(RColorBrewer)
 library(foreach)
 library(dplyr)
 
