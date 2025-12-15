@@ -17,11 +17,10 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'ggplot2', 'RColorBrewer', 'foreach', 'dplyr'))
+#install.packages(c('data.table', 'tidyverse', 'ggplot2', 'foreach', 'dplyr'))
 library(data.table)
 library(tidyverse)
 library(ggplot2)
-library(RColorBrewer)
 library(foreach)
 library(dplyr)
 
@@ -52,12 +51,12 @@ all_ratios <- foreach(i=enviro_vars_names, .combine="rbind")%do%{
     load(paste0("data/processed/GEA/glms/glms_per_env_var/glm.collated_", i, ".Rdata") )
 
     # Graph pval distribution - abiotic
-    pdf(paste0("output/figures/GEA/glms/glm_pval_dist_abiotic_", i, ".pdf"), width = 8, height = 8)
-    ggplot(glm.model.collated, aes(x=p_lrt, group=factor(perm), color=factor(perm))) + geom_density() +
-    scale_color_manual(values = c("red", rep("grey", 100))) +
-    xlab("GLM P-values") + ylab("Number of SNPs") +
-    theme_bw() + theme(legend.position = "none")
-    dev.off()
+    #pdf(paste0("output/figures/GEA/glms/glm_pval_dist_abiotic_", i, ".pdf"), width = 8, height = 8)
+    #ggplot(glm.model.collated, aes(x=p_lrt, group=factor(perm), color=factor(perm))) + geom_density() +
+    #scale_color_manual(values = c("red", rep("grey", 100))) +
+    #xlab("GLM P-values") + ylab("Number of SNPs") +
+    #theme_bw() + theme(legend.position = "none")
+    #dev.off()
 
     # Number of permutations
     n_perm = length(unique(glm.model.collated$perm[which(glm.model.collated$perm>0)]))

@@ -31,6 +31,11 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # ================================================================================== #
 
+# Load csv
+all_ratios <- read.csv("data/processed/GEA/glms/glms_summary/Bio-oracle.rr.csv", header=T)
+
+# ================================================================================== #
+
 # Get names of enviro variables
 bio_oracle_sites_2010 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", header=T)
 
@@ -43,15 +48,15 @@ names(bio_oracle_sites_2010)[4:12] -> enviro_vars_names
 summary <- all_ratios %>%
   group_by(variable) %>%
   drop_na() %>%
-  summarise(mean = mean(rr_ratio), # Is the mean as simple as this or do I need to modify it?
-            sd = sd(rr_ratio),
+  summarise(mean = mean(rr_ratio_log2), 
+            sd = sd(rr_ratio_log2),
             n = n(),  # Number of observations
             se = sd / sqrt(n),  # Calculate standard error
             ci_low = mean - 1.96 * se,
             ci_high = mean + 1.96 * se,
-            quantile_0.05 = quantile(rr_ratio, 0.05),
-            quantile_0.95 = quantile(rr_ratio, 0.95),
-            quantile_0.5 = quantile(rr_ratio, 0.5)) %>%
+            quantile_0.05 = quantile(rr_ratio_log2, 0.05),
+            quantile_0.95 = quantile(rr_ratio_log2, 0.95),
+            quantile_0.5 = quantile(rr_ratio_log2, 0.5)) %>%
   ungroup()
 
 # Write table
@@ -61,21 +66,23 @@ write.csv(summary, "data/processed/GEA/glms/glms_summary/Biotic.rr.sum.csv", row
 # ================================================================================== #
 
 # Graph summary
-pdf("output/figures/GEA/glms/glm_biotic_rr_sum.pdf", width = 8, height = 8)
+
+# Graph relative rate of model enrichment - mean and sd
+pdf("output/figures/GEA/glms/glm_Bio-oracle_rr_sum.pdf", width = 8, height = 8)
 ggplot(summary, aes(x = reorder(variable, mean), y = mean)) + 
   geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd))+ 
   geom_point()+ 
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") +  
-  labs(title = "",
-       x = "Group",
+  labs(title = "Mean ± SD",
+       x = "Environmental Variable",
        y = "Value") +
   theme_minimal()+
   coord_flip()+
   theme_bw()
 dev.off()
 
-
-pdf("output/figures/GEA/glms/glm_biotic_rr_sum_CI.pdf", width = 8, height = 8)
+# Graph relative rate of model enrichment  - mean and 95% CI
+pdf("output/figures/GEA/glms/glm_Bio-oracle_rr_sum_CI.pdf", width = 8, height = 8)
 ggplot(summary, aes(x = reorder(variable, mean), y = mean)) +
   geom_errorbar(aes(ymin = ci_low, ymax = ci_high)) +  # Use 95% CI
   geom_point() +
@@ -87,14 +94,3 @@ ggplot(summary, aes(x = reorder(variable, mean), y = mean)) +
   coord_flip()
 dev.off()
 
-pdf("output/figures/GEA/glms/glm_biotic_rr_sum_quant_0.5.pdf", width = 8, height = 8)
-ggplot(summary, aes(x = reorder(variable, quantile_0.5), y = quantile_0.5)) +
-  geom_errorbar(aes(ymin = quantile_0.05, ymax = quantile_0.95)) +  # Use 95% CI
-  geom_point() +
-  geom_hline(yintercept = 1, linetype = "dashed", color = "red") +  # Reference line at 1
-  labs(title = "Mean ± 95% CI Plot",
-       x = "Group",
-       y = "Value") +
-  theme_minimal() +
-  coord_flip()
-dev.off()
