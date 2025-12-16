@@ -13,7 +13,7 @@
 # Request nodes
 #SBATCH --nodes=1 
 
-# Reserve walltime -- hh:mm:ss --30 hrs max
+# Reserve walltime -- hh:mm:ss
 #SBATCH --time=30:00:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
@@ -44,7 +44,7 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 # Run R script
 
-Rscript --vanilla $WORKING_FOLDER/src/02_GEA/02_glms/02_compare_enviro_var/01_compare_env_glms.R
+Rscript --vanilla $WORKING_FOLDER/src/02_GEA/02_glms/02_compare_vars/01_compare_vars.R
 
 #--------------------------------------------------------------------------------
 

@@ -8,47 +8,52 @@ rm(list=ls())
 # Set path as main Github repo
 # Install and load package
 #install.packages(c('rprojroot'))
-library(rprojroot)
+#library(rprojroot)
 # Specify root path
-root_path <- find_root_file(criterion = has_file("README.md"))
+#root_path <- find_root_file(criterion = has_file("README.md"))
 # Set working directory as path from root
-setwd(root_path)
+#setwd(root_path)
 
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'ggplot2', 'foreach', 'dplyr'))
+#install.packages(c('data.table', 'tidyverse', 'ggplot2', 'foreach', 'doParallel', 'dplyr'))
 library(data.table)
 library(tidyverse)
 library(ggplot2)
 library(foreach)
+library(doParallel)
 library(dplyr)
 
 # ================================================================================== #
 
 # Generate output directories
-out_dir <- paste("data/processed/GEA/glms/glms_summary")
+out_dir <- paste("/gpfs2/scratch/elongman/Nucella_can_Seascape/data/processed/GEA/glms/glms_summary")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # ================================================================================== #
 
 # Get names of enviro variables
-bio_oracle_sites_2010 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", header=T)
+vars_names <- read.csv("guide_files/Seascape_vars_names.txt", header=F)
 
 # Extract just names
-names(bio_oracle_sites_2010)[4:12] -> enviro_vars_names
+vars_names <- vars_names$V1
 
 # ================================================================================== #
 
 # Model enrichment
 
+# Run in parallel
+myCluster <- makeCluster(detectCores()-1, type="FORK")
+registerDoParallel(myCluster)
+
 # Summarize the permutation data across the environmental variables
-all_ratios <- foreach(i=enviro_vars_names, .combine="rbind")%do%{
+all_ratios <- foreach(i=vars_names, .combine="rbind")%dopar%{
     # State variable name
     message(i)
 
     # Load data
-    load(paste0("data/processed/GEA/glms/glms_per_env_var/glm.collated_", i, ".Rdata") )
+    load(paste0("/gpfs3/scratch/elongman/glms_per_env_var/glm.collated_", i, ".Rdata") )
 
     # Graph pval distribution - abiotic
     #pdf(paste0("output/figures/GEA/glms/glm_pval_dist_abiotic_", i, ".pdf"), width = 8, height = 8)
@@ -86,6 +91,11 @@ all_ratios <- foreach(i=enviro_vars_names, .combine="rbind")%do%{
     rm(glm.model.collated)
 }
 
+# Stop parallelization
+stopCluster(myCluster)
+
+# ================================================================================== #
+
 # Write table
-write.csv(all_ratios, "data/processed/GEA/glms/glms_summary/Bio-oracle.rr.csv", row.names=FALSE)
+write.csv(all_ratios, "/gpfs2/scratch/elongman/Nucella_can_Seascape/data/processed/GEA/glms/glms_summary/Abiotic_biotic_vars_rr.csv", row.names=FALSE)
 
