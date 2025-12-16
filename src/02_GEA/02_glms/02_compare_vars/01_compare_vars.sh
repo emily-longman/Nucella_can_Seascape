@@ -17,7 +17,10 @@
 #SBATCH --time=30:00:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=800G 
+#SBATCH --mem=900G 
+
+# Submit job array
+#SBATCH --array=1-23
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%j.out
@@ -42,9 +45,34 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 #--------------------------------------------------------------------------------
 
+# Guide file 
+guide_file=$WORKING_FOLDER/guide_files/Seascape_vars_names.txt
+
+#Example: -- the headers are just for descriptive purposes. The actual file has no headers. 
+# Env variable name   
+# thetao_max
+#...
+# P.och_m
+# P.och_hm     
+
+#--------------------------------------------------------------------------------
+
+# Determine the environmental variable to process
+
+# Echo slurm array task ID
+echo ${SLURM_ARRAY_TASK_ID}
+
+# Using the guide file, extract the scaffold names associated based on the Slurm array task ID for a given partition
+i=`sed -n ${SLURM_ARRAY_TASK_ID}p $guide_file`
+
+# State environmental variable
+echo ${i}
+
+#--------------------------------------------------------------------------------
+
 # Run R script
 
-Rscript --vanilla $WORKING_FOLDER/src/02_GEA/02_glms/02_compare_vars/01_compare_vars.R
+Rscript --vanilla $WORKING_FOLDER/src/02_GEA/02_glms/02_compare_vars/01_compare_vars.R "${i}"
 
 #--------------------------------------------------------------------------------
 
