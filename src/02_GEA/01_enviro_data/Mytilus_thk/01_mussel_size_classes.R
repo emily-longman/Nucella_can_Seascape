@@ -30,7 +30,7 @@ library(RColorBrewer)
 # Load data
 
 # Read in mussel shell data
-Mcali <- read.csv("data/raw/M.cali.thk/Mcali_shell_thk.csv", header=T)
+Mcali <- read.csv("data/raw/Mcali_thk/Mcali_shell_thk.csv", header=T)
 
 # ================================================================================== #
 
@@ -73,5 +73,5 @@ Mcali.data <- Mcali %>% filter(!is.na(Segment.Area))
 Mcali.data.sum <- Mcali.data %>% group_by(Site.Code, value_bin) %>% summarize(count=n())
 
 # Write table
-write.csv(Mcali.data.sum, "data/raw/M.cali.thk/Mcali.data.sum.csv", row.names=FALSE)
+write.csv(Mcali.data.sum, "data/raw/Mcali_thk/Mcali.data.sum.csv", row.names=FALSE)
 

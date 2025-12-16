@@ -1,0 +1,198 @@
+# Subset M. californianus thickness dataset
+
+# Clear memory
+rm(list=ls()) 
+
+# ================================================================================== #
+
+# Set path as main Github repo
+install.packages(c('rprojroot'))
+library(rprojroot)
+
+# List all files and directories below the root
+dir(find_root_file(criterion = has_file("README.md")))
+root_path <- find_root_file(criterion = has_file("README.md"))
+# Set working directory as path from root
+setwd(root_path)
+
+# ================================================================================== #
+
+# Load packages
+install.packages(c('data.table', 'tidyverse', 'ggplot2', 'RColorBrewer', 'Hmisc'))
+library(data.table)
+library(tidyverse)
+library(ggplot2)
+library(RColorBrewer)
+library(Hmisc)
+
+# ================================================================================== #
+
+# Generate output directories
+
+# Data directory
+out_dir <- paste("data/processed/GEA/enviro_data/Mcali_thk")
+if (!dir.exists(out_dir)) {dir.create(out_dir)}
+
+# Figure directory
+out_dir_fig <- paste("output/figures/GEA/enviro/Mcali_thk")
+if (!dir.exists(out_dir_fig)) {dir.create(out_dir_fig)}
+
+# ================================================================================== #
+
+# Color palettes for graphing
+nb.cols <- 19
+mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
+
+# ================================================================================== #
+
+# Load data
+
+# Read in mussel shell data
+Mcali <- read.csv("data/raw/Mcali_thk/Mcali_shell_thk.csv", header=T)
+
+# Make sites a factors
+Mcali$Site.Code <- factor(Mcali$Site.Code, 
+    levels = rev(c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR")))
+
+# ================================================================================== #
+
+# Create bin column
+Mcali <- Mcali %>% mutate(
+        value_bin = case_when(
+          Length.L..mm. <= 20 ~ "10",
+          Length.L..mm. > 20 & Length.L..mm. <= 30 ~ "20",
+          Length.L..mm. > 30 & Length.L..mm. <= 40 ~ "30",
+          Length.L..mm. > 40 & Length.L..mm. <= 50 ~ "40",
+          Length.L..mm. > 50 & Length.L..mm. <= 60 ~ "50",
+          Length.L..mm. > 60 & Length.L..mm. <= 70 ~ "60",
+          Length.L..mm. > 70 & Length.L..mm. <= 80 ~ "70",
+          Length.L..mm. > 80 & Length.L..mm. <= 90 ~ "80",
+          Length.L..mm. > 90 & Length.L..mm. <= 100 ~ "90",
+          Length.L..mm. > 100 & Length.L..mm. <= 110 ~ "100",
+          Length.L..mm. > 110 & Length.L..mm. <= 120 ~ "110",
+          Length.L..mm. > 120 & Length.L..mm. <= 130 ~ "120",
+          Length.L..mm. > 130 & Length.L..mm. <= 140 ~ "130",
+          Length.L..mm. > 140 & Length.L..mm. <= 150 ~ "140",
+          Length.L..mm. > 150 ~ "150",
+          TRUE ~ "Other" # Catch-all for values not fitting previous conditions
+        )
+      )
+
+# ================================================================================== #
+
+# Filter for only mussels that have done ImageJ on
+Mcali_data <- Mcali %>% filter(!is.na(Segment.Area))
+
+# Set seed
+set.seed(123)
+
+# Subsample dataset so even number of mussels of each size for each pop
+Mcali_data_40 <- Mcali_data %>% group_by(Site.Code) %>% filter(value_bin == "40") %>% slice_sample(n=3)
+Mcali_data_50 <- Mcali_data %>% group_by(Site.Code) %>% filter(value_bin == "50") %>% slice_sample(n=4)
+Mcali_data_60 <- Mcali_data %>% group_by(Site.Code) %>% filter(value_bin == "60") %>% slice_sample(n=5)
+Mcali_data_70 <- Mcali_data %>% group_by(Site.Code) %>% filter(value_bin == "70") %>% slice_sample(n=6)
+Mcali_data_80 <- Mcali_data %>% group_by(Site.Code) %>% filter(value_bin == "80") %>% slice_sample(n=5)
+Mcali_data_90 <- Mcali_data %>% group_by(Site.Code) %>% filter(value_bin == "90") %>% slice_sample(n=4)
+Mcali_data_100 <- Mcali_data %>% group_by(Site.Code) %>% filter(value_bin == "100") %>% slice_sample(n=3)
+
+Mcali_data_sub <- rbind(Mcali_data_40, Mcali_data_50, Mcali_data_60, Mcali_data_70, Mcali_data_80, Mcali_data_90, Mcali_data_100)
+
+# Add one KH mussel that is 80.8mm becuase 70-80mm is one short
+Mcali_data_sub <- rbind(Mcali_data_sub, Mcali[1097,])
+
+# ================================================================================== #
+
+# Save dataset
+write.csv(Mcali_data_sub, "data/processed/GEA/enviro_data/Mcali_thk/Mcalifornianus_data_subset.csv", row.names=F)
+
+# ================================================================================== #
+
+# Format data
+
+# Make Integrated Thk numeric
+Mcali_data_sub$Integrated.Thk <- as.numeric(Mcali_data_sub$Integrated.Thk)
+# Make Max Thk numeric
+Mcali_data_sub$Max.thk <- as.numeric(Mcali_data_sub$Max.thk)
+# Make Min Thk numeric
+Mcali_data_sub$Min.thk <- as.numeric(Mcali_data_sub$Min.thk)
+
+# ================================================================================== #
+
+# Summarize data
+Mcali_sub_sum <- Mcali_data_sub %>%
+    group_by(Site.Code) %>%
+    summarise(num_shells = n(),
+    mean_STI = mean(STI), sd_STI = sd(STI), se_STI = sd_STI/sqrt(num_shells), 
+    mean_integrated_thk = mean(Integrated.Thk), sd_integrated_thk = sd(Integrated.Thk), se_integrated_thk = sd_integrated_thk/sqrt(num_shells), 
+    mean_max_thk = mean(Max.thk), sd_max_thk = sd(Max.thk), se_max_thk = sd_max_thk/sqrt(num_shells),
+    mean_min_thk = mean(Min.thk), sd_min_thk = sd(Min.thk), se_min_thk = sd_min_thk/sqrt(num_shells)) %>% as.data.frame() 
+
+# ================================================================================== #
+
+# Graph STI
+
+# Graph by population - mean and se
+pdf("output/figures/GEA/enviro/Mcali_thk/Mcali_STI_mean_se.pdf", width = 10, height = 14)
+ggplot(data = Mcali_sub_sum, aes(x=mean_STI, y=Site.Code, colour = Site.Code)) + 
+geom_point(data = Mcali_sub_sum, size=4, shape = 21, color = mycolors, fill = mycolors) + 
+geom_errorbar(data = Mcali_sub_sum, aes(xmin=mean_STI-se_STI, xmax=mean_STI+se_STI), width=.5) +
+scale_fill_manual(values=mycolors, guide="none") + 
+scale_colour_manual(values=mycolors, guide="none") +
+xlab("M. californianus Shell Thickness Index") + ylab("") + 
+theme_classic(base_size = 24)
+dev.off()
+
+# ================================================================================== #
+
+
+# Graph Integrated thk
+
+# Graph by population - mean and se
+pdf("output/figures/GEA/enviro/Mcali_thk/Mcali_integrated_thk_mean_se.pdf", width = 10, height = 14)
+ggplot(data = Mcali_sub_sum, aes(x=mean_integrated_thk, y=Site.Code, colour = Site.Code)) + 
+geom_point(data = Mcali_sub_sum, size=4, shape = 21, color = mycolors, fill = mycolors) + 
+geom_errorbar(data = Mcali_sub_sum, aes(xmin=mean_integrated_thk-se_integrated_thk, xmax=mean_integrated_thk+se_integrated_thk), width=.5) +
+scale_fill_manual(values=mycolors, guide="none") + 
+scale_colour_manual(values=mycolors, guide="none") +
+xlab("M. californianus Integrated Thickness (mm)") + ylab("") + 
+theme_classic(base_size = 24)
+dev.off()
+
+# Graph by population - raw points and pointrange
+pdf("output/figures/GEA/enviro/Mcali_thk/Mcali_integrated_thk_raw_pointrange.pdf", width = 10, height = 14)
+ggplot(data = Mcali_data_sub, aes(x=Integrated.Thk, y=Site.Code)) + 
+geom_jitter(data = Mcali_data_sub, aes(x=Integrated.Thk, y=Site.Code), colour="darkgrey", height = 0.1) +
+stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="pointrange", color=mycolors) + 
+theme_classic(base_size = 24) +
+xlab("M. californianus Integrated Thickness (mm)") + ylab("")
+dev.off()
+
+# ================================================================================== #
+
+# Graph Max thk
+
+# Graph by population - mean and se
+pdf("output/figures/GEA/enviro/Mcali_thk/Mcali_max_thk_mean_se.pdf", width = 10, height = 14)
+ggplot(data = Mcali_sub_sum, aes(x=mean_max_thk, y=Site.Code, colour = Site.Code)) + 
+geom_point(data = Mcali_sub_sum, size=4, shape = 21, color = mycolors, fill = mycolors) + 
+geom_errorbar(data = Mcali_sub_sum, aes(xmin=mean_max_thk-se_max_thk, xmax=mean_max_thk+se_max_thk), width=.5) +
+scale_fill_manual(values=mycolors, guide="none") + 
+scale_colour_manual(values=mycolors, guide="none") +
+xlab("M. californianus Max Thickness (mm)") + ylab("") + 
+theme_classic(base_size = 24)
+dev.off()
+
+# ================================================================================== #
+
+# Graph Min thk
+
+# Graph by population - mean and se
+pdf("output/figures/GEA/enviro/Mcali_thk/Mcali_min_thk_mean_se.pdf", width = 10, height = 14)
+ggplot(data = Mcali_sub_sum, aes(x=mean_min_thk, y=Site.Code, colour = Site.Code)) + 
+geom_point(data = Mcali_sub_sum, size=4, shape = 21, color = mycolors, fill = mycolors) + 
+geom_errorbar(data = Mcali_sub_sum, aes(xmin=mean_min_thk-se_min_thk, xmax=mean_min_thk+se_min_thk), width=.5) +
+scale_fill_manual(values=mycolors, guide="none") + 
+scale_colour_manual(values=mycolors, guide="none") +
+xlab("M. californianus Min Thickness (mm)") + ylab("") + 
+theme_classic(base_size = 24)
+dev.off()

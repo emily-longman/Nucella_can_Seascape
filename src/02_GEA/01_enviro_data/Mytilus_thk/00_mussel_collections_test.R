@@ -11,7 +11,7 @@ library(tidyverse)
 library(here)
 
 # Load data --------------------------------------------------------------------
-mussels <- read.csv(here::here("data/raw/enviro/M.cali.thk/Mcal_shell_thickness_2019.csv"))
+mussels <- read.csv(here::here("data/raw/enviro/Mcali_thk/Mcal_shell_thickness_2019.csv"))
 mussels$Thk.length <- mussels$Ave.thk.1.3/ mussels$Shell.Length
 str(mussels)
 
