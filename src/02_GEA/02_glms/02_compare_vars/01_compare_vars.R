@@ -17,12 +17,12 @@ rm(list=ls())
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'ggplot2', 'foreach', 'doParallel', 'dplyr'))
+#install.packages(c('data.table', 'tidyverse', 'ggplot2', 'foreach', 'doMC', 'dplyr'))
 library(data.table)
 library(tidyverse)
 library(ggplot2)
 library(foreach)
-library(doParallel)
+library(doMC)
 library(dplyr)
 
 # ================================================================================== #
