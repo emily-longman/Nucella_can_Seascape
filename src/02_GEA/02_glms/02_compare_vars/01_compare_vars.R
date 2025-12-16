@@ -42,10 +42,7 @@ vars_names <- vars_names$V1
 # ================================================================================== #
 
 # Model enrichment
-
-# Run in parallel
-myCluster <- makeCluster(detectCores()-1, type="FORK")
-registerDoParallel(myCluster)
+registerDoMC(20)
 
 # Summarize the permutation data across the environmental variables
 all_ratios <- foreach(i=vars_names, .combine="rbind")%dopar%{
@@ -91,8 +88,6 @@ all_ratios <- foreach(i=vars_names, .combine="rbind")%dopar%{
     rm(glm.model.collated)
 }
 
-# Stop parallelization
-stopCluster(myCluster)
 
 # ================================================================================== #
 
