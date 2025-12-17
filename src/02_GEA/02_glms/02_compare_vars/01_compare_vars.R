@@ -21,8 +21,6 @@ rm(list=ls())
 library(data.table)
 library(tidyverse)
 library(ggplot2)
-#library(foreach)
-#library(doMC)
 library(dplyr)
 
 # ================================================================================== #
@@ -39,10 +37,8 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # ================================================================================== #
 
-# Model enrichment
-#registerDoMC(20)
+# Model enrichment - Summarize the permutation data across the environmental variables
 
-# Summarize the permutation data across the environmental variables
 # State variable name
 message(env_var)
 
@@ -50,10 +46,11 @@ message(env_var)
 load(paste0("/gpfs3/scratch/elongman/glms_per_env_var/glm.collated_", env_var, ".Rdata") )
 
 # Graph pval distribution - abiotic
-pdf(paste0("output/figures/GEA/glms/glm_pval_dist_abiotic_", env_var, ".pdf"), width = 8, height = 8)
+pdf(paste0("output/figures/GEA/glms/glm_pval_dist_log_scale_abiotic_", env_var, ".pdf"), width = 8, height = 8)
 ggplot(glm.model.collated, aes(x=p_lrt, group=factor(perm), color=factor(perm))) + geom_density() +
 scale_color_manual(values = c("red", rep("grey", 100))) +
-xlab("GLM P-values") + ylab("Number of SNPs") +
+xlab("GLM P-values") + ylab("Number of SNPs") + 
+scale_y_log10(breaks = c(0.01, 0.1, 1.0), labels = c("0.01", "0.1", "1.0")) +
 theme_bw() + theme(legend.position = "none")
 dev.off()
 
@@ -76,7 +73,7 @@ rr_real <- real_data$rr_real
 
 # Join the datasets and compare the rr between real and perm
 ratios <- perm_data %>%
-mutate(rr_ratio = (rr_real / rr_perm), rr_ratio_log2 = log2(rr_real / rr_perm), variable = i)
+mutate(rr_ratio = (rr_real / rr_perm), rr_ratio_log2 = log2(rr_real / rr_perm), variable = env_var)
 
 
 # ================================================================================== #
