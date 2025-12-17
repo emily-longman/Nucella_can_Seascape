@@ -23,7 +23,7 @@
 #SBATCH --array=1-23
 
 # Name output of this job using %x=job-name and %j=job-id
-#SBATCH --output=./slurmOutput/%x.%j.out
+#SBATCH --output=./slurmOutput/%x.%A_%a.out
 
 # Receive emails when job begins and ends or fails
 #SBATCH --mail-type=ALL
