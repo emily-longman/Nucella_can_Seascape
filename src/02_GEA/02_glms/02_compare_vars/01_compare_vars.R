@@ -50,7 +50,7 @@ pdf(paste0("output/figures/GEA/glms/glm_pval_dist_log_scale_abiotic_", env_var, 
 ggplot(glm.model.collated, aes(x=p_lrt, group=factor(perm), color=factor(perm))) + geom_density() +
 scale_color_manual(values = c("red", rep("grey", 100))) +
 xlab("GLM P-values") + ylab("Number of SNPs") + 
-scale_y_log10(breaks = c(0.01, 0.1, 1.0), labels = c("0.01", "0.1", "1.0")) +
+scale_x_log10(breaks = c(0.01, 0.1, 1.0), labels = c("0.01", "0.1", "1.0")) +
 theme_bw() + theme(legend.position = "none")
 dev.off()
 

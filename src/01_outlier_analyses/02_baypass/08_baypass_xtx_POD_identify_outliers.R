@@ -86,7 +86,7 @@ pod.3.thres.99=quantile(XtX.POD.3$M_XtX, probs=0.99)
 pod.4.thres.99=quantile(XtX.POD.4$M_XtX, probs=0.99)
 pod.5.thres.99=quantile(XtX.POD.5$M_XtX, probs=0.99)
 
-# Take the mean of the 5 runs to determine the pod threshold 
+# Take the mean of the 5 runs to determine the pod threshold
 pod.thres.99 <- mean(c(pod.1.thres.99, pod.2.thres.99, pod.3.thres.99, pod.4.thres.99, pod.5.thres.99))
 
 # Identify outliers -- 318,349 SNPs

@@ -31,16 +31,27 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # ================================================================================== #
 
-# Load csv
-all_ratios <- read.csv("data/processed/GEA/glms/glms_summary/Bio-oracle.rr.csv", header=T)
+# Load csv files
+
+# Create list of file names
+file_names = as.list(dir(path = 'data/processed/GEA/glms/glms_summary/', pattern = "Vars_rr_*"))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/GEA/glms/glms_summary/', x))))
+
+# Read all the files and add a column with the chunk
+all_ratios <- foreach(w=file_names_v, .combine = rbind)%do%{  
+    # State which file loading
+    message(w)
+    # Load file
+    ratios = read.csv(w, header=T)
+}
+
+# Save all ratios
+write.csv(all_ratios, "data/processed/GEA/glms/glms_summary/All_vars_rr.csv", row.names=FALSE)
 
 # ================================================================================== #
 
-# Get names of enviro variables
-bio_oracle_sites_2010 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", header=T)
-
-# Extract just names
-names(bio_oracle_sites_2010)[4:12] -> enviro_vars_names
+# Get names of variables
+unique(all_ratios$variable) -> enviro_vars_names
 
 # ================================================================================== #
 
@@ -48,19 +59,20 @@ names(bio_oracle_sites_2010)[4:12] -> enviro_vars_names
 summary <- all_ratios %>%
   group_by(variable) %>%
   drop_na() %>%
-  summarise(mean = mean(rr_ratio_log2), 
-            sd = sd(rr_ratio_log2),
-            n = n(),  # Number of observations
-            se = sd / sqrt(n),  # Calculate standard error
-            ci_low = mean - 1.96 * se,
-            ci_high = mean + 1.96 * se,
+  summarise(n = n(),  # Number of observations,
+            mean_rr_log2 = mean(rr_ratio_log2),
+            sd_rr_log2 = sd(rr_ratio_log2),
+            se_rr_log2 = sd_rr_log2 / sqrt(n),  # Calculate standard error
+            ci_low = mean_rr_log2 - 1.96 * se_rr_log2,
+            ci_high = mean_rr_log2 + 1.96 * se_rr_log2,
             quantile_0.05 = quantile(rr_ratio_log2, 0.05),
             quantile_0.95 = quantile(rr_ratio_log2, 0.95),
             quantile_0.5 = quantile(rr_ratio_log2, 0.5)) %>%
   ungroup()
 
+
 # Write table
-write.csv(summary, "data/processed/GEA/glms/glms_summary/Biotic.rr.sum.csv", row.names=FALSE)
+write.csv(summary, "data/processed/GEA/glms/glms_summary/All_vars_rr_sum.csv", row.names=FALSE)
 
 
 # ================================================================================== #
@@ -68,27 +80,28 @@ write.csv(summary, "data/processed/GEA/glms/glms_summary/Biotic.rr.sum.csv", row
 # Graph summary
 
 # Graph relative rate of model enrichment - mean and sd
-pdf("output/figures/GEA/glms/glm_Bio-oracle_rr_sum.pdf", width = 8, height = 8)
-ggplot(summary, aes(x = reorder(variable, mean), y = mean)) + 
-  geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd))+ 
+pdf("output/figures/GEA/glms/GLM_rr_sum.pdf", width = 8, height = 8)
+ggplot(summary, aes(x = reorder(variable, mean_rr_log2), y = mean_rr_log2)) + 
+  geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
   geom_point()+ 
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") +  
-  labs(title = "Mean ± SD",
-       x = "Environmental Variable",
-       y = "Relative rate of model enrichment") +
+  labs(title = "Mean ± 2*SD",
+       x = "",
+       y = "Log2(Relative rate of model enrichment)") +
   theme_minimal()+
   coord_flip()+
-  theme_bw()
+  theme_bw(base_size=20)
 dev.off()
 
+
 # Graph relative rate of model enrichment  - mean and 95% CI
-pdf("output/figures/GEA/glms/glm_Bio-oracle_rr_sum_CI.pdf", width = 8, height = 8)
-ggplot(summary, aes(x = reorder(variable, mean), y = mean)) +
+pdf("output/figures/GEA/glms/GLM_rr_sum_CI.pdf", width = 8, height = 8)
+ggplot(summary, aes(x = reorder(variable, mean_rr_log2), y = mean_rr_log2)) +
   geom_errorbar(aes(ymin = ci_low, ymax = ci_high)) +  # Use 95% CI
   geom_point() +
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
   labs(title = "Mean ± 95% CI Plot",
-       x = "Group",
+       x = "",
        y = "Relative rate of model enrichment") +
   theme_minimal() +
   coord_flip()
