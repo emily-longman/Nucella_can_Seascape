@@ -17,10 +17,11 @@ rm(list=ls())
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'ggplot2', 'foreach', 'doMC', 'dplyr'))
+#install.packages(c('data.table', 'tidyverse', 'ggplot2', 'foreach', 'dplyr'))
 library(data.table)
 library(tidyverse)
 library(ggplot2)
+library(foreach)
 library(dplyr)
 
 # ================================================================================== #
@@ -45,14 +46,27 @@ message(env_var)
 # Load data
 load(paste0("/gpfs3/scratch/elongman/glms_per_env_var/glm.collated_", env_var, ".Rdata") )
 
-# Graph pval distribution - abiotic
+# Bin data
+hist.obj.env = foreach(i = 0:max(glm.model.collated$perm), .combine = "rbind")%do%{
+hist(glm.model.collated$p_lrt[glm.model.collated$perm == i], breaks = 100) -> hist.obj
+data.frame(
+  hist.obj$mids,
+  hist.obj$counts,
+  perm = i) -> o
+}
+
+# Graph pval distribution
 pdf(paste0("output/figures/GEA/glms/glm_pval_dist_log_scale_abiotic_", env_var, ".pdf"), width = 8, height = 8)
-ggplot(glm.model.collated, aes(x=p_lrt, group=factor(perm), color=factor(perm))) + geom_density() +
-scale_color_manual(values = c("red", rep("grey", 100))) +
-labs(title = paste0(env_var, "P-value distribution"), x = "GLM P-values", y = "Number of SNPs") +
-scale_x_log10(breaks = c(0.01, 0.1, 1.0), labels = c("0.01", "0.1", "1.0")) +
-theme_bw() + theme(base_size=20, legend.position = "none")
+ggplot(hist.obj.env, aes(x=(hist.obj.mids),y=hist.obj.counts, group=perm, color=perm==0)) +
+  geom_line(aes(alpha=perm==0 )) + 
+  scale_alpha_manual(values = c(0.1, 1)) +
+  scale_size_manual(values = c(0.7, 1.3)) +
+  scale_color_manual(values = c("red","black")) +
+  labs(title = paste0(env_var, " P-value distribution"), x = "GLM P-values", y = "Number of SNPs") +
+  theme_bw() +   theme(legend.position = "none") +
+  scale_x_log10()
 dev.off()
+
 
 # Number of permutations
 n_perm = length(unique(glm.model.collated$perm[which(glm.model.collated$perm>0)]))
