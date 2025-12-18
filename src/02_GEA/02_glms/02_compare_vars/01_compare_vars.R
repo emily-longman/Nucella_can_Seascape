@@ -56,17 +56,16 @@ data.frame(
 }
 
 # Graph pval distribution
-pdf(paste0("output/figures/GEA/glms/glm_pval_dist_log_scale_abiotic_", env_var, ".pdf"), width = 8, height = 8)
+pdf(paste0("output/figures/GEA/glms/glm_pval_dist_log_scale_", env_var, ".pdf"), width = 8, height = 8)
 ggplot(hist.obj.env, aes(x=(hist.obj.mids),y=hist.obj.counts, group=perm, color=perm==0)) +
-  geom_line(aes(alpha=perm==0 )) + 
+  geom_line(aes(alpha=perm==0 ), linewidth = 2.5) + 
   scale_alpha_manual(values = c(0.1, 1)) +
   scale_size_manual(values = c(0.7, 1.3)) +
   scale_color_manual(values = c("red","black")) +
   labs(title = paste0(env_var, " P-value distribution"), x = "GLM P-values", y = "Number of SNPs") +
-  theme_bw() +   theme(legend.position = "none") +
+  theme_bw(base_size = 24) +  theme(legend.position = "none") +
   scale_x_log10()
 dev.off()
-
 
 # Number of permutations
 n_perm = length(unique(glm.model.collated$perm[which(glm.model.collated$perm>0)]))
