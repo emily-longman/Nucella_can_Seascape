@@ -150,86 +150,86 @@ glm.model.output =
     ###############################################################
   
     # Run model for each variable
-    real_estimates =
-      foreach(j=enviro_vars_names, .combine = "rbind", .errorhandling = "remove")%do%{
-        
-        # Extract data for 'j' environmental variable
-        gathered_data %>% filter(enviro_var == j) -> inner.tmp
-        
-        # Model allele freq
-        # Generate 3 models - a null model (t0), a model with just demography (t1.dem) and a model with demography and "j" enviro var (t1.dem.env)
-        y <- inner.tmp$af_nEff
-        X.null <- model.matrix(~1, inner.tmp)
-        X.dem <- model.matrix(~PC1, inner.tmp)
-        X.dem.env <- model.matrix(~PC1+value, inner.tmp)
-        t0 <- fastglm(x=X.null, y=y, family=binomial(), weights=inner.tmp$nEff, method=0)
-        t1.dem <- fastglm(x=X.dem, y=y, family=binomial(), weights=inner.tmp$nEff, method=0)
-        t1.dem.env <- fastglm(x=X.dem.env, y=y, family=binomial(), weights=inner.tmp$nEff, method=0)
-        
-        # Generate output table with t1.dem.env model information and model comparison info for each variable
-        data.frame(
-          chr = unique(inner.tmp$chr),
-          pos = unique(inner.tmp$pos),
-          variable = j,
-          missing = seqMissing(genofile),
-          perm = 0,
-          data = "real",
-          AIC_null = c(AIC(t0)),
-          AIC_dem = c(AIC(t1.dem)),
-          AIC_dem_env = c(AIC(t1.dem.env)),
-          b_enviro = last(t1.dem.env$coef),
-          se_enviro = last(t1.dem.env$se),
-          p_lrt = anovaFun(t1.dem, t1.dem.env))
-      } # End for enviro var
+#    real_estimates =
+#      foreach(j=enviro_vars_names, .combine = "rbind", .errorhandling = "remove")%do%{
+#        
+#        # Extract data for 'j' environmental variable
+#        gathered_data %>% filter(enviro_var == j) -> inner.tmp
+#        
+#        # Model allele freq
+#        # Generate 3 models - a null model (t0), a model with just demography (t1.dem) and a model with demography and "j" enviro var (t1.dem.env)
+#        y <- inner.tmp$af_nEff
+#        X.null <- model.matrix(~1, inner.tmp)
+#        X.dem <- model.matrix(~PC1, inner.tmp)
+#        X.dem.env <- model.matrix(~PC1+value, inner.tmp)
+#        t0 <- fastglm(x=X.null, y=y, family=binomial(), weights=inner.tmp$nEff, method=0)
+#        t1.dem <- fastglm(x=X.dem, y=y, family=binomial(), weights=inner.tmp$nEff, method=0)
+#        t1.dem.env <- fastglm(x=X.dem.env, y=y, family=binomial(), weights=inner.tmp$nEff, method=0)
+#        
+#        # Generate output table with t1.dem.env model information and model comparison info for each variable
+#        data.frame(
+#          chr = unique(inner.tmp$chr),
+#          pos = unique(inner.tmp$pos),
+#          variable = j,
+#          missing = seqMissing(genofile),
+#          perm = 0,
+#          data = "real",
+#          AIC_null = c(AIC(t0)),
+#          AIC_dem = c(AIC(t1.dem)),
+#          AIC_dem_env = c(AIC(t1.dem.env)),
+#          b_enviro = last(t1.dem.env$coef),
+#          se_enviro = last(t1.dem.env$se),
+#          p_lrt = anovaFun(t1.dem, t1.dem.env))
+#      } # End for enviro var
 
       ###############################################################
       
     # Permutations to generate null expectation of association between af and enviro var
-#    permutation_estimates =
-#      foreach(j=enviro_vars_names, .combine = "rbind", .errorhandling = "remove")%do%{
-#                
-#        # Extract data for 'j' environmental variable
-#        gathered_data %>% filter(enviro_var == j) -> inner.tmp.shuffle
-#
-#          # Do 100 permutations 
-#          foreach(l=1:100, .combine = "rbind")%do%{
-#            set.seed(l)
-#            
-#            # Shuffle enviro data for 'j' enviro variable
-#            #inner.tmp.perm %>% mutate(shuffle_value = sample(value)) -> inner.tmp.shuffle
-#            inner.tmp.shuffle$shuffle_value <- sample(inner.tmp.shuffle$value)
-#
-#            # Model allele freq
-#            # Generate 3 models - a null model (t0), a model with just demography (t1.dem) and a model with demography and "j" enviro var (t1.dem.env)
-#            y.perm <- inner.tmp.shuffle$af_nEff
-#            X.null.perm <- model.matrix(~1, inner.tmp.shuffle)
-#            X.dem.perm <- model.matrix(~PC1, inner.tmp.shuffle)
-#            X.dem.env.perm <- model.matrix(~PC1+shuffle_value, inner.tmp.shuffle)
-#            t0.perm <- fastglm(x=X.null.perm, y=y.perm, family=binomial(), weights=inner.tmp.shuffle$nEff, method=0)
-#            t1.dem.perm <- fastglm(x=X.dem.perm, y=y.perm, family=binomial(), weights=inner.tmp.shuffle$nEff, method=0)
-#            t1.dem.env.perm <- fastglm(x=X.dem.env.perm, y=y.perm, family=binomial(), weights=inner.tmp.shuffle$nEff, method=0)
-#                  
-#                # Generate output table with t1.dem.env model information and model comparison info for each variable
-#                data.frame(
-#                  chr = unique(inner.tmp.shuffle$chr),
-#                  pos = unique(inner.tmp.shuffle$pos),
-#                  variable = j,
-#                  missing = seqMissing(genofile),
-#                  perm = l,
-#                  data = "permutation",
-#                  AIC_null = c(AIC(t0.perm)),
-#                  AIC_dem = c(AIC(t1.dem.perm)),
-#                  AIC_dem_env = c(AIC(t1.dem.env.perm)),
-#                  b_enviro = last(t1.dem.env.perm$coef),
-#                  se_enviro = last(t1.dem.env.perm$se),
-#                  p_lrt = anovaFun(t1.dem.perm, t1.dem.env.perm))
-#
-#              } # End for perm
-#            } # End for enviro var
+    permutation_estimates =
+      foreach(j=enviro_vars_names, .combine = "rbind", .errorhandling = "remove")%do%{
+                
+        # Extract data for 'j' environmental variable
+        gathered_data %>% filter(enviro_var == j) -> inner.tmp.shuffle
+
+          # Do 25 permutations 
+          foreach(l=1:25, .combine = "rbind")%do%{
+            set.seed(l)
+            
+            # Shuffle enviro data for 'j' enviro variable
+            #inner.tmp.perm %>% mutate(shuffle_value = sample(value)) -> inner.tmp.shuffle
+            inner.tmp.shuffle$shuffle_value <- sample(inner.tmp.shuffle$value)
+
+            # Model allele freq
+            # Generate 3 models - a null model (t0), a model with just demography (t1.dem) and a model with demography and "j" enviro var (t1.dem.env)
+            y.perm <- inner.tmp.shuffle$af_nEff
+            X.null.perm <- model.matrix(~1, inner.tmp.shuffle)
+            X.dem.perm <- model.matrix(~PC1, inner.tmp.shuffle)
+            X.dem.env.perm <- model.matrix(~PC1+shuffle_value, inner.tmp.shuffle)
+            t0.perm <- fastglm(x=X.null.perm, y=y.perm, family=binomial(), weights=inner.tmp.shuffle$nEff, method=0)
+            t1.dem.perm <- fastglm(x=X.dem.perm, y=y.perm, family=binomial(), weights=inner.tmp.shuffle$nEff, method=0)
+            t1.dem.env.perm <- fastglm(x=X.dem.env.perm, y=y.perm, family=binomial(), weights=inner.tmp.shuffle$nEff, method=0)
+                  
+                # Generate output table with t1.dem.env model information and model comparison info for each variable
+                data.frame(
+                  chr = unique(inner.tmp.shuffle$chr),
+                  pos = unique(inner.tmp.shuffle$pos),
+                  variable = j,
+                  missing = seqMissing(genofile),
+                  perm = l,
+                  data = "permutation",
+                  AIC_null = c(AIC(t0.perm)),
+                  AIC_dem = c(AIC(t1.dem.perm)),
+                  AIC_dem_env = c(AIC(t1.dem.env.perm)),
+                  b_enviro = last(t1.dem.env.perm$coef),
+                  se_enviro = last(t1.dem.env.perm$se),
+                  p_lrt = anovaFun(t1.dem.perm, t1.dem.env.perm))
+
+              } # End for perm
+            } # End for enviro var
    
     # Combine real estimates and permutations
 #    all_data <- rbind(real_estimates, permutation_estimates)
-    return(real_estimates)
+    return(permutation_estimates)
   }
 
 # ================================================================================== #
@@ -237,7 +237,7 @@ glm.model.output =
 # Generate folders and save output
 
 # Folder name
-folder_name <- paste("data/processed/GEA/glms/glms_chunk_analysis_Mcali/real")
+folder_name <- paste("data/processed/GEA/glms/glms_chunk_analysis_Mcali/perm_1_25")
 if (!dir.exists(folder_name)) {dir.create(folder_name)}
 
 # Save file for chunk w

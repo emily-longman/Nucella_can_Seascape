@@ -149,12 +149,12 @@ snp.dt <- data.table(
 
 # Load SNPs of interest
 bonf.sig.SNPs <- read.csv("data/processed/outlier_analyses/baypass/Outlier_SNPs/Nucella_outlier_SNPs_bonferroni.csv", header=T)
-SNPs.Interest.pval.001 <- read.csv("data/processed/outlier_analyses/baypass/Outlier_SNPs/Nucella_outlier_SNPs_pval.0.001.csv", header=T)
+#SNPs.Interest.pval.001 <- read.csv("data/processed/outlier_analyses/baypass/Outlier_SNPs/Nucella_outlier_SNPs_pval.0.001.csv", header=T) #70,205 SNPs
 
 # Create SNP ID column
 # Use either subset of SNPs below to annotate the data using the following code
 snps <- bonf.sig.SNPs %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
-snps <- SNPs.Interest.pval.001 %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
+#snps <- SNPs.Interest.pval.001 %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 # Check structure
 str(snps)
@@ -222,8 +222,8 @@ N.canaliculata_annotated_SNPs <- left_join(annotation, snp.dt, by = join_by(SNP_
 
 # Write output (bonferroni)
 write.csv(N.canaliculata_annotated_SNPs, "data/processed/outlier_analyses/snpeff/N.canaliculata_SNPs_bonferroni_annotated.txt")
-write.csv(N.canaliculata_annotated_SNPs, "data/processed/outlier_analyses/snpeff/N.canaliculata_SNPs_bonferroni_annotated.csv")
+#write.csv(N.canaliculata_annotated_SNPs, "data/processed/outlier_analyses/snpeff/N.canaliculata_SNPs_bonferroni_annotated.csv")
 
 # Write output (window rnp SNPs)
 write.csv(N.canaliculata_annotated_SNPs, "data/processed/outlier_analyses/snpeff/N.canaliculata_SNPs_rnp_annotated.txt")
-write.csv(N.canaliculata_annotated_SNPs, "data/processed/outlier_analyses/snpeff/N.canaliculata_SNPs_rnp_annotated.csv")
+#write.csv(N.canaliculata_annotated_SNPs, "data/processed/outlier_analyses/snpeff/N.canaliculata_SNPs_rnp_annotated.csv")
