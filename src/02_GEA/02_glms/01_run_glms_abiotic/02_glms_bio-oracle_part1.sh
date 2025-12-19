@@ -56,7 +56,7 @@ SCRIPT_FOLDER=$WORKING_FOLDER/src/02_GEA/02_glms/01_run_glms_abiotic
 # Guide file 
 guide_file=$WORKING_FOLDER/guide_files/scaffold_names_guide_file_array.txt
 
-#Example: -- the headers are just for descriptive purposes. The actual file has no headers. (dimensions: 18919, 2; 999 partitions each with 19 scaffold names)
+#Example: -- the headers are just for descriptive purposes. The actual file has no headers. (dimensions: 18919, 2; 996 partitions each with 19 scaffold names)
 # Scaffold name         # Partition/array
 # Backbone_10001              1
 # Backbone_10003              1

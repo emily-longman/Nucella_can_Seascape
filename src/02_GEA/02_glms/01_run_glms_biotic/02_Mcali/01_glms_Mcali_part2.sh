@@ -23,7 +23,7 @@
 #SBATCH --cpus-per-task=5
 
 # Submit job array
-#SBATCH --array=501 #-996%75
+#SBATCH --array=501-996%75
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -56,7 +56,7 @@ SCRIPT_FOLDER=$WORKING_FOLDER/src/02_GEA/02_glms/01_run_glms_biotic/02_Mcali
 # Guide file 
 guide_file=$WORKING_FOLDER/guide_files/scaffold_names_guide_file_array.txt
 
-#Example: -- the headers are just for descriptive purposes. The actual file has no headers. (dimensions: 18919, 2; 999 partitions each with 19 scaffold names)
+#Example: -- the headers are just for descriptive purposes. The actual file has no headers. (dimensions: 18919, 2; 996 partitions each with 19 scaffold names)
 # Scaffold name         # Partition/array
 # Backbone_10001              1
 # Backbone_10003              1
@@ -97,8 +97,8 @@ fi
 
 # Run R script
 
-#Rscript $SCRIPT_FOLDER/01_glms_Mcali_real.R "${SLURM_ARRAY_TASK_ID}"
-Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm1:25.R "${SLURM_ARRAY_TASK_ID}"
+Rscript $SCRIPT_FOLDER/01_glms_Mcali_real.R "${SLURM_ARRAY_TASK_ID}"
+#Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm1:25.R "${SLURM_ARRAY_TASK_ID}"
 #Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm26:50.R "${SLURM_ARRAY_TASK_ID}"
 #Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm51:75.R "${SLURM_ARRAY_TASK_ID}"
 #Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm76:100.R "${SLURM_ARRAY_TASK_ID}"
