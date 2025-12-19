@@ -50,10 +50,10 @@ scaffold.names.df <- read.csv(paste("data/processed/GEA/glms/scaffold.names", w,
 scaffold.names <- scaffold.names.df$V1
 
 # Load SNPs of interest (baypass POD outlier SNPs - 3,095 SNPs SNPs)
-baypass_POD_sig_SNPs <- read.table("data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs_threshold_0.01", header=T)
+#baypass_POD_sig_SNPs <- read.table("data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs_threshold_0.01", header=T)
 
-# Load bio-oracle environmental data
-MARINe_data <- read.csv("data/processed/GEA/enviro_data/MARINe/MARINe_data.csv", header=T)
+# Load M californianus shell thickness data
+Mcalifornianus_data <- read.csv("data/processed/GEA/enviro_data/Mcali_thk/Mcalifornianus_data_clean.csv", header=T)
 
 # Open the GDS file
 genofile <- seqOpen("data/processed/outlier_analyses/snpeff/N.canaliculata_SNPs.annotate.gds")
@@ -67,13 +67,13 @@ colnames(pca.df)[1] <- "sampleId"
 # Format data
 
 # Rename "location" column as "sampleId"
-names(MARINe_data)[names(MARINe_data) == "location"] <- "sampleId"
+names(Mcalifornianus_data)[names(Mcalifornianus_data) == "Site.Code"] <- "sampleId"
 
-# Join bio-oracle dataframe and PCA dataframe
-MARINe_data <- dplyr::left_join(MARINe_data, pca.df, by = "sampleId")
+# Join M. californianus dataframe and PCA dataframe
+Mcalifornianus_data <- dplyr::left_join(Mcalifornianus_data, pca.df, by = "sampleId")
 
 # Create SNP_id column for outlier SNP list
-baypass_POD_sig_SNPs <- baypass_POD_sig_SNPs %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
+#baypass_POD_sig_SNPs <- baypass_POD_sig_SNPs %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 # Extract SNP data from GDS
 snp.dt <- data.table(
@@ -135,20 +135,14 @@ glm.model.output =
     af_i_snp[,nEff:=round((dp*2*nSnail)/(2*nSnail+dp-1))]
     # Calculate the effective allele freq
     af_i_snp[,af_nEff:=round(af*nEff)/nEff]
-  
-    ###############################################################
-
-    # Remove the two populations that are not in the MARINe database from af_i_snp
-    af_i_snp <- af_i_snp[-which(af_i_snp$sampleId =="VD"),]
-    af_i_snp <- af_i_snp[-which(af_i_snp$sampleId == "OCT" ),]
 
     ###############################################################
 
-    # Join with bio-oracle environmental data
-    left_join(af_i_snp, MARINe_data, by ="sampleId") -> af_i_snp_enviro
+    # Join with environmental data
+    left_join(af_i_snp, Mcalifornianus_data, by ="sampleId") -> af_i_snp_enviro
     
     # Create long format data table with the enviro data in column labeled "value" and the specific variable identified in the column "column"
-    af_i_snp_enviro %>% as_tibble %>% gather(key = "enviro_var", value = "value", `B.gland_m`:`P.och_hm`) -> gathered_data
+    af_i_snp_enviro %>% as_tibble %>% gather(key = "enviro_var", value = "value", `mean_STI`:`mean_min_thk`) -> gathered_data
     
     # Get names of environmental variables
     unique(gathered_data$enviro_var) -> enviro_vars_names
@@ -242,12 +236,12 @@ glm.model.output =
 
 # Generate folders and save output
 
-# Folder name 
-folder_name <- paste("data/processed/GEA/glms/glms_chunk_analysis_marine/real")
+# Folder name
+folder_name <- paste("data/processed/GEA/glms/glms_chunk_analysis_Mcali/real")
 if (!dir.exists(folder_name)) {dir.create(folder_name)}
 
 # Save file for chunk w
-file_name <- paste("GLM_MARINe_chunk_", w, sep = "")
+file_name <- paste("GLM_Mcali_chunk_", w, sep = "")
 save(glm.model.output, file = paste(folder_name, "/" , file_name, ".Rdata", sep = "") )
 
 message("done")

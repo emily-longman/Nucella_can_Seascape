@@ -148,10 +148,11 @@ snp.dt <- data.table(
 #--------------------------------------------------------------------------------
 
 # Load SNPs of interest
-bonf.sig.SNPs <- read.csv("data/processed/outlier_analyses/baypass/Outlier_SNPs/Nucella_outlier_SNPs_bonferroni", header=T)
-SNPs.Interest.pval.001 <- read.csv("data/processed/outlier_analyses/baypass/Outlier_SNPs/Nucella_outlier_SNPs_pval0.001", header=T)
+bonf.sig.SNPs <- read.csv("data/processed/outlier_analyses/baypass/Outlier_SNPs/Nucella_outlier_SNPs_bonferroni.csv", header=T)
+SNPs.Interest.pval.001 <- read.csv("data/processed/outlier_analyses/baypass/Outlier_SNPs/Nucella_outlier_SNPs_pval.0.001.csv", header=T)
 
 # Create SNP ID column
+# Use either subset of SNPs below to annotate the data using the following code
 snps <- bonf.sig.SNPs %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 snps <- SNPs.Interest.pval.001 %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 
