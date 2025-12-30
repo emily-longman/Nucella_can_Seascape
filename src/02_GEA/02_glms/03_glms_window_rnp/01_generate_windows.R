@@ -23,6 +23,13 @@ library(tidyverse)
 library(foreach)
 library(dplyr)
 
+# Install and load SeqArray
+#if (!require("BiocManager", quietly = TRUE))
+#install.packages("BiocManager")
+#BiocManager::install(version = "3.20")
+#BiocManager::install("SeqArray")
+library(SeqArray)
+
 # ================================================================================== #
 
 # Generate output directories
@@ -37,57 +44,73 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 
 # ================================================================================== #
 
+# Open the GDS file
+genofile <- seqOpen("data/processed/outlier_analyses/snpeff/N.canaliculata_SNPs.annotate.gds")
+
+# Extract SNP data from GDS (14,897,468 SNPs)
+snp.dt <- data.table(
+        chr=seqGetData(genofile, "chromosome"),
+        pos=seqGetData(genofile, "position"),
+        nAlleles=seqGetData(genofile, "$num_allele"),
+        variant.id=seqGetData(genofile, "variant.id"),
+        allele=seqGetData(genofile, "allele")) %>%
+    mutate(SNP_id = paste(chr, pos, sep = "_"))
+
 # Load SNP data (3,095 outlier SNPs)
-baypass_POD_sig_SNPs <- read.table("data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs_threshold_0.01", header=T) 
+#baypass_POD_sig_SNPs <- read.table("data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs_threshold_0.01", header=T) 
+
+# ================================================================================== #
+
+# How many SNPs are on each contig:
+SNPS_density <- snp.dt %>% group_by(chr) %>% summarize(n=n())
+
+# Graph SNP density
+pdf("output/figures/GEA/glms/glms_window_summary/glm_pval_density.pdf", width = 8, height = 8)
+ggplot(SNPS_density, aes(x=n))+ geom_density() + xlim(0,150)
+dev.off()
+# Use this information to determine level to filter for number of SNPs in a given window
 
 # ================================================================================== #
 
 # Create windows
 
 # Define window and step size
-win.bp <- 1e5 #100,000
-step.bp <- 5e4 #50,000
+win.bp <- 100000
+step.bp <- 50000
 
-# How many SNPs are on each contig:
-SNPS_density <- baypass_POD_sig_SNPs %>% group_by(chr) %>% summarize(n=n())
+# Generate windows (note: only chromosomes with the number of SNPs in that window >= 5)
+wins <- foreach(chr.i=unique(snp.dt$chr), .combine="rbind", .errorhandling="remove")%do%{
+      # State chromosome
+      message(chr.i)
 
-# Graph
-pdf("output/figures/GEA/glms/glms_window_summary/glm_pval_density.pdf", width = 8, height = 8)
-ggplot(SNPS_density, aes(x=n))+ geom_density()
-dev.off()
-# Use this information to determine level to filter for number of SNPs in a given window
+      # Filter data for focal chromosome
+      tmp <- snp.dt %>%
+      filter(chr == chr.i)
 
-# Generate windows (note: only windows with the number of SNPs in that window >= 2)
-wins <- foreach(chr.i=unique(baypass_POD_sig_SNPs$chr),
-                .combine="rbind", 
-                .errorhandling="remove")%do%{
-                  
-                  message(chr.i)
-                  
-                  tmp <- baypass_POD_sig_SNPs %>%
-                    filter(chr == chr.i)
-                  
-                  nSNPs=dim(tmp)[1]
-                  
-                  if(nSNPs >= 2){
-                    o =
-                      data.table(chr=chr.i,
-                                 nSNPs=dim(tmp)[1],
-                                 start=seq(from=min(tmp$pos), to=max(tmp$pos)-win.bp, by=step.bp),
-                                 end=seq(from=min(tmp$pos), to=max(tmp$pos)-win.bp, by=step.bp) + win.bp)
-                    return(o)
-                    
-                  }   
-                  else {message("fails nSNPs filter")}
-                }
+      # Number of SNPs on chromosome
+      nSNPs=dim(tmp)[1]
+
+      # For only chromosomes with >= 5
+      if(nSNPs >= 5){
+      o = data.table(chr=chr.i,
+      nSNPs=dim(tmp)[1],
+      start=seq(from=min(tmp$pos), to=max(tmp$pos)-win.bp, by=step.bp),
+      end=seq(from=min(tmp$pos), to=max(tmp$pos)-win.bp, by=step.bp) + win.bp)
+
+      # Return output
+      return(o)
+
+      }   
+      else {message("fails nSNPs filter")}
+}
 
 # Add window index
 wins[,i:=1:dim(wins)[1]]
 
-# Check dimensions - 335 windows
+# Check dimensions - 12,928 windows
 dim(wins)
 
 # ================================================================================== #
 
 # Save windows
-save(wins, file="data/processed/GEA/glms/glms_window_summary/windows_SNPs_threshold_0.01.RData")
+save(wins, file="data/processed/GEA/glms/glms_window_summary/windows.RData")

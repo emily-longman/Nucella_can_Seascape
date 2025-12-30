@@ -79,8 +79,8 @@ write.csv(summary, "data/processed/GEA/glms/glms_summary/All_vars_rr_sum.csv", r
 
 # Graph summary
 
-# Graph relative rate of model enrichment - mean and sd
-pdf("output/figures/GEA/glms/GLM_rr_sum.pdf", width = 8, height = 8)
+# Graph relative rate of model enrichment - mean and 2*sd
+pdf("output/figures/GEA/glms/GLM_rr_sum_2SD.pdf", width = 8, height = 8)
 ggplot(summary, aes(x = reorder(variable, mean_rr_log2), y = mean_rr_log2)) + 
   geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
   geom_point()+ 
@@ -93,6 +93,19 @@ ggplot(summary, aes(x = reorder(variable, mean_rr_log2), y = mean_rr_log2)) +
   theme_bw(base_size=20)
 dev.off()
 
+# Graph relative rate of model enrichment - mean and sd
+pdf("output/figures/GEA/glms/GLM_rr_sum_SD.pdf", width = 8, height = 8)
+ggplot(summary, aes(x = reorder(variable, mean_rr_log2), y = mean_rr_log2)) + 
+  geom_errorbar(aes(ymin=mean_rr_log2-sd_rr_log2, ymax=mean_rr_log2+sd_rr_log2))+ 
+  geom_point()+ 
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +  
+  labs(title = "Mean ± SD",
+       x = "",
+       y = "Log2(Relative rate of model enrichment)") +
+  theme_minimal()+
+  coord_flip()+
+  theme_bw(base_size=20)
+dev.off()
 
 # Graph relative rate of model enrichment  - mean and 95% CI
 pdf("output/figures/GEA/glms/GLM_rr_sum_CI.pdf", width = 8, height = 8)
@@ -102,8 +115,9 @@ ggplot(summary, aes(x = reorder(variable, mean_rr_log2), y = mean_rr_log2)) +
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
   labs(title = "Mean ± 95% CI Plot",
        x = "",
-       y = "Relative rate of model enrichment") +
+       y = "Log2(Relative rate of model enrichment)") +
   theme_minimal() +
-  coord_flip()
+  coord_flip() + 
+  theme_bw(base_size=20)
 dev.off()
 
