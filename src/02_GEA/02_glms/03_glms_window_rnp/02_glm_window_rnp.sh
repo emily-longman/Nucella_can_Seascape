@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=merge_glms
+#SBATCH --job-name=glms_window_rnp
 
 # Specify partition
 #SBATCH --partition=general
@@ -14,13 +14,16 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=15:00:00 
+#SBATCH --time=30:00:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
 #SBATCH --mem=900G 
 
 # Submit job array
 #SBATCH --array=1-4 #1-27
+
+# Request CPU
+#SBATCH --cpus-per-task=10
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out

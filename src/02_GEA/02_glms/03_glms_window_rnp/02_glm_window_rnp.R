@@ -17,11 +17,12 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr'))
+#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'doMC'))
 library(data.table)
 library(tidyverse)
 library(foreach)
 library(dplyr)
+library(doMC)
 
 # ================================================================================== #
 
@@ -67,6 +68,9 @@ glm.model.collated$rnp <- glm.model.collated$rank/Lp
 
 # ================================================================================== #
 
+# Register the multicore parallel backend
+registerDoMC(20)
+
 # Window summarization for each permutation and environmental var
 wins_sum <- foreach(perm.i=unique(glm.model.collated$perm),.combine="rbind", .errorhandling="remove")%do%{ 
     
@@ -78,7 +82,7 @@ wins_sum <- foreach(perm.i=unique(glm.model.collated$perm),.combine="rbind", .er
 
     # Start window summarization process
     win.out <- foreach(win.i=1:dim(wins)[1], .errorhandling = "remove", .combine = "rbind"
-    )%do%{
+    )%dopar%{
     
     # State window
     message(paste("Window:", win.i, dim(wins)[1], sep = " / "))

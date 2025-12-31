@@ -75,8 +75,8 @@ dev.off()
 # Create windows
 
 # Define window and step size
-win.bp <- 100000
-step.bp <- 50000
+win.bp <- 200000
+step.bp <- 100000
 
 # Generate windows (note: only chromosomes with the number of SNPs in that window >= 5)
 wins <- foreach(chr.i=unique(snp.dt$chr), .combine="rbind", .errorhandling="remove")%do%{
@@ -107,7 +107,7 @@ wins <- foreach(chr.i=unique(snp.dt$chr), .combine="rbind", .errorhandling="remo
 # Add window index
 wins[,i:=1:dim(wins)[1]]
 
-# Check dimensions - 12,928 windows
+# Check dimensions - 3,017 windows
 dim(wins)
 
 # ================================================================================== #
