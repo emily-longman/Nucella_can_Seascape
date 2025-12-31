@@ -49,7 +49,7 @@ module load R/4.4.1
 WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 # Script folder.
-SCRIPT_FOLDER=$WORKING_FOLDER/src/02_GEA/02_glms/01_run_glms_biotic/02_Mcali
+SCRIPT_FOLDER=$WORKING_FOLDER/src/02_GEA_glms/01_run_glms_biotic/02_Mcali
 
 #--------------------------------------------------------------------------------
 

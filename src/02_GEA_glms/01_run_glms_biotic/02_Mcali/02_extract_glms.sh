@@ -106,7 +106,7 @@ fi
 
 # Run R script
 
-Rscript --vanilla $WORKING_FOLDER/src/02_GEA/02_glms/01_run_glms_biotic/02_Mcali/02_extract_glms.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/02_GEA_glms/01_run_glms_biotic/02_Mcali/02_extract_glms.R "${i}"
 # The --vanilla option prevents restoring or saving workspaces
 
 #--------------------------------------------------------------------------------
