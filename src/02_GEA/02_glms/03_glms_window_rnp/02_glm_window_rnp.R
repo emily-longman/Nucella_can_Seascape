@@ -123,4 +123,4 @@ wins_sum <- foreach(perm.i=unique(glm.model.collated$perm),.combine="rbind", .er
 # ================================================================================== #
 
 # Save glm rnp for windows
-save(data_win_sum, file=paste("data/processed/GEA/glms/glms_window_summary/glm_windows_", env_var, ".RData", sep = ""))
+save(wins_sum, file=paste("data/processed/GEA/glms/glms_window_summary/glm_windows_", env_var, ".RData", sep = ""))
