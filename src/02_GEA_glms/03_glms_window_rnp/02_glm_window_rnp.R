@@ -72,7 +72,7 @@ glm.model.collated$rnp <- glm.model.collated$rank/Lp
 registerDoMC(20)
 
 # Window summarization for each permutation and environmental var
-wins_sum <- foreach(perm.i=unique(glm.model.collated$perm),.combine="rbind", .errorhandling="remove")%do%{ 
+wins_sum <- foreach(perm.i=unique(glm.model.collated$perm),.combine="rbind", .errorhandling="remove")%dopar%{ 
     
     # State permutation number
     message(paste("Permutation #:", perm.i))
