@@ -49,7 +49,7 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 #--------------------------------------------------------------------------------
 
-# Guide files
+# Guide files - Note: need to make sure the latter file is in the same order as the samples in the gfile
 var_names=$WORKING_FOLDER/guide_files/Bio-oracle_enviro_vars_names.txt
 guide_file=$WORKING_FOLDER/guide_files/Baypass_abiotic.txt
 
@@ -98,13 +98,14 @@ fi
 # Change directory 
 cd $WORKING_FOLDER/data/processed/GEA/baypass/abiotic/${var}
 
-# Run baypass in xtx mode
+# Run baypass in aux covaraiate mode to estimate Bayes Factors
 $baypass -npop 19 \
--gfile $WORKING_FOLDE/data/processedR/outlier_analyses/baypass/genobaypass \
+-gfile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/genobaypass \
 -poolsizefile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/poolsize \
 -omegafile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/omega/NC_baypass_mat_omega.out \
 -efile $WORKING_FOLDER/data/processed/GEA/baypass/${var}.data.txt \
 -d0yij 4 \
+-auxmodel \
 -outprefix NC_abiotic_${var} \
 -nthreads 20
 
