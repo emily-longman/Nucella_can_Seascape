@@ -28,79 +28,70 @@ library(doMC)
 
 # Specify arguments
 args = commandArgs(trailingOnly=TRUE)
-env_var = as.character(args[1]) #Environmental variable
-
-# ================================================================================== #
-
-# Generate output directories
-
-# Data directory
-out_dir <- paste("data/processed/GEA/glms/glms_window_summary")
-if (!dir.exists(out_dir)) {dir.create(out_dir)}
-
-# Figure directory
-out_fig_dir <- paste("output/figures/GEA/glms/glms_window_summary")
-if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
+win_group = as.numeric(args[1])
 
 # ================================================================================== #
 
 # State variable name
-message(paste("Environmental variable:", env_var))
-# Load data
-load(paste0("/gpfs3/scratch/elongman/glms_per_env_var/glm.collated_", env_var, ".Rdata") )
-
-# Load windows - #335 windows for the 3,095 outlier SNPs
+message(paste("Window group:", win_group))
+# Load windows
 load("data/processed/GEA/glms/glms_window_summary/windows.RData")
+# Extract windows of interest
+wins_group_i <- wins_guide_file_array %>% filter(.groups == win_group)
 
-# ================================================================================== #
-
-# Format data
-
-# Create SNP_id column
-glm.model.collated <- glm.model.collated %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
-
-# ================================================================================== #
-
-# Rank-normalize p-values
-glm.model.collated$rank <- rank(glm.model.collated$p_lrt)
-Lp <- length(glm.model.collated$p_lrt)
-glm.model.collated$rnp <- glm.model.collated$rank/Lp
+# Load ecological variables
+Seascape_vars_names <- read.csv("guide_files/Seascape_vars_names.txt", header=F)
+vars_subset <- Seascape_vars_names$V1[1:5]
 
 # ================================================================================== #
 
 # Register the multicore parallel backend
 registerDoMC(20)
 
-# Window summarization for each permutation and environmental var
-wins_sum <- foreach(perm.i=unique(glm.model.collated$perm),.combine="rbind", .errorhandling="remove")%dopar%{ 
-    
-    # State permutation number
-    message(paste("Permutation #:", perm.i))
+# Window summarization for each ecological variation
+wins_sum <- foreach(var = vars_subset, .combine = "rbind", .errorhandling = "remove")%do%{
 
-    # Filter data based on perm (0 = real data, 1 to 100 are permutations)
-    tmp <- glm.model.collated %>% filter(perm == perm.i)
+    # Load data
+    load(paste0("data/processed/GEA/glms/glms_per_env_var/glm.collated_", var, ".Rdata"))
 
-    # Start window summarization process
-    win.out <- foreach(win.i=1:dim(wins)[1], .errorhandling = "remove", .combine = "rbind"
-    )%dopar%{
+    # Create SNP_id column
+    glm.model.collated <- glm.model.collated %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
+
+    # Rank-normalize p-values
+    glm.model.collated$rank <- rank(glm.model.collated$p_lrt)
+    Lp <- length(glm.model.collated$p_lrt)
+    glm.model.collated$rnp <- glm.model.collated$rank/Lp
+
+    # Window summarization for each permutation and environmental var
+    wins_sum <- foreach(perm.i=unique(glm.model.collated$perm),.combine="rbind", .errorhandling="remove")%dopar%{ 
     
-    # State window
-    message(paste("Window:", win.i, dim(wins)[1], sep = " / "))
+        # State permutation number
+        message(paste("Permutation #:", perm.i))
+
+        # Filter data based on perm (0 = real data, 1 to 100 are permutations)
+        tmp <- glm.model.collated %>% filter(perm == perm.i)
+
+        # Start window summarization process
+        win.out <- foreach(win.i=1:dim(wins_group_i)[1], .errorhandling = "remove", .combine = "rbind"
+        )%dopar%{
+    
+        # State window
+        message(paste("Window:", win.i, dim(wins_group_i)[1], sep = " / "))
   
-    # Filter for a given window
-    win_tmp <- tmp %>%
-        filter(chr == wins[win.i]$chr) %>%
-        filter(pos >= wins[win.i]$start & pos <= wins[win.i]$end)
+        # Filter for a given window
+        win_tmp <- tmp %>%
+        filter(chr == wins_group_i[win.i]$chr) %>%
+        filter(pos >= wins_group_i[win.i]$start & pos <= wins_group_i[win.i]$end)
     
-    # P-values
-    pr.i.0.01 <- c(0.01)
-    pr.i.0.001 <- c(0.001)
+        # P-values
+        pr.i.0.01 <- c(0.01)
+        pr.i.0.001 <- c(0.001)
     
-    # Summarize for a given window
-    win_tmp %>% 
-        filter(!is.na(rnp)) %>%
-        summarise(
-              chr = wins[win.i]$chr,
+        # Summarize for a given window
+        win_tmp %>% 
+            filter(!is.na(rnp)) %>%
+            summarise(
+              chr = wins_group_i[win.i]$chr,
               pos_mean = mean(pos),
               pos_min = min(pos),
               pos_max = max(pos),
@@ -119,8 +110,17 @@ wins_sum <- foreach(perm.i=unique(glm.model.collated$perm),.combine="rbind", .er
             )
     }
 }
+}
 
 # ================================================================================== #
 
-# Save glm rnp for windows
-save(wins_sum, file=paste("data/processed/GEA/glms/glms_window_summary/glm_windows_", env_var, ".RData", sep = ""))
+# Generate folders and save output
+
+# Folder name for chunk c
+folder_name <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis")
+
+# Save file for chunk w
+file_name <- paste0("glm_window_chunks_", win_i)
+save(wins_sum, file = paste0(folder_name, "/", file_name, ".Rdata") )
+
+message("done")

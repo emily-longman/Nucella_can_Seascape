@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_window_rnp
+#SBATCH --job-name=endemism
 
 # Specify partition
 #SBATCH --partition=general
@@ -17,13 +17,10 @@
 #SBATCH --time=30:00:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=950G 
+#SBATCH --mem=50G 
 
 # Submit job array
-#SBATCH --array=1-4 #1-27
-
-# Request CPU
-#SBATCH --cpus-per-task=10
+#SBATCH --array=1-500
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -50,40 +47,9 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 #--------------------------------------------------------------------------------
 
-# Guide file 
-guide_file=$WORKING_FOLDER/guide_files/wins_guide_file_array.txt
-
-#Example: -- the headers are just for descriptive purposes. The actual file has no headers. 
-# Chr             Pos  Start   End    win_i   group
-# Backbone_1553  2497  1657  101657   1        1      
-# Backbone_1553  2497  51657 151657   2        1 
-# ...    
-
-#--------------------------------------------------------------------------------
-
-# Determine partition to process 
-
-# Echo slurm array task ID
-echo "Window group:" ${SLURM_ARRAY_TASK_ID}
-
-#--------------------------------------------------------------------------------
-
-# Generate Folders and files
-
-# Move to working directory
-cd $WORKING_FOLDER/data/processed/GEA/glms/glms_window_summary
-
-# This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "glms_window_chunk_analysis" ]
-then echo "Working glms_window_chunk_analysis folder exist"; echo "Let's move on."; date
-else echo "Working glms_window_chunk_analysis folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis; date
-fi
-
-#--------------------------------------------------------------------------------
-
 # Run R script
 
-Rscript --vanilla $WORKING_FOLDER/src/02_GEA_glms/03_glms_window_rnp/02_glm_window_rnp.R "${SLURM_ARRAY_TASK_ID}"
+Rscript --vanilla $WORKING_FOLDER/src/06_endemism/01_endemism.R "${SLURM_ARRAY_TASK_ID}"
 # The --vanilla option prevents restoring or saving workspaces
 
 #--------------------------------------------------------------------------------

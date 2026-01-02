@@ -17,11 +17,12 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr'))
+install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'groupdata2'))
 library(data.table)
 library(tidyverse)
 library(foreach)
 library(dplyr)
+library(groupdata2)
 
 # Install and load SeqArray
 #if (!require("BiocManager", quietly = TRUE))
@@ -112,5 +113,14 @@ dim(wins)
 
 # ================================================================================== #
 
+# Group the backbone names into 1000 (Note: 12928 wins /1000 array = 12.9)
+group(wins, n=13, method = "greedy") -> wins_guide_file_array
+
+# Write the table
+write.table(wins_guide_file_array, "guide_files/wins_guide_file_array.txt", col.names = F, row.names = F, quote = F)
+# Note guide_file_array has dimensions:  12928, 6
+
+# ================================================================================== #
+
 # Save windows
-save(wins, file="data/processed/GEA/glms/glms_window_summary/windows.RData")
+save(wins_guide_file_array, file="data/processed/GEA/glms/glms_window_summary/windows.RData")

@@ -4,16 +4,39 @@
 # Emily K. Longman
 # ------------------------------------------------------------------------------
 
+# Set path as main Github repo
+# Install and load package
+#install.packages(c('rprojroot'))
+library(rprojroot)
+# Specify root path
+root_path <- find_root_file(criterion = has_file("README.md"))
+# Set working directory as path from root
+setwd(root_path)
+
+# ------------------------------------------------------------------------------
+
 # Load libraries
 library(ggplot2)
 library(dplyr)
 library(tidyverse)
-library(here)
+library(maps) 
+library(mapdata)
+library(RColorBrewer)
 
 # Load data --------------------------------------------------------------------
-mussels <- read.csv(here::here("data/raw/enviro/Mcali_thk/Mcal_shell_thickness_2019.csv"))
+
+# Read in metadata 
+metadata <- read.csv("guide_files/Populations_metadata.csv", header=T)
+# Filter metadata for 2019 sites
+metadata_sub <- metadata %>% filter(Site.Code %in% c("FC", "SH", "ARA", "VD", "BMR", "SBR"))
+
+# Load 2019 mussel data
+mussels <- read.csv("data/raw/Mcali_thk/Mcal_shell_thickness_2019.csv")
 mussels$Thk.length <- mussels$Ave.thk.1.3/ mussels$Shell.Length
 str(mussels)
+
+# Load 2023/2024 data
+mussels_2024 <- read.csv("data/processed/GEA/enviro_data/Mcali_thk/Mcalifornianus_data_subset.csv", header=T)
 
 # Look at all data -------------------------------------------------------------
 
@@ -147,5 +170,67 @@ abline(v = 0.01994755, col= 2)
 
 range(mussels.FC.less.120.great.40.sample) 
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+
+# Get state data
+states <- map_data("state")
+# Subset data for only California and Oregon
+west_coast <- subset(states, region %in% c("california", "oregon"))
 
 
+# Order Metadata
+metadata$Site.Code <- factor(metadata$Site.Code, 
+levels=c("STR", "OCT", "HZD", "PB", "PSN", "SBR", "PL", "PGP", "BMR", "FR", "VD","KH", "STC", "PSG", "CBL", "ARA", "SH", "SLR", "FC"))
+
+# Remove MP from 2019 data
+mussels <- mussels %>% filter(Site.Code != "MP")
+# Rename BH as BMR
+mussels$Site.Code[which(mussels$Site.Code == "BH")] <- "BMR"
+
+
+# 2019 mussel analyses
+# Summarize data
+mussels_sum <- mussels %>% group_by(Site.Code) %>% summarise(mean_avg_thick = mean(Avg.Thickness))
+# Bind
+mussels_sum_meta <- left_join(mussels_sum, metadata_sub, by="Site.Code")
+
+# Graph 2019 data
+pdf("output/figures/Mcali_ave_thick_2019.pdf", width = 8, height = 8)
+ggplot(data = west_coast) + 
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
+  geom_point(data = mussels_sum_meta, aes(x = Longitude, y = Latitude, fill = mean_avg_thick), shape = 21, size = 5) + 
+  scale_fill_gradient(low = "cyan1", high = "gray27") + 
+             coord_fixed(1.3) +
+  xlim(c(-128, -114)) +
+  xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 12) + ggtitle("Shell Thickness Projections")
+dev.off()
+
+
+# 2024 mussel analyses
+# Summarize data
+mussels_2024_sum <- mussels_2024 %>% group_by(Site.Code) %>% summarise(mean_STI = mean(STI), mean_integrated_thk = mean(Integrated.Thk))
+# Bind
+mussels_2024_sum_meta <- left_join(mussels_2024_sum, metadata, by="Site.Code")
+
+# Graph 2024 data
+pdf("output/figures/Mcali_STI_2024.pdf", width = 8, height = 8)
+ggplot(data = west_coast) + 
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
+  geom_point(data = mussels_2024_sum_meta, aes(x = Longitude, y = Latitude, fill = mean_STI), shape = 21, size = 5) + 
+  scale_fill_gradient(low = "cyan1", high = "gray27") + 
+             coord_fixed(1.3) +
+  xlim(c(-128, -114)) +
+  xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 12) + ggtitle("STI Shell Thickness Projections")
+dev.off()
+
+# Graph 2024 data
+pdf("output/figures/Mcali_integrated_thick_2024.pdf", width = 8, height = 8)
+ggplot(data = west_coast) + 
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
+  geom_point(data = mussels_2024_sum_meta, aes(x = Longitude, y = Latitude, fill = mean_integrated_thk), shape = 21, size = 5) + 
+  scale_fill_gradient(low = "cyan1", high = "gray27") + 
+             coord_fixed(1.3) +
+  xlim(c(-128, -114)) +
+  xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 12) + ggtitle("Integrated Shell Thickness Projections")
+dev.off()

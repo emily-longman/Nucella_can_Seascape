@@ -256,3 +256,45 @@ Mcalifornianus_data_clean <- Mcalifornianus_data[, c(1:5,6,9,12,15)]
 
 # Save dataset
 write.csv(Mcalifornianus_data_clean, "data/processed/GEA/enviro_data/Mcali_thk/Mcalifornianus_data_clean.csv", row.names=F)
+
+
+
+# ================================================================================== #
+
+# Alternate graphing 
+
+# Get state data
+states <- map_data("state")
+# Subset data for only California and Oregon
+west_coast <- subset(states, region %in% c("california", "oregon"))
+
+# Order Metadata
+Mcali_data_sub$Site.Code <- factor(Mcali_data_sub$Site.Code, 
+levels=c("STR", "OCT", "HZD", "PB", "PSN", "SBR", "PL", "PGP", "BMR", "FR", "VD","KH", "STC", "PSG", "CBL", "ARA", "SH", "SLR", "FC"))
+
+# Summarize data
+Mcali_data_sub_sum <- Mcali_data_sub %>% group_by(Site.Code) %>% summarise(mean_STI = mean(STI), mean_integrated_thk = mean(Integrated.Thk))
+# Bind
+Mcali_data_sub_sum_meta <- left_join(Mcali_data_sub_sum, meta, by="Site.Code")
+
+# Graph 2024 data
+pdf("output/figures/Mcali_STI_2024.pdf", width = 8, height = 8)
+ggplot(data = west_coast) + 
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
+  geom_point(data = Mcali_data_sub_sum_meta, aes(x = Longitude, y = Latitude, fill = mean_STI), shape = 21, size = 5) + 
+  scale_fill_gradient(low = "cyan1", high = "gray27") + 
+             coord_fixed(1.3) +
+  xlim(c(-128, -114)) +
+  xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 12) + ggtitle("STI Shell Thickness Projections")
+dev.off()
+
+# Graph 2024 data
+pdf("output/figures/Mcali_integrated_thick_2024.pdf", width = 8, height = 8)
+ggplot(data = west_coast) + 
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
+  geom_point(data = Mcali_data_sub_sum_meta, aes(x = Longitude, y = Latitude, fill = mean_integrated_thk), shape = 21, size = 5) + 
+  scale_fill_gradient(low = "cyan1", high = "gray27") + 
+             coord_fixed(1.3) +
+  xlim(c(-128, -114)) +
+  xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 12) + ggtitle("Integrated Shell Thickness Projections")
+dev.off()

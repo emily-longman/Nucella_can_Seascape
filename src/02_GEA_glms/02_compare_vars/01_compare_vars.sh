@@ -51,9 +51,7 @@ guide_file=$WORKING_FOLDER/guide_files/Seascape_vars_names.txt
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers. 
 # Env variable name   
 # thetao_max
-#...
-# P.och_m
-# P.och_hm     
+#...    
 
 #--------------------------------------------------------------------------------
 
