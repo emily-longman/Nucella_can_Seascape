@@ -112,5 +112,8 @@ $baypass -npop 19 \
 
 #--------------------------------------------------------------------------------
 
+# Housekeeping
+rm $WORKING_FOLDER/data/processed/GEA/baypass/${var}.data.txt
+
 # Say done
 echo "done"
