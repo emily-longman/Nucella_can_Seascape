@@ -64,7 +64,8 @@ cd $WORKING_FOLDER/data/processed/GEA/baypass
 echo ${SLURM_ARRAY_TASK_ID}
 
 # Extract enviro var 
-var=`sed "${SLURM_ARRAY_TASK_ID}"q $var_names`
+var=`sed "${SLURM_ARRAY_TASK_ID}q;d" $var_names`
+echo $var
 
 # Using the guide file, extract the bio-oracle data associated based on the Slurm array task ID 
 awk -v var="$var" '$1 == var { print $2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20}' $guide_file > ${var}.data.txt
