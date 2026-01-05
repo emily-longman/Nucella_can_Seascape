@@ -54,8 +54,8 @@ load("data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean.Rdata")
 # Window summarization for ph mean
 
 # Window summarization for each permutation and environmental var
-wins_sum <- foreach(perm.i=unique(glm.model.collated$perm),.combine="rbind", .errorhandling="remove")%dopar%{ 
-    
+#wins_sum <- foreach(perm.i=unique(glm.model.collated$perm),.combine="rbind", .errorhandling="remove")%dopar%{ 
+    perm.i=0
     # State permutation number
     message(paste("Permutation #:", perm.i))
 
@@ -105,8 +105,8 @@ wins_sum <- foreach(perm.i=unique(glm.model.collated$perm),.combine="rbind", .er
               nSNPs = n()
             )
     }
-    return(win.out)
-}
+    #return(win.out)
+#}
 
 # ================================================================================== #
 
@@ -115,7 +115,7 @@ wins_sum <- foreach(perm.i=unique(glm.model.collated$perm),.combine="rbind", .er
 # Folder name for window group i
 folder_name <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_ph_mean")
 
-# Save file for chunk w
+# Save file for window group
 file_name <- paste0("glm_window_chunks_", win_group)
 save(wins_sum, file = paste0(folder_name, "/", file_name, ".Rdata") )
 
