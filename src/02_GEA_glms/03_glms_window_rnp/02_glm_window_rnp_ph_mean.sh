@@ -14,13 +14,13 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=30:00:00 
+#SBATCH --time=45:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=950G 
+#SBATCH --mem=250G 
 
 # Submit job array
-#SBATCH --array=3-500 #-995
+#SBATCH --array=3-500%50 #-995
 
 # Request CPU
 #SBATCH --cpus-per-task=10
@@ -34,7 +34,7 @@
 
 #--------------------------------------------------------------------------------
 
-# This script will run the accompanying 03_merge_glms.R script. 
+# This script will run the accompanying 02_glm_window_rnp_ph_mean_real.R script. 
 # Note: prior to running this script, the merged glms were moved to the Working folder rather than the tmp directory.
 
 # Load modules 
