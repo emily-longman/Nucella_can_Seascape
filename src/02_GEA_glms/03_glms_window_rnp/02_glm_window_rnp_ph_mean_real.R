@@ -113,7 +113,7 @@ load("data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean.Rdata")
 # Generate folders and save output
 
 # Folder name for window group i
-folder_name <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_ph_mean")
+folder_name <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_ph_mean_real")
 
 # Save file for window group
 file_name <- paste0("glm_window_chunks_", win_group)
