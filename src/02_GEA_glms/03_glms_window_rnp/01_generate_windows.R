@@ -118,7 +118,7 @@ group(wins, n=13, method = "greedy") -> wins_guide_file_array
 
 # Write the table
 write.table(wins_guide_file_array, "guide_files/wins_guide_file_array.txt", col.names = F, row.names = F, quote = F)
-# Note guide_file_array has dimensions:  12928, 6
+# Note guide_file_array has dimensions:  12928, 6 - 995 groups
 
 # ================================================================================== #
 
