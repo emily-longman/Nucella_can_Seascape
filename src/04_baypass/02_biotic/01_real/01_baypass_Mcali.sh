@@ -14,13 +14,13 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss
-#SBATCH --time=3-00:00:00
+#SBATCH --time=1-16:00:00
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
 #SBATCH --mem=100G 
 
 # Request CPU
-#SBATCH --cpus-per-task=20
+#SBATCH --cpus-per-task=25
 
 # Submit job array
 #SBATCH --array=1-4
@@ -114,7 +114,8 @@ $baypass -npop 19 \
 -d0yij 4 \
 -auxmodel \
 -outprefix NC_biotic_${var} \
--nthreads 20
+-nthreads 25
+# Note inc threads to go faster
 
 #--------------------------------------------------------------------------------
 
