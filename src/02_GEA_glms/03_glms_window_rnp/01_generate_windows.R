@@ -57,9 +57,6 @@ snp.dt <- data.table(
         allele=seqGetData(genofile, "allele")) %>%
     mutate(SNP_id = paste(chr, pos, sep = "_"))
 
-# Load SNP data (3,095 outlier SNPs)
-#baypass_POD_sig_SNPs <- read.table("data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs_threshold_0.01", header=T) 
-
 # ================================================================================== #
 
 # How many SNPs are on each contig:
