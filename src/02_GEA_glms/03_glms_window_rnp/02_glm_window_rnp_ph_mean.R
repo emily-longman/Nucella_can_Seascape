@@ -80,8 +80,8 @@ wins_sum <- foreach(perm.i=unique(glm.model.collated$perm),.combine="rbind", .er
         filter(pos >= wins_group_i$start[window.w] & pos <= wins_group_i$end[window.w])
     
         # P-values
+        pr.i.0.05 <- c(0.05)
         pr.i.0.01 <- c(0.01)
-        pr.i.0.001 <- c(0.001)
     
         # Summarize for a given window
         win_tmp %>% 
@@ -94,12 +94,12 @@ wins_sum <- foreach(perm.i=unique(glm.model.collated$perm),.combine="rbind", .er
               variable = unique(variable),
               perm = perm.i,
               win = wins_group_i$i[window.w],
+              rnp.pr.0.05 = c(mean(rnp <= pr.i.0.05)),
               rnp.pr.0.01 = c(mean(rnp <= pr.i.0.01)),
-              rnp.pr.0.001 = c(mean(rnp <= pr.i.0.001)),
+              rnp.binom.p.0.05 = c(binom.test(sum(rnp <= pr.i.0.05), length(rnp), pr.i.0.05)$p.value),
               rnp.binom.p.0.01 = c(binom.test(sum(rnp <= pr.i.0.01), length(rnp), pr.i.0.01)$p.value),
-              rnp.binom.p.0.001 = c(binom.test(sum(rnp <= pr.i.0.001), length(rnp), pr.i.0.001)$p.value),
+              sum.rnp.0.05 = sum(rnp <= pr.i.0.05),
               sum.rnp.0.01 = sum(rnp <= pr.i.0.01),
-              sum.rnp.0.01 = sum(rnp <= pr.i.0.001),
               max.rnp = max(rnp),
               min.rnp = min(rnp),
               nSNPs = n()

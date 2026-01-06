@@ -90,10 +90,11 @@ wins <- foreach(chr.i=unique(snp.dt$chr), .combine="rbind", .errorhandling="remo
 
       # For only chromosomes with >= 5
       if(nSNPs >= 5){
-      o = data.table(chr=chr.i,
-      nSNPs=dim(tmp)[1],
-      start=seq(from=min(tmp$pos), to=max(tmp$pos)-win.bp, by=step.bp),
-      end=seq(from=min(tmp$pos), to=max(tmp$pos)-win.bp, by=step.bp) + win.bp)
+      o = data.table(
+        chr=chr.i,
+        nSNPs=dim(tmp)[1],
+        start=seq(from=min(tmp$pos), to=max(tmp$pos)-win.bp, by=step.bp),
+        end=seq(from=min(tmp$pos), to=max(tmp$pos)-win.bp, by=step.bp) + win.bp)
 
       # Return output
       return(o)
