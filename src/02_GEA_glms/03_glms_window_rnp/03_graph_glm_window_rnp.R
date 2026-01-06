@@ -1,4 +1,4 @@
-# Create windows 
+# Graph window analysis
 
 # Clear memory
 rm(list=ls())
