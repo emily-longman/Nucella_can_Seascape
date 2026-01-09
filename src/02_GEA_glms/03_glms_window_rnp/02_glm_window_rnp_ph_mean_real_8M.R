@@ -38,7 +38,7 @@ win_group = as.numeric(args[1])
 # State variable name
 message(paste("Window group:", win_group))
 # Load windows
-load("data/processed/GEA/glms/glms_window_summary/windows_nSNP50.RData")
+load("data/processed/GEA/glms/glms_window_summary/windows_8M.RData")
 # Extract 13 windows of interest based on win_group
 wins_group_i <- wins_guide_file_array %>% filter(.groups == win_group)
 
@@ -48,6 +48,30 @@ wins_group_i <- wins_guide_file_array %>% filter(.groups == win_group)
 
 # Load data
 load("data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean.Rdata")
+
+# Make snp_id column
+glm.model.collated <- glm.model.collated %>%
+  mutate(SNP_id = paste(chr, pos, sep = "_"))
+
+# ================================================================================== #
+
+# Load pooldata object
+load("data/raw/pooldata/pooldata.RData")
+
+# Extract SNP info for all SNPs
+pooldata@snp.info %>%
+  as.data.frame() %>% mutate(rs.id = rownames(.)) ->
+  pooldata.snp.info
+
+# Rename columns
+names(pooldata.snp.info)[1:2] = c("chr","pos")
+
+# Make snp_id column
+pooldata.snp.info <- pooldata.snp.info %>%
+  mutate(SNP_id = paste(chr, pos, sep = "_"))
+
+# Filter GLM to only sites in pooldata snp.info
+glm.model.collated.filt <- glm.model.collated %>% filter(SNP_id %in% pooldata.snp.info$SNP_id)
 
 # ================================================================================== #
 
@@ -60,7 +84,7 @@ load("data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean.Rdata")
     message(paste("Permutation #:", perm.i))
 
     # Filter glm data based on perm (0 = real data, 1 to 100 are permutations)
-    tmp <- glm.model.collated %>% filter(perm == perm.i)
+    tmp <- glm.model.collated.filt %>% filter(perm == perm.i)
 
         # Rank-normalize p-values
         tmp$rank <- rank(tmp$p_lrt)
@@ -113,7 +137,7 @@ load("data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean.Rdata")
 # Generate folders and save output
 
 # Folder name for window group i
-folder_name <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_ph_mean_real")
+folder_name <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_ph_mean_real_8M")
 
 # Save file for window group
 file_name <- paste0("glm_window_chunks_", win_group)
