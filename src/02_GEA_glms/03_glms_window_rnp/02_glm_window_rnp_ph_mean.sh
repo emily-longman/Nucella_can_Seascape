@@ -51,7 +51,7 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 #--------------------------------------------------------------------------------
 
 # Guide file 
-guide_file=$WORKING_FOLDER/guide_files/wins_guide_file_array_nSNP50.txt
+guide_file=$WORKING_FOLDER/guide_files/wins_guide_file_array.txt
 
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers. 
 # Chr            nSNPs  Start   End    win_i   group
