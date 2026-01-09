@@ -14,13 +14,13 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss
-#SBATCH --time=3-00:00:00
+#SBATCH --time=1-16:00:00
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=60G
+#SBATCH --mem=100G 
 
 # Request CPU
-#SBATCH --cpus-per-task=20
+#SBATCH --cpus-per-task=25
 
 # Submit job array
 #SBATCH --array=1-4
@@ -81,29 +81,29 @@ cat ${var}.data.txt
 cd $WORKING_FOLDER/data/processed/GEA/baypass
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "biotic" ]
-then echo "Working biotic folder exist"; echo "Let's move on."; date
-else echo "Working biotic folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/baypass/biotic; date
+if [ -d "biotic_aux" ]
+then echo "Working biotic_aux folder exist"; echo "Let's move on."; date
+else echo "Working biotic_aux folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/baypass/biotic_aux; date
 fi
 
-cd $WORKING_FOLDER/data/processed/GEA/baypass/biotic
+cd $WORKING_FOLDER/data/processed/GEA/baypass/biotic_aux
 
 if [ -d "Mcali" ]
 then echo "Working Mcali folder exist"; echo "Let's move on."; date
-else echo "Working Mcali folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/baypass/biotic/Mcali; date
+else echo "Working Mcali folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/baypass/biotic_aux/Mcali; date
 fi
 
-cd $WORKING_FOLDER/data/processed/GEA/baypass/biotic/Mcali
+cd $WORKING_FOLDER/data/processed/GEA/baypass/biotic_aux/Mcali
 
 if [ -d "${var}" ]
 then echo "Working ${var} folder exist"; echo "Let's move on."; date
-else echo "Working ${var} folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/baypass/biotic/Mcali/${var}; date
+else echo "Working ${var} folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/baypass/biotic_aux/Mcali/${var}; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Change directory 
-cd $WORKING_FOLDER/data/processed/GEA/baypass/biotic/Mcali/${var}
+cd $WORKING_FOLDER/data/processed/GEA/baypass/biotic_aux/Mcali/${var}
 
 # Run baypass in aux covaraiate mode to estimate Bayes Factors
 $baypass -npop 19 \
@@ -112,6 +112,7 @@ $baypass -npop 19 \
 -omegafile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/omega/NC_baypass_mat_omega.out \
 -efile $WORKING_FOLDER/data/processed/GEA/baypass/${var}.data.txt \
 -d0yij 4 \
+-auxmodel \
 -outprefix NC_biotic_${var} \
 -nthreads 25
 # Note inc threads to go faster

@@ -108,7 +108,6 @@ $baypass -npop 19 \
 -omegafile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/omega/NC_baypass_mat_omega.out \
 -efile $WORKING_FOLDER/data/processed/GEA/baypass/${var}.data.txt \
 -d0yij 4 \
--auxmodel \
 -outprefix NC_biotic_${var} \
 -nthreads 20
 
