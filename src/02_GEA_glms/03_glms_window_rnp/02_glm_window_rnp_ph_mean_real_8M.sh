@@ -17,13 +17,13 @@
 #SBATCH --time=01:00:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=900G 
+#SBATCH --mem=200G 
 
 # Submit job array
-#SBATCH --array=1-995%100
+#SBATCH --array=1-400%100 #401-995%100
 
 # Request CPU
-#SBATCH --cpus-per-task=30
+#SBATCH --cpus-per-task=10
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -51,7 +51,7 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 #--------------------------------------------------------------------------------
 
 # Guide file 
-guide_file=$WORKING_FOLDER/guide_files/wins_guide_file_array_nSNP50.txt
+guide_file=$WORKING_FOLDER/guide_files/wins_guide_file_array_8M.txt
 
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers. 
 # Chr            nSNPs  Start   End    win_i   group
