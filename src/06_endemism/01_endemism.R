@@ -68,7 +68,9 @@ snp.dt <- data.table(
     mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 
-#snp.dt[,list(minPos=min(pos), maxPos=max(pos)), list(chr)]
+#head(snp.dt[,list(minPos=min(pos), maxPos=max(pos)), list(chr)])
+
+# ================================================================================== #
 
 # Subset to sites with only 2 alleles
 snp.dt <- snp.dt[nAlleles==2]
@@ -82,6 +84,23 @@ numJobs <- 500
 
 # Create bins
 snp.dt[,bin:=rep(1:numJobs, each=ceiling(dim(snp.dt)[1]/numJobs))[1:dim(snp.dt)[1]]]
+
+
+####
+# Load pooldata object
+load("data/raw/pooldata/pooldata.RData")
+
+# Extract SNP info for all SNPs
+pooldata@snp.info %>%
+  as.data.frame() %>% mutate(rs.id = rownames(.)) ->
+  pooldata.snp.info
+
+# Rename columns
+names(pooldata.snp.info)[1:2] = c("chr","pos")
+
+# Make snp_id column
+pooldata.snp.info <- pooldata.snp.info %>%
+  mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 # ================================================================================== #
 
@@ -143,9 +162,9 @@ m.ag <- m[,list(nSamps_poly=sum(freq>0 & freq<1, na.rm=T),
                 nSamps_missing=sum(is.na(freq)),
 
                 nLocales_poly=length(unique(na.omit(Site.Code[freq>0 & freq<1]))),
-                #nSamps2_poly=length(unique(na.omit(sampleId[freq>0 & freq<1]))), #Unlike the fies, I don't have multiple samples per site
+                #nSamps2_poly=length(unique(na.omit(sampleId[freq>0 & freq<1]))), #Unlike the flies, I don't have multiple samples per site
 
-                nLocales_fixed=length(unique(na.omit(Site.Code[freq==0 & freq==1]))),
+                nLocales_fixed=length(unique(na.omit(Site.Code[freq==0 | freq==1]))),
                 #nSamps2_fixed=length(unique(na.omit(sampleId[freq==0 & freq==1]))),
 
                 global_af=sum(ad, na.rm=T)/sum(dp, na.rm=T),
@@ -176,7 +195,7 @@ print(length(m.ag$variant))  # Confirm length matches your expectation
 message("Annotations")
 seqResetFilter(genofile)
 seqSetFilter(genofile, variant.id=m.ag[nSamps_poly!=0]$variant)
-tmp <- seqGetData(genofile, "annotation/info/ANN")
+s <- seqGetData(genofile, "annotation/info/ANN")
 len1 <- tmp$length
 len2 <- tmp$data
 
@@ -201,7 +220,7 @@ m.ag <- merge(m.ag, snp.dt1.an, by.x="variant", by.y="variant.id")
 
 #table(m.ag$col=="stop_gained", m.ag$nSamps_poly)
 #m.ag[col=="stop_gained" & nSamps_poly==5]
-o <- merge(snp.dt[bin==i], m.ag, by.x="id", by.y="variant")
+o <- merge(snp.dt[bin==i], m.ag, by.x="variant.id", by.y="variant")
 
       
 #o <- rbindlist(o)
@@ -211,6 +230,6 @@ o <- merge(snp.dt[bin==i], m.ag, by.x="id", by.y="variant")
 x <- o[nSamps_poly>0]
 x
 
-save(x, file= paste("/gpfs2/scratch/lproud/Dest_2.0_SNAPE/private_v5_slices/slice", job, ".Rdata", sep=""))
+save(x, file= paste("data/processed/endemism/slice", job, ".Rdata", sep=""))
   
 ##  save(o, file=paste("/scratch/aob2x/private_v5_slices/slice", job, ".Rdata", sep=""))

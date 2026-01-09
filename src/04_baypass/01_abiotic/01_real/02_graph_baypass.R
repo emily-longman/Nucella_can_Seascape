@@ -57,7 +57,7 @@ baypass.bf <- foreach(w=abiotic_var, .combine="rbind", .errorhandling = "remove"
     message(w)
 
     # Path to file
-    path <- paste("data/processed/GEA/baypass/abiotic/", w, sep = "")
+    path <- paste("data/processed/GEA/baypass/abiotic_aux/", w, sep = "")
     # File name
     file_name <- dir(path = path, pattern = "*_betai.out")
     # Full path
@@ -99,7 +99,7 @@ baypass.bf <- foreach(w=Mcali_var, .combine="rbind", .errorhandling = "remove")%
 # Graph Baypass output
 
 # Graph bayes factor - This is too big.....
-pdf("output/figures/GEA/baypass/glm_baypass_BF.pdf", width = 8, height = 8)
+pdf("output/figures/GEA/baypass/baypass_BF.pdf", width = 8, height = 8)
 ggplot(baypass.bf, aes(y=BF.dB., x=chr)) + 
   labs(x = "Position", y = "BFaux (in dB)") +
   geom_point(alpha=0.8) + 
@@ -108,11 +108,11 @@ ggplot(baypass.bf, aes(y=BF.dB., x=chr)) +
 dev.off()
 
 # Graph BF of individual variables
-pdf("output/figures/GEA/baypass/glm_baypass_BF_ph_mean.pdf", width = 8, height = 8)
-plot(baypass.bf[which(baypass.bf$variable == "ph_mean"),]$BF.dB., xlab="SNP",ylab="BFmc (in dB)")
+pdf("output/figures/GEA/baypass/baypass_BF_ph_mean_baseR.pdf", width = 8, height = 8)
+plot(baypass.bf[which(baypass.bf$variable == "ph_mean"),]$BF.dB., xlab="SNP",ylab="BFaux (in dB)")
 dev.off()
 
-pdf("output/figures/GEA/baypass/glm_baypass_BF_ph_mean.pdf", width = 8, height = 8)
+pdf("output/figures/GEA/baypass/baypass_BF_ph_mean.pdf", width = 8, height = 8)
 ggplot(baypass.bf[which(baypass.bf$variable == "ph_mean"),], aes(y=BF.dB., x=chr)) + 
   labs(x = "Position", y = "BFaux (in dB)") +
   geom_point(alpha=0.8) + 
@@ -122,7 +122,17 @@ ggplot(baypass.bf[which(baypass.bf$variable == "ph_mean"),], aes(y=BF.dB., x=chr
         axis.text.y = element_text(size = 12)) 
 dev.off()
 
-pdf("output/figures/GEA/baypass/glm_baypass_BF_chl_mean.pdf", width = 8, height = 8)
+pdf("output/figures/GEA/baypass/baypass_BF_thetao_mean.pdf", width = 8, height = 8)
+ggplot(baypass.bf[which(baypass.bf$variable == "thetao_mean"),], aes(y=BF.dB., x=chr)) + 
+  labs(x = "Position", y = "BFaux (in dB)") +
+  geom_point(alpha=0.8) + 
+  theme_classic(base_size = 20) + 
+  theme(panel.spacing = unit(0.5, "lines"),
+        axis.text.x = element_blank(), axis.ticks.x = element_blank(),
+        axis.text.y = element_text(size = 12)) 
+dev.off()
+
+pdf("output/figures/GEA/baypass/baypass_BF_chl_mean.pdf", width = 8, height = 8)
 ggplot(baypass.bf[which(baypass.bf$variable == "chl_mean"),], aes(y=BF.dB., x=chr)) + 
   labs(x = "Position", y = "BFaux (in dB)") +
   geom_point(alpha=0.8) + 
@@ -131,6 +141,46 @@ ggplot(baypass.bf[which(baypass.bf$variable == "chl_mean"),], aes(y=BF.dB., x=ch
         axis.text.x = element_blank(), axis.ticks.x = element_blank(),
         axis.text.y = element_text(size = 12)) 
 dev.off()
+
+# ================================================================================== #
+
+# Explore patterns in bayes factors
+
+# pH mean
+bf.ph.mean <- baypass.bf[which(baypass.bf$variable == "ph_mean"),]
+bf.ph.mean.extreme <- bf.ph.mean[which(bf.ph.mean$BF.dB.>50),]
+bf.ph.mean.extreme <- bf.ph.mean.extreme %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
+write.csv(bf.ph.mean.extreme, "data/processed/GEA/baypass/bf.ph.mean.extremes.csv", row.names = F, quote = F)
+
+# Temp mean
+bf.thetao.mean <- baypass.bf[which(baypass.bf$variable == "thetao_mean"),]
+bf.thetao.mean.extreme <- bf.thetao.mean[which(bf.thetao.mean$BF.dB.>50),]
+bf.thetao.mean.extreme <- bf.thetao.mean.extreme %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
+write.csv(bf.thetao.mean.extreme, "data/processed/GEA/baypass/bf.thetao.mean.extremes.csv", row.names = F, quote = F)
+
+# Temp min
+bf.thetao.min <- baypass.bf[which(baypass.bf$variable == "thetao_min"),]
+bf.thetao.min.extreme <- bf.thetao.min[which(bf.thetao.min$BF.dB.>50),]
+bf.thetao.min.extreme <- bf.thetao.min.extreme %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
+write.csv(bf.thetao.min.extreme, "data/processed/GEA/baypass/bf.thetao.min.extremes.csv", row.names = F, quote = F)
+
+# Chl mean
+bf.chl.mean <- baypass.bf[which(baypass.bf$variable == "chl_mean"),]
+bf.chl.mean.extreme <- bf.chl.mean[which(bf.chl.mean$BF.dB.>50),]
+bf.chl.mean.extreme <- bf.chl.mean.extreme %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
+write.csv(bf.chl.mean.extreme, "data/processed/GEA/baypass/bf.chl.mean.extreme.csv", row.names = F, quote = F)
+
+# Note: All have a max Bayes Factor value of 52.96447989
+
+# No overlap between the SNPs in the ph mean and thetao mean nor
+bf.ph.mean.extreme.overlap <- bf.ph.mean.extreme %>% filter(SNP_id %in% bf.thetao.mean.extreme$SNP_id)
+bf.ph.mean.extreme.overlap <- bf.ph.mean.extreme %>% filter(SNP_id %in% bf.chl.mean.extreme$SNP_id)
+bf.ph.mean.extreme.overlap <- bf.ph.mean.extreme %>% filter(SNP_id %in% bf.thetao.min.extreme$SNP_id)
+
+# Load pooldata
+load("data/raw/pooldata/pooldata.RData")
+
+
 
 # ================================================================================== #
 # ================================================================================== #
