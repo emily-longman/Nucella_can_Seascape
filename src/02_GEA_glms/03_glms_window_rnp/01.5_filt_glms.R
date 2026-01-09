@@ -50,6 +50,9 @@ pooldata.snp.info <- pooldata.snp.info %>%
 # Filter GLM to only sites in pooldata snp.info
 glm.model.collated.filt <- glm.model.collated %>% filter(SNP_id %in% pooldata.snp.info$SNP_id)
 
+# Check structure
+str(glm.model.collated.filt)
+
 # ================================================================================== #
 
 # Save glm output

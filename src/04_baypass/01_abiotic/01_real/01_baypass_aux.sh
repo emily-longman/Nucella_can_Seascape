@@ -81,23 +81,23 @@ cat ${var}.data.txt
 cd $WORKING_FOLDER/data/processed/GEA/baypass
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "abiotic" ]
-then echo "Working abiotic folder exist"; echo "Let's move on."; date
-else echo "Working abiotic folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/baypass/abiotic; date
+if [ -d "abiotic_aux" ]
+then echo "Working abiotic_aux folder exist"; echo "Let's move on."; date
+else echo "Working abiotic_aux folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/baypass/abiotic_aux; date
 fi
 
-cd $WORKING_FOLDER/data/processed/GEA/baypass/abiotic
+cd $WORKING_FOLDER/data/processed/GEA/baypass/abiotic_aux
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
 if [ -d "${var}" ]
 then echo "Working ${var} folder exist"; echo "Let's move on."; date
-else echo "Working ${var} folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/baypass/abiotic/${var}; date
+else echo "Working ${var} folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/baypass/abiotic_aux/${var}; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Change directory 
-cd $WORKING_FOLDER/data/processed/GEA/baypass/abiotic/${var}
+cd $WORKING_FOLDER/data/processed/GEA/baypass/abiotic_aux/${var}
 
 # Run baypass in aux covaraiate mode to estimate Bayes Factors
 $baypass -npop 19 \
@@ -106,6 +106,7 @@ $baypass -npop 19 \
 -omegafile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/omega/NC_baypass_mat_omega.out \
 -efile $WORKING_FOLDER/data/processed/GEA/baypass/${var}.data.txt \
 -d0yij 4 \
+-auxmodel \
 -outprefix NC_abiotic_${var} \
 -nthreads 20
 
