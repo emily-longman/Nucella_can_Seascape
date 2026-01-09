@@ -1,4 +1,4 @@
-# Create windows 
+# Create windows
 
 # Clear memory
 rm(list=ls())
@@ -47,31 +47,7 @@ wins_group_i <- wins_guide_file_array %>% filter(.groups == win_group)
 #vars_subset <- Seascape_vars_names$V1[1:5]
 
 # Load data
-load("data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean.Rdata")
-
-# Make snp_id column
-glm.model.collated <- glm.model.collated %>%
-  mutate(SNP_id = paste(chr, pos, sep = "_"))
-
-# ================================================================================== #
-
-# Load pooldata object
-load("data/raw/pooldata/pooldata.RData")
-
-# Extract SNP info for all SNPs
-pooldata@snp.info %>%
-  as.data.frame() %>% mutate(rs.id = rownames(.)) ->
-  pooldata.snp.info
-
-# Rename columns
-names(pooldata.snp.info)[1:2] = c("chr","pos")
-
-# Make snp_id column
-pooldata.snp.info <- pooldata.snp.info %>%
-  mutate(SNP_id = paste(chr, pos, sep = "_"))
-
-# Filter GLM to only sites in pooldata snp.info
-glm.model.collated.filt <- glm.model.collated %>% filter(SNP_id %in% pooldata.snp.info$SNP_id)
+load("data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean_8M.Rdata")
 
 # ================================================================================== #
 

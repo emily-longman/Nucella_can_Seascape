@@ -1,0 +1,58 @@
+# Filt glms output
+
+# Clear memory
+rm(list=ls())
+
+# ================================================================================== #
+
+# Set path as main Github repo
+# Install and load package
+#install.packages(c('rprojroot'))
+library(rprojroot)
+# Specify root path
+root_path <- find_root_file(criterion = has_file("README.md"))
+# Set working directory as path from root
+setwd(root_path)
+
+# ================================================================================== #
+
+# Load packages
+#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'doMC'))
+library(data.table)
+library(tidyverse)
+library(foreach)
+library(dplyr)
+
+# ================================================================================== #
+
+# Load data
+load("data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean.Rdata")
+
+# Make snp_id column
+glm.model.collated <- glm.model.collated %>%
+  mutate(SNP_id = paste(chr, pos, sep = "_"))
+
+# ================================================================================== #
+
+# Load pooldata object
+load("data/raw/pooldata/pooldata.RData")
+
+# Extract SNP info for all SNPs
+pooldata@snp.info %>%
+  as.data.frame() %>% mutate(rs.id = rownames(.)) ->
+  pooldata.snp.info
+
+# Rename columns
+names(pooldata.snp.info)[1:2] = c("chr","pos")
+
+# Make snp_id column
+pooldata.snp.info <- pooldata.snp.info %>%
+  mutate(SNP_id = paste(chr, pos, sep = "_"))
+
+# Filter GLM to only sites in pooldata snp.info
+glm.model.collated.filt <- glm.model.collated %>% filter(SNP_id %in% pooldata.snp.info$SNP_id)
+
+# ================================================================================== #
+
+# Save glm output
+save(glm.model.collated.filt, "data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean_8M.Rdata")
