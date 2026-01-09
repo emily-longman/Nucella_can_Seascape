@@ -83,7 +83,7 @@ fi
 
 # Run R script
 
-Rscript --vanilla $WORKING_FOLDER/src/02_GEA_glms/03_glms_window_rnp/02_glm_window_rnp_ph_mean_8M.R "${SLURM_ARRAY_TASK_ID}"
+Rscript --vanilla $WORKING_FOLDER/src/02_GEA_glms/03_glms_window_rnp/02_glm_window_rnp_ph_mean_real_8M.R "${SLURM_ARRAY_TASK_ID}"
 # The --vanilla option prevents restoring or saving workspaces
 
 #--------------------------------------------------------------------------------
