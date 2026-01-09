@@ -38,7 +38,7 @@ win_group = as.numeric(args[1])
 # State variable name
 message(paste("Window group:", win_group))
 # Load windows
-load("data/processed/GEA/glms/glms_window_summary/windows_nSNP50.RData")
+load("data/processed/GEA/glms/glms_window_summary/windows.RData")
 # Extract 13 windows of interest based on win_group
 wins_group_i <- wins_guide_file_array %>% filter(.groups == win_group)
 
@@ -80,8 +80,8 @@ load("data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean.Rdata")
         filter(pos >= wins_group_i$start[window.w] & pos <= wins_group_i$end[window.w])
     
         # P-values
+        pr.i.0.05 <- c(0.05)
         pr.i.0.01 <- c(0.01)
-        pr.i.0.001 <- c(0.001)
     
         # Summarize for a given window
         win_tmp %>% 
@@ -94,12 +94,12 @@ load("data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean.Rdata")
               variable = unique(variable),
               perm = perm.i,
               win = wins_group_i$i[window.w],
+              rnp.pr.0.05 = c(mean(rnp <= pr.i.0.05)),
               rnp.pr.0.01 = c(mean(rnp <= pr.i.0.01)),
-              rnp.pr.0.001 = c(mean(rnp <= pr.i.0.001)),
+              rnp.binom.p.0.05 = c(binom.test(sum(rnp <= pr.i.0.05), length(rnp), pr.i.0.05)$p.value),
               rnp.binom.p.0.01 = c(binom.test(sum(rnp <= pr.i.0.01), length(rnp), pr.i.0.01)$p.value),
-              rnp.binom.p.0.001 = c(binom.test(sum(rnp <= pr.i.0.001), length(rnp), pr.i.0.001)$p.value),
+              sum.rnp.0.05 = sum(rnp <= pr.i.0.05),
               sum.rnp.0.01 = sum(rnp <= pr.i.0.01),
-              sum.rnp.0.01 = sum(rnp <= pr.i.0.001),
               max.rnp = max(rnp),
               min.rnp = min(rnp),
               nSNPs = n()
@@ -113,7 +113,7 @@ load("data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean.Rdata")
 # Generate folders and save output
 
 # Folder name for window group i
-folder_name <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_ph_mean_real")
+folder_name <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_ph_mean_real_filt_nSNP")
 
 # Save file for window group
 file_name <- paste0("glm_window_chunks_", win_group)
