@@ -17,10 +17,8 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'doMC'))
-library(data.table)
+#install.packages(c('tidyverse', 'dplyr'))
 library(tidyverse)
-library(foreach)
 library(dplyr)
 
 # ================================================================================== #
@@ -55,4 +53,4 @@ glm.model.collated.filt <- glm.model.collated %>% filter(SNP_id %in% pooldata.sn
 # ================================================================================== #
 
 # Save glm output
-save(glm.model.collated.filt, "data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean_8M.Rdata")
+save(glm.model.collated.filt, file="data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean_8M.Rdata")

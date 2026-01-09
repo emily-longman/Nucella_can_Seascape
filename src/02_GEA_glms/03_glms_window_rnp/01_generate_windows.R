@@ -133,7 +133,7 @@ wins <- foreach(chr.i=unique(snp.dt.filt$chr), .combine="rbind", .errorhandling=
       else {message("fails nSNPs filter")}
 }
 
-# Generate windows (note: only chromosomes with the number of SNPs in that window >= 5)
+# Generate windows (note: only chromosomes with the number of SNPs in that window >= 100)
 wins <- foreach(chr.i=unique(snp.dt$chr), .combine="rbind", .errorhandling="remove")%do%{
       # State chromosome
       message(chr.i)
@@ -145,7 +145,7 @@ wins <- foreach(chr.i=unique(snp.dt$chr), .combine="rbind", .errorhandling="remo
       # Number of SNPs on chromosome
       nSNPs=dim(tmp)[1]
 
-      # For only chromosomes with >= 5
+      # For only chromosomes with >= 100
       if(nSNPs >= 100){
       o = data.table(
         chr=chr.i,
@@ -165,6 +165,11 @@ wins[,i:=1:dim(wins)[1]]
 
 # Check dimensions - 12928 windows for 14 mill; 12318 for 8 mill
 dim(wins)
+
+#####
+
+# Filter so only polymorphic sites
+
 
 # ================================================================================== #
 
