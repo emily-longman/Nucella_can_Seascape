@@ -40,8 +40,8 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 # Extract glm chunk for each environmental variable
 
 # Create list of file names
-file_names = as.list(dir(path = '/gpfs2/scratch/elongman/Nucella_can_Seascape/data/processed/GEA/glms/glms_chunk_analysis/', pattern = "GLM_100perm_Bio-Oracle_chunk_*"))
-file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('/gpfs2/scratch/elongman/Nucella_can_Seascape/data/processed/GEA/glms/glms_chunk_analysis/', x))))
+file_names = as.list(dir(path = '/gpfs2/scratch/elongman/Nucella_can_Seascape/data/processed/GEA/glms/glms_chunk_analysis_abiotic/', pattern = "GLM_100perm_Bio-Oracle_chunk_*"))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('/gpfs2/scratch/elongman/Nucella_can_Seascape/data/processed/GEA/glms/glms_chunk_analysis_abiotic/', x))))
 
 # Read all the files and add a column with the chunk
 foreach(w=file_names_v, .errorhandling = "remove")%do%{  
@@ -51,7 +51,7 @@ foreach(w=file_names_v, .errorhandling = "remove")%do%{
     o = get(load(w))
 
     # Add column with identifier
-    o %>% mutate(chunk = w) %>% mutate(chunk = str_remove(chunk, pattern = "/gpfs2/scratch/elongman/Nucella_can_Seascape/data/processed/GEA/glms/glms_chunk_analysis/GLM_100perm_Bio-Oracle_chunk_")) -> tmp
+    o %>% mutate(chunk = w) %>% mutate(chunk = str_remove(chunk, pattern = "/gpfs2/scratch/elongman/Nucella_can_Seascape/data/processed/GEA/glms/glms_chunk_analysis_abiotic/GLM_100perm_Bio-Oracle_chunk_")) -> tmp
 
     # Remove end of chunk name
     tmp <- tmp %>% mutate(chunk = str_remove(chunk, pattern = ".Rdata"))
