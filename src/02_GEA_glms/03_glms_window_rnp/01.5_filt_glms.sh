@@ -14,13 +14,16 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=03:00:00 
+#SBATCH --time=01:30:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=500G 
+#SBATCH --mem=350G 
 
 # Request CPU
 #SBATCH --cpus-per-task=5
+
+# Submit job array
+#SBATCH --array=1-27
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -46,9 +49,32 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 #--------------------------------------------------------------------------------
 
+# Guide file 
+guide_file=$WORKING_FOLDER/guide_files/Seascape_vars_names.txt
+
+#Example: -- the headers are just for descriptive purposes. The actual file has no headers. 
+# Env variable name   
+# thetao_max
+#...    
+
+#--------------------------------------------------------------------------------
+
+# Determine the environmental variable to process
+
+# Echo slurm array task ID
+echo ${SLURM_ARRAY_TASK_ID}
+
+# Using the guide file, extract the scaffold names associated based on the Slurm array task ID for a given partition
+i=`sed -n ${SLURM_ARRAY_TASK_ID}p $guide_file`
+
+# State environmental variable
+echo ${i}
+
+#--------------------------------------------------------------------------------
+
 # Run R script
 
-Rscript --vanilla $WORKING_FOLDER/src/02_GEA_glms/03_glms_window_rnp/01.5_filt_glms.R
+Rscript --vanilla $WORKING_FOLDER/src/02_GEA_glms/03_glms_window_rnp/01.5_filt_glms.R "${i}"
 # The --vanilla option prevents restoring or saving workspaces
 
 #--------------------------------------------------------------------------------
