@@ -195,7 +195,7 @@ print(length(m.ag$variant))  # Confirm length matches your expectation
 message("Annotations")
 seqResetFilter(genofile)
 seqSetFilter(genofile, variant.id=m.ag[nSamps_poly!=0]$variant)
-s <- seqGetData(genofile, "annotation/info/ANN")
+tmp <- seqGetData(genofile, "annotation/info/ANN")
 len1 <- tmp$length
 len2 <- tmp$data
 
