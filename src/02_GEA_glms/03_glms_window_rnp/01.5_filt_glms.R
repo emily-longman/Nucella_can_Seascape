@@ -33,7 +33,7 @@ env_var = as.character(args[1]) #Environmental variable
 message(env_var)
 
 # Load data
-load(paste0("/gpfs3/scratch/elongman/glms_per_env_var/glm.collated_", env_var, ".Rdata") )
+load(paste0("data/processed/GEA/glms/glms_per_env_var/glm.collated_", env_var, ".Rdata") )
 
 # Load data
 #load("data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean.Rdata")
