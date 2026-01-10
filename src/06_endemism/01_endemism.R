@@ -230,6 +230,6 @@ o <- merge(snp.dt[bin==i], m.ag, by.x="variant.id", by.y="variant")
 x <- o[nSamps_poly>0]
 x
 
-save(x, file= paste("data/processed/endemism/slice", job, ".Rdata", sep=""))
+save(x, file= paste("data/processed/endemism/slice_", i, ".Rdata", sep=""))
   
 ##  save(o, file=paste("/scratch/aob2x/private_v5_slices/slice", job, ".Rdata", sep=""))
