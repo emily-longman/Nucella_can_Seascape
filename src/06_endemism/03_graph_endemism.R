@@ -44,34 +44,28 @@ load("data/processed/endemism/endemism.merge.filt.RData")
 endemism.merge.filt.SNS <- endemism.merge.filt %>% filter(col == "synonymous_variant" | col == "missense_variant")
 
 # Summarize
-o <- foreach(nL = unique(endemism.merge.filt.SNS$nLocales_poly), .combine="rbind", .errorhandling = "remove"){
+o <- foreach(nL=unique(endemism.merge.filt.SNS$nLocales_poly), .combine="rbind", .errorhandling="remove")%do%{
 
-    prop <- sum(endemism.merge.filt.SNS$col%like%"missense") / dim(endemism.merge.filt.SNS)[1]
-    prop_se <- sqrt(prop * (1-prop)/dim(endemism.merge.filt.SNS)[1])
+    tmp <- endemism.merge.filt.SNS %>% filter(nLocales_poly == nL)
+
+    propNS <- sum(tmp$col%like%"missense_variant") / dim(endemism.merge.filt.SNS)[1]
+    propNS_se <- sqrt(propNS * (1-propNS)/dim(endemism.merge.filt.SNS)[1])
+
+    data.table(
+       nLocales_poly = nL,
+       nSNP=dim(tmp)[1],
+       propNS = propNS,
+       propNS_se = propNS_se
+    )
 }
-
-    
-
-    data.table(nLocales_poly=nL,
-                mod=c("propNS", "dist", "maf", "score"),
-                nSNPs=dim(endemism.merge.filt.SNS)[1],
-                p=c(NA, unlist(lapply(mods, function(x) x$p.value))),
-                lci=c(prop-1.96*prop_se, unlist(lapply(mods, function(x) x$conf.int[1]))),
-                uci=c(prop+1.96*prop_se, unlist(lapply(mods, function(x) x$conf.int[2]))),
-                df=c(NA, unlist(lapply(mods, function(x) x$parameter))),
-                t=c(NA, unlist(lapply(mods, function(x) x$statistic))),
-                delta=c(prop, unlist(lapply(mods, function(x) x$estimate[1]-x$estimate[2]))))
-                
-
 
 # ================================================================================== #
 
 # Graph
 pdf("output/figures/endemism/Ncan_endemism.pdf", width = 8, height = 8)
-ggplot(endemism.merge.filt.SNS, aes(x=nLocales_poly, )) + 
+ggplot(o, aes(x=nLocales_poly, propNS)) + 
   geom_line() + 
-  theme_classic(base_size = 20) + 
-  theme(panel.spacing = unit(0.5, "lines"),
-        axis.text.x = element_blank(), axis.ticks.x = element_blank(),
-        axis.text.y = element_text(size = 12)) 
+  ylab("Proportion of\nmissense coding SNPs") +
+  geom_hline(aes(yintercept=0), linetype="dashed") +
+  theme_classic(base_size = 20)
 dev.off()
