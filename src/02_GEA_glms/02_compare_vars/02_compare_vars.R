@@ -33,7 +33,7 @@ env_var = as.character(args[1]) #Environmental variable
 # ================================================================================== #
 
 # Generate output directories
-out_dir <- paste("/gpfs2/scratch/elongman/Nucella_can_Seascape/data/processed/GEA/glms/glms_summary")
+out_dir <- paste("data/processed/GEA/glms/glms_summary")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # ================================================================================== #
@@ -44,7 +44,7 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 message(env_var)
 
 # Load data
-load(paste0("/gpfs3/scratch/elongman/glms_per_env_var/glm.collated_", env_var, "filt.Rdata") )
+load(paste0("data/processed/GEA/glms/glms_per_env_var/glm.collated_", env_var, "filt.Rdata") )
 
 # Bin data
 hist.obj.env = foreach(i = 0:max(glm.model.collated$perm), .combine = "rbind")%do%{
@@ -91,4 +91,4 @@ mutate(rr_ratio = (rr_real / rr_perm), rr_ratio_log2 = log2(rr_real / rr_perm), 
 # ================================================================================== #
 
 # Write table
-write.csv(ratios, file = paste("/gpfs2/scratch/elongman/Nucella_can_Seascape/data/processed/GEA/glms/glms_summary/Vars_rr_", env_var, ".csv", sep = ""), row.names=FALSE)
+write.csv(ratios, file = paste("data/processed/GEA/glms/glms_summary/Vars_rr_", env_var, ".csv", sep = ""), row.names=FALSE)
