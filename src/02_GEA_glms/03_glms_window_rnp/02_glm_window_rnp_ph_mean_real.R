@@ -1,4 +1,4 @@
-# Create windows 
+# Create windows
 
 # Clear memory
 rm(list=ls())
@@ -47,7 +47,7 @@ wins_group_i <- wins_guide_file_array %>% filter(.groups == win_group)
 #vars_subset <- Seascape_vars_names$V1[1:5]
 
 # Load data
-load("data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean.Rdata")
+load("data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean_filt.Rdata")
 
 # ================================================================================== #
 
@@ -60,7 +60,7 @@ load("data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean.Rdata")
     message(paste("Permutation #:", perm.i))
 
     # Filter glm data based on perm (0 = real data, 1 to 100 are permutations)
-    tmp <- glm.model.collated %>% filter(perm == perm.i)
+    tmp <- glm.model.collated.filt %>% filter(perm == perm.i)
 
         # Rank-normalize p-values
         tmp$rank <- rank(tmp$p_lrt)
@@ -113,7 +113,7 @@ load("data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean.Rdata")
 # Generate folders and save output
 
 # Folder name for window group i
-folder_name <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_ph_mean_real_nSNP100")
+folder_name <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_ph_mean_real")
 
 # Save file for window group
 file_name <- paste0("glm_window_chunks_", win_group)

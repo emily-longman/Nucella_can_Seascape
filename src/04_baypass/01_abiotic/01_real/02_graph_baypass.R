@@ -50,6 +50,111 @@ Mcali_var <- Mcali_variables$V1[1:4]
 
 # ================================================================================== #
 
+# Baypass in standard covariate mode
+
+# Read all files and add variable name
+baypass.bf <- foreach(w=abiotic_var, .combine="rbind", .errorhandling = "remove")%do%{  
+    
+    # State which variable loading
+    message(w)
+
+    # Path to file
+    path <- paste("data/processed/GEA/baypass/abiotic/", w, sep = "")
+    # File name
+    file_name <- dir(path = path, pattern = "*_betai_reg.out")
+    # Full path
+    full_path <- file.path(path, file_name)
+    # Load file
+    baypass_betai <- read.table(full_path, header=T)
+
+    # Add variable column
+    baypass_betai <- baypass_betai %>% mutate(variable = w)
+
+    # Join baypass results with snp metadata
+    baypass_betai_pos <- cbind(snp.meta, baypass_betai)
+}
+
+# Graph BF of individual variables
+pdf("output/figures/GEA/baypass/baypass_BF_ph_mean.pdf", width = 8, height = 8)
+ggplot(baypass.bf[which(baypass.bf$variable == "ph_mean"),], aes(y=BF.dB., x=chr)) + 
+  labs(x = "Position", y = "BF (in dB)") +
+  geom_point(alpha=0.8) + 
+  theme_classic(base_size = 20) + 
+  theme(panel.spacing = unit(0.5, "lines"),
+        axis.text.x = element_blank(), axis.ticks.x = element_blank(),
+        axis.text.y = element_text(size = 12)) 
+dev.off()
+
+pdf("output/figures/GEA/baypass/baypass_BF_thetao_mean.pdf", width = 8, height = 8)
+ggplot(baypass.bf[which(baypass.bf$variable == "thetao_mean"),], aes(y=BF.dB., x=chr)) + 
+  labs(x = "Position", y = "BF (in dB)") +
+  geom_point(alpha=0.8) + 
+  theme_classic(base_size = 20) + 
+  theme(panel.spacing = unit(0.5, "lines"),
+        axis.text.x = element_blank(), axis.ticks.x = element_blank(),
+        axis.text.y = element_text(size = 12)) 
+dev.off()
+
+pdf("output/figures/GEA/baypass/baypass_BF_chl_mean.pdf", width = 8, height = 8)
+ggplot(baypass.bf[which(baypass.bf$variable == "chl_mean"),], aes(y=BF.dB., x=chr)) + 
+  labs(x = "Position", y = "BF (in dB)") +
+  geom_point(alpha=0.8) + 
+  theme_classic(base_size = 20) + 
+  theme(panel.spacing = unit(0.5, "lines"),
+        axis.text.x = element_blank(), axis.ticks.x = element_blank(),
+        axis.text.y = element_text(size = 12)) 
+dev.off()
+
+pdf("output/figures/GEA/baypass/baypass_BF_so_mean.pdf", width = 8, height = 8)
+ggplot(baypass.bf[which(baypass.bf$variable == "so_mean"),], aes(y=BF.dB., x=chr)) + 
+  labs(x = "Position", y = "BF (in dB)") +
+  geom_point(alpha=0.8) + 
+  theme_classic(base_size = 20) + 
+  theme(panel.spacing = unit(0.5, "lines"),
+        axis.text.x = element_blank(), axis.ticks.x = element_blank(),
+        axis.text.y = element_text(size = 12)) 
+dev.off()
+
+# Read in files and graph - abiotic
+foreach(w=abiotic_var, .combine="rbind", .errorhandling = "remove")%do%{  
+    
+    # State which variable loading
+    message(w)
+
+    # Path to file
+    path <- paste("data/processed/GEA/baypass/abiotic/", w, sep = "")
+    # File name
+    file_name <- dir(path = path, pattern = "*_summary_pi_xtx.out")
+    # Full path
+    full_path <- file.path(path, file_name)
+    # Load file
+    baypass_xtx <- read.table(full_path, header=T)
+
+    # Add variable column
+    baypass_xtx <- baypass_xtx %>% mutate(variable = w)
+
+    # Join baypass results with snp metadata
+    baypass_xtx <- cbind(snp.meta, baypass_xtx)
+
+    # Graph XtX for var
+    pdf(paste0("output/figures/GEA/baypass/baypass_xtx_", w,".pdf"), width = 10, height = 5)
+    plot(baypass_xtx$XtXst)
+    dev.off()
+
+    # Graph outliers for var
+    pdf(paste0("output/figures/GEA/baypass/baypass_xtx_outliers_", w,".pdf"), width = 10, height = 5)
+    par(mar=c(5,5,4,1)+.1) #Adjust margins
+    plot(baypass_xtx$log10.1.pval., ylab=expression(-log[10](italic(p))), xlab="Position")
+    abline(h=-log10(0.001), lty=2, col="red") #0.001 p-value threshold
+    abline(h=-log10(0.05/dim(baypass_xtx)[1]), lty=1, col="red") # Bonferroni threshold
+    dev.off()
+
+}
+
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
+
 # Read all files and add variable name
 baypass.bf <- foreach(w=abiotic_var, .combine="rbind", .errorhandling = "remove")%do%{  
     
@@ -206,12 +311,12 @@ foreach(w=abiotic_var, .combine="rbind", .errorhandling = "remove")%do%{
     # Join baypass results with snp metadata
     baypass_xtx <- cbind(snp.meta, baypass_xtx)
 
-    # Graph XtX for ph_mean
+    # Graph XtX for var
     pdf(paste0("output/figures/GEA/baypass/baypass_xtx_", w,".pdf"), width = 10, height = 5)
     plot(baypass_xtx$XtXst)
     dev.off()
 
-    # Graph outliers for ph_mean
+    # Graph outliers for var
     pdf(paste0("output/figures/GEA/baypass/baypass_xtx_outliers_", w,".pdf"), width = 10, height = 5)
     par(mar=c(5,5,4,1)+.1) #Adjust margins
     plot(baypass_xtx$log10.1.pval., ylab=expression(-log[10](italic(p))), xlab="Position")

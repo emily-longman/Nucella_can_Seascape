@@ -46,6 +46,10 @@ message("Partition: ", i)
 out_dir <- paste("data/processed/endemism")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
+# Data directory
+out_dir <- paste("data/processed/endemism/chunks")
+if (!dir.exists(out_dir)) {dir.create(out_dir)}
+
 # ================================================================================== #
 
 # Open the GDS file
@@ -58,7 +62,7 @@ meta <- read.csv("guide_files/Populations_metadata.csv")
 
 # Format data
 
-# Extract SNP data from GDS
+# Extract SNP data from GDS - 14,897,468 SNPs
 snp.dt <- data.table(
         chr=seqGetData(genofile, "chromosome"),
         pos=seqGetData(genofile, "position"),
@@ -84,23 +88,6 @@ numJobs <- 500
 
 # Create bins
 snp.dt[,bin:=rep(1:numJobs, each=ceiling(dim(snp.dt)[1]/numJobs))[1:dim(snp.dt)[1]]]
-
-
-####
-# Load pooldata object
-load("data/raw/pooldata/pooldata.RData")
-
-# Extract SNP info for all SNPs
-pooldata@snp.info %>%
-  as.data.frame() %>% mutate(rs.id = rownames(.)) ->
-  pooldata.snp.info
-
-# Rename columns
-names(pooldata.snp.info)[1:2] = c("chr","pos")
-
-# Make snp_id column
-pooldata.snp.info <- pooldata.snp.info %>%
-  mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 # ================================================================================== #
 
@@ -189,8 +176,6 @@ print(length(m.ag$variant))  # Confirm length matches your expectation
 
 # ================================================================================== #
 
-# NOTE: somehow the numbers get off here between df
-
 # Get annotations
 message("Annotations")
 seqResetFilter(genofile)
@@ -230,6 +215,6 @@ o <- merge(snp.dt[bin==i], m.ag, by.x="variant.id", by.y="variant")
 x <- o[nSamps_poly>0]
 x
 
-save(x, file= paste("data/processed/endemism/slice_", i, ".Rdata", sep=""))
+save(x, file= paste("data/processed/endemism/chunks/slice_", i, ".Rdata", sep=""))
   
 ##  save(o, file=paste("/scratch/aob2x/private_v5_slices/slice", job, ".Rdata", sep=""))

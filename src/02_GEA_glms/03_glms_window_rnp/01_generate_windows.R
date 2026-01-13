@@ -133,43 +133,11 @@ wins <- foreach(chr.i=unique(snp.dt.filt$chr), .combine="rbind", .errorhandling=
       else {message("fails nSNPs filter")}
 }
 
-# Generate windows (note: only chromosomes with the number of SNPs in that window >= 100)
-wins <- foreach(chr.i=unique(snp.dt$chr), .combine="rbind", .errorhandling="remove")%do%{
-      # State chromosome
-      message(chr.i)
-
-      # Filter data for focal chromosome
-      tmp <- snp.dt %>%
-      filter(chr == chr.i)
-
-      # Number of SNPs on chromosome
-      nSNPs=dim(tmp)[1]
-
-      # For only chromosomes with >= 100
-      if(nSNPs >= 100){
-      o = data.table(
-        chr=chr.i,
-        nSNPs=dim(tmp)[1],
-        start=seq(from=min(tmp$pos), to=max(tmp$pos)-win.bp, by=step.bp),
-        end=seq(from=min(tmp$pos), to=max(tmp$pos)-win.bp, by=step.bp) + win.bp)
-
-      # Return output
-      return(o)
-
-      }   
-      else {message("fails nSNPs filter")}
-}
-
 # Add window index
 wins[,i:=1:dim(wins)[1]]
 
-# Check dimensions - 12928 windows for 14 mill; 12318 for 8 mill
+# Check dimensions - 12928 windows for 14 mill; 12,318 for 8 mill
 dim(wins)
-
-#####
-
-# Filter so only polymorphic sites
-
 
 # ================================================================================== #
 
@@ -178,11 +146,9 @@ group(wins, n=13, method = "greedy") -> wins_guide_file_array
 
 # Write the table
 write.table(wins_guide_file_array, "guide_files/wins_guide_file_array.txt", col.names = F, row.names = F, quote = F)
-write.table(wins_guide_file_array, "guide_files/wins_guide_file_array_8M.txt", col.names = F, row.names = F, quote = F)
 # Note guide_file_array has dimensions:  12928, 6 - 995 groups; 12318, 5, - 995 groups
 
 # ================================================================================== #
 
 # Save windows
 save(wins_guide_file_array, file="data/processed/GEA/glms/glms_window_summary/windows.RData")
-save(wins_guide_file_array, file="data/processed/GEA/glms/glms_window_summary/windows_8M.RData")

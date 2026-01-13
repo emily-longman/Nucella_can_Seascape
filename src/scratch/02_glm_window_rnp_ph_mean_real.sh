@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_window_rnp_real_test_8M
+#SBATCH --job-name=glms_window_rnp_real_nSNP100
 
 # Specify partition
 #SBATCH --partition=general
@@ -20,7 +20,7 @@
 #SBATCH --mem=200G 
 
 # Submit job array
-#SBATCH --array=701-995%100 #1-400%100 #401-700%100
+#SBATCH --array=501-995%100 #1-500%100
 
 # Request CPU
 #SBATCH --cpus-per-task=10
@@ -51,7 +51,7 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 #--------------------------------------------------------------------------------
 
 # Guide file 
-guide_file=$WORKING_FOLDER/guide_files/wins_guide_file_array_8M.txt
+guide_file=$WORKING_FOLDER/guide_files/wins_guide_file_array.txt
 
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers. 
 # Chr            nSNPs  Start   End    win_i   group
@@ -74,16 +74,16 @@ echo "Window group:" ${SLURM_ARRAY_TASK_ID}
 cd $WORKING_FOLDER/data/processed/GEA/glms/glms_window_summary
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "glms_window_chunk_analysis_ph_mean_real_8M" ]
-then echo "Working glms_window_chunk_analysis_ph_mean_real_8M folder exist"; echo "Let's move on."; date
-else echo "Working glms_window_chunk_analysis_ph_mean_real_8M folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_ph_mean_real_8M; date
+if [ -d "glms_window_chunk_analysis_ph_mean_real_nSNP100" ]
+then echo "Working glms_window_chunk_analysis_ph_mean_real_nSNP100 folder exist"; echo "Let's move on."; date
+else echo "Working glms_window_chunk_analysis_ph_mean_real_nSNP100 folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_ph_mean_real_nSNP100; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Run R script
 
-Rscript --vanilla $WORKING_FOLDER/src/02_GEA_glms/03_glms_window_rnp/02_glm_window_rnp_ph_mean_real_8M.R "${SLURM_ARRAY_TASK_ID}"
+Rscript --vanilla $WORKING_FOLDER/src/02_GEA_glms/03_glms_window_rnp/02_glm_window_rnp_ph_mean_real.R "${SLURM_ARRAY_TASK_ID}"
 # The --vanilla option prevents restoring or saving workspaces
 
 #--------------------------------------------------------------------------------
