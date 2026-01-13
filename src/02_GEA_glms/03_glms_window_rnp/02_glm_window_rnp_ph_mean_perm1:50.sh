@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_window_rnp_real
+#SBATCH --job-name=glms_window_rnp_perm_1:50
 
 # Specify partition
 #SBATCH --partition=general
@@ -20,7 +20,7 @@
 #SBATCH --mem=200G 
 
 # Submit job array
-#SBATCH --array=501-995%100 #1-500%100
+#SBATCH --array=1-500%100 #501-995%100
 
 # Request CPU
 #SBATCH --cpus-per-task=10
@@ -74,16 +74,16 @@ echo "Window group:" ${SLURM_ARRAY_TASK_ID}
 cd $WORKING_FOLDER/data/processed/GEA/glms/glms_window_summary
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "glms_window_chunk_analysis_ph_mean_real" ]
-then echo "Working glms_window_chunk_analysis_ph_mean_real folder exist"; echo "Let's move on."; date
-else echo "Working glms_window_chunk_analysis_ph_mean_real folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_ph_mean_real; date
+if [ -d "glms_window_chunk_analysis_ph_mean_perm" ]
+then echo "Working glms_window_chunk_analysis_ph_mean_perm folder exist"; echo "Let's move on."; date
+else echo "Working glms_window_chunk_analysis_ph_mean_perm folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_ph_mean_perm; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Run R script
 
-Rscript --vanilla $WORKING_FOLDER/src/02_GEA_glms/03_glms_window_rnp/02_glm_window_rnp_ph_mean_real.R "${SLURM_ARRAY_TASK_ID}"
+Rscript --vanilla $WORKING_FOLDER/src/02_GEA_glms/03_glms_window_rnp/02_glm_window_rnp_ph_mean_perm1:50.R "${SLURM_ARRAY_TASK_ID}"
 # The --vanilla option prevents restoring or saving workspaces
 
 #--------------------------------------------------------------------------------

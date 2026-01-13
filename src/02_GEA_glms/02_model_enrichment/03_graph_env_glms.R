@@ -28,6 +28,8 @@ library(dplyr)
 # Generate output directories
 out_dir <- paste("data/processed/GEA/glms/glms_summary")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
+out_dir <- paste("data/processed/GEA/glms/glms_summary/model_enrichment")
+if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # ================================================================================== #
 
@@ -54,9 +56,8 @@ write.csv(all_ratios, "data/processed/GEA/glms/glms_summary/All_vars_rr.csv", ro
 # ================================================================================== #
 
 # Get names of variables
-abiotic_vars <- var_full_names$Var[which(var_full_names$Group=="Abiotic")]
-biotic_vars <- var_full_names$Var[which(var_full_names$Group=="Biotic")]
-#unique(all_ratios$variable) -> enviro_vars_names
+abiotic_vars <- var_full_names$variable[which(var_full_names$group=="Abiotic")]
+biotic_vars <- var_full_names$variable[which(var_full_names$group=="Biotic")]
 
 # ================================================================================== #
 
@@ -100,55 +101,36 @@ summary_biotic <- left_join(summary_biotic, var_full_names, by="variable")
 # Write table
 write.csv(summary_biotic, "data/processed/GEA/glms/glms_summary/Biotic_vars_rr_sum.csv", row.names=FALSE)
 
-
-# Summarize
-#summary <- all_ratios %>%
-#  group_by(variable) %>%
-#  drop_na() %>%
-#  summarise(n = n(),  # Number of observations,
-#            mean_rr_log2 = mean(rr_ratio_log2),
-#            sd_rr_log2 = sd(rr_ratio_log2),
-#            se_rr_log2 = sd_rr_log2 / sqrt(n),  # Calculate standard error
-#            ci_low = mean_rr_log2 - 1.96 * se_rr_log2,
-#            ci_high = mean_rr_log2 + 1.96 * se_rr_log2,
-#            quantile_0.05 = quantile(rr_ratio_log2, 0.05),
-#            quantile_0.95 = quantile(rr_ratio_log2, 0.95),
-#            quantile_0.5 = quantile(rr_ratio_log2, 0.5)) %>%
-#  ungroup()
-# Write table
-#write.csv(summary, "data/processed/GEA/glms/glms_summary/All_vars_rr_sum.csv", row.names=FALSE)
-
-
 # ================================================================================== #
 
 # Graph summary
 
 # Graph relative rate of model enrichment for abiotic - mean and 2*sd
-pdf("output/figures/GEA/glms/GLM_Abiotic_rr_sum_2SD.pdf", width = 8, height = 8)
-ggplot(summary_abiotic, aes(x = reorder(variable, mean_rr_log2), y = mean_rr_log2)) + 
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Abiotic_rr_sum_2SD.pdf", width = 6.75, height = 8)
+ggplot(summary_abiotic, aes(x = reorder(variable_full_name, mean_rr_log2), y = mean_rr_log2)) + 
   geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
   geom_point()+ 
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") +  
-  labs(title = "Mean ± 2*SD",
-       x = "",
+  ylim(-0.65, 0.65) +
+  labs(x = "",
        y = "Log2(Relative rate of model enrichment)") +
   theme_minimal()+
   coord_flip()+
-  theme_bw(base_size=20)
+  theme_bw(base_size=18)
 dev.off()
 
 # Graph relative rate of model enrichment for biotic - mean and 2*sd
-pdf("output/figures/GEA/glms/GLM_Abiotic_rr_sum_2SD.pdf", width = 8, height = 8)
-ggplot(summary_biotic, aes(x = reorder(variable, mean_rr_log2), y = mean_rr_log2)) + 
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Biotic_rr_sum_2SD.pdf", width = 8, height = 8)
+ggplot(summary_biotic, aes(x = reorder(variable_full_name, mean_rr_log2), y = mean_rr_log2)) + 
   geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
   geom_point()+ 
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") +  
-  labs(title = "Mean ± 2*SD",
-       x = "",
+  ylim(-0.65, 0.65) +
+  labs(x = "",
        y = "Log2(Relative rate of model enrichment)") +
   theme_minimal()+
   coord_flip()+
-  theme_bw(base_size=20)
+  theme_bw(base_size=18)
 dev.off()
 
 # Graph relative rate of model enrichment - mean and sd

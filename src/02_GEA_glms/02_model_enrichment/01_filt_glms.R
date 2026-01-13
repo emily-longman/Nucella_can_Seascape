@@ -25,18 +25,15 @@ library(dplyr)
 
 # Specify arguments
 args = commandArgs(trailingOnly=TRUE)
-env_var = as.character(args[1]) #Environmental variable
+var = as.character(args[1]) #Environmental variable
 
 # ================================================================================== #
 
 # State variable name
-message(env_var)
+message(var)
 
 # Load data
-load(paste0("data/processed/GEA/glms/glms_per_env_var/glm.collated_", env_var, ".Rdata") )
-
-# Load data
-#load("data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean.Rdata")
+load(paste0("data/processed/GEA/glms/glms_per_var/glm.collated_", var, ".Rdata") )
 
 # Make snp_id column
 glm.model.collated <- glm.model.collated %>%
@@ -68,5 +65,4 @@ str(glm.model.collated.filt)
 # ================================================================================== #
 
 # Save glm output
-#save(glm.model.collated.filt, file="data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean_8M.Rdata")
-save(glm.model.collated.filt, file=paste("data/processed/GEA/glms/glms_per_env_var/glm.collated_", env_var, "_8M.Rdata", sep = ""))
+save(glm.model.collated.filt, file=paste("data/processed/GEA/glms/glms_per_var/glm.collated_", var, "_filt.Rdata", sep = ""))

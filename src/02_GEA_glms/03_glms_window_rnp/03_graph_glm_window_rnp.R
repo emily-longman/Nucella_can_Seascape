@@ -38,9 +38,9 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 # Merge GLM windows
 
 # Create list of file names
-path <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_ph_mean_real_8M/")
+path <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_ph_mean_real/")
 file_names = as.list(dir(path = path, pattern = "glm_window_chunks_*"))
-file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_ph_mean_real_8M/"), x))))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_ph_mean_real/"), x))))
 
 # Check number of files
 length(file_names_v)
@@ -60,7 +60,7 @@ str(win.out)
 # ================================================================================== #
 
 # Load windows
-load("data/processed/GEA/glms/glms_window_summary/windows_8M.RData")
+load("data/processed/GEA/glms/glms_window_summary/windows.RData")
 
 # ================================================================================== #
 
@@ -71,8 +71,8 @@ chr.unique <- unique(win.out$chr)
 win.out$chr.unique <- as.numeric(factor(win.out$chr, levels = chr.unique))
 
 # Graph rnp geompoint
-pdf("output/figures/GEA/glms/glms_window_summary/glm_window_rnp_0.01_geompoint_8M.pdf", width = 8, height = 8)
-ggplot(win.out, aes(y=-log10(rnp.binom.p.0.01), x=chr.unique)) + 
+pdf("output/figures/GEA/glms/glms_window_summary/glm_window_ph_mean_rnp_0.05_geompoint.pdf", width = 8, height = 8)
+ggplot(win.out, aes(y=-log10(rnp.binom.p.0.05), x=chr.unique)) + 
   geom_point(alpha=0.8, size=1.3) + 
   facet_wrap(~variable) + 
   theme_bw() + theme(legend.position = "none")
@@ -88,8 +88,8 @@ dev.off()
 #dev.off()
 
 # Graph rnp geomline
-pdf("output/figures/GEA/glms/glms_window_summary/glm_window_rnp_0.01_geomline_8M.pdf", width = 8, height = 8)
-ggplot(win.out, aes(y=-log10(rnp.binom.p.0.01), x=chr.unique)) + 
+pdf("output/figures/GEA/glms/glms_window_summary/glm_window_ph_mean_rnp_0.05_geomline.pdf", width = 8, height = 8)
+ggplot(win.out, aes(y=-log10(rnp.binom.p.0.05), x=chr.unique)) + 
   geom_line( ) + 
   facet_wrap(~variable) +
   theme_bw() + theme(legend.position = "none")

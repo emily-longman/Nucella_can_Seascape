@@ -35,6 +35,8 @@ var = as.character(args[1]) #Environmental variable
 # Generate output directories
 out_dir <- paste("data/processed/GEA/glms/glms_summary")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
+out_dir <- paste("data/processed/GEA/glms/glms_summary/pval_dist")
+if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # ================================================================================== #
 
@@ -56,7 +58,7 @@ data.frame(
 }
 
 # Graph pval distribution
-pdf(paste0("output/figures/GEA/glms/glm_pval_dist_log_scale_", var, ".pdf"), width = 8, height = 8)
+pdf(paste0("output/figures/GEA/glms/pval_dist/glm_pval_dist_log_scale_", var, ".pdf"), width = 8, height = 8)
 ggplot(hist.obj.env, aes(x=(hist.obj.mids),y=hist.obj.counts, group=perm, color=perm==0)) +
   geom_line(aes(alpha=perm==0 ), linewidth = 2.5) + 
   scale_alpha_manual(values = c(0.1, 1)) +

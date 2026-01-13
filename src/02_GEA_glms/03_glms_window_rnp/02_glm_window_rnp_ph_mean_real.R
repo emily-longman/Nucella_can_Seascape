@@ -42,12 +42,8 @@ load("data/processed/GEA/glms/glms_window_summary/windows.RData")
 # Extract 13 windows of interest based on win_group
 wins_group_i <- wins_guide_file_array %>% filter(.groups == win_group)
 
-# Load ecological variables
-#Seascape_vars_names <- read.csv("guide_files/Seascape_vars_names.txt", header=F)
-#vars_subset <- Seascape_vars_names$V1[1:5]
-
 # Load data
-load("data/processed/GEA/glms/glms_per_env_var/glm.collated_ph_mean_filt.Rdata")
+load("data/processed/GEA/glms/glms_per_var/glm.collated_ph_mean_filt.Rdata")
 
 # ================================================================================== #
 
