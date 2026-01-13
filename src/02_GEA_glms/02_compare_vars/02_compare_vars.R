@@ -44,7 +44,7 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 message(env_var)
 
 # Load data
-load(paste0("data/processed/GEA/glms/glms_per_env_var/glm.collated_", env_var, "filt.Rdata") )
+load(paste0("data/processed/GEA/glms/glms_per_env_var/glm.collated_", env_var, "_filt.Rdata") )
 
 # Bin data
 hist.obj.env = foreach(i = 0:max(glm.model.collated$perm), .combine = "rbind")%do%{
