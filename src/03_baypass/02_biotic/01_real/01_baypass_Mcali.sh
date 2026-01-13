@@ -58,7 +58,7 @@ guide_file=$WORKING_FOLDER/guide_files/Baypass_biotic_Mcali.txt
 # Determine partition to process 
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/GEA/baypass
+cd $WORKING_FOLDER/data/processed/baypass
 
 # Echo slurm array task ID
 echo ${SLURM_ARRAY_TASK_ID}
@@ -78,39 +78,39 @@ cat ${var}.data.txt
 # Generate Folders and files
 
 # Move to working directory
-cd $WORKING_FOLDER/data/processed/GEA/baypass
+cd $WORKING_FOLDER/data/processed/baypass
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
 if [ -d "biotic" ]
 then echo "Working biotic folder exist"; echo "Let's move on."; date
-else echo "Working biotic folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/baypass/biotic; date
+else echo "Working biotic folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/biotic; date
 fi
 
-cd $WORKING_FOLDER/data/processed/GEA/baypass/biotic
+cd $WORKING_FOLDER/data/processed/baypass/biotic
 
 if [ -d "Mcali" ]
 then echo "Working Mcali folder exist"; echo "Let's move on."; date
-else echo "Working Mcali folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/baypass/biotic/Mcali; date
+else echo "Working Mcali folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/biotic/Mcali; date
 fi
 
-cd $WORKING_FOLDER/data/processed/GEA/baypass/biotic/Mcali
+cd $WORKING_FOLDER/data/processed/baypass/biotic/Mcali
 
 if [ -d "${var}" ]
 then echo "Working ${var} folder exist"; echo "Let's move on."; date
-else echo "Working ${var} folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/baypass/biotic/Mcali/${var}; date
+else echo "Working ${var} folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/biotic/Mcali/${var}; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Change directory 
-cd $WORKING_FOLDER/data/processed/GEA/baypass/biotic/Mcali/${var}
+cd $WORKING_FOLDER/data/processed/baypass/biotic/Mcali/${var}
 
 # Run baypass in aux covaraiate mode to estimate Bayes Factors
 $baypass -npop 19 \
 -gfile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/genobaypass \
 -poolsizefile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/poolsize \
 -omegafile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/omega/NC_baypass_mat_omega.out \
--efile $WORKING_FOLDER/data/processed/GEA/baypass/${var}.data.txt \
+-efile $WORKING_FOLDER/data/processed/baypass/${var}.data.txt \
 -d0yij 4 \
 -outprefix NC_biotic_${var} \
 -nthreads 25
@@ -119,7 +119,7 @@ $baypass -npop 19 \
 #--------------------------------------------------------------------------------
 
 # Housekeeping
-rm $WORKING_FOLDER/data/processed/GEA/baypass/${var}.data.txt
+rm $WORKING_FOLDER/data/processed/baypass/${var}.data.txt
 
 # Say done
 echo "done"

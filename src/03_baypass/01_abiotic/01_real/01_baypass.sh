@@ -78,34 +78,34 @@ cat ${var}.data.txt
 # Generate Folders and files
 
 # Move to working directory
-cd $WORKING_FOLDER/data/processed/GEA/baypass
+cd $WORKING_FOLDER/data/processed/baypass
 
 # Generate folder
 if [ -d "abiotic" ]
 then echo "Working abiotic folder exist"; echo "Let's move on."; date
-else echo "Working abiotic folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/baypass/abiotic; date
+else echo "Working abiotic folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/abiotic; date
 fi
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/GEA/baypass/abiotic
+cd $WORKING_FOLDER/data/processed/baypass/abiotic
 
 # Generate folder
 if [ -d "${var}" ]
 then echo "Working ${var} folder exist"; echo "Let's move on."; date
-else echo "Working ${var} folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/baypass/abiotic/${var}; date
+else echo "Working ${var} folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/abiotic/${var}; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Change directory 
-cd $WORKING_FOLDER/data/processed/GEA/baypass/abiotic/${var}
+cd $WORKING_FOLDER/data/processed/baypass/abiotic/${var}
 
 # Run baypass in aux covaraiate mode to estimate Bayes Factors
 $baypass -npop 19 \
 -gfile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/genobaypass \
 -poolsizefile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/poolsize \
 -omegafile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/omega/NC_baypass_mat_omega.out \
--efile $WORKING_FOLDER/data/processed/GEA/baypass/${var}.data.txt \
+-efile $WORKING_FOLDER/data/processed/baypass/${var}.data.txt \
 -d0yij 4 \
 -outprefix NC_abiotic_${var}_run1 \
 -nthreads 20
@@ -113,7 +113,7 @@ $baypass -npop 19 \
 #--------------------------------------------------------------------------------
 
 # Housekeeping
-rm $WORKING_FOLDER/data/processed/GEA/baypass/${var}.data.txt
+rm $WORKING_FOLDER/data/processed/baypass/${var}.data.txt
 
 # Say done
 echo "done"
