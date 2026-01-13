@@ -47,8 +47,8 @@ message(env_var)
 load(paste0("data/processed/GEA/glms/glms_per_env_var/glm.collated_", env_var, "_filt.Rdata") )
 
 # Bin data
-hist.obj.env = foreach(i = 0:max(glm.model.collated$perm), .combine = "rbind")%do%{
-hist(glm.model.collated$p_lrt[glm.model.collated$perm == i], breaks = 100) -> hist.obj
+hist.obj.env = foreach(i = 0:max(glm.model.collated.filt$perm), .combine = "rbind")%do%{
+hist(glm.model.collated.filt$p_lrt[glm.model.collated.filt$perm == i], breaks = 100) -> hist.obj
 data.frame(
   hist.obj$mids,
   hist.obj$counts,
@@ -68,14 +68,14 @@ ggplot(hist.obj.env, aes(x=(hist.obj.mids),y=hist.obj.counts, group=perm, color=
 dev.off()
 
 # Number of permutations
-n_perm = length(unique(glm.model.collated$perm[which(glm.model.collated$perm>0)]))
+n_perm = length(unique(glm.model.collated.filt$perm[which(glm.model.collated.filt$perm>0)]))
 message(n_perm)
 
 # Check if the environmental model beats the demographic model by comparing AIC
-glm.model.collated <- glm.model.collated %>% mutate(AICdiff = if_else(AIC_dem_env < AIC_dem, 1, 0)) 
+glm.model.collated.filt <- glm.model.collated.filt %>% mutate(AICdiff = if_else(AIC_dem_env < AIC_dem, 1, 0)) 
 
 # Calculate relative rate (rr) of model enrichment (i.e., the number of SNPs where the env dem model was found as the better model)
-aic_sum <- glm.model.collated %>% group_by(perm) %>% summarise(rr = sum(AICdiff == 1, na.rm = TRUE), .groups = "drop")
+aic_sum <- glm.model.collated.filt %>% group_by(perm) %>% summarise(rr = sum(AICdiff == 1, na.rm = TRUE), .groups = "drop")
 
 # Separate by real and perm
 real_data <- aic_sum %>% filter(perm == 0) %>% rename(rr_real = rr)
