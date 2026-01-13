@@ -28,7 +28,7 @@ library(dplyr)
 
 # Specify arguments
 args = commandArgs(trailingOnly=TRUE)
-env_var = as.character(args[1]) #Environmental variable
+var = as.character(args[1]) #Environmental variable
 
 # ================================================================================== #
 
@@ -41,10 +41,10 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 # Model enrichment - Summarize the permutation data across the environmental variables
 
 # State variable name
-message(env_var)
+message(var)
 
 # Load data
-load(paste0("data/processed/GEA/glms/glms_per_env_var/glm.collated_", env_var, "_filt.Rdata") )
+load(paste0("data/processed/GEA/glms/glms_per_var/glm.collated_", var, "_filt.Rdata") )
 
 # Bin data
 hist.obj.env = foreach(i = 0:max(glm.model.collated.filt$perm), .combine = "rbind")%do%{
@@ -56,13 +56,13 @@ data.frame(
 }
 
 # Graph pval distribution
-pdf(paste0("output/figures/GEA/glms/glm_pval_dist_log_scale_", env_var, ".pdf"), width = 8, height = 8)
+pdf(paste0("output/figures/GEA/glms/glm_pval_dist_log_scale_", var, ".pdf"), width = 8, height = 8)
 ggplot(hist.obj.env, aes(x=(hist.obj.mids),y=hist.obj.counts, group=perm, color=perm==0)) +
   geom_line(aes(alpha=perm==0 ), linewidth = 2.5) + 
   scale_alpha_manual(values = c(0.1, 1)) +
   scale_size_manual(values = c(0.7, 1.3)) +
   scale_color_manual(values = c("red","black")) +
-  labs(title = paste0(env_var, " P-value distribution"), x = "GLM P-values", y = "Number of SNPs") +
+  labs(title = paste0(var, " P-value distribution"), x = "GLM P-values", y = "Number of SNPs") +
   theme_bw(base_size = 24) +  theme(legend.position = "none") +
   scale_x_log10()
 dev.off()
@@ -86,9 +86,9 @@ rr_real <- real_data$rr_real
 
 # Join the datasets and compare the rr between real and perm
 ratios <- perm_data %>%
-mutate(rr_ratio = (rr_real / rr_perm), rr_ratio_log2 = log2(rr_real / rr_perm), variable = env_var)
+mutate(rr_ratio = (rr_real / rr_perm), rr_ratio_log2 = log2(rr_real / rr_perm), variable = var)
 
 # ================================================================================== #
 
 # Write table
-write.csv(ratios, file = paste("data/processed/GEA/glms/glms_summary/Vars_rr_", env_var, ".csv", sep = ""), row.names=FALSE)
+write.csv(ratios, file = paste("data/processed/GEA/glms/glms_summary/Vars_rr_", var, ".csv", sep = ""), row.names=FALSE)

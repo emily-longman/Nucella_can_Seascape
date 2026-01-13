@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=model_envrichment_env_glms
+#SBATCH --job-name=model_enrichment
 
 # Specify partition
 #SBATCH --partition=general
@@ -31,7 +31,7 @@
 
 #--------------------------------------------------------------------------------
 
-# This script will run the accompanying 01_compare_env_glms.R. 
+# This script will run the accompanying 02_model_enrichment.R. 
 
 # Load modules 
 module load R/4.4.1
@@ -70,7 +70,7 @@ echo ${i}
 
 # Run R script
 
-Rscript --vanilla $WORKING_FOLDER/src/02_GEA_glms/02_compare_vars/02_compare_vars.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/02_GEA_glms/02_model_enrichment/02_model_enrichment.R "${i}"
 
 #--------------------------------------------------------------------------------
 
