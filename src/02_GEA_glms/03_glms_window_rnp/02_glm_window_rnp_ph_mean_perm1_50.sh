@@ -34,7 +34,7 @@
 
 #--------------------------------------------------------------------------------
 
-# This script will run the accompanying 02_glm_window_rnp_ph_mean_real.R script. 
+# This script will run the accompanying 02_glm_window_rnp_ph_mean_perm1_50.R script. 
 # Note: prior to running this script, the merged glms were moved to the Working folder rather than the tmp directory.
 
 # Load modules 
@@ -83,7 +83,7 @@ fi
 
 # Run R script
 
-Rscript --vanilla $WORKING_FOLDER/src/02_GEA_glms/03_glms_window_rnp/02_glm_window_rnp_ph_mean_perm1:50.R "${SLURM_ARRAY_TASK_ID}"
+Rscript --vanilla $WORKING_FOLDER/src/02_GEA_glms/03_glms_window_rnp/02_glm_window_rnp_ph_mean_perm1_50.R "${SLURM_ARRAY_TASK_ID}"
 # The --vanilla option prevents restoring or saving workspaces
 
 #--------------------------------------------------------------------------------
