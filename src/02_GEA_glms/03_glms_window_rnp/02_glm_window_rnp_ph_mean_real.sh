@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_window_rnp_real_test_8M
+#SBATCH --job-name=glms_window_rnp_real
 
 # Specify partition
 #SBATCH --partition=general
@@ -20,7 +20,7 @@
 #SBATCH --mem=200G 
 
 # Submit job array
-#SBATCH --array=701-995%100 #1-400%100 #401-700%100
+#SBATCH --array=1-500%100 #501-995%100
 
 # Request CPU
 #SBATCH --cpus-per-task=10
