@@ -80,15 +80,16 @@ cat ${var}.data.txt
 # Move to working directory
 cd $WORKING_FOLDER/data/processed/GEA/baypass
 
-# This part of the script will check and generate, if necessary, all of the output folders used in the script
+# Generate folder
 if [ -d "abiotic" ]
 then echo "Working abiotic folder exist"; echo "Let's move on."; date
 else echo "Working abiotic folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/baypass/abiotic; date
 fi
 
+# Change directory
 cd $WORKING_FOLDER/data/processed/GEA/baypass/abiotic
 
-# This part of the script will check and generate, if necessary, all of the output folders used in the script
+# Generate folder
 if [ -d "${var}" ]
 then echo "Working ${var} folder exist"; echo "Let's move on."; date
 else echo "Working ${var} folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/baypass/abiotic/${var}; date
@@ -106,7 +107,7 @@ $baypass -npop 19 \
 -omegafile $WORKING_FOLDER/data/processed/outlier_analyses/baypass/omega/NC_baypass_mat_omega.out \
 -efile $WORKING_FOLDER/data/processed/GEA/baypass/${var}.data.txt \
 -d0yij 4 \
--outprefix NC_abiotic_${var} \
+-outprefix NC_abiotic_${var}_run1 \
 -nthreads 20
 
 #--------------------------------------------------------------------------------

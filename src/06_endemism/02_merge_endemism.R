@@ -1,5 +1,4 @@
 # Merge endemism analysis
-# Modified from L. Proud; Original from A. Bergland
 
 # Clear memory
 rm(list=ls())
@@ -18,12 +17,10 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('SeqArray', 'data.table', 'tidyverse', 'dplyr', 'geodist', 'foreach'))
-library(SeqArray)
+#install.packages(c('data.table', 'tidyverse', 'dplyr', 'foreach'))
 library(data.table)
 library(tidyverse)
 library(dplyr)
-library(geodist)
 library(foreach)
 
 # ================================================================================== #
@@ -73,3 +70,8 @@ pooldata.snp.info <- pooldata.snp.info %>%
 
 # Filter for only SNPs in pooldata object - 8,191,999 SNPs
 endemism.merge.filt <- endemism.merge %>% filter(SNP_id %in% pooldata.snp.info$SNP_id)
+
+# ================================================================================== #
+
+# Save dataset - 8,191,999 SNPs
+save(endemism.merge.filt, file="data/processed/endemism/endemism.merge.filt.RData")
