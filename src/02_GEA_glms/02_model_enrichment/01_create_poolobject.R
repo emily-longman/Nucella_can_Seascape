@@ -1,4 +1,4 @@
-# Use poolfstat to convert VCF to Baypass input file
+# Use poolfstat to filter VCF and create poolobject
 
 # Clear memory
 rm(list=ls()) 
@@ -26,7 +26,7 @@ library(poolfstat)
 # Generate Folders and files
 
 # Make output directory
-data_processed_outlier="data/processed/outlier_analyses"
+data_processed_outlier="data/raw/pooldata"
 if (!dir.exists(data_processed_outlier)) {dir.create(data_processed_outlier)}
 
 # ================================================================================== #
@@ -52,7 +52,5 @@ min.cov.per.pool = 20, min.rc = 5, max.cov.per.pool = 120, min.maf = 0.01, nline
 
 # ================================================================================== #
 
-# Convert to BayPass input file 
-pooldata2genobaypass(pooldata, writing.dir = "data/processed/outlier_analyses/baypass", subsamplesize = -1)
-# Three output files = genobaypass (allele counts), poolsize (haploid size per pool), & snpdet (snp info matrix). 
-# Subsample size can be used to sample to a smaller number of SNPs. If the subsample size is <0, then all SNPs are included in the BayPass files.
+# Save pooldata
+save(pooldata, file="data/raw/pooldata/pooldata.RData")
