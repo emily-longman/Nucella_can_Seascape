@@ -111,7 +111,7 @@ wins_sum <- foreach(perm.i=1:25,.combine="rbind", .errorhandling="remove")%do%{
 folder_name <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_ph_mean_perm")
 
 # Save file for chunk w
-file_name <- paste0("glm_window_chunks_", win_group)
+file_name <- paste0("glm_window_chunks_perm1_25_", win_group)
 save(wins_sum, file = paste0(folder_name, "/", file_name, ".Rdata") )
 
 message("done")
