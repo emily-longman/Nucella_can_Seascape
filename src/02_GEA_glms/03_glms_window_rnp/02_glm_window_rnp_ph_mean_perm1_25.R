@@ -47,10 +47,10 @@ load("data/processed/GEA/glms/glms_per_var/glm.collated_ph_mean_filt.Rdata")
 
 # ================================================================================== #
 
-# Window summarization for ph mean perm 1-50
+# Window summarization for ph mean perm 1-25
 
 # Window summarization for each permutation and environmental var
-wins_sum <- foreach(perm.i=unique(glm.model.collated$perm),.combine="rbind", .errorhandling="remove")%dopar%{ 
+wins_sum <- foreach(perm.i=1:25,.combine="rbind", .errorhandling="remove")%do%{ 
     
     # State permutation number
     message(paste("Permutation #:", perm.i))
@@ -64,7 +64,7 @@ wins_sum <- foreach(perm.i=unique(glm.model.collated$perm),.combine="rbind", .er
         tmp$rnp <- tmp$rank/Lp
 
         # Start window summarization process for windows within window group
-        win.out <- foreach(window.w=1:dim(wins_group_i)[1], .combine = "rbind", .errorhandling = "remove")%dopar%{
+        win.out <- foreach(window.w=1:dim(wins_group_i)[1], .combine = "rbind", .errorhandling = "remove")%do%{
     
         # State window
         message(paste0("Window: ", window.w, " / ", dim(wins_group_i)[1]))
