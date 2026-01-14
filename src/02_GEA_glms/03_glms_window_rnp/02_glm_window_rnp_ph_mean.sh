@@ -20,10 +20,10 @@
 #SBATCH --mem=200G 
 
 # Submit job array
-#SBATCH --array=1-995%75
+#SBATCH --array=1 #1-995%75
 
 # Request CPU
-#SBATCH --cpus-per-task=2
+#SBATCH --cpus-per-task=10
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
