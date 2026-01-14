@@ -14,13 +14,13 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=01:00:00 
+#SBATCH --time=00:40:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=300G 
+#SBATCH --mem=200G 
 
 # Submit job array
-#SBATCH --array=1-5 #1-995%75
+#SBATCH --array=1-995%75
 
 # Request CPU
 #SBATCH --cpus-per-task=10
