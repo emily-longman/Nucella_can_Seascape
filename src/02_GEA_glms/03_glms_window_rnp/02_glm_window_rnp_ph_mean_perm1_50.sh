@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_window_rnp_perm1_25
+#SBATCH --job-name=glms_window_rnp_perm1_50
 
 # Specify partition
 #SBATCH --partition=general
