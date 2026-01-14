@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_window_rnp_perm
+#SBATCH --job-name=glms_window_rnp_ph_mean
 
 # Specify partition
 #SBATCH --partition=general
@@ -14,13 +14,13 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=01:20:00 
+#SBATCH --time=00:45:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=500G 
+#SBATCH --mem=180G 
 
 # Submit job array
-#SBATCH --array=1-5 #1-995%75
+#SBATCH --array=1-995%75
 
 # Request CPU
 #SBATCH --cpus-per-task=10
@@ -74,16 +74,16 @@ echo "Window group:" ${SLURM_ARRAY_TASK_ID}
 cd $WORKING_FOLDER/data/processed/GEA/glms/glms_window_summary
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "glms_window_chunk_analysis_ph_mean_perm" ]
-then echo "Working glms_window_chunk_analysis_ph_mean_perm folder exist"; echo "Let's move on."; date
-else echo "Working glms_window_chunk_analysis_ph_mean_perm folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_ph_mean_perm; date
+if [ -d "glms_window_chunk_analysis_ph_mean" ]
+then echo "Working glms_window_chunk_analysis_ph_mean folder exist"; echo "Let's move on."; date
+else echo "Working glms_window_chunk_analysis_ph_mean folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_ph_mean; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Run R script
 
-Rscript --vanilla $WORKING_FOLDER/src/02_GEA_glms/03_glms_window_rnp/02_glm_window_rnp_ph_mean_perm1_50.R "${SLURM_ARRAY_TASK_ID}"
+Rscript --vanilla $WORKING_FOLDER/src/02_GEA_glms/03_glms_window_rnp/02_glm_window_rnp_ph_mean.R "${SLURM_ARRAY_TASK_ID}"
 # The --vanilla option prevents restoring or saving workspaces
 
 #--------------------------------------------------------------------------------
