@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=baypass_abiotic
+#SBATCH --job-name=baypass_ph_mean
 
 # Specify partition
 #SBATCH --partition=week
@@ -14,16 +14,16 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss
-#SBATCH --time=3-00:00:00
+#SBATCH --time=2-05:00:00
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=100G 
+#SBATCH --mem=50G 
 
 # Request CPU
 #SBATCH --cpus-per-task=20
 
 # Submit job array
-#SBATCH --array=1-9
+#SBATCH --array=2-5 #already ran 1
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -49,29 +49,8 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 #--------------------------------------------------------------------------------
 
-# Guide files - Note: need to make sure the latter file is in the same order as the samples in the gfile
-var_names=$WORKING_FOLDER/guide_files/Bio-oracle_enviro_vars_names.txt
-guide_file=$WORKING_FOLDER/guide_files/Baypass_abiotic.txt
-
-#--------------------------------------------------------------------------------
-
-# Determine partition to process 
-
-# Change directory
-cd $WORKING_FOLDER/data/processed/baypass
-
 # Echo slurm array task ID
-echo ${SLURM_ARRAY_TASK_ID}
-
-# Extract enviro var 
-var=`sed "${SLURM_ARRAY_TASK_ID}q;d" $var_names`
-echo $var
-
-# Using the guide file, extract the bio-oracle data associated based on the Slurm array task ID 
-awk -v var="$var" '$1 == var { print $2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20}' $guide_file > ${var}.data.txt
-
-# State data
-cat ${var}.txt
+echo "Doing Baypass run:" ${SLURM_ARRAY_TASK_ID}
 
 #--------------------------------------------------------------------------------
 
@@ -90,30 +69,27 @@ fi
 cd $WORKING_FOLDER/data/processed/baypass/abiotic
 
 # Generate folder
-if [ -d "${var}" ]
-then echo "Working ${var} folder exist"; echo "Let's move on."; date
-else echo "Working ${var} folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/abiotic/${var}; date
+if [ -d "ph_mean" ]
+then echo "Working ph_mean folder exist"; echo "Let's move on."; date
+else echo "Working ph_mean folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/abiotic/ph_mean; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Change directory 
-cd $WORKING_FOLDER/data/processed/baypass/abiotic/${var}
+cd $WORKING_FOLDER/data/processed/baypass/abiotic/ph_mean
 
 # Run baypass in aux covaraiate mode to estimate Bayes Factors
 $baypass -npop 19 \
 -gfile $WORKING_FOLDER/data/processed/baypass/input_files/genobaypass \
 -poolsizefile $WORKING_FOLDER/data/processed/baypass/input_files/poolsize \
 -omegafile $WORKING_FOLDER/data/processed/baypass/omega/NC_baypass_mat_omega.out \
--efile $WORKING_FOLDER/data/processed/baypass/${var}.data.txt \
+-efile $WORKING_FOLDER/guide_files/ph_mean.txt \
 -d0yij 4 \
--outprefix NC_abiotic_${var}_run1 \
+-outprefix NC_abiotic_ph_mean_run${SLURM_ARRAY_TASK_ID} \
 -nthreads 20
 
 #--------------------------------------------------------------------------------
-
-# Housekeeping
-rm $WORKING_FOLDER/data/processed/baypass/${var}.data.txt
 
 # Say done
 echo "done"

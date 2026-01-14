@@ -68,10 +68,10 @@ var=`sed "${SLURM_ARRAY_TASK_ID}q;d" $var_names`
 echo $var
 
 # Using the guide file, extract the bio-oracle data associated based on the Slurm array task ID 
-awk -v var="$var" '$1 == var { print $2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20}' $guide_file > ${var}.data.txt
+awk -v var="$var" '$1 == var { print $2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20}' $guide_file > ${var}.txt
 
 # State data
-cat ${var}.data.txt
+cat ${var}.txt
 
 #--------------------------------------------------------------------------------
 
@@ -110,7 +110,7 @@ $baypass -npop 19 \
 -gfile $WORKING_FOLDER/data/processed/baypass/input_files/genobaypass \
 -poolsizefile $WORKING_FOLDER/data/processed/baypass/input_files/poolsize \
 -omegafile $WORKING_FOLDER/data/processed/baypass/omega/NC_baypass_mat_omega.out \
--efile $WORKING_FOLDER/data/processed/baypass/${var}.data.txt \
+-efile $WORKING_FOLDER/data/processed/baypass/${var}.txt \
 -d0yij 4 \
 -outprefix NC_biotic_${var} \
 -nthreads 25
@@ -119,7 +119,7 @@ $baypass -npop 19 \
 #--------------------------------------------------------------------------------
 
 # Housekeeping
-rm $WORKING_FOLDER/data/processed/baypass/${var}.data.txt
+rm $WORKING_FOLDER/data/processed/baypass/${var}.txt
 
 # Say done
 echo "done"
