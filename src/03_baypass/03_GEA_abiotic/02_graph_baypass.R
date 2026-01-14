@@ -38,7 +38,7 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 # Load Data
 
 # Read in SNP data
-snp.meta <- read.table("data/processed/outlier_analyses/baypass/snpdet", header=F)
+snp.meta <- read.table("data/processed/baypass/input_files/snpdet", header=F)
 # Re-name snp metadata
 colnames(snp.meta) <- c("chr", "pos", "allele1", "allele2")
 

@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=baypass_omega
+#SBATCH --job-name=baypass_omega_subset
 
 # Specify partition
 #SBATCH --partition=week
@@ -53,22 +53,22 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 cd $WORKING_FOLDER/data/processed/baypass
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "omega" ]
-then echo "Working omega folder exist"; echo "Let's move on."; date
-else echo "Working omega folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/omega; date
+if [ -d "omega_subset" ]
+then echo "Working omega_subset folder exist"; echo "Let's move on."; date
+else echo "Working omega_subset folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/omega_subset; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Change directory 
-cd $WORKING_FOLDER/data/processed/baypass/omega
+cd $WORKING_FOLDER/data/processed/baypass/omega_subset
 
 # Run baypass - this will generate the omega file which will be used in the subsequent scripts
-$baypass -npop 19 \
--gfile $WORKING_FOLDER/data/processed/baypass/input_files/genobaypass \
--poolsizefile $WORKING_FOLDER/data/processed/baypass/input_files/poolsize \
+$baypass -npop 16 \
+-gfile $WORKING_FOLDER/data/processed/baypass/input_files/subset.genobaypass \
+-poolsizefile $WORKING_FOLDER/data/processed/baypass/input_files/subset.poolsize \
 -d0yij 4 \
--outprefix NC_baypass \
+-outprefix NC_subset_baypass \
 -npilot 100 -nthreads 25
 
 #-npop: number of pools

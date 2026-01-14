@@ -102,8 +102,8 @@ cd $WORKING_FOLDER/data/processed/baypass/abiotic/${var}
 
 # Run baypass in aux covaraiate mode to estimate Bayes Factors
 $baypass -npop 19 \
--gfile $WORKING_FOLDER/data/processed/baypass/genobaypass \
--poolsizefile $WORKING_FOLDER/data/processed/baypass/poolsize \
+-gfile $WORKING_FOLDER/data/processed/baypass/input_files/genobaypass \
+-poolsizefile $WORKING_FOLDER/data/processed/baypass/input_files/poolsize \
 -omegafile $WORKING_FOLDER/data/processed/baypass/omega/NC_baypass_mat_omega.out \
 -efile $WORKING_FOLDER/data/processed/baypass/${var}.data.txt \
 -d0yij 4 \
