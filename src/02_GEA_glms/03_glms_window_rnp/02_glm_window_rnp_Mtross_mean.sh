@@ -20,7 +20,7 @@
 #SBATCH --mem=200G 
 
 # Submit job array
-#SBATCH --array=596,599,601 #501-995%50 #1-500%100
+#SBATCH --array=1-500%100 #501-995%50
 
 # Request CPU
 #SBATCH --cpus-per-task=2

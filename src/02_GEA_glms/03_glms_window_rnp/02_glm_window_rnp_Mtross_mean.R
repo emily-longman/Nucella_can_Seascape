@@ -43,7 +43,7 @@ load("data/processed/GEA/glms/glms_window_summary/windows.RData")
 wins_group_i <- wins_guide_file_array %>% filter(.groups == win_group)
 
 # Load data
-load("data/processed/GEA/glms/glms_per_var/glm.collated_ph_mean_filt.Rdata")
+load("data/processed/GEA/glms/glms_per_var/glm.collated_M.tross_m_filt.Rdata")
 
 # ================================================================================== #
 

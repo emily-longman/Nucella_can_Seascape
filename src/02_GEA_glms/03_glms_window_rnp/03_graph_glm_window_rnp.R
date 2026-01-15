@@ -116,3 +116,70 @@ dev.off()
 
 
 # ================================================================================== #
+# ================================================================================== #
+
+# Merge GLM windows
+
+# Create list of file names
+path <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_Mtross_mean/")
+file_names = as.list(dir(path = path, pattern = "glm_window_chunks_*"))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_Mtross_mean/"), x))))
+
+# Check number of files
+length(file_names_v)
+
+# Read all the files and add a column with the chunk
+win.out =  
+foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
+    # State which file loading
+    message(i)
+    # Load file
+    o = get(load(i))
+}
+
+# Check structure
+str(win.out)
+
+# ================================================================================== #
+
+# Summarize model
+win.Mtross.mean <- win.out %>%
+  mutate(data_type = case_when(perm == 0 ~ "real",
+                               perm != 0 ~ "perm")) %>%
+  group_by(data_type, win, chr, pos_mean) %>%
+  summarise(uci = quantile(rnp.binom.p.0.05, 0.05)) %>%
+  mutate(model = "Mtross_mean")
+
+  # ================================================================================== #
+
+# Graph rnp p
+
+# Create unique Chromosome number
+chr.unique <- unique(win.out$chr)
+win.out$chr.unique <- as.numeric(factor(win.out$chr, levels = chr.unique))
+win.Mtross.mean.chr.unique <- unique(win.Mtross.mean$chr)
+win.Mtross.mean$chr.unique <- as.numeric(factor(win.Mtross.mean$chr, levels = win.Mtross.mean.chr.unique))
+
+# Graph rnp geompoint
+pdf("output/figures/GEA/glms/glms_window_summary/glm_window_Mtross_mean_rnp_0.05_geompoint_real.pdf", width = 8, height = 8)
+ggplot(win.out[which(win.out$perm==0),], aes(y=-log10(rnp.binom.p.0.05), x=chr.unique)) + 
+  geom_point(alpha=0.8, size=1.3) + 
+  facet_wrap(~variable) + 
+  theme_bw() + theme(legend.position = "none")
+dev.off()
+
+# Graph rnp geomline
+pdf("output/figures/GEA/glms/glms_window_summary/glm_window_Mtross_mean_rnp_0.05_geomline_real.pdf", width = 8, height = 8)
+ggplot(win.out[which(win.out$perm==0),], aes(y=-log10(rnp.binom.p.0.05), x=chr.unique)) + 
+  geom_line( ) + 
+  facet_wrap(~variable) +
+  theme_bw() + theme(legend.position = "none")
+dev.off()
+
+# Graph permutations
+pdf("output/figures/GEA/glms/glms_window_summary/glm_window_Mtross_mean_uci.pdf", width = 14, height = 8)
+ggplot(win.Mtross.mean, aes(y=-log10(uci), x=chr.unique, col=data_type)) + 
+  geom_line() + ylim(0,250) +
+  scale_color_manual(values = c("#a1c8cf", "black")) +
+  theme_bw()
+dev.off()
