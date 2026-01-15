@@ -49,11 +49,8 @@ w = as.numeric(args[1]) # Chunk: this is the chunk (1000 chunks each with 19 sca
 scaffold.names.df <- read.csv(paste("data/processed/GEA/glms/scaffold.names", w, "txt", sep = "."), sep = " ", header=F)
 scaffold.names <- scaffold.names.df$V1
 
-# Load SNPs of interest (baypass POD outlier SNPs - 3,095 SNPs SNPs)
-baypass_POD_sig_SNPs <- read.table("data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs_threshold_0.01", header=T)
-
 # Load bio-oracle environmental data
-MARINe_data <- read.csv("data/processed/GEA/enviro_data/MARINe/MARINe_data.csv", header=T)
+MARINe_data <- read.csv("data/processed/GEA/enviro_data/MARINe/MARINe_data_16pops.csv", header=T)
 
 # Open the GDS file
 genofile <- seqOpen("data/processed/outlier_analyses/snpeff/N.canaliculata_SNPs.annotate.gds")
@@ -71,9 +68,6 @@ names(MARINe_data)[names(MARINe_data) == "location"] <- "sampleId"
 
 # Join bio-oracle dataframe and PCA dataframe
 MARINe_data <- dplyr::left_join(MARINe_data, pca.df, by = "sampleId")
-
-# Create SNP_id column for outlier SNP list
-baypass_POD_sig_SNPs <- baypass_POD_sig_SNPs %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 # Extract SNP data from GDS
 snp.dt <- data.table(
@@ -139,6 +133,7 @@ glm.model.output =
     ###############################################################
 
     # Remove the two populations that are not in the MARINe database from af_i_snp
+    af_i_snp <- af_i_snp[-which(af_i_snp$sampleId == "CBL" ),]
     af_i_snp <- af_i_snp[-which(af_i_snp$sampleId =="VD"),]
     af_i_snp <- af_i_snp[-which(af_i_snp$sampleId == "OCT" ),]
 

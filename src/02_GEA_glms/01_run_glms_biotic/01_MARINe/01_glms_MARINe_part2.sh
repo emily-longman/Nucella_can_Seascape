@@ -14,16 +14,16 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=30:00:00
+#SBATCH --time=5:00:00 #30:00:00
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=10G 
+#SBATCH --mem=30G 
 
 # Request CPU
 #SBATCH --cpus-per-task=5
 
 # Submit job array
-#SBATCH --array=751-996%50 #501-750%50 #501-996%50
+#SBATCH --array=501-996%50
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -97,11 +97,11 @@ fi
 
 # Run R script
 
-#Rscript $SCRIPT_FOLDER/01_glms_MARINe_real.R "${SLURM_ARRAY_TASK_ID}"
+Rscript $SCRIPT_FOLDER/01_glms_MARINe_real.R "${SLURM_ARRAY_TASK_ID}"
 #Rscript $SCRIPT_FOLDER/01_glms_MARINe_perm1:25.R "${SLURM_ARRAY_TASK_ID}"
 #Rscript $SCRIPT_FOLDER/01_glms_MARINe_perm26:50.R "${SLURM_ARRAY_TASK_ID}"
 #Rscript $SCRIPT_FOLDER/01_glms_MARINe_perm51:75.R "${SLURM_ARRAY_TASK_ID}"
-Rscript $SCRIPT_FOLDER/01_glms_MARINe_perm76:100.R "${SLURM_ARRAY_TASK_ID}"
+#Rscript $SCRIPT_FOLDER/01_glms_MARINe_perm76:100.R "${SLURM_ARRAY_TASK_ID}"
 
 #--------------------------------------------------------------------------------
 
