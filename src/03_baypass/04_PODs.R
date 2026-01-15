@@ -47,11 +47,12 @@ pi.beta.coef <- read.table("data/processed/baypass/omega/NC_baypass_summary_beta
 # Omega file
 omega <- as.matrix(read.table("data/processed/baypass/omega/NC_baypass_mat_omega.out"))
 
+# Set working directory
 setwd("data/processed/baypass/PODs")
 
 # Create PODs
 foreach(i=1:10, .errorhandling="remove")%do%{
     suffix <- paste("POD.", i, sep="")
-    simulate.baypass(omega.mat=omega, nsnp = 500000, beta.pi=pi.beta.coef, sample.size=pooldata@poolsizes, suffix=suffix)
+    simulate.baypass(omega.mat=omega, nsnp = 1000000, beta.pi=pi.beta.coef, sample.size=pooldata@poolsizes, suffix=suffix)
 
 }
