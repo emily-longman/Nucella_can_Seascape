@@ -172,6 +172,9 @@ ggplot() +
   theme_bw()
 dev.off()
 
+# Write outliers to csv
+write.csv(win.ph.mean.outliers.all.perm, "data/processed/GEA/glms/glms_window_summary/win.ph.mean.outliers.all.perm.csv", row.names=FALSE)
+
 # ================================================================================== #
 # ================================================================================== #
 # ================================================================================== #
