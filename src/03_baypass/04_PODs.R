@@ -50,9 +50,15 @@ omega <- as.matrix(read.table("data/processed/baypass/omega/NC_baypass_mat_omega
 # Set working directory
 setwd("data/processed/baypass/PODs")
 
-# Create PODs
+# Create PODs - 1M SNPs
 foreach(i=1:10, .errorhandling="remove")%do%{
     suffix <- paste("POD.", i, sep="")
     simulate.baypass(omega.mat=omega, nsnp = 1000000, beta.pi=pi.beta.coef, sample.size=pooldata@poolsizes, suffix=suffix)
 
+}
+
+# Create PODs - ~8M SNPs (match # SNPs of poolobject)
+foreach(i=1:10, .errorhandling="remove")%do%{
+    suffix <- paste("POD8M.", i, sep="")
+    simulate.baypass(omega.mat=omega, nsnp = pooldata@nsnp, beta.pi=pi.beta.coef, sample.size=pooldata@poolsizes, suffix=suffix)
 }
