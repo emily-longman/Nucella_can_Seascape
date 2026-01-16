@@ -72,9 +72,9 @@ bf.ph.mean.sum <- bf.ph.mean %>% group_by(chr, pos, allele1, allele2, MRK) %>%
 
 # Graph BF with POD threshold
 pdf("output/figures/baypass/baypass_BF_ph_mean_rep.means.pdf", width = 12, height = 8)
-ggplot(bf.ph.mean.sum[which(bf.ph.mean.sum$bf_db.mean > 0),], aes(y=bf_db.mean, x=chr)) + 
+ggplot(bf.ph.mean.sum, aes(y=bf_db.mean, x=chr)) + 
   labs(x = "Position", y = "BF (in dB)") +
-  geom_point(alpha=0.7) + 
+  geom_point(alpha=0.6) + 
   geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(),
@@ -85,7 +85,7 @@ dev.off()
 
 # Identify patterns in bayes factors
 
-# pH mean - 448 SNPs with BF > threshold
+# pH mean - 1,673 SNPs with BF > threshold
 bf.ph.mean.sum.outliers <- bf.ph.mean.sum[which(bf.ph.mean.sum$bf_db.mean > bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)]),]
 bf.ph.mean.sum.outliers <- bf.ph.mean.sum.outliers %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 write.csv(bf.ph.mean.sum.outliers, "data/processed/baypass/bf.ph.mean.sum.outliers.csv", row.names = F, quote = F)
