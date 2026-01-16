@@ -60,30 +60,23 @@ setnames(bf.POD, "BF(dB)", "bf_db")
 
 # ================================================================================== #
 
-# Remove BF < 0
-bf.POD.filt <- bf.POD[which(bf.POD$bf_db > 0),]
+# Calculate quantiles for each POD
+bf.POD.sum <- bf.POD %>% group_by(run) %>% reframe(bf_db = quantile(bf_db, c(.95, .99, .999)), thr = c(.95, .99, .999)) %>% as.data.frame()
 
-# Summarize
-bf.POD.sum <- bf.POD.filt %>% group_by(MRK) %>% reframe(bf_db.mean = mean(bf_db), bf_db.median = median(bf_db))
+# Average quantiles across POD runs
+bf.POD.thr <- bf.POD.sum %>% group_by(thr) %>% summarize(bf_db.mean=mean(bf_db))
 
-# Identify BF threshold
-bf.POD.thr <- bf.POD.sum %>% reframe(bf_db.mean = quantile(bf_db.mean, c(.95, .99, .999)),
-                                    bf_db.median = quantile(bf_db.median, c(.95, .99, .999)),
-                                    thr = c(.95, .99, .999))
-
-
-# Graph BF of individual POD run to see distribution
+# Graph BF of one POD to see distribution with threshold
 pdf("output/figures/baypass/baypass_BF_POD1.pdf", width = 8, height = 8)
-ggplot(bf.POD[which(bf.POD$run == "1" & bf.POD$bf_db>0),], aes(y=bf_db, x=MRK)) + 
+ggplot(bf.POD[which(bf.POD$run==1),], aes(y=bf_db, x=MRK)) + 
   labs(x = "Position", y = "BF (in dB)") +
   geom_point(alpha=0.8) + 
   theme_classic(base_size = 20) + 
+  geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red") + 
   theme(panel.spacing = unit(0.5, "lines"),
         axis.text.x = element_blank(), axis.ticks.x = element_blank(),
         axis.text.y = element_text(size = 12)) 
 dev.off()
-
-# ================================================================================== #
 
 # Save
 save(bf.POD.thr, file="data/processed/baypass/abiotic/ph_mean_POD_thr.Rdata")

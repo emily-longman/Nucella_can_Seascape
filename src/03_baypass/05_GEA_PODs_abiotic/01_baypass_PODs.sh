@@ -23,7 +23,7 @@
 #SBATCH --cpus-per-task=20
 
 # Submit job array
-#SBATCH --array=1-10
+#SBATCH --array=1-5 #1-10
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -81,12 +81,12 @@ cd $WORKING_FOLDER/data/processed/baypass/abiotic/ph_mean_POD
 
 # Run baypass in aux covaraiate mode to estimate Bayes Factors
 $baypass -npop 19 \
--gfile $WORKING_FOLDER/data/processed/baypass/PODs/G.POD.${SLURM_ARRAY_TASK_ID} \
+-gfile $WORKING_FOLDER/data/processed/baypass/PODs/G.POD8M.${SLURM_ARRAY_TASK_ID} \
 -poolsizefile $WORKING_FOLDER/data/processed/baypass/input_files/poolsize \
 -omegafile $WORKING_FOLDER/data/processed/baypass/omega/NC_baypass_mat_omega.out \
 -efile $WORKING_FOLDER/guide_files/ph_mean.txt \
 -d0yij 4 \
--outprefix NC_abiotic_ph_mean_POD_run${SLURM_ARRAY_TASK_ID} \
+-outprefix NC_abiotic_ph_mean_POD8M_run${SLURM_ARRAY_TASK_ID} \
 -nthreads 20
 
 #--------------------------------------------------------------------------------
