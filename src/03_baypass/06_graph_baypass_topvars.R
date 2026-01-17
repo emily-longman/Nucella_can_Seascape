@@ -81,7 +81,7 @@ ggplot(bf.ph.mean.sum, aes(y=bf_db.mean, x=chr)) +
         axis.text.y = element_text(size = 12))
 dev.off()
 
-# Graph BF with POD threshold - without BF < 0 
+# Graph BF with POD threshold - without BF < 0
 pdf("output/figures/baypass/baypass_BF_ph_mean_5rep_posBF.pdf", width = 12, height = 8)
 ggplot(bf.ph.mean.sum[which(bf.ph.mean.sum$bf_db.mean>0),], aes(y=bf_db.mean, x=chr)) + 
   labs(x = "Position", y = "BF (in dB)") +
