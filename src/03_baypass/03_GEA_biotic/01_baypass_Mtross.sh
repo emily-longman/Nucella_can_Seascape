@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=baypass_ph_mean
+#SBATCH --job-name=baypass_Mtross
 
 # Specify partition
 #SBATCH --partition=week
@@ -60,33 +60,33 @@ echo "Doing Baypass run:" ${SLURM_ARRAY_TASK_ID}
 cd $WORKING_FOLDER/data/processed/baypass
 
 # Generate folder
-if [ -d "abiotic" ]
-then echo "Working abiotic folder exist"; echo "Let's move on."; date
-else echo "Working abiotic folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/abiotic; date
+if [ -d "biotic" ]
+then echo "Working biotic folder exist"; echo "Let's move on."; date
+else echo "Working biotic folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/biotic; date
 fi
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/baypass/abiotic
+cd $WORKING_FOLDER/data/processed/baypass/biotic
 
 # Generate folder
-if [ -d "ph_mean" ]
-then echo "Working ph_mean folder exist"; echo "Let's move on."; date
-else echo "Working ph_mean folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/abiotic/ph_mean; date
+if [ -d "Mtross_mean" ]
+then echo "Working Mtross_mean folder exist"; echo "Let's move on."; date
+else echo "Working Mtross_mean folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/biotic/Mtross_mean; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Change directory 
-cd $WORKING_FOLDER/data/processed/baypass/abiotic/ph_mean
+cd $WORKING_FOLDER/data/processed/baypass/biotic/Mtross_mean
 
 # Run baypass in standard covariate mode to estimate Bayes Factors
-$baypass -npop 19 \
--gfile $WORKING_FOLDER/data/processed/baypass/input_files/genobaypass \
--poolsizefile $WORKING_FOLDER/data/processed/baypass/input_files/poolsize \
--omegafile $WORKING_FOLDER/data/processed/baypass/omega/NC_baypass_mat_omega.out \
--efile $WORKING_FOLDER/guide_files/Baypass_ph_mean.txt \
+$baypass -npop 16 \
+-gfile $WORKING_FOLDER/data/processed/baypass/input_files/subset.genobaypass \
+-poolsizefile $WORKING_FOLDER/data/processed/baypass/input_files/subset.poolsize \
+-omegafile $WORKING_FOLDER/data/processed/baypass/omega_subset/NC_subset_baypass_mat_omega.out \
+-efile $WORKING_FOLDER/guide_files/ph_mean.txt \
 -d0yij 4 \
--outprefix NC_abiotic_ph_mean_run${SLURM_ARRAY_TASK_ID} \
+-outprefix NC_biotic_Mtross_mean_run${SLURM_ARRAY_TASK_ID} \
 -nthreads 20
 
 #--------------------------------------------------------------------------------
