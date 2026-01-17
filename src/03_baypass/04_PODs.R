@@ -62,3 +62,7 @@ foreach(i=1:5, .errorhandling="remove")%do%{
     suffix <- paste("POD8M.", i, sep="")
     simulate.baypass(omega.mat=omega, nsnp = pooldata@nsnp, beta.pi=pi.beta.coef, sample.size=pooldata@poolsizes, suffix=suffix)
 }
+foreach(i=6:10, .errorhandling="remove")%do%{
+    suffix <- paste("POD8M.", i, sep="")
+    simulate.baypass(omega.mat=omega, nsnp = pooldata@nsnp, beta.pi=pi.beta.coef, sample.size=pooldata@poolsizes, suffix=suffix)
+}
