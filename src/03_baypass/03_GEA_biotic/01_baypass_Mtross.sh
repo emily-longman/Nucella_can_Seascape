@@ -84,7 +84,7 @@ $baypass -npop 16 \
 -gfile $WORKING_FOLDER/data/processed/baypass/input_files/subset.genobaypass \
 -poolsizefile $WORKING_FOLDER/data/processed/baypass/input_files/subset.poolsize \
 -omegafile $WORKING_FOLDER/data/processed/baypass/omega_subset/NC_subset_baypass_mat_omega.out \
--efile $WORKING_FOLDER/guide_files/ph_mean.txt \
+-efile $WORKING_FOLDER/guide_files/Baypass_Mtross_mean.txt \
 -d0yij 4 \
 -outprefix NC_biotic_Mtross_mean_run${SLURM_ARRAY_TASK_ID} \
 -nthreads 20
