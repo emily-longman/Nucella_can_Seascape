@@ -81,7 +81,7 @@ cd $WORKING_FOLDER/data/processed/baypass/biotic/Mtross_mean_POD
 
 # Run baypass in standard covariate mode to estimate Bayes Factors
 $baypass -npop 16 \
--gfile $WORKING_FOLDER/data/processed/baypass/input_files/subset.genobaypass \
+-gfile $WORKING_FOLDER/data/processed/baypass/PODs/G.POD8M_subset.${SLURM_ARRAY_TASK_ID} \
 -poolsizefile $WORKING_FOLDER/data/processed/baypass/input_files/subset.poolsize \
 -omegafile $WORKING_FOLDER/data/processed/baypass/omega_subset/NC_subset_baypass_mat_omega.out \
 -efile $WORKING_FOLDER/guide_files/Baypass_Mtross_mean.txt \
