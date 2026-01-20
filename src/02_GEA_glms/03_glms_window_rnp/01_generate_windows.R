@@ -118,7 +118,7 @@ wins <- foreach(chr.i=unique(snp.dt.filt$chr), .combine="rbind", .errorhandling=
       # Number of SNPs on chromosome
       nSNPs=dim(tmp)[1]
 
-      # For only chromosomes with >= 5
+      # For only chromosomes with >= 100
       if(nSNPs >= 100){
       o = data.table(
         chr=chr.i,
