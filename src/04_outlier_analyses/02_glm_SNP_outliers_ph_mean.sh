@@ -28,7 +28,7 @@
 
 #--------------------------------------------------------------------------------
 
-# This script will run the accompanying 02_glm_SNP_outliers_Mtross_mean.R script. 
+# This script will run the accompanying 02_glm_SNP_outliers_ph_mean.R script. 
 
 # Load modules 
 module load gcc/13.3.0
