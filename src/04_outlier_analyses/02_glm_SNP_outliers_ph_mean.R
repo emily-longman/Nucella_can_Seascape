@@ -27,29 +27,21 @@ library(RColorBrewer)
 
 # ================================================================================== #
 
-# Generate output directories
-
-# Figure directory
-out_fig_dir <- paste("output/figures/outliers")
-if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
-
-# ================================================================================== #
-
 # Load Data
 
 # Read in outlier window
-win.Mtross.mean.outliers <- read.csv("data/processed/GEA/glms/glms_window_summary/win.Mtross.mean.outliers.csv", header=T)
+win.ph.mean.outliers <- read.csv("data/processed/GEA/glms/glms_window_summary/win.ph.mean.outliers.csv", header=T)
 
 # Load GLM real data (glm.model.collated.filt.real)
-load("data/processed/GEA/glms/glms_per_var/glm.collated_M.tross_m_filt_real.Rdata")
+load("data/processed/GEA/glms/glms_per_var/glm.collated_ph_mean_filt_real.Rdata")
 
 # ================================================================================== #
 
 # Identify SNPs in outlier windows
-glm.Mtross.mean.win.outliers <- foreach(win.i=unique(win.Mtross.mean.outliers$win), .combine="rbind", .errorhandling="remove")%do%{
+glm.ph.mean.win.outliers <- foreach(win.i=unique(win.ph.mean.outliers$win), .combine="rbind", .errorhandling="remove")%do%{
     
     # Extract window
-    win.tmp <- win.Mtross.mean.outliers[which(win.Mtross.mean.outliers$win==win.i),]
+    win.tmp <- win.ph.mean.outliers[which(win.ph.mean.outliers$win==win.i),]
 
     # Extract SNPs in window
     glm.tmp <- glm.model.collated.filt.real %>% filter(
@@ -59,9 +51,9 @@ glm.Mtross.mean.win.outliers <- foreach(win.i=unique(win.Mtross.mean.outliers$wi
 }
 
 # Remove duplicates
-glm.Mtross.mean.win.outliers <- glm.Mtross.mean.win.outliers %>% distinct()
+glm.ph.mean.win.outliers <- glm.ph.mean.win.outliers %>% distinct()
 
 # ================================================================================== #
 
 # Save
-save(glm.Mtross.mean.win.outliers, file="data/processed/GEA/glms/glms_window_summary/glm.Mtross.mean.win.outliers.Rdata")
+save(glm.ph.mean.win.outliers, file="data/processed/GEA/glms/glms_window_summary/glm.ph.mean.win.outliers.Rdata")
