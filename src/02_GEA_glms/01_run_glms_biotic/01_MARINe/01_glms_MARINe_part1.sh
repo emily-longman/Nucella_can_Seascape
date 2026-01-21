@@ -66,7 +66,7 @@ guide_file=$WORKING_FOLDER/guide_files/scaffold_names_guide_file_array.txt
 
 #--------------------------------------------------------------------------------
 
-# Determine partition to process 
+# Determine partition to process - Note: chunk 17 does not have any SNPs in it for this dataset
 
 # Change directory
 cd $WORKING_FOLDER/data/processed/GEA/glms
