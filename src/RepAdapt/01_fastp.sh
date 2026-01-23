@@ -33,7 +33,7 @@ fi
 
 # Use apptainer to use the correct versions of programs
 module load apptainer/1.3.4
-repadapt=https://depot.galaxyproject.org/singularity/fastp:0.20.1--h8b12597_0
+repadapt_fastp=https://depot.galaxyproject.org/singularity/fastp:0.20.1--h8b12597_0
 
 # Guide File
 GUIDE_FILE=$WORKING_FOLDER/data/processed/repadapt/guide_files/Trim_map.txt
@@ -43,7 +43,10 @@ INPUT1=`awk -F "\t" '{print $1}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
 INPUT2=`awk -F "\t" '{print $2}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
 echo "Sample i:" ${i} "Read 1:" ${INPUT1} "Read 2:" ${INPUT2}
 
-# Test run
+# Change directory
+cd $WORKING_FOLDER/data/processed/repadapt/fastp
+
+# Run fastp
 apptainer run $repadapt fastp -w  4 -i $RAW_READS/$INPUT1 -I $RAW_READS/$INPUT2 -o $i\_R1_trimmed.fastq.gz -O $i\_R2_trimmed.fastq.gz
 
 #--------------------------------------------------------------------------------
