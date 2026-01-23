@@ -44,7 +44,7 @@ INPUT2=`awk -F "\t" '{print $2}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
 echo "Sample i:" ${i} "Read 1:" ${INPUT1} "Read 2:" ${INPUT2}
 
 # Test run
-apptainer run $repadapt fastp -w  4 -i $INPUT1 -I $INPUT2 -o $i\_R1_trimmed.fastq.gz -O $i\_R2_trimmed.fastq.gz
+apptainer run $repadapt fastp -w  4 -i $RAW_READS/$INPUT1 -I $RAW_READS/$INPUT2 -o $i\_R1_trimmed.fastq.gz -O $i\_R2_trimmed.fastq.gz
 
 #--------------------------------------------------------------------------------
 
