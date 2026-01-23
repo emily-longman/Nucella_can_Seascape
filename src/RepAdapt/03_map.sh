@@ -47,15 +47,15 @@ $WORKING_FOLDER/data/processed/repadapt/fastp/$INPUT2  \
 > $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\.sam
 
 # Build bam file (and remove sam file)
-apptainer run $repadapt_samtools view -Sb -q 10 $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\.sam > $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\.bam
+apptainer run $repadapt_samtools samtools view -Sb -q 10 $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\.sam > $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\.bam
 rm $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\.sam
 
 # Sort bam file (remove unsorted bam file)
-apptainer run $repadapt_samtools sort --threads  4 $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\.bam > $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\_sorted.bam
+apptainer run $repadapt_samtools samtools sort --threads  4 $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\.bam > $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\_sorted.bam
 rm $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\.bam
 
 # Index sorted bam file
-samtools index $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\_sorted.bam
+apptainer run $repadapt_samtools samtools index $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\_sorted.bam
 
 #--------------------------------------------------------------------------------
 
