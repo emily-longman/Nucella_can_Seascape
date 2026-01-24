@@ -18,7 +18,6 @@
 WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 RAW_READS=/gpfs3tmp/pi/jcnunez/All_shortreads
 
-
 # Make folders
 cd $WORKING_FOLDER/data/processed
 if [ -d "repadapt" ]
