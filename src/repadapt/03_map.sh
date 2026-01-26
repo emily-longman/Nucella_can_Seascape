@@ -1,13 +1,13 @@
 #!/bin/bash
-#SBATCH --partition=general
+#SBATCH --partition=week #general
 #SBATCH --nodes=1
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=emily.longman@uvm.edu 
-#SBATCH --time=30:00:00
-#SBATCH --cpus-per-task=10
-#SBATCH --mem-per-cpu=30G
-#SBATCH --array=1-38
+#SBATCH --time=02-00:00:00 #30:00:00
+#SBATCH --cpus-per-task=15 #10
+#SBATCH --mem-per-cpu=60G #30G
+#SBATCH --array=10,30 #1-38
 
 #--------------------------------------------------------------------------------
 # My additions:
@@ -40,17 +40,17 @@ INPUT2=${i}_R2_trimmed.fastq.gz
 cd $WORKING_FOLDER/data/processed/repadapt/bwa_output
 
 # Map read
-apptainer run $repadapt_bwa bwa mem -t 10 $WORKING_FOLDER/data/processed/repadapt/genome/N.canaliculata_assembly.fasta.softmasked.fa \
+apptainer run $repadapt_bwa bwa mem -t 15 $WORKING_FOLDER/data/processed/repadapt/genome/N.canaliculata_assembly.fasta.softmasked.fa \
 $WORKING_FOLDER/data/processed/repadapt/fastp/$INPUT1 \
 $WORKING_FOLDER/data/processed/repadapt/fastp/$INPUT2  \
 > $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\.sam
 
 # Build bam file (and remove sam file)
-apptainer run $repadapt_samtools samtools view -Sb -q 10 --threads 10 $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\.sam > $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\.bam
+apptainer run $repadapt_samtools samtools view -Sb -q 10 --threads 15 $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\.sam > $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\.bam
 rm $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\.sam
 
 # Sort bam file (remove unsorted bam file)
-apptainer run $repadapt_samtools samtools sort --threads 10 $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\.bam > $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\_sorted.bam
+apptainer run $repadapt_samtools samtools sort --threads 15 $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\.bam > $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\_sorted.bam
 rm $WORKING_FOLDER/data/processed/repadapt/bwa_output/$i\.bam
 
 # Index sorted bam file
