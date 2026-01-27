@@ -72,6 +72,8 @@ bf.ph.mean.sum <- bf.ph.mean %>% group_by(chr, pos, allele1, allele2, MRK) %>%
 # Save
 save(bf.ph.mean.sum, file="data/processed/baypass/abiotic/bf.ph.mean.sum.Rdata")
 
+#load("data/processed/baypass/abiotic/bf.ph.mean.sum.Rdata")
+
 # ================================================================================== #
 
 # Graph BF with 0.001 POD threshold
@@ -134,6 +136,8 @@ bf.Mtross.mean.sum <- bf.Mtross.mean %>% group_by(chr, pos, allele1, allele2, MR
 
 # Save
 save(bf.Mtross.mean.sum, file="data/processed/baypass/biotic/bf.Mtross.mean.sum.Rdata")
+
+#load("data/processed/baypass/biotic/bf.Mtross.mean.sum.Rdata")
 
 # ================================================================================== #
 

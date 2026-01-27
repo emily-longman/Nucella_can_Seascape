@@ -59,7 +59,7 @@ data.frame(
 
 # Graph pval distribution
 pdf(paste0("output/figures/GEA/glms/pval_dist/glm_pval_dist_log_scale_", var, ".pdf"), width = 12, height = 8)
-ggplot(hist.obj.env, aes(x=(hist.obj.mids),y=hist.obj.counts, group=perm, color=perm==0)) +
+ggplot(hist.obj.env[which(hist.obj.env$mids < 1.00)], aes(x=(hist.obj.mids),y=hist.obj.counts, group=perm, color=perm==0)) +
   geom_line(aes(alpha=perm==0 ), linewidth = 2.5) + 
   scale_alpha_manual(values = c(0.1, 1)) +
   scale_size_manual(values = c(0.7, 1.3)) +
