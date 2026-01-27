@@ -61,13 +61,12 @@ str(hist.obj.env)
 
 # Graph pval distribution
 pdf(paste0("output/figures/GEA/glms/pval_dist/glm_pval_dist_log_scale_", var, ".pdf"), width = 12, height = 8)
-ggplot(hist.obj.env[which(hist.obj.env$mids < 1.00),], aes(x=(hist.obj.mids),y=hist.obj.counts, group=perm, color=perm==0)) +
+ggplot(hist.obj.env[which(hist.obj.env$hist.obj.mids < 0.995),], aes(x=(hist.obj.mids),y=hist.obj.counts, group=perm, color=perm==0)) +
   geom_line(aes(alpha=perm==0 ), linewidth = 2.5) + 
   scale_alpha_manual(values = c(0.1, 1)) +
-  scale_size_manual(values = c(0.7, 1.3)) +
-  scale_color_manual(values = c("red","black")) +
-  #scale_y_continuous(labels = function(x) format(x, scientific = FALSE)) +
-  xlim(0, 0.999) +
+  scale_size_manual(values = c(0.7, 1.5)) +
+  scale_color_manual(values = c("#f63b3b","black")) +
+  scale_y_continuous(labels = function(x) format(x, scientific = FALSE)) +
   labs(title = paste0(var, " P-value distribution"), x = "GLM P-values", y = "Number of SNPs") +
   theme_bw(base_size = 24) +  theme(legend.position = "none") +
   scale_x_log10()
