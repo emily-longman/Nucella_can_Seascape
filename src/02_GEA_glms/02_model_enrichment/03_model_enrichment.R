@@ -59,7 +59,7 @@ data.frame(
 
 str(hist.obj.env)
 
-# Graph pval distribution
+# Graph pval distribution - remove 0.995 values as these are artifacts
 pdf(paste0("output/figures/GEA/glms/pval_dist/glm_pval_dist_log_scale_", var, ".pdf"), width = 12, height = 8)
 ggplot(hist.obj.env[which(hist.obj.env$hist.obj.mids < 0.995),], aes(x=(hist.obj.mids),y=hist.obj.counts, group=perm, color=perm==0)) +
   geom_line(aes(alpha=perm==0 ), linewidth = 2.5) + 
@@ -73,27 +73,27 @@ ggplot(hist.obj.env[which(hist.obj.env$hist.obj.mids < 0.995),], aes(x=(hist.obj
 dev.off()
 
 # Number of permutations
-#n_perm = length(unique(glm.model.collated.filt$perm[which(glm.model.collated.filt$perm>0)]))
-#message(n_perm)
+n_perm = length(unique(glm.model.collated.filt$perm[which(glm.model.collated.filt$perm>0)]))
+message(n_perm)
 
 # Check if the environmental model beats the demographic model by comparing AIC
-#glm.model.collated.filt <- glm.model.collated.filt %>% mutate(AICdiff = if_else(AIC_dem_env < AIC_dem, 1, 0)) 
+glm.model.collated.filt <- glm.model.collated.filt %>% mutate(AICdiff = if_else(AIC_dem_env < AIC_dem, 1, 0)) 
 
 # Calculate relative rate (rr) of model enrichment (i.e., the number of SNPs where the env dem model was found as the better model)
-#aic_sum <- glm.model.collated.filt %>% group_by(perm) %>% summarise(rr = sum(AICdiff == 1, na.rm = TRUE), .groups = "drop")
+aic_sum <- glm.model.collated.filt %>% group_by(perm) %>% summarise(rr = sum(AICdiff == 1, na.rm = TRUE), .groups = "drop")
 
 # Separate by real and perm
-#real_data <- aic_sum %>% filter(perm == 0) %>% rename(rr_real = rr)
-#perm_data <- aic_sum %>% filter(perm > 0) %>% rename(rr_perm = rr)
+real_data <- aic_sum %>% filter(perm == 0) %>% rename(rr_real = rr)
+perm_data <- aic_sum %>% filter(perm > 0) %>% rename(rr_perm = rr)
 
 # rr of real data
-#rr_real <- real_data$rr_real
+rr_real <- real_data$rr_real
 
 # Join the datasets and compare the rr between real and perm
-#ratios <- perm_data %>%
-#mutate(rr_ratio = (rr_real / rr_perm), rr_ratio_log2 = log2(rr_real / rr_perm), variable = var)
+ratios <- perm_data %>%
+mutate(rr_ratio = (rr_real / rr_perm), rr_ratio_log2 = log2(rr_real / rr_perm), variable = var)
 
 # ================================================================================== #
 
 # Write table
-#write.csv(ratios, file = paste("data/processed/GEA/glms/glms_summary/Vars_rr_", var, ".csv", sep = ""), row.names=FALSE)
+write.csv(ratios, file = paste("data/processed/GEA/glms/glms_summary/Vars_rr_", var, ".csv", sep = ""), row.names=FALSE)
