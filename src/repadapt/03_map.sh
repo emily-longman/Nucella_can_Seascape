@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --partition=week #general
+#SBATCH --partition=general
 #SBATCH --nodes=1
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
 #SBATCH --mail-type=ALL
