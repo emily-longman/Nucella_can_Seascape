@@ -31,8 +31,10 @@ GUIDE_FILE=$WORKING_FOLDER/data/processed/repadapt/guide_files/Trim_map.txt
 # Extract sample names/files
 i=`awk -F "\t" '{print $6}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
 echo "Sample i:" ${i}
+JAVAMEM=20G
 
 # Remove duplicates. We feed it a bam, and we get a deduplicated bam per sample/library
+export JAVA_TOOL_OPTIONS="-Xmx2048m"
 apptainer run $repadapt_picard picard MarkDuplicates \
 INPUT=$WORKING_FOLDER/data/processed/repadapt/bwa_output/${i}_sorted.bam \
 OUTPUT=$WORKING_FOLDER/data/processed/repadapt/remove_dup/${i}_sorted\_dedup.bam \
