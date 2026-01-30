@@ -34,9 +34,9 @@ echo "Sample i:" ${i}
 
 # Remove duplicates. We feed it a bam, and we get a deduplicated bam per sample/library
 apptainer run $repadapt_picard picard MarkDuplicates \
-INPUT=$WORKING_FOLDER/data/processed/repadapt/bwa_output/${i}.bam \
-OUTPUT=$WORKING_FOLDER/data/processed/repadapt/remove_dup/${i}\_dedup.bam \
-METRICS_FILE=$WORKING_FOLDER/data/processed/repadapt/remove_dup/${i}.bam\_DUP_metrics.txt VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true
+INPUT=$WORKING_FOLDER/data/processed/repadapt/bwa_output/${i}_sorted.bam \
+OUTPUT=$WORKING_FOLDER/data/processed/repadapt/remove_dup/${i}_sorted\_dedup.bam \
+METRICS_FILE=$WORKING_FOLDER/data/processed/repadapt/remove_dup/${i}_sorted.bam\_DUP_metrics.txt VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true
 
 #--------------------------------------------------------------------------------
 
