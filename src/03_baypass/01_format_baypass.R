@@ -50,3 +50,11 @@ pooldata.subset <- pooldata.subset(pooldata, pool.index=c(1,2,3,4,5,7,8,9,10,11,
 
 # Convert to BayPass input file
 pooldata2genobaypass(pooldata.subset, writing.dir = "data/processed/baypass/input_files", prefix="subset", subsamplesize = -1)
+
+# ================================================================================== #
+
+# Subset data - cut site: 4 (ARA)
+pooldata.subset.18pop <- pooldata.subset(pooldata, pool.index=c(1,2,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19))
+
+# Convert to BayPass input file
+pooldata2genobaypass(pooldata.subset.18pop, writing.dir = "data/processed/baypass/input_files", prefix="subset18pop", subsamplesize = -1)
