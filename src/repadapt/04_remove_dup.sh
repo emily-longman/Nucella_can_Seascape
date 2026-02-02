@@ -7,7 +7,7 @@
 #SBATCH --time=30:00:00
 #SBATCH --cpus-per-task=10
 #SBATCH --mem-per-cpu=100G
-#SBATCH --array=1-2 #1-38
+#SBATCH --array=1-38
 
 #--------------------------------------------------------------------------------
 # My additions:
@@ -34,8 +34,7 @@ echo "Sample i:" ${i}
 JAVAMEM=20G
 
 # Remove duplicates. We feed it a bam, and we get a deduplicated bam per sample/library
-export APPTAINERENV_JAVA_OPTS="-Xmx20G"
-apptainer run $repadapt_picard picard MarkDuplicates \
+apptainer run $repadapt_picard picard -Xmx20G MarkDuplicates \
 INPUT=$WORKING_FOLDER/data/processed/repadapt/bwa_output/${i}_sorted.bam \
 OUTPUT=$WORKING_FOLDER/data/processed/repadapt/remove_dup/${i}_sorted\_dedup.bam \
 METRICS_FILE=$WORKING_FOLDER/data/processed/repadapt/remove_dup/${i}_sorted.bam\_DUP_metrics.txt VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true
