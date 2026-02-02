@@ -8,7 +8,7 @@
 #SBATCH --job-name=glms_marine_part2
 
 # Specify partition
-#SBATCH --partition=week #general
+#SBATCH --partition=general
 
 # Request nodes
 #SBATCH --nodes=1 
