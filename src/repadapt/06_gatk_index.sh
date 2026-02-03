@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --partition=general
 #SBATCH --nodes=1
-#SBATCH --output=./slurmOutput/%x.%A_%a.out
+#SBATCH --output=./slurmOutput/%x_%j.out
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=emily.longman@uvm.edu 
 #SBATCH --time=01:00:00
-#SBATCH --mem-per-cpu=10G
+#SBATCH --mem-per-cpu=20G
 
 #--------------------------------------------------------------------------------
 # My additions:
@@ -27,7 +27,7 @@ repadapt_picard=https://depot.galaxyproject.org/singularity/picard:2.26.3--hdfd7
 apptainer run $repadapt_samtools samtools faidx N.canaliculata_assembly.fasta.softmasked.fa
 
 # Index with Picard
-apptainer run $repadapt_picard picard -Xmx10G CreateSequenceDictionary \
+apptainer run $repadapt_picard picard -Xmx20G CreateSequenceDictionary \
 R=N.canaliculata_assembly.fasta.softmasked.fa O=N.canaliculata_assembly.fasta.softmasked.dict
 
 #--------------------------------------------------------------------------------
