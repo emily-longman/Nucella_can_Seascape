@@ -13,25 +13,18 @@
 # WORKING_FOLDER is the core folder where this pipeline is being run.
 WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
-# Make folders
-cd $WORKING_FOLDER/data/processed/repadapt
-if [ -d "index" ]
-then echo "Working index folder exist"; echo "Let's move on."; date
-else echo "Working index folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/repadapt/index; date
-fi
-
-# Use apptainer to use the correct versions of programs
-module load apptainer/1.3.4
-repadapt_picard=https://depot.galaxyproject.org/singularity/picard:2.26.3--hdfd78af_0
-repadapt_samtools=https://depot.galaxyproject.org/singularity/samtools:1.16.1--h6899075_0
-
 # This is to create gatk index of ref genome needed for indel realignment
 
 # Change directory
 cd $WORKING_FOLDER/data/processed/repadapt/genome
 
+# Use apptainer to use the correct versions of programs
+module load apptainer/1.3.4
+repadapt_samtools=https://depot.galaxyproject.org/singularity/samtools:1.16.1--h6899075_0
+repadapt_picard=https://depot.galaxyproject.org/singularity/picard:2.26.3--hdfd78af_0
+
 # Index with Samtools
-apptainer run $repadapt_samtools faidx N.canaliculata_assembly.fasta.softmasked.fa
+apptainer run $repadapt_samtools samtools faidx N.canaliculata_assembly.fasta.softmasked.fa
 
 # Index with Picard
 apptainer run $repadapt_picard picard -Xmx10G CreateSequenceDictionary \
