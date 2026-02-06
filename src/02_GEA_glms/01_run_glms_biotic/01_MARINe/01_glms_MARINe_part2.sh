@@ -8,22 +8,22 @@
 #SBATCH --job-name=glms_marine_part2
 
 # Specify partition
-#SBATCH --partition=general
+#SBATCH --partition=week
 
 # Request nodes
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=30:00:00 #5:00:00 for most real
+#SBATCH --time=3-00:00:00 #30:00:00 #5:00:00 for most real
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
 #SBATCH --mem=30G 
 
 # Request CPU
-#SBATCH --cpus-per-task=25 #8
+#SBATCH --cpus-per-task=10 #8
 
 # Submit job array
-#SBATCH --array=923,954,956 #501-996%75 #530-996%75
+#SBATCH --array=923,956 #501-996%75 #530-996%75
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
