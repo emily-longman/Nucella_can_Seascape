@@ -23,7 +23,7 @@
 #SBATCH --cpus-per-task=5
 
 # Submit job array
-#SBATCH --array=501-996%75
+#SBATCH --array=501-900%75 #996 Still need last chunk
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
