@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_Mcali_part1
+#SBATCH --job-name=glms_Mcali_part1_perm1:25
 
 # Specify partition
 #SBATCH --partition=general
