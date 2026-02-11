@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_Mcali_part1_perm51:75
+#SBATCH --job-name=glms_Mcali_part1_perm76:100
 
 # Specify partition
 #SBATCH --partition=general
@@ -100,8 +100,8 @@ fi
 #Rscript $SCRIPT_FOLDER/01_glms_Mcali_real.R "${SLURM_ARRAY_TASK_ID}"
 #Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm1:25.R "${SLURM_ARRAY_TASK_ID}"
 #Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm26:50.R "${SLURM_ARRAY_TASK_ID}"
-Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm51:75.R "${SLURM_ARRAY_TASK_ID}"
-#Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm76:100.R "${SLURM_ARRAY_TASK_ID}"
+#Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm51:75.R "${SLURM_ARRAY_TASK_ID}"
+Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm76:100.R "${SLURM_ARRAY_TASK_ID}"
 
 #--------------------------------------------------------------------------------
 
