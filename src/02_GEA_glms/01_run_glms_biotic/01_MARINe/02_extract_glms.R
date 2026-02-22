@@ -32,7 +32,7 @@ env_var = as.character(args[1]) #Environmental variable
 # ================================================================================== #
 
 # Generate output directories
-out_dir <- paste("/gpfs3/scratch/elongman/glms_per_env_var/glms_", env_var, sep = "")
+out_dir <- paste("/gpfs3tmp/pi/jcnunez/glms_per_env_var/glms_", env_var, sep = "")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # ================================================================================== #
