@@ -45,7 +45,7 @@ module load R/4.4.1
 WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 # TMP_FOLDER - path to temporary folder with extra storage
-TMP_FOLDER=/gpfs3/scratch/elongman
+TMP_FOLDER=/gpfs3tmp/pi/jcnunez
 
 #--------------------------------------------------------------------------------
 
@@ -76,7 +76,7 @@ echo ${i}
 
 # Run R script
 
-Rscript --vanilla $WORKING_FOLDER/src/02_GEA_glms/01_run_glms_biotic/02_Mcali/03_merge_glms.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/02_GEA_glms/01_run_glms_biotic/02_Mcali_18pop/03_merge_glms.R "${i}"
 # The --vanilla option prevents restoring or saving workspaces
 
 #--------------------------------------------------------------------------------

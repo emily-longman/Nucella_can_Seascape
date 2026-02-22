@@ -32,7 +32,7 @@ env_var = as.character(args[1]) #Environmental variable
 # ================================================================================== #
 
 # Generate output directories
-out_dir <- paste("/gpfs3/scratch/elongman/glms_per_env_var")
+out_dir <- paste("/gpfs3tmp/pi/jcnunez/glms_per_env_var")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # ================================================================================== #
@@ -40,9 +40,9 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 # Load and merge data
 
 # Create list of file names
-path <- paste("/gpfs3/scratch/elongman/glms_per_env_var/glms_", env_var, "/", sep = "")
+path <- paste("/gpfs3tmp/pi/jcnunez/glms_per_env_var/glms_", env_var, "/", sep = "")
 file_names = as.list(dir(path = path, pattern = "glm_*"))
-file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("/gpfs3/scratch/elongman/glms_per_env_var/glms_", env_var, "/", sep = ""), x))))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("/gpfs3tmp/pi/jcnunez/glms_per_env_var/glms_", env_var, "/", sep = ""), x))))
 
 # Check number of files
 length(file_names_v)
@@ -62,4 +62,4 @@ str(glm.model.collated)
 # ================================================================================== #
 
 # Save merged data
-save(glm.model.collated, file = paste("/gpfs3/scratch/elongman/glms_per_env_var/glm.collated_", env_var,".Rdata", sep = ""))
+save(glm.model.collated, file = paste("/gpfs3tmp/pi/jcnunez/glms_per_env_var/glm.collated_", env_var,".Rdata", sep = ""))
