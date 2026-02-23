@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=baypass_Mtross
+#SBATCH --job-name=baypass_Mcali_IntegratedThk
 
 # Specify partition
 #SBATCH --partition=week
@@ -69,24 +69,24 @@ fi
 cd $WORKING_FOLDER/data/processed/baypass/biotic
 
 # Generate folder
-if [ -d "Mtross_mean" ]
-then echo "Working Mtross_mean folder exist"; echo "Let's move on."; date
-else echo "Working Mtross_mean folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/biotic/Mtross_mean; date
+if [ -d "Mcali_IntegratedThk" ]
+then echo "Working Mcali_IntegratedThk folder exist"; echo "Let's move on."; date
+else echo "Working Mcali_IntegratedThk folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/biotic/Mcali_IntegratedThk; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Change directory 
-cd $WORKING_FOLDER/data/processed/baypass/biotic/Mtross_mean
+cd $WORKING_FOLDER/data/processed/baypass/biotic/Mcali_IntegratedThk
 
 # Run baypass in standard covariate mode to estimate Bayes Factors
-$baypass -npop 16 \
--gfile $WORKING_FOLDER/data/processed/baypass/input_files/subset.genobaypass \
--poolsizefile $WORKING_FOLDER/data/processed/baypass/input_files/subset.poolsize \
--omegafile $WORKING_FOLDER/data/processed/baypass/omega_subset/NC_subset_baypass_mat_omega.out \
--efile $WORKING_FOLDER/guide_files/Baypass_Mtross_mean.txt \
+$baypass -npop 18 \
+-gfile $WORKING_FOLDER/data/processed/baypass/input_files/subset18pop.genobaypass \
+-poolsizefile $WORKING_FOLDER/data/processed/baypass/input_files/subset18pop.poolsize \
+-omegafile $WORKING_FOLDER/data/processed/baypass/omega_subset18pop/NC_subset18pop_baypass_mat_omega.out \
+-efile $WORKING_FOLDER/guide_files/Baypass_Mcali_IntegratedThk.txt \
 -d0yij 4 \
--outprefix NC_biotic_Mtross_mean_run${SLURM_ARRAY_TASK_ID} \
+-outprefix NC_biotic_Mcali_IntegratedThk_run${SLURM_ARRAY_TASK_ID} \
 -nthreads 20
 
 #--------------------------------------------------------------------------------
