@@ -240,6 +240,8 @@ dev.off()
 # Identify patterns in bayes factors
 
 # Mcali Integrated Thk - XXXX SNPs with BF > threshold
-bf.McaliIntThk.mean.sum.outliers <- bf.McaliIntThk.mean.sum[which(bf.McaliIntThk.mean.sum$bf_db.mean > bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)]),]
-bf.McaliIntThk.mean.sum.outliers <- bf.McaliIntThk.mean.sum.outliers %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
-write.csv(bf.McaliIntThk.mean.sum.outliers, "data/processed/baypass/bf.McaliIntThk.mean.sum.outliers.csv", row.names = F, quote = F)
+#bf.McaliIntThk.mean.sum.outliers <- bf.McaliIntThk.mean.sum[which(bf.McaliIntThk.mean.sum$bf_db.mean > bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)]),]
+# Mcali Integrated Thk - 80 SNPs with BF > 20
+bf.McaliIntThk.mean.sum.outliers.bf20 <- bf.McaliIntThk.mean.sum[which(bf.McaliIntThk.mean.sum$bf_db.mean > 20),]
+bf.McaliIntThk.mean.sum.outliers.bf20 <- bf.McaliIntThk.mean.sum.outliers.bf20 %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
+write.csv(bf.McaliIntThk.mean.sum.outliers.bf20, "data/processed/baypass/bf.McaliIntThk.mean.sum.outliers.bf20.csv", row.names = F, quote = F)
