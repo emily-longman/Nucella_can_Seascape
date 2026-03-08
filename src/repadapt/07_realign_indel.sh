@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH --partition=general
+#SBATCH --partition=week
 #SBATCH --nodes=1
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=emily.longman@uvm.edu 
-#SBATCH --time=05:00:00
-#SBATCH --mem-per-cpu=50G
+#SBATCH --time=2-00:00:00
+#SBATCH --mem-per-cpu=300G
 #SBATCH --array=1 #1-38
 
 #--------------------------------------------------------------------------------
