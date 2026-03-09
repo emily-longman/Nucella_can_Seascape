@@ -55,19 +55,19 @@ snp.dt <- data.table(
 #--------------------------------------------------------------------------------
 
 # Load SNPs of interest
-bf.McaliIntThk.mean.sum.outliers.bf20 <- read.csv("data/processed/baypass/bf.McaliIntThk.mean.sum.outliers.bf20.csv", header=T)
+bf.McaliIntThk.mean.sum.outliers <- read.csv("data/processed/baypass/bf.McaliIntThk.mean.sum.outliers.csv", header=T)
 
 #--------------------------------------------------------------------------------
 
 # Extract annotation data for each SNP of interest
 
-annotation <- foreach(i=1:dim(bf.McaliIntThk.mean.sum.outliers.bf20)[1], .combine = "rbind", .errorhandling = "remove")%do%{
+annotation <- foreach(i=1:dim(bf.McaliIntThk.mean.sum.outliers)[1], .combine = "rbind", .errorhandling = "remove")%do%{
 
   message(i)
   # Reset filter
   seqResetFilter(genofile)
   # Extract SNP_id for SNP i
-  tmp.i = bf.McaliIntThk.mean.sum.outliers.bf20[i,]$SNP_id
+  tmp.i = bf.McaliIntThk.mean.sum.outliers[i,]$SNP_id
   # Extract snp.dt information for SNP i
   pos.tmp = snp.dt %>% filter(SNP_id %in% tmp.i) %>% .$id
   # Set filter for SNP i
@@ -112,7 +112,7 @@ return(annotate.list)
 #--------------------------------------------------------------------------------
 
 # Join annotation and SNP information
-bf.McaliIntThk.mean.sum.outliers.bf20.annotated <- left_join(bf.McaliIntThk.mean.sum.outliers.bf20, annotation, by = join_by(SNP_id))
+bf.McaliIntThk.mean.sum.outliers.annotated <- left_join(bf.McaliIntThk.mean.sum.outliers, annotation, by = join_by(SNP_id))
 
 # Write output
-write.csv(bf.McaliIntThk.mean.sum.outliers.bf20.annotated, "data/processed/baypass/bf.McaliIntThk.mean.sum.outliers.bf20.annotated.csv", row.names = F, quote = F)
+write.csv(bf.McaliIntThk.mean.sum.outliers.annotated, "data/processed/baypass/bf.McaliIntThk.mean.sum.outliers.annotated.csv", row.names = F, quote = F)

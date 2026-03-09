@@ -176,7 +176,6 @@ write.csv(bf.Mtross.mean.sum.outliers, "data/processed/baypass/bf.Mtross.mean.su
 # ================================================================================== #
 
 # Load POD thresholds
-# Didn't calculate POD thresholds for M cali thk yet
 load("data/processed/baypass/biotic/Mcali_IntegratedThk_POD_thr.Rdata")
 
 # Read in Baypass Mcali Integrated thk mean files
@@ -212,7 +211,7 @@ pdf("output/figures/baypass/baypass_BF_Mcali_IntegratedThk_repmeans.pdf", width 
 ggplot(bf.McaliIntThk.mean.sum, aes(y=bf_db.mean, x=chr)) + 
   labs(x = "Position", y = "BF (in dB)") +
   geom_point(alpha=0.6) + 
-  #geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red") +
+  geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(),
         axis.text.y = element_text(size = 12))
@@ -223,7 +222,7 @@ pdf("output/figures/baypass/baypass_BF_Mcali_IntegratedThk_repmeans_posBF.pdf", 
 ggplot(bf.McaliIntThk.mean.sum[which(bf.McaliIntThk.mean.sum$bf_db.mean>0),], aes(y=bf_db.mean, x=chr)) + 
   labs(x = "Position", y = "BF (in dB)") +
   geom_point(alpha=0.6) + 
-  #geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red") +
+  geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(),
         axis.text.y = element_text(size = 12))
@@ -234,8 +233,6 @@ dev.off()
 # Identify patterns in bayes factors
 
 # Mcali Integrated Thk - XXXX SNPs with BF > threshold
-#bf.McaliIntThk.mean.sum.outliers <- bf.McaliIntThk.mean.sum[which(bf.McaliIntThk.mean.sum$bf_db.mean > bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)]),]
-# Mcali Integrated Thk - 80 SNPs with BF > 20
-bf.McaliIntThk.mean.sum.outliers.bf20 <- bf.McaliIntThk.mean.sum[which(bf.McaliIntThk.mean.sum$bf_db.mean > 20),]
-bf.McaliIntThk.mean.sum.outliers.bf20 <- bf.McaliIntThk.mean.sum.outliers.bf20 %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
-write.csv(bf.McaliIntThk.mean.sum.outliers.bf20, "data/processed/baypass/bf.McaliIntThk.mean.sum.outliers.bf20.csv", row.names = F, quote = F)
+bf.McaliIntThk.mean.sum.outliers <- bf.McaliIntThk.mean.sum[which(bf.McaliIntThk.mean.sum$bf_db.mean > bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)]),]
+bf.McaliIntThk.mean.sum.outliers <- bf.McaliIntThk.mean.sum.outliers %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
+write.csv(bf.McaliIntThk.mean.sum.outliers, "data/processed/baypass/bf.McaliIntThk.mean.sum.outliers.csv", row.names = F, quote = F)
