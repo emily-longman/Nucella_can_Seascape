@@ -34,20 +34,20 @@ echo "Sample i:" ${i}
 JAVAMEM=20G
 
 # Index with samtools
-apptainer run $repadapt_samtools samtools index $WORKING_FOLDER/data/processed/repadapt/add_RG/${i}_sorted_dedup_RG.bam
+apptainer run $repadapt_samtools samtools index $WORKING_FOLDER/data/processed/repadapt/merge_lanes/${i}_sorted_dedup_RG_lanes_merged.bam
 
 # Generate a indel realigned bam file for each sample/library
 apptainer run $repadapt_gatk3 gatk3 -Xmx20G -T RealignerTargetCreator \
 -R $WORKING_FOLDER/data/processed/repadapt/genome/N.canaliculata_assembly.fasta.softmasked.fa \
--I $WORKING_FOLDER/data/processed/repadapt/add_RG/${i}_sorted_dedup_RG.bam \
--o $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG\.intervals
+-I $WORKING_FOLDER/data/processed/repadapt/merge_lanes/${i}_sorted_dedup_RG_lanes_merged.bam \
+-o $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged\.intervals
 
 apptainer run $repadapt_gatk3 gatk3 -Xmx20G -T IndelRealigner \
 -R $WORKING_FOLDER/data/processed/repadapt/genome/N.canaliculata_assembly.fasta.softmasked.fa \
--I $WORKING_FOLDER/data/processed/repadapt/add_RG/${i}_sorted_dedup_RG.bam \
+-I $WORKING_FOLDER/data/processed/repadapt/merge_lanes/${i}_sorted_dedup_RG_lanes_merged.bam \
 -targetIntervals \
--o $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG\.intervals \
---consensusDeterminationModel USE_READS -o $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG\_realigned.bam
+-o $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged\.intervals \
+--consensusDeterminationModel USE_READS -o $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged\_realigned.bam
 
 #--------------------------------------------------------------------------------
 
@@ -71,4 +71,4 @@ apptainer run $repadapt_gatk3 gatk3 -Xmx20G -T IndelRealigner \
 
 #java -jar $EBROOTGATK/GenomeAnalysisTK.jar -T RealignerTargetCreator -R Betula_pendula_subsp._pendula.fa -I $INPUT -o $OUTPUT\.intervals
 
-java -jar $EBROOTGATK/GenomeAnalysisTK.jar -T IndelRealigner -R Betula_pendula_subsp._pendula.fa -I $INPUT -targetIntervals $OUTPUT\.intervals --consensusDeterminationModel USE_READS  -o $OUTPUT\_realigned.bam
+#java -jar $EBROOTGATK/GenomeAnalysisTK.jar -T IndelRealigner -R Betula_pendula_subsp._pendula.fa -I $INPUT -targetIntervals $OUTPUT\.intervals --consensusDeterminationModel USE_READS  -o $OUTPUT\_realigned.bam
