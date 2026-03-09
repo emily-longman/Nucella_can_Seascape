@@ -6,7 +6,7 @@
 #SBATCH --mail-user=emily.longman@uvm.edu 
 #SBATCH --time=3-00:00:00
 #SBATCH --mem-per-cpu=300G
-#SBATCH --array=1 #1-38
+#SBATCH --array=1-38
 
 #--------------------------------------------------------------------------------
 # My additions:
@@ -27,10 +27,10 @@ repadapt_samtools=https://depot.galaxyproject.org/singularity/samtools:1.16.1--h
 repadapt_gatk3=https://depot.galaxyproject.org/singularity/gatk:3.8--9
 
 # Guide File
-GUIDE_FILE=$WORKING_FOLDER/data/processed/repadapt/guide_files/Trim_map.txt
+GUIDE_FILE=$WORKING_FOLDER/data/processed/repadapt/guide_files/Merge_bams.txt
 # Extract sample names/files
-i=`awk -F "\t" '{print $6}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
-echo "Sample i:" ${i}
+i=`awk -F "\t" '{print $1}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
+echo "Population i:" ${i}
 JAVAMEM=20G
 
 # Index with samtools
