@@ -172,18 +172,12 @@ bf.Mtross.mean.sum.outliers <- bf.Mtross.mean.sum[which(bf.Mtross.mean.sum$bf_db
 bf.Mtross.mean.sum.outliers <- bf.Mtross.mean.sum.outliers %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 write.csv(bf.Mtross.mean.sum.outliers, "data/processed/baypass/bf.Mtross.mean.sum.outliers.csv", row.names = F, quote = F)
 
-
-
-
-
-
-
 # ================================================================================== #
 # ================================================================================== #
 
 # Load POD thresholds
 # Didn't calculate POD thresholds for M cali thk yet
-#load("data/processed/baypass/biotic/Mtross_mean_POD_thr.Rdata")
+load("data/processed/baypass/biotic/Mcali_IntegratedThk_POD_thr.Rdata")
 
 # Read in Baypass Mcali Integrated thk mean files
 
