@@ -5,8 +5,9 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=emily.longman@uvm.edu 
 #SBATCH --time=2-10:00:00
-#SBATCH --mem-per-cpu=400G
-#SBATCH --array=1-38
+#SBATCH --cpus-per-task=25
+#SBATCH --mem-per-cpu=300G
+#SBATCH --array=1-19
 
 #--------------------------------------------------------------------------------
 # My additions:
@@ -42,11 +43,12 @@ apptainer run $repadapt_gatk3 gatk3 -Xmx20G -T RealignerTargetCreator \
 -I $WORKING_FOLDER/data/processed/repadapt/merge_lanes/${i}_sorted_dedup_RG_lanes_merged.bam \
 -o $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged\.intervals
 
+echo "Finished Realigner Target Creator; Now, Indel Realigner"
+
 apptainer run $repadapt_gatk3 gatk3 -Xmx20G -T IndelRealigner \
 -R $WORKING_FOLDER/data/processed/repadapt/genome/N.canaliculata_assembly.fasta.softmasked.fa \
 -I $WORKING_FOLDER/data/processed/repadapt/merge_lanes/${i}_sorted_dedup_RG_lanes_merged.bam \
--targetIntervals \
--o $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged\.intervals \
+-targetIntervals $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged\.intervals \
 --consensusDeterminationModel USE_READS -o $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged\_realigned.bam
 
 #--------------------------------------------------------------------------------
