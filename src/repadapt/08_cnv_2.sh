@@ -33,28 +33,28 @@ i=`awk -F "\t" '{print $1}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
 echo "Population i:" ${i}
 
 # dump depth of coverage at every position in the genome
-apptainer run $repadapt_samtools samtools depth -aa $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged_realigned.bam > $WORKING_FOLDER/data/processed/repadapt/cnv/${i}_sorted_dedup_RG_lanes_merged_realigned.depth
+apptainer run $repadapt_samtools samtools depth -aa $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged_realigned.bam > $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged_realigned.depth
 
 # gene depth analysis
 echo \n">>> Computing depth of each gene for ${i} <<<"\n
-awk '{print $1"\t"$2"\t"$2"\t"$3}' $WORKING_FOLDER/data/processed/repadapt/cnv/${i}_sorted_dedup_RG_lanes_merged_realigned.depth | apptainer run $repadapt_bedtools bedtools map -a $WORKING_FOLDER/data/processed/repadapt/cnv/genes.bed -b stdin -c 4 -o mean -null 0 -g $WORKING_FOLDER/data/processed/repadapt/cnv/genome.bed | awk -F "\t" '{print $1":"$2"-"$3"\t"$4}' | sort -k1,1 > $WORKING_FOLDER/data/processed/repadapt/cnv/${i}_sorted_dedup_RG_lanes_merged_realigned-genes.tsv
+awk '{print $1"\t"$2"\t"$2"\t"$3}' $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged_realigned.depth | apptainer run $repadapt_bedtools bedtools map -a $WORKING_FOLDER/data/processed/repadapt/cnv/genes.bed -b stdin -c 4 -o mean -null 0 -g $WORKING_FOLDER/data/processed/repadapt/cnv/genome.bed | awk -F "\t" '{print $1":"$2"-"$3"\t"$4}' | sort -k1,1 > $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged_realigned-genes.tsv
 
 # sort gene depth results based on input bed file
-join -a 1 -e 0 -o '1.1 2.2' -t $'\t' genes.list $WORKING_FOLDER/data/processed/repadapt/cnv/${i}_sorted_dedup_RG_lanes_merged_realigned-genes.tsv > $WORKING_FOLDER/data/processed/repadapt/cnv/${i}_sorted_dedup_RG_lanes_merged_realigned-genes.sorted.tsv
+join -a 1 -e 0 -o '1.1 2.2' -t $'\t' genes.list $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged_realigned-genes.tsv > $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged_realigned-genes.sorted.tsv
 
 # window depth analysis
 echo \n">>> Computing depth of each window for ${i} <<<"\n
-awk '{print $1"\t"$2"\t"$2"\t"$3}' $WORKING_FOLDER/data/processed/repadapt/cnv/${i}_sorted_dedup_RG_lanes_merged_realigned.depth | apptainer run $repadapt_bedtools bedtools map -a $WORKING_FOLDER/data/processed/repadapt/cnv/windows.bed -b stdin -c 4 -o mean -null 0 -g $WORKING_FOLDER/data/processed/repadapt/cnv/genome.bed | awk -F "\t" '{print $1":"$2"-"$3"\t"$4}' | sort -k1,1  > $WORKING_FOLDER/data/processed/repadapt/cnv/${i}_sorted_dedup_RG_lanes_merged_realigned-windows.tsv
+awk '{print $1"\t"$2"\t"$2"\t"$3}' $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged_realigned.depth | apptainer run $repadapt_bedtools bedtools map -a $WORKING_FOLDER/data/processed/repadapt/cnv/windows.bed -b stdin -c 4 -o mean -null 0 -g $WORKING_FOLDER/data/processed/repadapt/cnv/genome.bed | awk -F "\t" '{print $1":"$2"-"$3"\t"$4}' | sort -k1,1  > $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged_realigned-windows.tsv
 
 # sort window depth results based on input bed file
-join -a 1 -e 0 -o '1.1 2.2' -t $'\t' $WORKING_FOLDER/data/processed/repadapt/cnv/windows.list $WORKING_FOLDER/data/processed/repadapt/cnv/${i}_sorted_dedup_RG_lanes_merged_realigned-windows.tsv > $WORKING_FOLDER/data/processed/repadapt/cnv/${i}_sorted_dedup_RG_lanes_merged_realigned-windows.sorted.tsv
+join -a 1 -e 0 -o '1.1 2.2' -t $'\t' $WORKING_FOLDER/data/processed/repadapt/realign_indel/windows.list $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged_realigned-windows.tsv > $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged_realigned-windows.sorted.tsv
 
 # overall genome depth
 echo \n">>> Computing depth of whole genome for ${i} <<<"\n
-awk '{sum += $3; count++} END {if (count > 0) print sum/count; else print "No data"}' $WORKING_FOLDER/data/processed/repadapt/cnv/${i}_sorted_dedup_RG_lanes_merged_realigned.depth > $WORKING_FOLDER/data/processed/repadapt/cnv/${i}_sorted_dedup_RG_lanes_merged_realigned-wg.txt
+awk '{sum += $3; count++} END {if (count > 0) print sum/count; else print "No data"}' $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged_realigned.depth > $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged_realigned-wg.txt
 
 echo " >>> Cleaning a bit...
 "
-rm -rf $WORKING_FOLDER/data/processed/repadapt/cnv/${i}_sorted_dedup_RG_lanes_merged_realigned.depth
+rm -rf $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged_realigned.depth
 echo "
 DONE! Check your files"
