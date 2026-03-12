@@ -4,7 +4,7 @@
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=emily.longman@uvm.edu 
-#SBATCH --time=16:00:00 #30:00:00 #2-10:00:00
+#SBATCH --time=16:00:00
 #SBATCH --cpus-per-task=3 #5
 #SBATCH --mem-per-cpu=300G
 #SBATCH --array=14-18 #1-18 #19
