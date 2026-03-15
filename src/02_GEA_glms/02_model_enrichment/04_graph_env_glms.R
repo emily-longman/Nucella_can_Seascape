@@ -133,6 +133,53 @@ ggplot(summary_biotic, aes(x = reorder(variable_full_name, mean_rr_log2), y = me
   theme_bw(base_size=18)
 dev.off()
 
+# ================================================================================== #
+
+# Create group based on if beat 2sd or 1sd
+summary_abiotic <- summary_abiotic %>% 
+  mutate(col = case_when(mean_rr_log2-2*sd_rr_log2 > 0 ~ "blue",
+                      mean_rr_log2-2*sd_rr_log2 < 0 & mean_rr_log2-sd_rr_log2 > 0 ~ "steelblue3",
+                      mean_rr_log2-sd_rr_log2 < 0 ~ "gray56"))
+
+
+# Graph relative rate of model enrichment for biotic - mean and 2*sd
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Abiotic_rr_color.pdf", width = 9, height = 5)
+ggplot(summary_abiotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mean_rr_log2), color = col)) + 
+  #geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
+  geom_point(size=7)+ 
+  scale_color_identity() +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "red") +  
+  xlim(-0.65, 0.65) +
+  labs(x = "Log2(Relative rate of model enrichment)",
+       y = "") +
+  theme_minimal()+
+  coord_flip()+
+  theme_bw(base_size=18) + 
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank())
+dev.off()
+
+# Create group based on if beat 2sd or 1sd
+summary_biotic <- summary_biotic %>% 
+  mutate(col = case_when(mean_rr_log2-2*sd_rr_log2 > 0 ~ "blue",
+                      mean_rr_log2-2*sd_rr_log2 < 0 & mean_rr_log2-sd_rr_log2 > 0 ~ "steelblue3",
+                      mean_rr_log2-sd_rr_log2 < 0 ~ "gray56"))
+
+# Graph relative rate of model enrichment for biotic - mean and 2*sd
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Biotic_rr_color.pdf", width = 9, height = 5)
+ggplot(summary_biotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mean_rr_log2), color = col)) + 
+  #geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
+  geom_point(size=7)+ 
+  scale_color_identity() +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "red") +  
+  xlim(-0.65, 0.65) +
+  labs(x = "Log2(Relative rate of model enrichment)",
+       y = "") +
+  theme_minimal()+
+  coord_flip()+
+  theme_bw(base_size=18) + 
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank())
+dev.off()
+
 # Graph relative rate of model enrichment - mean and sd
 #pdf("output/figures/GEA/glms/GLM_rr_sum_SD.pdf", width = 8, height = 8)
 #ggplot(summary, aes(x = reorder(variable, mean_rr_log2), y = mean_rr_log2)) + 
