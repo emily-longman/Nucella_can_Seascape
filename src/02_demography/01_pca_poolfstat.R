@@ -86,6 +86,12 @@ write.csv(pca.df, "data/processed/outlier_analyses/pca.csv")
 
 # Graph PCA
 
+# Add column that highlights N, S, admixture
+pca.df <- pca.df %>% mutate(site = rownames(pca.df), 
+    shape = case_when(site %in% c("STR", "OCT", "HZD", "PB", "PSN") ~ "S", 
+                   site %in% c("SBR", "PL", "PGP") ~ "Admix", 
+                   site %in% c("BMR", "FR", "VD", "KH", "STC", "PSG", "CBL", "ARA", "SH", "SLR", "FC") ~ "N"))
+
 # Color palette
 nb.cols <- 19
 mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
@@ -94,7 +100,34 @@ colors.reorder <- mycolors[c(19,2,3,4,11,5,1,10,17,14,6,8,7,13,9,18,16,12,15)]
 viridiscolors <- viridis(n=19)
 viridiscolors.reorder <- viridiscolors[c(19,2,3,4,11,5,1,10,17,14,6,8,7,13,9,18,16,12,15)]
 
-# Plotting PC1 and PC2
+
+# Plot PC1 and PC2 with ggplot
+pdf("output/figures/demography/PCA_all_SNPs_PC1_PC2_ggplot.pdf", width = 10, height = 8)
+ggplot(pca.df, aes(x=PC1, y=PC2, shape=shape, fill = factor(site))) + geom_jitter(size=8, width = 0.01) + 
+scale_shape_manual(values = c(21, 22, 23)) + scale_fill_manual(values = viridiscolors.reorder) +
+ylim(-0.5, 0.5) + xlim(-0.5, 0.5) + 
+ylab(paste0("PC",2," (",round(pooldata.pca$perc.var[2],2),"%)")) + xlab(paste0("PC",1," (",round(pooldata.pca$perc.var[1],2),"%)")) +
+theme_linedraw(base_size = 26) +
+geom_vline(xintercept = 0, color = "black", linetype = "dashed") + geom_hline(yintercept = 0, color = "black", linetype = "dashed") +
+guides(fill = guide_legend(override.aes = list(shape = c(21, 23, 23, 23, 23, 23, 23, 23, 21, 22, 23, 23, 23, 22, 23, 21, 21, 22, 21))))
+dev.off()
+
+# Order by N to S
+lat <- c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR")
+pca.df.order <- pca.df %>% mutate(site = factor(site, levels = lat)) %>% arrange(site)
+
+
+pdf("output/figures/demography/PCA_all_SNPs_PC1_PC2_ggplot.pdf", width = 10, height = 8)
+ggplot(pca.df.order, aes(x=PC1, y=PC2, shape=shape, fill = factor(site))) + geom_jitter(size=8, width = 0.01) + 
+scale_shape_manual(values = c(21, 22, 23)) + scale_fill_manual(values = viridiscolors) +
+ylim(-0.5, 0.5) + xlim(-0.5, 0.5) + ylab(paste0("PC",2," (",round(pooldata.pca$perc.var[2],2),"%)")) + xlab(paste0("PC",1," (",round(pooldata.pca$perc.var[1],2),"%)")) +
+theme_linedraw(base_size = 26) +
+geom_vline(xintercept = 0, color = "black", linetype = "dashed") + geom_hline(yintercept = 0, color = "black", linetype = "dashed") + 
+guides(fill = guide_legend(override.aes = list(shape = c(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 22, 22, 22, 23, 23, 23, 23, 23))), shape = "none") +
+labs(fill = "Site")
+dev.off()
+
+# Plot with base R
 pdf("output/figures/demography/PCA_all_SNPs_PC1_PC2.pdf", width = 8, height = 8)
 par(mar=c(5,6,4,1)+.1) # Adjust margins
 pca <- plot(pooldata.pca$pop.loadings[,1],pooldata.pca$pop.loadings[,2],
@@ -104,21 +137,6 @@ col="black", bg=colors.reorder, pch=21, cex = 5, cex.lab = 3)
 abline(h=0,lty=2,col="grey") ; abline(v=0,lty=2,col="grey")
 dev.off()
 
-pdf("output/figures/demography/PCA_all_SNPs_PC1_PC2_ggplot.pdf", width = 8, height = 8)
-ggplot(pca.df, aes(x=PC1, y=PC2)) + geom_point(size=8, shape = 21, fill = colors.reorder) + 
-ylim(-0.5, 0.5) + xlim(-0.5, 0.5) + ylab(paste0("PC",2," (",round(pooldata.pca$perc.var[2],2),"%)")) + xlab(paste0("PC",1," (",round(pooldata.pca$perc.var[1],2),"%)")) +
-theme_linedraw(base_size = 26) +
-geom_vline(xintercept = 0, color = "black", linetype = "dashed") + geom_hline(yintercept = 0, color = "black", linetype = "dashed")
-dev.off()
-
-
-pdf("output/figures/demography/PCA_all_SNPs_PC1_PC2_ggplot_viridis.pdf", width = 8, height = 8)
-ggplot(pca.df, aes(x=PC1, y=PC2)) + geom_point(size=8, shape = 21, fill = viridiscolors.reorder) + theme_bw(base_size = 26) +
-geom_vline(xintercept = 0, color = "black", linetype = "dashed") + geom_hline(yintercept = 0, color = "black", linetype = "dashed")
-dev.off()
-
-
-# Plotting PC3 and PC4
 pdf("output/figures/demography/PCA_all_SNPs_PC3_PC4.pdf", width = 8, height = 8)
 par(mar=c(5,6,4,1)+.1) # Adjust margins
 pca <- plot(pooldata.pca$pop.loadings[,3],pooldata.pca$pop.loadings[,4],
