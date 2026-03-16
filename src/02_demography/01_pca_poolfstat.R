@@ -17,9 +17,24 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-install.packages(c('poolfstat', 'tidyverse'))
+install.packages(c('poolfstat', 'tidyverse', 'ggplot2', 'RColorBrewer', 'viridis'))
 library(poolfstat)
 library(tidyverse)
+library(ggplot2)
+library(RColorBrewer)
+library(viridis)
+
+# ================================================================================== #
+
+# Generate Folders and files
+
+# Make data directory
+data_dir="data/raw/pooldata"
+if (!dir.exists(data_dir)) {dir.create(data_dir)}
+
+# Make output directory
+output_dir="output/figures/demography"
+if (!dir.exists(output_dir)) {dir.create(output_dir)}
 
 # ================================================================================== #
 
@@ -45,9 +60,9 @@ min.cov.per.pool = 20, min.rc = 5, max.cov.per.pool = 120, min.maf = 0.01, nline
 # ================================================================================== #
 
 # Save pooldata
-save(pooldata, file="data/processed/outlier_analyses/pooldata.RData")
+save(pooldata, file="data/raw/pooldata/pooldata.RData")
 # Reload pooldata
-load("data/processed/outlier_analyses/pooldata.RData")
+load("data/raw/pooldata/pooldata.RData")
 
 # ================================================================================== #
 
@@ -67,3 +82,48 @@ colnames(pca.df) <- c("PC1", "PC2", "PC3", "PC4", "PC5", "PC6", "PC7", "PC8", "P
 # Save dataframe
 write.csv(pca.df, "data/processed/outlier_analyses/pca.csv")
 
+# ================================================================================== #
+
+# Graph PCA
+
+# Color palette
+nb.cols <- 19
+mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
+colors.reorder <- mycolors[c(19,2,3,4,11,5,1,10,17,14,6,8,7,13,9,18,16,12,15)]
+
+viridiscolors <- viridis(n=19)
+viridiscolors.reorder <- viridiscolors[c(19,2,3,4,11,5,1,10,17,14,6,8,7,13,9,18,16,12,15)]
+
+# Plotting PC1 and PC2
+pdf("output/figures/demography/PCA_all_SNPs_PC1_PC2.pdf", width = 8, height = 8)
+par(mar=c(5,6,4,1)+.1) # Adjust margins
+pca <- plot(pooldata.pca$pop.loadings[,1],pooldata.pca$pop.loadings[,2],
+xlab=paste0("PC",1," (",round(pooldata.pca$perc.var[1],2),"%)"),
+ylab=paste0("PC",2," (",round(pooldata.pca$perc.var[2],2),"%)"),
+col="black", bg=colors.reorder, pch=21, cex = 5, cex.lab = 3)
+abline(h=0,lty=2,col="grey") ; abline(v=0,lty=2,col="grey")
+dev.off()
+
+pdf("output/figures/demography/PCA_all_SNPs_PC1_PC2_ggplot.pdf", width = 8, height = 8)
+ggplot(pca.df, aes(x=PC1, y=PC2)) + geom_point(size=8, shape = 21, fill = colors.reorder) + 
+ylim(-0.5, 0.5) + xlim(-0.5, 0.5) + ylab(paste0("PC",2," (",round(pooldata.pca$perc.var[2],2),"%)")) + xlab(paste0("PC",1," (",round(pooldata.pca$perc.var[1],2),"%)")) +
+theme_linedraw(base_size = 26) +
+geom_vline(xintercept = 0, color = "black", linetype = "dashed") + geom_hline(yintercept = 0, color = "black", linetype = "dashed")
+dev.off()
+
+
+pdf("output/figures/demography/PCA_all_SNPs_PC1_PC2_ggplot_viridis.pdf", width = 8, height = 8)
+ggplot(pca.df, aes(x=PC1, y=PC2)) + geom_point(size=8, shape = 21, fill = viridiscolors.reorder) + theme_bw(base_size = 26) +
+geom_vline(xintercept = 0, color = "black", linetype = "dashed") + geom_hline(yintercept = 0, color = "black", linetype = "dashed")
+dev.off()
+
+
+# Plotting PC3 and PC4
+pdf("output/figures/demography/PCA_all_SNPs_PC3_PC4.pdf", width = 8, height = 8)
+par(mar=c(5,6,4,1)+.1) # Adjust margins
+pca <- plot(pooldata.pca$pop.loadings[,3],pooldata.pca$pop.loadings[,4],
+xlab=paste0("PC",3," (",round(pooldata.pca$perc.var[3],2),"%)"),
+ylab=paste0("PC",4," (",round(pooldata.pca$perc.var[4],2),"%)"),
+col="black", bg=colors.reorder,pch=21, cex = 5, cex.lab = 3)
+abline(h=0,lty=2,col="grey") ; abline(v=0,lty=2,col="grey")
+dev.off()
