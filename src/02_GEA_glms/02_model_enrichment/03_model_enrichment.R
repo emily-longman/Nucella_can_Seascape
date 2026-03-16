@@ -72,6 +72,19 @@ ggplot(hist.obj.env[which(hist.obj.env$hist.obj.mids < 0.995),], aes(x=(hist.obj
   scale_x_log10()
 dev.off()
 
+# Graph pval distribution - remove 0.995 values as these are artifacts
+pdf(paste0("output/figures/GEA/glms/pval_dist/glm_pval_dist_log_scale_", var, "alt.pdf"), width = 14, height = 8)
+ggplot(hist.obj.env[which(hist.obj.env$hist.obj.mids < 0.995),], aes(x=(hist.obj.mids),y=hist.obj.counts/1000000, group=perm, color=perm==0)) +
+  geom_line(aes(alpha=perm==0 ), linewidth = 2.5) + 
+  scale_alpha_manual(values = c(0.1, 1)) +
+  scale_size_manual(values = c(0.7, 1.5)) +
+  scale_color_manual(values = c("#f63b3b","black")) +
+  scale_y_continuous(labels = function(x) format(x, scientific = FALSE)) +
+  labs(title = paste0(var, " P-value distribution"), x = "GLM P-values", y = "Number of Million SNPs") +
+  theme_bw(base_size = 30) +  theme(legend.position = "none") +
+  scale_x_log10()
+dev.off()
+
 # Number of permutations
 n_perm = length(unique(glm.model.collated.filt$perm[which(glm.model.collated.filt$perm>0)]))
 message(n_perm)
