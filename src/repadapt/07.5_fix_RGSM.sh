@@ -24,6 +24,7 @@ fi
 # Use apptainer to use the correct versions of programs
 module load apptainer/1.3.4
 repadapt_picard=https://depot.galaxyproject.org/singularity/picard:2.26.3--hdfd78af_0
+repadapt_samtools=https://depot.galaxyproject.org/singularity/samtools:1.16.1--h6899075_0
 
 # Guide File
 GUIDE_FILE=$WORKING_FOLDER/data/processed/repadapt/guide_files/samples_file.txt
