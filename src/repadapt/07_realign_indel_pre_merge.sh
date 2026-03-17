@@ -5,9 +5,9 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=emily.longman@uvm.edu 
 #SBATCH --time=18:00:00
-#SBATCH --cpus-per-task=5
+#SBATCH --cpus-per-task=3
 #SBATCH --mem-per-cpu=300G
-#SBATCH --array=1-19
+#SBATCH --array=1-38
 
 #--------------------------------------------------------------------------------
 # My additions:
@@ -28,28 +28,28 @@ repadapt_samtools=https://depot.galaxyproject.org/singularity/samtools:1.16.1--h
 repadapt_gatk3=https://depot.galaxyproject.org/singularity/gatk:3.8--9
 
 # Guide File
-GUIDE_FILE=$WORKING_FOLDER/data/processed/repadapt/guide_files/Merge_bams.txt
+GUIDE_FILE=$WORKING_FOLDER/data/processed/repadapt/guide_files/Trim_map.txt
 # Extract sample names/files
-i=`awk -F "\t" '{print $1}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
-echo "Population i:" ${i}
+i=`awk -F "\t" '{print $6}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
+echo "Sample i:" ${i}
 JAVAMEM=20G
 
 # Index with samtools
-apptainer run $repadapt_samtools samtools index $WORKING_FOLDER/data/processed/repadapt/merge_lanes/${i}_sorted_dedup_RG_lanes_merged.bam
+apptainer run $repadapt_samtools samtools index $WORKING_FOLDER/data/processed/repadapt/merge_lanes/${i}_sorted_dedup_RG.bam
 
 # Generate a indel realigned bam file for each sample/library
 apptainer run $repadapt_gatk3 gatk3 -Xmx20G -T RealignerTargetCreator \
 -R $WORKING_FOLDER/data/processed/repadapt/genome/N.canaliculata_assembly.fasta.softmasked.fa \
--I $WORKING_FOLDER/data/processed/repadapt/merge_lanes/${i}_sorted_dedup_RG_lanes_merged.bam \
--o $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged\.intervals
+-I $WORKING_FOLDER/data/processed/repadapt/merge_lanes/${i}_sorted_dedup_RG.bam \
+-o $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG\.intervals
 
 echo "Finished Realigner Target Creator; Now, Indel Realigner"
 
 apptainer run $repadapt_gatk3 gatk3 -Xmx20G -T IndelRealigner \
 -R $WORKING_FOLDER/data/processed/repadapt/genome/N.canaliculata_assembly.fasta.softmasked.fa \
--I $WORKING_FOLDER/data/processed/repadapt/merge_lanes/${i}_sorted_dedup_RG_lanes_merged.bam \
--targetIntervals $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged\.intervals \
---consensusDeterminationModel USE_READS -o $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged\_realigned.bam
+-I $WORKING_FOLDER/data/processed/repadapt/merge_lanes/${i}_sorted_dedup_RG.bam \
+-targetIntervals $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG\.intervals \
+--consensusDeterminationModel USE_READS -o $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG\_realigned.bam
 
 #--------------------------------------------------------------------------------
 
