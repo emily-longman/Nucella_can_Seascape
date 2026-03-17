@@ -36,9 +36,9 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 # Load and merge data
 
 # Create list of file names
-path <- paste("data/processed/baypass/window_summary/window_chunk_analysis_Mtross_mean/")
+path <- paste("data/processed/baypass/window_summary/window_chunk_analysis_ph_mean/")
 file_names = as.list(dir(path = path, pattern = "window_chunks_*"))
-file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("data/processed/baypass/window_summary/window_chunk_analysis_Mtross_mean/"), x))))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("data/processed/baypass/window_summary/window_chunk_analysis_ph_mean/"), x))))
 
 # Check number of files
 length(file_names_v)
@@ -58,7 +58,7 @@ str(win.out)
 # ================================================================================== #
 
 # Save merged data
-save(win.out, file = "data/processed/baypass/window_summary/window_analysis_Mtross_mean.RData")
+save(win.out, file = "data/processed/baypass/window_summary/window_analysis_ph_mean.RData")
 
 # ================================================================================== #
 
@@ -69,28 +69,28 @@ win.out$chr.unique <- as.numeric(factor(win.out$chr, levels = win.out.chr.unique
 # Graph rnp p
 
 # Graph rnp geompoint
-pdf("output/figures/baypass/window_summary/baypass_window_Mtross_mean_rnp_0.05_geompoint.pdf", width = 12, height = 6)
+pdf("output/figures/baypass/window_summary/baypass_window_ph_mean_rnp_0.05_geompoint.pdf", width = 12, height = 6)
 ggplot(win.out, aes(y=-log10(rnp.binom.p.0.05), x=chr.unique)) + 
   geom_point(alpha=0.8, size=1.6) + geom_hline(yintercept=-log10(0.05/length(win.out$rnp.binom.p.0.05)), col="red", linetype="dashed") +
   theme_bw(base_size=26) + theme(legend.position = "none")
 dev.off()
 
 # Graph rnp geomline
-pdf("output/figures/baypass/window_summary/baypass_window_Mtross_mean_rnp_0.05_geomline.pdf", width = 12, height = 6)
+pdf("output/figures/baypass/window_summary/baypass_window_ph_mean_rnp_0.05_geomline.pdf", width = 12, height = 6)
 ggplot(win.out, aes(y=-log10(rnp.binom.p.0.05), x=chr.unique)) + 
   geom_line( ) + 
   theme_bw(base_size=26) + theme(legend.position = "none")
 dev.off()
 
 # Graph rnp geompoint
-pdf("output/figures/baypass/window_summary/baypass_window_Mtross_mean_rnp_0.01_geompoint.pdf", width = 12, height = 6)
+pdf("output/figures/baypass/window_summary/baypass_window_ph_mean_rnp_0.01_geompoint.pdf", width = 12, height = 6)
 ggplot(win.out, aes(y=-log10(rnp.binom.p.0.01), x=chr.unique)) + 
   geom_point(alpha=0.8, size=1.6) + geom_hline(yintercept=-log10(0.01/length(win.out$rnp.binom.p.0.01)), col="red", linetype="dashed") +
   theme_bw(base_size=26) + theme(legend.position = "none")
 dev.off()
 
 # Graph rnp geomline
-pdf("output/figures/baypass/window_summary/baypass_window_Mtross_mean_rnp_0.01_geomline.pdf", width = 12, height = 6)
+pdf("output/figures/baypass/window_summary/baypass_window_ph_mean_rnp_0.01_geomline.pdf", width = 12, height = 6)
 ggplot(win.out, aes(y=-log10(rnp.binom.p.0.01), x=chr.unique)) + 
   geom_line( ) + 
   theme_bw(base_size=26) + theme(legend.position = "none")
@@ -102,5 +102,5 @@ dev.off()
 win.out.outliers <- win.out %>% filter(-log10(rnp.binom.p.0.01) > -log10(0.01/length(rnp.binom.p.0.01)))
 
 # Save outliers
-write.csv(win.out.outliers, "data/processed/baypass/window_summary/window_analysis_Mtross_mean_outliers.csv", row.names=FALSE)
+write.csv(win.out.outliers, "data/processed/baypass/window_summary/window_analysis_ph_mean_outliers.csv", row.names=FALSE)
 
