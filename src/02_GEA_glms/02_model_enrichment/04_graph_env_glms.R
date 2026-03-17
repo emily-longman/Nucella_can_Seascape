@@ -171,6 +171,20 @@ ggplot(summary_abiotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, me
   theme_bw(base_size=30) + 
   theme(axis.text.x = element_blank(), axis.ticks = element_blank())
 dev.off()
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Abiotic_rr_color_longer.pdf", width = 16, height = 5)
+ggplot(summary_abiotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mean_rr_log2), color = col)) + 
+  #geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
+  geom_point(size=7)+ 
+  scale_color_identity() +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "red") +  
+  xlim(-0.365, 0.365) + 
+  labs(x = "Log2(Relative rate \nof model enrichment)",
+       y = "") +
+  theme_minimal()+
+  coord_flip()+
+  theme_bw(base_size=30) + 
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank())
+dev.off()
 
 # Create group based on if beat 2sd or 1sd
 summary_biotic <- summary_biotic %>% 
@@ -180,6 +194,20 @@ summary_biotic <- summary_biotic %>%
 
 # Graph relative rate of model enrichment for biotic - mean and 2*sd
 pdf("output/figures/GEA/glms/model_enrichment/GLM_Biotic_rr_color.pdf", width = 14, height = 5)
+ggplot(summary_biotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mean_rr_log2), color = col)) + 
+  #geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
+  geom_point(size=7)+ 
+  scale_color_identity() +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "red") +  
+  xlim(-0.365, 0.365) + 
+  labs(x = "Log2(Relative rate \nof model enrichment)",
+       y = "") +
+  theme_minimal()+
+  coord_flip()+
+  theme_bw(base_size=30) + 
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank())
+dev.off()
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Biotic_rr_color_longer.pdf", width = 16, height = 5)
 ggplot(summary_biotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mean_rr_log2), color = col)) + 
   #geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
   geom_point(size=7)+ 
