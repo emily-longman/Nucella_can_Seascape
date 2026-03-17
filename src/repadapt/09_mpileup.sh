@@ -6,7 +6,7 @@
 #SBATCH --mail-user=emily.longman@uvm.edu 
 #SBATCH --time=30:00:00
 #SBATCH --mem-per-cpu=60G
-#SBATCH --array=1-631%100
+#SBATCH --array=1 #1-631%100
 
 #--------------------------------------------------------------------------------
 # My additions/modifications:
@@ -38,6 +38,8 @@ echo "Slurm array:" ${SLURM_ARRAY_TASK_ID}
 awk '$2=='${SLURM_ARRAY_TASK_ID}'' $GUIDE_FILE | awk '{print $1}' > chr.names.${SLURM_ARRAY_TASK_ID}.txt
 
 
+REFERENCE=$WORKING_FOLDER/data/processed/repadapt/genome/N.canaliculata_assembly.fasta.softmasked.fa
+
 #CHROM=$(sed -n "${SLURM_ARRAY_TASK_ID}p" chromosomes.txt) ### list of chromosomes (can be found in the FASTA index file of reference genome -- .fai file). This species has 14, that's why array number is 14. We parallelize by chromosome. 
 
 ### Here we call SNPs. 
@@ -55,8 +57,7 @@ cat chr.names.${SLURM_ARRAY_TASK_ID}.txt | \
 while read scaffold 
 do echo ${scaffold}
 
-apptainer run $repadapt_bcftools bcftools mpileup -Ou -f $WORKING_FOLDER/data/processed/repadapt/genome/N.canaliculata_assembly.fasta.softmasked.fa \
---bam-list samples.list.txt -q 5 -r $scaffold -I -a FMT/AD,FMT/DP | bcftools call -S $WORKING_FOLDER/data/processed/repadapt/guide_files/ploidymap.txt -G - -f GQ -mv -Ov > $WORKING_FOLDER/data/processed/repadapt/mpileup/$scaffold\.vcf
+apptainer run $repadapt_bcftools bcftools mpileup -Ou -f $REFERENCE --bam-list samples.list.txt -q 5 -r $scaffold -I -a FMT/AD,FMT/DP | apptainer run $repadapt_bcftools bcftools call -S $WORKING_FOLDER/data/processed/repadapt/guide_files/ploidymap.txt -G - -f GQ -mv -Ov > $WORKING_FOLDER/data/processed/repadapt/mpileup/$scaffold\.vcf
 
 done
 

@@ -35,4 +35,4 @@ group(data, n=30, method = "greedy") -> guide_file_array
 
 # Write the table
 write.table(guide_file_array, "chromosomes_guide_file.txt", col.names = F, row.names = F, quote = F)
-# Note guide_file_array has dimensions:  19014, 2
+# Note guide_file_array has dimensions:  18919, 2 -> 631 groups
