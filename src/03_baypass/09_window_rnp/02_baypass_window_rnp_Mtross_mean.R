@@ -77,6 +77,8 @@ win.out <- foreach(window.w=1:dim(wins_group_i)[1], .combine = "rbind", .errorha
               pos_min = min(pos),
               pos_max = max(pos),
               bf_mean = mean(bf_db.mean),
+              bf_min = min(bf_db.mean),
+              bf_max = max(bf_db.mean),
               win = wins_group_i$i[window.w],
               rnp.pr.0.05 = c(mean(rnp <= pr.i.0.05)),
               rnp.pr.0.01 = c(mean(rnp <= pr.i.0.01)),
