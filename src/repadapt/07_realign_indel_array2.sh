@@ -17,9 +17,9 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 # Make folders
 cd $WORKING_FOLDER/data/processed/repadapt
-if [ -d "realign_indel2" ]
-then echo "Working realign_indel2 folder exist"; echo "Let's move on."; date
-else echo "Working realign_indel2 folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/repadapt/realign_indel2; date
+if [ -d "realign_indel" ]
+then echo "Working realign_indel folder exist"; echo "Let's move on."; date
+else echo "Working realign_indel folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/repadapt/realign_indel; date
 fi
 
 # Use apptainer to use the correct versions of programs
@@ -41,15 +41,15 @@ apptainer run $repadapt_samtools samtools index $WORKING_FOLDER/data/processed/r
 apptainer run $repadapt_gatk3 gatk3 -Xmx20G -T RealignerTargetCreator \
 -R $WORKING_FOLDER/data/processed/repadapt/genome/N.canaliculata_assembly.fasta.softmasked.fa \
 -I $WORKING_FOLDER/data/processed/repadapt/merge_lanes/${i}_sorted_dedup_RG_lanes_merged.bam \
--o $WORKING_FOLDER/data/processed/repadapt/realign_indel2/${i}_sorted_dedup_RG_lanes_merged\.intervals
+-o $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged\.intervals
 
 echo "Finished Realigner Target Creator; Now, Indel Realigner"
 
 apptainer run $repadapt_gatk3 gatk3 -Xmx20G -T IndelRealigner \
 -R $WORKING_FOLDER/data/processed/repadapt/genome/N.canaliculata_assembly.fasta.softmasked.fa \
 -I $WORKING_FOLDER/data/processed/repadapt/merge_lanes/${i}_sorted_dedup_RG_lanes_merged.bam \
--targetIntervals $WORKING_FOLDER/data/processed/repadapt/realign_indel2/${i}_sorted_dedup_RG_lanes_merged\.intervals \
---consensusDeterminationModel USE_READS -o $WORKING_FOLDER/data/processed/repadapt/realign_indel2/${i}_sorted_dedup_RG_lanes_merged\_realigned.bam
+-targetIntervals $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged\.intervals \
+--consensusDeterminationModel USE_READS -o $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged\_realigned.bam
 
 #--------------------------------------------------------------------------------
 
