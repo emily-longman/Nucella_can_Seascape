@@ -7,7 +7,7 @@
 #SBATCH --time=18:00:00
 #SBATCH --cpus-per-task=3
 #SBATCH --mem-per-cpu=200G
-#SBATCH --array=10-19
+#SBATCH --array=11-19
 
 #--------------------------------------------------------------------------------
 # My additions:
