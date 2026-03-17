@@ -143,7 +143,7 @@ summary_abiotic <- summary_abiotic %>%
 
 
 # Graph relative rate of model enrichment for biotic - mean and 2*sd
-pdf("output/figures/GEA/glms/model_enrichment/GLM_Abiotic_rr_color.pdf", width = 9, height = 5)
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Abiotic_rr_color.pdf", width = 14, height = 5)
 ggplot(summary_abiotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mean_rr_log2), color = col)) + 
   #geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
   geom_point(size=7)+ 
@@ -154,7 +154,7 @@ ggplot(summary_abiotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, me
        y = "") +
   theme_minimal()+
   coord_flip()+
-  theme_bw(base_size=22) + 
+  theme_bw(base_size=30) + 
   theme(axis.text.x = element_blank(), axis.ticks = element_blank())
 dev.off()
 
@@ -165,7 +165,7 @@ summary_biotic <- summary_biotic %>%
                       mean_rr_log2-sd_rr_log2 < 0 ~ "gray56"))
 
 # Graph relative rate of model enrichment for biotic - mean and 2*sd
-pdf("output/figures/GEA/glms/model_enrichment/GLM_Biotic_rr_color.pdf", width = 9, height = 5)
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Biotic_rr_color.pdf", width = 14, height = 5)
 ggplot(summary_biotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mean_rr_log2), color = col)) + 
   #geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
   geom_point(size=7)+ 
@@ -176,7 +176,7 @@ ggplot(summary_biotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mea
        y = "") +
   theme_minimal()+
   coord_flip()+
-  theme_bw(base_size=18) + 
+  theme_bw(base_size=30) + 
   theme(axis.text.x = element_blank(), axis.ticks = element_blank())
 dev.off()
 
