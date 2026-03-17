@@ -100,30 +100,20 @@ colors.reorder <- mycolors[c(19,2,3,4,11,5,1,10,17,14,6,8,7,13,9,18,16,12,15)]
 viridiscolors <- viridis(n=19)
 viridiscolors.reorder <- viridiscolors[c(19,2,3,4,11,5,1,10,17,14,6,8,7,13,9,18,16,12,15)]
 
-
-# Plot PC1 and PC2 with ggplot
-pdf("output/figures/demography/PCA_all_SNPs_PC1_PC2_ggplot.pdf", width = 10, height = 8)
-ggplot(pca.df, aes(x=PC1, y=PC2, shape=shape, fill = factor(site))) + geom_jitter(size=8, width = 0.01) + 
-scale_shape_manual(values = c(21, 22, 23)) + scale_fill_manual(values = viridiscolors.reorder) +
-ylim(-0.5, 0.5) + xlim(-0.5, 0.5) + 
-ylab(paste0("PC",2," (",round(pooldata.pca$perc.var[2],2),"%)")) + xlab(paste0("PC",1," (",round(pooldata.pca$perc.var[1],2),"%)")) +
-theme_linedraw(base_size = 26) +
-geom_vline(xintercept = 0, color = "black", linetype = "dashed") + geom_hline(yintercept = 0, color = "black", linetype = "dashed") +
-guides(fill = guide_legend(override.aes = list(shape = c(21, 23, 23, 23, 23, 23, 23, 23, 21, 22, 23, 23, 23, 22, 23, 21, 21, 22, 21))))
-dev.off()
-
 # Order by N to S
 lat <- c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR")
 pca.df.order <- pca.df %>% mutate(site = factor(site, levels = lat)) %>% arrange(site)
 
 
-pdf("output/figures/demography/PCA_all_SNPs_PC1_PC2_ggplot.pdf", width = 10, height = 8)
-ggplot(pca.df.order, aes(x=PC1, y=PC2, shape=shape, fill = factor(site))) + geom_jitter(size=8, width = 0.01) + 
+# Plot PC1 and PC2 with ggplot
+pdf("output/figures/demography/PCA_all_SNPs_PC1_PC2_ggplot_bigger.pdf", width = 12, height = 9)
+ggplot(pca.df.order, aes(x=PC1, y=PC2, shape=shape, fill = factor(site))) + geom_jitter(size=16, width = 0.01, height = 0.01) + 
 scale_shape_manual(values = c(21, 22, 23)) + scale_fill_manual(values = viridiscolors) +
-ylim(-0.5, 0.5) + xlim(-0.5, 0.5) + ylab(paste0("PC",2," (",round(pooldata.pca$perc.var[2],2),"%)")) + xlab(paste0("PC",1," (",round(pooldata.pca$perc.var[1],2),"%)")) +
-theme_linedraw(base_size = 26) +
+ylim(-0.51, 0.51) + xlim(-0.51, 0.51) + 
+ylab(paste0("PC",2," (",round(pooldata.pca$perc.var[2],2),"%)")) + xlab(paste0("PC",1," (",round(pooldata.pca$perc.var[1],2),"%)")) +
+theme_linedraw(base_size = 36) +
 geom_vline(xintercept = 0, color = "black", linetype = "dashed") + geom_hline(yintercept = 0, color = "black", linetype = "dashed") + 
-guides(fill = guide_legend(override.aes = list(shape = c(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 22, 22, 22, 23, 23, 23, 23, 23))), shape = "none") +
+guides(fill = guide_legend(override.aes = list(shape = c(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 22, 22, 22, 23, 23, 23, 23, 23), size = 8)), shape = "none") +
 labs(fill = "Site")
 dev.off()
 
@@ -134,14 +124,6 @@ pca <- plot(pooldata.pca$pop.loadings[,1],pooldata.pca$pop.loadings[,2],
 xlab=paste0("PC",1," (",round(pooldata.pca$perc.var[1],2),"%)"),
 ylab=paste0("PC",2," (",round(pooldata.pca$perc.var[2],2),"%)"),
 col="black", bg=colors.reorder, pch=21, cex = 5, cex.lab = 3)
-abline(h=0,lty=2,col="grey") ; abline(v=0,lty=2,col="grey")
+abline(h=0,lty=2,col="grey"); abline(v=0,lty=2,col="grey")
 dev.off()
 
-pdf("output/figures/demography/PCA_all_SNPs_PC3_PC4.pdf", width = 8, height = 8)
-par(mar=c(5,6,4,1)+.1) # Adjust margins
-pca <- plot(pooldata.pca$pop.loadings[,3],pooldata.pca$pop.loadings[,4],
-xlab=paste0("PC",3," (",round(pooldata.pca$perc.var[3],2),"%)"),
-ylab=paste0("PC",4," (",round(pooldata.pca$perc.var[4],2),"%)"),
-col="black", bg=colors.reorder,pch=21, cex = 5, cex.lab = 3)
-abline(h=0,lty=2,col="grey") ; abline(v=0,lty=2,col="grey")
-dev.off()

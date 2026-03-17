@@ -57,7 +57,9 @@ cat chr.names.${SLURM_ARRAY_TASK_ID}.txt | \
 while read scaffold 
 do echo ${scaffold}
 
-apptainer run $repadapt_bcftools bcftools mpileup -Ou -f $REFERENCE --bam-list samples.list.txt -q 5 -r $scaffold -I -a FMT/AD,FMT/DP | apptainer run $repadapt_bcftools bcftools call -S $WORKING_FOLDER/data/processed/repadapt/guide_files/ploidymap.txt -G - -f GQ -mv -Ov > $WORKING_FOLDER/data/processed/repadapt/mpileup/$scaffold\.vcf
+apptainer run $repadapt_bcftools bcftools mpileup -Ou -f $REFERENCE --bam-list samples.list.txt -q 5 -r $scaffold -I -a FMT/AD,FMT/DP | apptainer run $repadapt_bcftools bcftools call -G - -f GQ -mv -Ov > $WORKING_FOLDER/data/processed/repadapt/mpileup/$scaffold\.vcf
+
+#apptainer run $repadapt_bcftools bcftools mpileup -Ou -f $REFERENCE --bam-list samples.list.txt -q 5 -r $scaffold -I -a FMT/AD,FMT/DP | apptainer run $repadapt_bcftools bcftools call -S $WORKING_FOLDER/data/processed/repadapt/guide_files/ploidymap.txt -G - -f GQ -mv -Ov > $WORKING_FOLDER/data/processed/repadapt/mpileup/$scaffold\.vcf
 
 done
 
