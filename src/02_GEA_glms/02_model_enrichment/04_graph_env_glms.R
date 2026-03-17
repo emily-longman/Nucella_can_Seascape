@@ -149,12 +149,12 @@ ggplot(summary_abiotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, me
   geom_point(size=7)+ 
   scale_color_identity() +
   geom_vline(xintercept = 0, linetype = "dashed", color = "red") +  
-  xlim(-0.65, 0.65) +
-  labs(x = "Log2(Relative rate of model enrichment)",
+  xlim(-0.365, 0.365) + 
+  labs(x = "Log2(Relative rate \nof model enrichment)",
        y = "") +
   theme_minimal()+
   coord_flip()+
-  theme_bw(base_size=18) + 
+  theme_bw(base_size=22) + 
   theme(axis.text.x = element_blank(), axis.ticks = element_blank())
 dev.off()
 
@@ -171,8 +171,8 @@ ggplot(summary_biotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mea
   geom_point(size=7)+ 
   scale_color_identity() +
   geom_vline(xintercept = 0, linetype = "dashed", color = "red") +  
-  xlim(-0.65, 0.65) +
-  labs(x = "Log2(Relative rate of model enrichment)",
+  xlim(-0.365, 0.365) + 
+  labs(x = "Log2(Relative rate \nof model enrichment)",
        y = "") +
   theme_minimal()+
   coord_flip()+
