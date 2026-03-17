@@ -33,7 +33,10 @@ echo "Sample i:" ${i}
 JAVAMEM=20G
 
 # Add read groups, we start with our deduplicated bam files and we get a deduplicated bam with read groups assigned per sample/library
-apptainer run $repadapt_picard picard -Xmx20G AddOrReplaceReadGroups \
-I=$WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged_realigned.bam \
-O=$WORKING_FOLDER/data/processed/repadapt/realign_indel_fix_RG/${i}_sorted_dedup_RG_lanes_merged_realigned.bam \
-RGID=${i} RGLB=${i}\_LB RGPL=ILLUMINA RGPU=unit1 RGSM=${i}
+#apptainer run $repadapt_picard picard -Xmx20G AddOrReplaceReadGroups \
+#I=$WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged_realigned.bam \
+#O=$WORKING_FOLDER/data/processed/repadapt/realign_indel_fix_RG/${i}_sorted_dedup_RG_lanes_merged_realigned.bam \
+#RGID=${i} RGLB=${i}\_LB RGPL=ILLUMINA RGPU=unit1 RGSM=${i}
+
+# Index with samtools
+apptainer run $repadapt_samtools samtools index $WORKING_FOLDER/data/processed/repadapt/realign_indel_fix_RG/${i}_sorted_dedup_RG_lanes_merged_realigned.bam
