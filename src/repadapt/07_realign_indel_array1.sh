@@ -35,19 +35,19 @@ echo "Population i:" ${i}
 JAVAMEM=20G
 
 # Index with samtools
-apptainer run $repadapt_samtools samtools index $WORKING_FOLDER/data/processed/repadapt/merge_lanes/${i}_sorted_dedup_RG_lanes_merged.bam
+apptainer run $repadapt_samtools samtools index $WORKING_FOLDER/data/processed/repadapt/merge_lanes_fix_RG/${i}_sorted_dedup_RG_lanes_merged.bam
 
 # Generate a indel realigned bam file for each sample/library
 apptainer run $repadapt_gatk3 gatk3 -Xmx20G -T RealignerTargetCreator \
 -R $WORKING_FOLDER/data/processed/repadapt/genome/N.canaliculata_assembly.fasta.softmasked.fa \
--I $WORKING_FOLDER/data/processed/repadapt/merge_lanes/${i}_sorted_dedup_RG_lanes_merged.bam \
+-I $WORKING_FOLDER/data/processed/repadapt/merge_lanes_fix_RG/${i}_sorted_dedup_RG_lanes_merged.bam \
 -o $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged\.intervals
 
 echo "Finished Realigner Target Creator; Now, Indel Realigner"
 
 apptainer run $repadapt_gatk3 gatk3 -Xmx20G -T IndelRealigner \
 -R $WORKING_FOLDER/data/processed/repadapt/genome/N.canaliculata_assembly.fasta.softmasked.fa \
--I $WORKING_FOLDER/data/processed/repadapt/merge_lanes/${i}_sorted_dedup_RG_lanes_merged.bam \
+-I $WORKING_FOLDER/data/processed/repadapt/merge_lanes_fix_RG/${i}_sorted_dedup_RG_lanes_merged.bam \
 -targetIntervals $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged\.intervals \
 --consensusDeterminationModel USE_READS -o $WORKING_FOLDER/data/processed/repadapt/realign_indel/${i}_sorted_dedup_RG_lanes_merged\_realigned.bam
 
