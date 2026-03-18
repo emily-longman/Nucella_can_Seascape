@@ -5,8 +5,8 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=emily.longman@uvm.edu 
 #SBATCH --time=24:00:00
-#SBATCH --cpus-per-task=5 #3
-#SBATCH --mem-per-cpu=200G
+#SBATCH --cpus-per-task=4 #3
+#SBATCH --mem-per-cpu=100G #200
 #SBATCH --array=8 #1-10
 
 #--------------------------------------------------------------------------------
