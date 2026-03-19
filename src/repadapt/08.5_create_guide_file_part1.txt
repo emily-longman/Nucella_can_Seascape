@@ -31,4 +31,4 @@ sed -i 's/>//g' chromosomes.txt
 cd $WORKING_FOLDER/data/processed/repadapt
 
 # Make list of ALL the realigned bam files
-ls $WORKING_FOLDER/data/processed/repadapt/realign_indel_fix_RG/*realigned.bam > samples.list.txt
+ls $WORKING_FOLDER/data/processed/repadapt/realign_indel/*realigned.bam > samples.list.txt
