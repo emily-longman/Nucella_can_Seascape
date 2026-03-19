@@ -21,12 +21,12 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 # Change directory
 cd $WORKING_FOLDER/data/processed/repadapt/realign_indel
 
-#find . -name "*realigned.bam" | sed 's/.bam//g' | sed 's/^..//g' > list.txt
+find . -name "*realigned.bam" | sed 's/.bam//g' | sed 's/^..//g' > list.txt
 
-#echo -e "location\t$(cut -f2 list.txt | sort | uniq | paste -s -d '\t')" > depthheader.txt
+echo -e "location\t$(cut -f2 list.txt | sort | uniq | paste -s -d '\t')" > depthheader.txt
 
 # get a list of sample names
-#cut -f2 list.txt | sort | uniq > samples.txt
+cut -f2 list.txt | sort | uniq > samples.txt
 
 ### combine windowed depth analysis results
 # get just the second (depth) column of each output file
