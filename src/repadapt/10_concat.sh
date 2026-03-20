@@ -32,6 +32,8 @@ ls $WORKING_FOLDER/data/processed/repadapt/mpileup/*vcf > $WORKING_FOLDER/data/p
 
 ### Here we concatenate them in a single vcf
 
-apptainer run $repadapt_bcftools bcftools concat -f $WORKING_FOLDER/data/processed/repadapt/vcf.list.txt -Oz > $WORKING_FOLDER/data/processed/repadapt/vcf/ncanaliculata.vcf.gz
+apptainer run $repadapt_bcftools bcftools concat -f $WORKING_FOLDER/data/processed/repadapt/vcf.list.txt -Oz > $WORKING_FOLDER/data/processed/repadapt/vcf/ncanaliculata.vcf | gzip -c > $WORKING_FOLDER/data/processed/repadapt/vcf/ncanaliculata.vcf.gz
+
+#apptainer run $repadapt_bcftools bcftools concat -f $WORKING_FOLDER/data/processed/repadapt/vcf.list.txt -Oz > $WORKING_FOLDER/data/processed/repadapt/vcf/ncanaliculata.vcf.gz
 cd $WORKING_FOLDER/data/processed/repadapt/vcf
 apptainer run $repadapt_samtools tabix -p vcf ncanaliculata.vcf.gz
