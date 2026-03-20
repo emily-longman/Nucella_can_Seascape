@@ -56,8 +56,8 @@ REFERENCE=$WORKING_FOLDER/data/processed/repadapt/genome/N.canaliculata_assembly
 cat chr.names.${SLURM_ARRAY_TASK_ID}.txt | \
 while read scaffold 
 do echo ${scaffold}
-#will need to change ploidymap so not just test - try renaming file as .PED
-apptainer run $repadapt_bcftools bcftools mpileup -Ou -f $REFERENCE --bam-list samples.list.txt -q 5 -r $scaffold -I -a FMT/AD,FMT/DP | apptainer run $repadapt_bcftools bcftools call -S $WORKING_FOLDER/data/processed/repadapt/guide_files/ploidymap.test.txt -G - -f GQ -mv -Ov > $WORKING_FOLDER/data/processed/repadapt/mpileup/$scaffold\.vcf
+
+apptainer run $repadapt_bcftools bcftools mpileup -Ou -f $REFERENCE --bam-list samples.list.txt -q 5 -r $scaffold -I -a FMT/AD,FMT/DP | apptainer run $repadapt_bcftools bcftools call -S $WORKING_FOLDER/data/processed/repadapt/guide_files/ploidymap.txt -G - -f GQ -mv -Ov > $WORKING_FOLDER/data/processed/repadapt/mpileup/$scaffold\.vcf
 
 done
 
