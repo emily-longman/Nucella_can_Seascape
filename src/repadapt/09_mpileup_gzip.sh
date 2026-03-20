@@ -6,7 +6,7 @@
 #SBATCH --mail-user=emily.longman@uvm.edu 
 #SBATCH --time=30:00:00
 #SBATCH --mem-per-cpu=60G
-#SBATCH --array=1 #1-631%100
+#SBATCH --array=1-631%100
 
 #--------------------------------------------------------------------------------
 # My additions/modifications:
