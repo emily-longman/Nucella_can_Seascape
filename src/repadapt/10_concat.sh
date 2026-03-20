@@ -5,7 +5,7 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=emily.longman@uvm.edu 
 #SBATCH --time=30:00:00
-#SBATCH --mem-per-cpu=100G
+#SBATCH --mem-per-cpu=600G
 
 #--------------------------------------------------------------------------------
 
@@ -27,7 +27,8 @@ repadapt_samtools=https://depot.galaxyproject.org/singularity/samtools:1.16.1--h
 
 ### Concatenate all the chromsome vcfs produced in script 09. 
 ### list.txt is a list of the 14 (in this case) vcfs produced in script 09.
-ls $WORKING_FOLDER/data/processed/repadapt/mpileup/*vcf.gz > $WORKING_FOLDER/data/processed/repadapt/vcf.list.txt
+ls $WORKING_FOLDER/data/processed/repadapt/mpileup/*vcf > $WORKING_FOLDER/data/processed/repadapt/vcf.list.txt
+#ls $WORKING_FOLDER/data/processed/repadapt/mpileup/*vcf.gz > $WORKING_FOLDER/data/processed/repadapt/vcf.list.txt
 
 ### Here we concatenate them in a single vcf
 
