@@ -18,7 +18,7 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 cd $WORKING_FOLDER/data/processed/repadapt
 if [ -d "mpileup_gz" ]
 then echo "Working mpileup_gz folder exist"; echo "Let's move on."; date
-else echo "Working mpileup_gz folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/repadapt/mpilmpileup_gzeup; date
+else echo "Working mpileup_gz folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/repadapt/mpileup_gz; date
 fi
 
 ###### CHANGE THE LINE OF CODE BELOW TO LOAD THE CORRECT VERSION OF BCFTOOLS IN YOUR MACHINE/SERVER  = bcftools v. 1.16
