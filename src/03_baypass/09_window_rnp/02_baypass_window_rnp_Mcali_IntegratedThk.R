@@ -41,12 +41,25 @@ wins_group_i <- wins_guide_file_array %>% filter(.groups == win_group)
 # Load mean bf data from 5 baypass runs
 load("data/processed/baypass/biotic/bf.Mcali.IntThk.sum.Rdata")
 
+# Load POD thresholds
+load("data/processed/baypass/biotic/Mcali_IntegratedThk_POD_thr.Rdata")
+
 # ================================================================================== #
 
 # Rank-normalize bf (note: high bf should be associated with a low rank)
 bf.McaliIntThk.mean.sum$rank <- rank(-bf.McaliIntThk.mean.sum$bf_db.mean)
 Lp <- length(bf.McaliIntThk.mean.sum$bf_db.mean)
 bf.McaliIntThk.mean.sum$rnp <- bf.McaliIntThk.mean.sum$rank/Lp
+
+# ================================================================================== #
+
+# Use the POD threshold to come up with p-val
+
+# Create the ECDF (empirical cumulative distribution functio) function
+my_ecdf <- ecdf(bf.McaliIntThk.mean.sum$bf_db.mean)
+
+# Find the probability for a given value
+probability <- my_ecdf(bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)])
 
 # ================================================================================== #
 
@@ -64,10 +77,6 @@ win.out <- foreach(window.w=1:dim(wins_group_i)[1], .combine = "rbind", .errorha
         filter(chr == wins_group_i$chr[window.w]) %>%
         filter(pos >= wins_group_i$start[window.w] & pos <= wins_group_i$end[window.w])
     
-        # P-values
-        pr.i.0.05 <- c(0.05)
-        pr.i.0.01 <- c(0.01)
-    
         # Summarize for a given window
         win_tmp %>% 
             filter(!is.na(rnp)) %>%
@@ -80,12 +89,9 @@ win.out <- foreach(window.w=1:dim(wins_group_i)[1], .combine = "rbind", .errorha
               bf_min = min(bf_db.mean),
               bf_max = max(bf_db.mean),
               win = wins_group_i$i[window.w],
-              rnp.pr.0.05 = c(mean(rnp <= pr.i.0.05)),
-              rnp.pr.0.01 = c(mean(rnp <= pr.i.0.01)),
-              rnp.binom.p.0.05 = c(binom.test(sum(rnp <= pr.i.0.05), length(rnp), pr.i.0.05)$p.value),
-              rnp.binom.p.0.01 = c(binom.test(sum(rnp <= pr.i.0.01), length(rnp), pr.i.0.01)$p.value),
-              sum.rnp.0.05 = sum(rnp <= pr.i.0.05),
-              sum.rnp.0.01 = sum(rnp <= pr.i.0.01),
+              rnp.POD = c(mean(rnp <= probability)),
+              rnp.binom.POD = c(binom.test(sum(rnp <= probability), length(rnp), probability)$p.value),
+              sum.rnp.POD = sum(rnp <= probability),
               max.rnp = max(rnp),
               min.rnp = min(rnp),
               nSNPs = n()
