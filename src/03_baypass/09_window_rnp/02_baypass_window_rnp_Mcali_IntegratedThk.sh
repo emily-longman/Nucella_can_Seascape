@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=baypass_window_rnp_Mtross_mean
+#SBATCH --job-name=baypass_window_rnp_Mcali_IntegratedThk
 
 # Specify partition
 #SBATCH --partition=general
