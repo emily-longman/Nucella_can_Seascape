@@ -34,7 +34,7 @@ out_dir <- paste("data/processed/GEA/enviro_data/Mcali_thk")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # Figure directory
-out_dir_fig <- paste("output/figures/GEA/enviro/Mcali_thk")
+out_dir_fig <- paste("output/figures/enviro_data/Mcali_thk")
 if (!dir.exists(out_dir_fig)) {dir.create(out_dir_fig)}
 
 # ================================================================================== #
@@ -52,6 +52,8 @@ Mcali <- read.csv("data/raw/Mcali_thk/Mcali_shell_thk.csv", header=T)
 
 # Read metadata
 meta <- read.csv("guide_files/Populations_metadata.csv", header=T)
+# Rename Site as Site.Code
+meta <- rename(meta, Site.Code=Site)
 
 # ================================================================================== #
 
@@ -257,11 +259,9 @@ Mcalifornianus_data_clean <- Mcalifornianus_data[, c(1:5,6,9,12,15)]
 # Save dataset
 write.csv(Mcalifornianus_data_clean, "data/processed/GEA/enviro_data/Mcali_thk/Mcalifornianus_data_clean.csv", row.names=F)
 
-
-
 # ================================================================================== #
 
-# Alternate graphing 
+# Graphing as map projections
 
 # Get state data
 states <- map_data("state")
@@ -277,24 +277,32 @@ Mcali_data_sub_sum <- Mcali_data_sub %>% group_by(Site.Code) %>% summarise(mean_
 # Bind
 Mcali_data_sub_sum_meta <- left_join(Mcali_data_sub_sum, meta, by="Site.Code")
 
-# Graph 2024 data
-pdf("output/figures/Mcali_STI_2024.pdf", width = 8, height = 8)
+# Cut ARA since outlier for collection
+Mcali_data_sub_sum.18 <- Mcali_data_sub_sum_meta[-which(Mcali_data_sub_sum_meta$Site.Code == "ARA"),]
+
+# Graph STI 2024 data
+pdf("output/figures/enviro/Mcali_thk/Mcali_STI_2024_18sites_altcolors.pdf", width = 8, height = 8)
 ggplot(data = west_coast) + 
   geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
-  geom_point(data = Mcali_data_sub_sum_meta, aes(x = Longitude, y = Latitude, fill = mean_STI), shape = 21, size = 5) + 
-  scale_fill_gradient(low = "cyan1", high = "gray27") + 
+  geom_point(data = Mcali_data_sub_sum.18, aes(x = Long, y = Lat, fill = mean_STI), shape = 21, size = 8) + 
+  #scale_fill_gradient(low = "cyan1", high = "gray27") + 
+  #scale_fill_viridis(option="viridis", direction = -1) +
+  scale_fill_gradientn(colours=brewer.pal(6, "YlOrRd"), name="STI") +
              coord_fixed(1.3) +
-  xlim(c(-128, -114)) +
-  xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 12) + ggtitle("STI Shell Thickness Projections")
+  xlim(c(-125, -114)) +
+  xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 24) + #ggtitle("STI Shell Thickness Projections") +
+  theme(legend.title = element_text(size = 20), legend.text = element_text(size = 16), legend.position = c(0.98, 0.52))
 dev.off()
 
-# Graph 2024 data
-pdf("output/figures/Mcali_integrated_thick_2024.pdf", width = 8, height = 8)
+# Graph Mean Integrated Thk 2024 data
+pdf("output/figures/enviro/Mcali_thk/Mcali_integrated_thick_18sites_2024_altcolors.pdf", width = 8, height = 8)
 ggplot(data = west_coast) + 
   geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
-  geom_point(data = Mcali_data_sub_sum_meta, aes(x = Longitude, y = Latitude, fill = mean_integrated_thk), shape = 21, size = 5) + 
-  scale_fill_gradient(low = "cyan1", high = "gray27") + 
+  geom_point(data = Mcali_data_sub_sum.18, aes(x = Long, y = Lat, fill = mean_integrated_thk), shape = 21, size = 8) + 
+  #scale_fill_gradient(low = "cyan1", high = "gray27") + 
+  scale_fill_gradientn(colours=brewer.pal(6, "YlOrRd"), name="Integrated Thickness") +
              coord_fixed(1.3) +
-  xlim(c(-128, -114)) +
-  xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 12) + ggtitle("Integrated Shell Thickness Projections")
+  xlim(c(-125, -114)) +
+  xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 24) + #ggtitle("Integrated Shell Thickness Projections") + 
+  theme(legend.title = element_text(size = 20), legend.text = element_text(size = 16), legend.position = c(0.98, 0.52))
 dev.off()

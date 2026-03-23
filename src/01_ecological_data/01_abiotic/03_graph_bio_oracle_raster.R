@@ -30,6 +30,12 @@ library(raster)
 
 # ================================================================================== #
 
+# Figure directory
+out_dir_fig <- paste("output/figures/enviro_data/Bio-oracle")
+if (!dir.exists(out_dir_fig)) {dir.create(out_dir_fig)}
+
+# ================================================================================== #
+
 # Read in Bio-oracle present data
 bio_oracle <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle.csv", header=T)
 
@@ -61,7 +67,7 @@ raster_resolution <- 0.05
 # Create raster layer object - specify study extent, resolution and coordinate reference system
 study_raster <- raster(study_extent, res=raster_resolution, crs="+proj=longlat +datum=WGS84")
 
-# Set color palette 
+# Set color palette
 mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(1000))
 
 # ================================================================================== #
@@ -72,7 +78,7 @@ mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(1000))
 values(study_raster) <- NA
 
 # Graph empty template
-pdf("output/figures/GEA/enviro/Bio-oracle/Raster_template.pdf", width = 5, height = 5)
+pdf("output/figures/enviro/Bio-oracle/Raster_template.pdf", width = 5, height = 5)
 plot(study_raster, main = "West Coast Raster Template")
 dev.off()
 
@@ -86,36 +92,61 @@ coordinates <- cbind(bio_oracle_2010$longitude, bio_oracle_2010$latitude)
 # Extract one variable - temperature 
 bio_oracle_2010_temp_mean <- bio_oracle_2010 %>% 
   dplyr::select(longitude, latitude, thetao_mean)
+# Extract one variable - temperature 
+bio_oracle_2010_ph_mean <- bio_oracle_2010 %>% 
+  dplyr::select(longitude, latitude, ph_mean)
 
 # Rasterize temperature data
 temp_raster <- rasterize(coordinates, study_raster, bio_oracle_2010_temp_mean$thetao_mean, fun = mean, na.rm = TRUE)
+# Rasterize ph data
+ph_raster <- rasterize(coordinates, study_raster, bio_oracle_2010_ph_mean$ph_mean, fun = mean, na.rm = TRUE)
 
 # Look at structure
 str(temp_raster)
 
 # Graph temperature raster
-pdf("output/figures/GEA/enviro/Bio-oracle/Test_Raster_bio-oracle_temp_mean.pdf", width = 3.25, height = 5)
+pdf("output/figures/enviro/Bio-oracle/Test_Raster_bio-oracle_temp_mean.pdf", width = 3.25, height = 5)
 plot(temp_raster, col = mycolors, axes = TRUE, box = FALSE,
-xlim = c(-130, 115), ylim = c(33, 46), 
+xlim = c(-130, 114), ylim = c(33, 46), 
+xlab="Longitude", ylab="Latitude", main = "Rasterized thetao_mean")
+dev.off()
+# Graph ph raster
+pdf("output/figures/enviro/Bio-oracle/Test_Raster_bio-oracle_ph_mean.pdf", width = 3.25, height = 5)
+plot(temp_raster, col = mycolors, axes = TRUE, box = FALSE,
+xlim = c(-125, 114), ylim = c(32, 46), 
 xlab="Longitude", ylab="Latitude", main = "Rasterized thetao_mean")
 dev.off()
 
 # Write raster tif file
-writeRaster(temp_raster, filename = "output/figures/GEA/enviro/Bio-oracle/Test_biooracle_thetao_mean_test_raster.tif", format = "GTiff")
+writeRaster(temp_raster, filename = "output/figures/enviro/Bio-oracle/Test_biooracle_thetao_mean_test_raster.tif", format = "GTiff")
 
 # Graph with ggplot
 # Change to data frame
-raster_df <- as.data.frame(temp_raster, xy = TRUE, na.rm = TRUE)
+raster_df_temp <- as.data.frame(temp_raster, xy = TRUE, na.rm = TRUE)
+raster_df_ph <- as.data.frame(ph_raster, xy = TRUE, na.rm = TRUE)
 # Graph 
-pdf("output/figures/GEA/enviro/Bio-oracle/Test_Raster_bio-oracle_temp_mean_ggplot.pdf", width = 3.5, height = 5)
-ggplot(raster_df, aes(x = x, y = y, fill = layer)) +
+pdf("output/figures/enviro/Bio-oracle/Test_Raster_bio-oracle_temp_mean_ggplot.pdf", width = 3.5, height = 5)
+ggplot(raster_df_temp, aes(x = x, y = y, fill = layer)) +
   geom_raster(aes(fill=layer)) +
   scale_fill_gradientn(colours=brewer.pal(5, "RdBu")) +
   #scale_fill_viridis_c() +  # Color scale for the raster values
   coord_fixed(ratio = 1) +  # Fix aspect ratio so the plot is not distorted
-  ggtitle("Rasterized thetao_mean")  +
+  ggtitle("Rasterized ph_mean")  +
   theme_void() +
   theme(legend.title = element_blank(), plot.title = element_text(hjust=0.5))
+dev.off()
+# Graph 
+pdf("output/figures/enviro/Bio-oracle/Test_Raster_bio-oracle_ph_mean_ggplot.pdf",  width = 8, height = 8)
+ggplot(raster_df_ph, aes(x = x, y = y, fill = layer)) +
+  geom_raster(aes(fill=layer)) +
+  #scale_fill_gradientn(colours=brewer.pal(5, "RdBu")) +
+  scale_fill_gradientn(colours=brewer.pal(6, "YlOrRd"), name="mean pH") +
+  coord_fixed(ratio = 1) +  # Fix aspect ratio so the plot is not distorted
+  #ggtitle("Rasterized ph_mean")  +
+  theme_classic(base_size = 24) +
+  labs(x = "Longitude", y = "Latitude") + 
+  theme(legend.title = element_text(size = 20), legend.text = element_text(size = 16), legend.position = c(0.98, 0.52))
+  #theme(plot.title = element_text(hjust=0.5))
 dev.off()
 
 # ================================================================================== #
@@ -143,7 +174,7 @@ for (var in env_variables) {
     common_zlim <- c(10, 26)
     
     # Plot the raster for the current environmental variable
-    pdf(paste("output/figures/GEA/enviro/Bio-oracle/Raster_bio-oracle_present_",var,".pdf", sep = ""), width = 3.1, height = 5)
+    pdf(paste("output/figures/enviro/Bio-oracle/Raster_bio-oracle_present_",var,".pdf", sep = ""), width = 3.1, height = 5)
     plot(env_raster, xlim = c(-130, 115), ylim = c(33, 46), col = mycolors, axes = TRUE, box = FALSE, xlab="Longitude", ylab="Latitude") 
     dev.off()
  
@@ -196,7 +227,7 @@ for (var in env_variables) {
     common_zlim <- c(10, 26)
     
     # Plot the raster for the current environmental variable
-    pdf(paste("output/figures/GEA/enviro/Bio-oracle/Raster_bio-oracle_ssp585_",var,".pdf", sep = ""), width = 3.1, height = 5)
+    pdf(paste("output/figures/enviro/Bio-oracle/Raster_bio-oracle_ssp585_",var,".pdf", sep = ""), width = 3.1, height = 5)
     plot(env_raster, xlim = c(-130, 115), ylim = c(33, 46), col = mycolors, axes = TRUE, box = FALSE, xlab="Longitude", ylab="Latitude") 
     dev.off()
  

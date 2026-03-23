@@ -35,6 +35,10 @@ library(psych)
 out_dir <- paste("data/processed/GEA/enviro_data/MARINe")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
+# Figure directory
+out_dir_fig <- paste("output/figures/enviro_data/MARINe")
+if (!dir.exists(out_dir_fig)) {dir.create(out_dir_fig)}
+
 # ================================================================================== #
 
 # Color palettes for graphing
@@ -132,6 +136,31 @@ xlab("Percent cover") + ylab("") +
 theme_bw(base_size = 16) + facet_grid(. ~ prey_species) + 
 theme(strip.background =element_rect(fill="white"))+
 theme(strip.text = element_text(colour = 'black'))
+dev.off()
+
+####
+
+# Graph projections
+
+# Get state data
+states <- map_data("state")
+# Subset data for only California and Oregon
+west_coast <- subset(states, region %in% c("california", "oregon"))
+
+# Cut ARA since outlier for collection
+point_contact_filt_sum.17 <- point_contact_filt_sum[-which(point_contact_filt_sum$marine_site_name == "Coquille Point"),]
+
+# Graph M. trossulus mean
+pdf("output/figures/enviro/MARINe/MARINe_Mtross_17sites_map.pdf", width = 8, height = 8)
+ggplot(data = west_coast) + 
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
+  geom_point(data = point_contact_filt_sum.17[which(point_contact_filt_sum.17$species_lump == "Mytilus trossulus/galloprovincialis/edulis"),], aes(x = longitude, y = latitude, fill = mean), shape = 21, size = 8) + 
+  #scale_fill_gradient(low = "cyan1", high = "gray27") + 
+  scale_fill_gradientn(colours=brewer.pal(6, "YlOrRd"), name=expression(paste("Mean ", italic("M. trossulus")))) +
+             coord_fixed(1.3) +
+  xlim(c(-125, -114)) +
+  xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 24) + #ggtitle("Integrated Shell Thickness Projections") + 
+  theme(legend.title = element_text(size = 20), legend.text = element_text(size = 16), legend.position = c(0.98, 0.52))
 dev.off()
 
 # ================================================================================== #
