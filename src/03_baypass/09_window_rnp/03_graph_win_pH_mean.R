@@ -100,7 +100,6 @@ ggplot(win.out, aes(y=-log10(rnp.binom.POD), x=chr.unique)) +
   theme_bw(base_size=26) + theme(legend.position = "none")
 dev.off()
 
-
 # ================================================================================== #
 
 # Extract outliers
