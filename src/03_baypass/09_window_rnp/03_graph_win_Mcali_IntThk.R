@@ -103,7 +103,7 @@ dev.off()
 # ================================================================================== #
 
 # Extract outliers
-win.out.outliers <- win.out %>% filter(-log10(rnp.binom.POD) > -log10(0.01/length(rnp.binom.POD)))
+win.out.outliers <- win.out %>% filter(-log10(rnp.binom.POD) > -log10(pr.i))
 
 # Save outliers
 write.csv(win.out.outliers, "data/processed/baypass/window_summary/window_analysis_Mcali_IntThk_outliers.csv", row.names=FALSE)
