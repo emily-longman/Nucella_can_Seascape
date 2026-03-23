@@ -62,6 +62,24 @@ save(win.out, file = "data/processed/baypass/window_summary/window_analysis_Mcal
 
 # ================================================================================== #
 
+# Use the POD threshold to come up with p-val
+
+# Load mean bf data from 5 baypass runs
+load("data/processed/baypass/biotic/bf.Mcali.IntThk.sum.Rdata")
+# Load POD thresholds
+load("data/processed/baypass/biotic/Mcali_IntegratedThk_POD_thr.Rdata")
+
+# Create the ECDF (empirical cumulative distribution functio) function
+my_ecdf <- ecdf(bf.McaliIntThk.mean.sum$bf_db.mean)
+
+# Find the probability for a given value
+probability <- my_ecdf(bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)])
+
+# Calc pr.i as the opposite of the probability
+pr.i <- c(1-probability)
+
+# ================================================================================== #
+
 # Create unique Chromosome number
 win.out.chr.unique <- unique(win.out$chr)
 win.out$chr.unique <- as.numeric(factor(win.out$chr, levels = win.out.chr.unique))
@@ -69,37 +87,23 @@ win.out$chr.unique <- as.numeric(factor(win.out$chr, levels = win.out.chr.unique
 # Graph rnp p
 
 # Graph rnp geompoint
-pdf("output/figures/baypass/window_summary/baypass_window_Mcali_IntThk_rnp_0.05_geompoint.pdf", width = 12, height = 6)
-ggplot(win.out, aes(y=-log10(rnp.binom.p.0.05), x=chr.unique)) + 
-  geom_point(alpha=0.8, size=1.6) + geom_hline(yintercept=-log10(0.05/length(win.out$rnp.binom.p.0.05)), col="red", linetype="dashed") +
+pdf("output/figures/baypass/window_summary/baypass_window_Mcali_IntThk_rnpPOD_geompoint.pdf", width = 12, height = 6)
+ggplot(win.out, aes(y=-log10(rnp.binom.POD), x=chr.unique)) + 
+  geom_point(alpha=0.8, size=1.6) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed") +
   theme_bw(base_size=26) + theme(legend.position = "none")
 dev.off()
 
 # Graph rnp geomline
-pdf("output/figures/baypass/window_summary/baypass_window_Mcali_IntThk_rnp_0.05_geomline.pdf", width = 12, height = 6)
-ggplot(win.out, aes(y=-log10(rnp.binom.p.0.05), x=chr.unique)) + 
-  geom_line( ) + 
-  theme_bw(base_size=26) + theme(legend.position = "none")
-dev.off()
-
-# Graph rnp geompoint
-pdf("output/figures/baypass/window_summary/baypass_window_Mcali_IntThk_rnp_0.01_geompoint.pdf", width = 12, height = 6)
-ggplot(win.out, aes(y=-log10(rnp.binom.p.0.01), x=chr.unique)) + 
-  geom_point(alpha=0.8, size=1.6) + geom_hline(yintercept=-log10(0.01/length(win.out$rnp.binom.p.0.01)), col="red", linetype="dashed") +
-  theme_bw(base_size=26) + theme(legend.position = "none")
-dev.off()
-
-# Graph rnp geomline
-pdf("output/figures/baypass/window_summary/baypass_window_Mcali_IntThk_rnp_0.01_geomline.pdf", width = 12, height = 6)
-ggplot(win.out, aes(y=-log10(rnp.binom.p.0.01), x=chr.unique)) + 
-  geom_line( ) + 
+pdf("output/figures/baypass/window_summary/baypass_window_Mcali_IntThk_rnpPOD_geomline.pdf", width = 12, height = 6)
+ggplot(win.out, aes(y=-log10(rnp.binom.POD), x=chr.unique)) + 
+  geom_line( ) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed") +
   theme_bw(base_size=26) + theme(legend.position = "none")
 dev.off()
 
 # ================================================================================== #
 
 # Extract outliers
-win.out.outliers <- win.out %>% filter(-log10(rnp.binom.p.0.01) > -log10(0.01/length(rnp.binom.p.0.01)))
+win.out.outliers <- win.out %>% filter(-log10(rnp.binom.POD) > -log10(0.01/length(rnp.binom.POD)))
 
 # Save outliers
 write.csv(win.out.outliers, "data/processed/baypass/window_summary/window_analysis_Mcali_IntThk_outliers.csv", row.names=FALSE)

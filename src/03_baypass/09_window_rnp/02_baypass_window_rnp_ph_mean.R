@@ -61,6 +61,9 @@ my_ecdf <- ecdf(bf.ph.mean.sum$bf_db.mean)
 # Find the probability for a given value
 probability <- my_ecdf(bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)])
 
+# Calc pr.i as the opposite of the probability
+pr.i <- c(1-probability)
+
 # ================================================================================== #
 
 # Window summarization
@@ -89,9 +92,9 @@ win.out <- foreach(window.w=1:dim(wins_group_i)[1], .combine = "rbind", .errorha
               bf_min = min(bf_db.mean),
               bf_max = max(bf_db.mean),
               win = wins_group_i$i[window.w],
-              rnp.POD = c(mean(rnp <= probability)),
-              rnp.binom.POD = c(binom.test(sum(rnp <= probability), length(rnp), probability)$p.value),
-              sum.rnp.POD = sum(rnp <= probability),
+              rnp.POD = c(mean(rnp <= pr.i)),
+              rnp.binom.POD = c(binom.test(sum(rnp <= pr.i), length(rnp), pr.i)$p.value),
+              sum.rnp.POD = sum(rnp <= pr.i),
               max.rnp = max(rnp),
               min.rnp = min(rnp),
               nSNPs = n()
