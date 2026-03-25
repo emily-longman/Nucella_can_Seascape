@@ -73,7 +73,7 @@ ggplot(hist.obj.env[which(hist.obj.env$hist.obj.mids < 0.995),], aes(x=(hist.obj
 dev.off()
 
 # Graph pval distribution - remove 0.995 values as these are artifacts
-pdf(paste0("output/figures/GEA/glms/pval_dist/glm_pval_dist_log_scale_", var, "alt.pdf"), width = 12, height = 8)
+pdf(paste0("output/figures/GEA/glms/pval_dist/glm_pval_dist_log_scale_", var, "alt_taller.pdf"), width = 12, height = 8)
 ggplot(hist.obj.env[which(hist.obj.env$hist.obj.mids < 0.995),], aes(x=(hist.obj.mids),y=hist.obj.counts/1000000, group=perm, color=perm==0)) +
   geom_line(aes(alpha=perm==0 ), linewidth = 2.5) + 
   scale_alpha_manual(values = c(0.1, 1)) +
