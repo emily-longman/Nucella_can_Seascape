@@ -80,8 +80,8 @@ ggplot(hist.obj.env[which(hist.obj.env$hist.obj.mids < 0.995),], aes(x=(hist.obj
   scale_size_manual(values = c(0.7, 1.5)) +
   scale_color_manual(values = c("#f63b3b","black")) +
   scale_y_continuous(labels = function(x) format(x, scientific = FALSE)) +
-  labs(x = "GLM P-values", y = "Number of Million SNPs") +
-  theme_bw(base_size = 40) +  theme(legend.position = "none") +
+  labs(x = "GLM P-values", y = "# Million SNPs") +
+  theme_bw(base_size = 36) +  theme(legend.position = "none") +
   scale_x_log10()
 dev.off()
 
