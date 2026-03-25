@@ -157,10 +157,10 @@ ggplot(summary_abiotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, me
   theme_bw(base_size=30) + 
   theme(axis.text.x = element_blank(), axis.ticks = element_blank())
 dev.off()
-pdf("output/figures/GEA/glms/model_enrichment/GLM_Abiotic_rr_color_altsize.pdf", width = 9, height = 5)
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Abiotic_rr_color_altsize.pdf", width = 9, height = 6)
 ggplot(summary_abiotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mean_rr_log2), color = col)) + 
   #geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
-  geom_point(size=7)+ 
+  geom_point(size=9)+ 
   scale_color_identity() +
   geom_vline(xintercept = 0, linetype = "dashed", color = "red") +  
   xlim(-0.365, 0.365) + 
@@ -168,7 +168,7 @@ ggplot(summary_abiotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, me
        y = "") +
   theme_minimal()+
   coord_flip()+
-  theme_bw(base_size=30) + 
+  theme_bw(base_size=40) + 
   theme(axis.text.x = element_blank(), axis.ticks = element_blank())
 dev.off()
 pdf("output/figures/GEA/glms/model_enrichment/GLM_Abiotic_rr_color_longer.pdf", width = 16, height = 5)
@@ -193,10 +193,10 @@ summary_biotic <- summary_biotic %>%
                       mean_rr_log2-sd_rr_log2 < 0 ~ "gray56"))
 
 # Graph relative rate of model enrichment for biotic - mean and 2*sd
-pdf("output/figures/GEA/glms/model_enrichment/GLM_Biotic_rr_color.pdf", width = 14, height = 5)
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Biotic_rr_color.pdf", width = 14, height = 6)
 ggplot(summary_biotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mean_rr_log2), color = col)) + 
   #geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
-  geom_point(size=7)+ 
+  geom_point(size=9)+ 
   scale_color_identity() +
   geom_vline(xintercept = 0, linetype = "dashed", color = "red") +  
   xlim(-0.365, 0.365) + 
@@ -204,13 +204,13 @@ ggplot(summary_biotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mea
        y = "") +
   theme_minimal()+
   coord_flip()+
-  theme_bw(base_size=30) + 
+  theme_bw(base_size=40) + 
   theme(axis.text.x = element_blank(), axis.ticks = element_blank())
 dev.off()
-pdf("output/figures/GEA/glms/model_enrichment/GLM_Biotic_rr_color_longer.pdf", width = 16, height = 5)
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Biotic_rr_color_longer.pdf", width = 15, height = 6)
 ggplot(summary_biotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mean_rr_log2), color = col)) + 
   #geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
-  geom_point(size=7)+ 
+  geom_point(size=9)+ 
   scale_color_identity() +
   geom_vline(xintercept = 0, linetype = "dashed", color = "red") +  
   xlim(-0.365, 0.365) + 
@@ -218,7 +218,7 @@ ggplot(summary_biotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mea
        y = "") +
   theme_minimal()+
   coord_flip()+
-  theme_bw(base_size=30) + 
+  theme_bw(base_size=40) + 
   theme(axis.text.x = element_blank(), axis.ticks = element_blank())
 dev.off()
 
