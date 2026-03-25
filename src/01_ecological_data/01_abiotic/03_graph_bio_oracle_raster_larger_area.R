@@ -37,26 +37,26 @@ if (!dir.exists(out_dir_fig)) {dir.create(out_dir_fig)}
 # ================================================================================== #
 
 # Read in Bio-oracle present data
-bio_oracle <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle.csv", header=T)
+bio_oracle <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_larger_area.csv", header=T)
 
 # Extract the most recent data (i.e., 2010-01-01T00:00:00Z, which represents 2010-2020)
 bio_oracle_2010 <- bio_oracle %>% 
   filter(time == "2010-01-01T00:00:00Z")
 
 # Read in Bio-oracle future data
-bio_oracle_ssp585 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_ssp585.csv", header=T)
+#bio_oracle_ssp585 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_ssp585.csv", header=T)
 
 # Extract only the last decade of data (i.e., )
-bio_oracle_ssp585_2090 <- bio_oracle_ssp585 %>% 
-  filter(time == "2090-01-01T00:00:00Z")
+#bio_oracle_ssp585_2090 <- bio_oracle_ssp585 %>% 
+#  filter(time == "2090-01-01T00:00:00Z")
 
 # ================================================================================== #
 
 # Specify parameters
 
 # Set geographic constraints
-latitude_range <- c(34, 45)
-longitude_range <- c(-125, -120)
+latitude_range <- c(32, 46)
+longitude_range <- c(-125, -116)
 
 # Set study extent
 study_extent <- extent(longitude_range[1], longitude_range[2], latitude_range[1], latitude_range[2])
@@ -92,7 +92,7 @@ coordinates <- cbind(bio_oracle_2010$longitude, bio_oracle_2010$latitude)
 # Extract one variable - temperature 
 bio_oracle_2010_temp_mean <- bio_oracle_2010 %>% 
   dplyr::select(longitude, latitude, thetao_mean)
-# Extract one variable - temperature 
+# Extract one variable - ph mean 
 bio_oracle_2010_ph_mean <- bio_oracle_2010 %>% 
   dplyr::select(longitude, latitude, ph_mean)
 
@@ -112,8 +112,8 @@ xlab="Longitude", ylab="Latitude", main = "Rasterized thetao_mean")
 dev.off()
 # Graph ph raster
 pdf("output/figures/enviro/Bio-oracle/Test_Raster_bio-oracle_ph_mean.pdf", width = 3.25, height = 5)
-plot(temp_raster, col = mycolors, axes = TRUE, box = FALSE,
-xlim = c(-130, 114), ylim = c(32, 46), 
+plot(ph_raster, col = mycolors, axes = TRUE, box = FALSE,
+xlim = c(-125, 114), ylim = c(32, 46), 
 xlab="Longitude", ylab="Latitude", main = "Rasterized thetao_mean")
 dev.off()
 
@@ -136,16 +136,16 @@ ggplot(raster_df_temp, aes(x = x, y = y, fill = layer)) +
   theme(legend.title = element_blank(), plot.title = element_text(hjust=0.5))
 dev.off()
 # Graph 
-pdf("output/figures/enviro/Bio-oracle/Test_Raster_bio-oracle_ph_mean_ggplot.pdf",  width = 8, height = 8)
+pdf("output/figures/enviro/Bio-oracle/Test_Raster_bio-oracle_ph_mean_ggplot_alt.pdf",  width = 6, height = 8)
 ggplot(raster_df_ph, aes(x = x, y = y, fill = layer)) +
   geom_raster(aes(fill=layer)) +
   #scale_fill_gradientn(colours=brewer.pal(5, "RdBu")) +
-  scale_fill_gradientn(colours=brewer.pal(6, "YlOrRd"), name="mean pH") +
+  scale_fill_gradientn(colours=brewer.pal(6, "YlOrRd"), name=NULL) +
   coord_fixed(ratio = 1) +  # Fix aspect ratio so the plot is not distorted
   #ggtitle("Rasterized ph_mean")  +
-  theme_classic(base_size = 24) +
+  theme_bw(base_size = 26) + xlim(c(-125, -114)) + ylim(c(32, 46)) +
   labs(x = "Longitude", y = "Latitude") + 
-  theme(legend.title = element_text(size = 20), legend.text = element_text(size = 16), legend.position = c(0.98, 0.52))
+  theme(legend.title = element_text(size = 20), legend.text = element_text(size = 20), legend.position = c(0.75, 0.53), legend.background = element_rect(color = "black", fill = "white", size = 0.5, linetype = "solid"))
   #theme(plot.title = element_text(hjust=0.5))
 dev.off()
 

@@ -122,6 +122,9 @@ Mcali_data_sub <- rbind(Mcali_data_sub, Mcali[1097,])
 # Save dataset
 write.csv(Mcali_data_sub, "data/processed/GEA/enviro_data/Mcali_thk/Mcalifornianus_data_subset.csv", row.names=F)
 
+# Read data
+Mcali_data_sub <- read.csv("data/processed/GEA/enviro_data/Mcali_thk/Mcalifornianus_data_subset.csv")
+
 # ================================================================================== #
 
 # Format data
@@ -305,4 +308,16 @@ ggplot(data = west_coast) +
   xlim(c(-125, -114)) +
   xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 24) + #ggtitle("Integrated Shell Thickness Projections") + 
   theme(legend.title = element_text(size = 20), legend.text = element_text(size = 16), legend.position = c(0.98, 0.52))
+dev.off()
+# Graph Mean Integrated Thk 2024 data (alt)
+pdf("output/figures/enviro/Mcali_thk/Mcali_integrated_thick_18sites_2024_altsize.pdf", width = 8, height = 8)
+ggplot(data = west_coast) + 
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
+  geom_point(data = Mcali_data_sub_sum.18, aes(x = Long, y = Lat, fill = mean_integrated_thk), shape = 21, size = 8) + 
+  #scale_fill_gradient(low = "cyan1", high = "gray27") + 
+  scale_fill_gradientn(colours=brewer.pal(6, "YlOrRd"), name=NULL) +
+             coord_fixed(1.3) +
+  xlim(c(-125, -114)) +
+  xlab("Longitude") + ylab("Latitude") + theme_bw(base_size = 26) + #ggtitle("Integrated Shell Thickness Projections") + 
+  theme(legend.title = element_text(size = 20), legend.text = element_text(size = 20), legend.position = c(0.80, 0.53), legend.background = element_rect(color = "black", fill = "white", size = 0.5, linetype = "solid"))
 dev.off()
