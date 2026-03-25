@@ -80,7 +80,7 @@ echo ${i}
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/02_GEA_glms/01_run_glms_abiotic/04_merge_glms.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/03_GEA_glms/01_run_glms_abiotic/04_merge_glms.R "${i}"
 
 #--------------------------------------------------------------------------------
 
