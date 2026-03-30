@@ -99,6 +99,16 @@ dev.off()
 
 # ================================================================================== #
 
+# Read in SNP data
+snpdet <- read.table("data/processed/baypass/input_files/snpdet", header=F)
+# Re-name snp metadata
+colnames(snpdet) <- c("chr", "pos", "allele1", "allele2")
+
+
+SNPS_snpdet_sum <- snpdet %>% group_by(chr) %>% summarize(n=n())
+
+# ================================================================================== #
+
 # Create windows
 
 # Define window and step size
