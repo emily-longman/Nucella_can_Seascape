@@ -106,7 +106,7 @@ dev.off()
 win.bp <- 100000
 step.bp <- 50000
 
-# Generate windows (note: only chromosomes with the number of SNPs in that window >= 5)
+# Generate windows
 wins <- foreach(chr.i=unique(snp.dt.filt$chr), .combine="rbind", .errorhandling="remove")%do%{
       # State chromosome
       message(chr.i)
