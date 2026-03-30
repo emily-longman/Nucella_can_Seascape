@@ -55,8 +55,8 @@ print(list_layers("temp"), n=100)
 
 # Define time, lat, and long (set lat and long to fully encompass all sites)
 time = c('2000-01-01T00:00:00Z', '2010-01-01T00:00:00Z')
-latitude = c(32, 46)
-longitude = c(-116, -125)
+latitude = c(32, 46.5)
+longitude = c(-117, -126)
 
 # Set constraints
 constraints = list(time, latitude, longitude)
@@ -113,9 +113,6 @@ for (dataset in datasets) {
   }
 }
 
-
-# Check list of files in output directory
-list.files(out_dir_present)
 
 # Note: upload these files to the appropriate folder on the VACC
 

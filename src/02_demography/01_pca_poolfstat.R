@@ -86,34 +86,35 @@ write.csv(pca.df, "data/processed/outlier_analyses/pca.csv")
 
 # Graph PCA
 
-# Add column that highlights N, S, admixture
+# Add column that highlights N, and S
 pca.df <- pca.df %>% mutate(site = rownames(pca.df), 
-    shape = case_when(site %in% c("STR", "OCT", "HZD", "PB", "PSN") ~ "S", 
-                   site %in% c("SBR", "PL", "PGP") ~ "Admix", 
-                   site %in% c("BMR", "FR", "VD", "KH", "STC", "PSG", "CBL", "ARA", "SH", "SLR", "FC") ~ "N"))
+    shape = case_when(site %in% c("STR", "OCT", "HZD", "PB", "PSN", "SBR", "PL") ~ "S", 
+                   site %in% c("PGP", "BMR", "FR", "VD", "KH", "STC", "PSG", "CBL", "ARA", "SH", "SLR", "FC") ~ "N"))
 
-# Color palette
-nb.cols <- 19
-mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
-colors.reorder <- mycolors[c(19,2,3,4,11,5,1,10,17,14,6,8,7,13,9,18,16,12,15)]
-
-viridiscolors <- viridis(n=19)
-viridiscolors.reorder <- viridiscolors[c(19,2,3,4,11,5,1,10,17,14,6,8,7,13,9,18,16,12,15)]
+# Add column that highlights N, S, admixture
+#pca.df <- pca.df %>% mutate(site = rownames(pca.df), 
+#    shape = case_when(site %in% c("STR", "OCT", "HZD", "PB", "PSN") ~ "S", 
+#                   site %in% c("SBR", "PL", "PGP") ~ "Admix", 
+#                   site %in% c("BMR", "FR", "VD", "KH", "STC", "PSG", "CBL", "ARA", "SH", "SLR", "FC") ~ "N"))
 
 # Order by N to S
 lat <- c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR")
 pca.df.order <- pca.df %>% mutate(site = factor(site, levels = lat)) %>% arrange(site)
 
+# Color palette
+mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(19))
+#colors.reorder <- mycolors[c(19,2,3,4,11,5,1,10,17,14,6,8,7,13,9,18,16,12,15)]
+viridiscolors <- viridis(n=19)
 
 # Plot PC1 and PC2 with ggplot
-pdf("output/figures/demography/PCA_all_SNPs_PC1_PC2_ggplot_bigger.pdf", width = 12, height = 9)
-ggplot(pca.df.order, aes(x=PC1, y=PC2, shape=shape, fill = factor(site))) + geom_jitter(size=16, width = 0.01, height = 0.01) + 
-scale_shape_manual(values = c(21, 22, 23)) + scale_fill_manual(values = viridiscolors) +
+pdf("output/figures/demography/PCA_all_SNPs_PC1_PC2_ggplot_bigger_NvsS.pdf", width = 12, height = 9)
+ggplot(pca.df.order, aes(x=PC1, y=PC2, shape=shape, fill = factor(site))) + geom_jitter(size=16, width = 0.015, height = 0.015) + 
+scale_shape_manual(values = c(21, 23)) + scale_fill_manual(values = viridiscolors) +
 ylim(-0.51, 0.51) + xlim(-0.51, 0.51) + 
 ylab(paste0("PC",2," (",round(pooldata.pca$perc.var[2],2),"%)")) + xlab(paste0("PC",1," (",round(pooldata.pca$perc.var[1],2),"%)")) +
 theme_linedraw(base_size = 36) +
 geom_vline(xintercept = 0, color = "black", linetype = "dashed") + geom_hline(yintercept = 0, color = "black", linetype = "dashed") + 
-guides(fill = guide_legend(override.aes = list(shape = c(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 22, 22, 22, 23, 23, 23, 23, 23), size = 8)), shape = "none") +
+guides(fill = guide_legend(override.aes = list(shape = c(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 23, 23, 23, 23, 23, 23, 23), size = 8)), shape = "none") +
 labs(fill = "Site")
 dev.off()
 

@@ -49,50 +49,10 @@ bio_oracle <- bio_oracle[-1,]
 bio_oracle <- bio_oracle %>%
 mutate(latitude = as.numeric(latitude), longitude = as.numeric(longitude))
 
-# Filter bio-oracle data for the 19 sites (will set NA for any lat long combo not specified, then will filter out those rows)
-# Note: latitude and longitude need to be rounded to nearest 0.025 or 0.075
-# Note: during rounding make sure you don't set the location as a spot on land
-bio_oracle_sites <- bio_oracle %>%
-  mutate(location = case_when(
-      latitude == 43.325 & longitude == -124.425 ~ "ARA",
-      latitude == 38.325 & longitude == -123.075 ~ "BMR",
-      latitude == 42.825 & longitude == -124.575 ~ "CBL",
-      latitude == 44.825 & longitude == -124.075 ~ "FC",
-      latitude == 38.525 & longitude == -123.275 ~ "FR",
-      latitude == 35.275 & longitude == -120.925 ~ "HZD",
-      latitude == 39.625 & longitude == -123.825 ~ "KH",
-      latitude == 34.875 & longitude == -120.675 ~ "OCT",
-      latitude == 35.675 & longitude == -121.325 ~ "PB",
-      latitude == 37.175 & longitude == -122.375 ~ "PGP",
-      latitude == 36.525 & longitude == -121.975 ~ "PL",
-      latitude == 41.775 & longitude == -124.275 ~ "PSG",
-      latitude == 35.725 & longitude == -121.325 ~ "PSN",
-      latitude == 36.425 & longitude == -121.925 ~ "SBR",
-      latitude == 44.225 & longitude == -124.125 ~ "SH",
-      latitude == 44.525 & longitude == -124.075 ~ "SLR",
-      latitude == 40.025 & longitude == -124.075 ~ "STC",
-      latitude == 34.725 & longitude == -120.625 ~ "STR",
-      latitude == 39.275 & longitude == -123.825 ~ "VD",
-      TRUE ~ NA_character_
-    )
-  ) %>%
-  filter(!is.na(location))
-
-# Check structure
-str(bio_oracle_sites)
-
-# ================================================================================== #
-
-# Extract data for most recent decade
-bio_oracle_sites_2010 <- bio_oracle_sites %>% 
-filter(time == "2010-01-01T00:00:00Z")
-
 # ================================================================================== #
 
 # Write table
 write.csv(bio_oracle, "data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_larger_area.csv", row.names=FALSE)
-write.csv(bio_oracle_sites, "data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_larger_area.csv", row.names=FALSE)
-write.csv(bio_oracle_sites_2010, "data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_2010_larger_area.csv", row.names=FALSE)
 
 # ================================================================================== #
 # ================================================================================== #

@@ -43,20 +43,13 @@ bio_oracle <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_lar
 bio_oracle_2010 <- bio_oracle %>% 
   filter(time == "2010-01-01T00:00:00Z")
 
-# Read in Bio-oracle future data
-#bio_oracle_ssp585 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_ssp585.csv", header=T)
-
-# Extract only the last decade of data (i.e., )
-#bio_oracle_ssp585_2090 <- bio_oracle_ssp585 %>% 
-#  filter(time == "2090-01-01T00:00:00Z")
-
 # ================================================================================== #
 
 # Specify parameters
 
 # Set geographic constraints
-latitude_range <- c(32, 46)
-longitude_range <- c(-125, -116)
+latitude_range <- c(32, 46.5)
+longitude_range <- c(-126, -117)
 
 # Set study extent
 study_extent <- extent(longitude_range[1], longitude_range[2], latitude_range[1], latitude_range[2])
@@ -124,6 +117,7 @@ writeRaster(temp_raster, filename = "output/figures/enviro/Bio-oracle/Test_bioor
 # Change to data frame
 raster_df_temp <- as.data.frame(temp_raster, xy = TRUE, na.rm = TRUE)
 raster_df_ph <- as.data.frame(ph_raster, xy = TRUE, na.rm = TRUE)
+
 # Graph 
 pdf("output/figures/enviro/Bio-oracle/Test_Raster_bio-oracle_temp_mean_ggplot.pdf", width = 3.5, height = 5)
 ggplot(raster_df_temp, aes(x = x, y = y, fill = layer)) +
@@ -139,13 +133,14 @@ dev.off()
 pdf("output/figures/enviro/Bio-oracle/Test_Raster_bio-oracle_ph_mean_ggplot_alt.pdf",  width = 6, height = 8)
 ggplot(raster_df_ph, aes(x = x, y = y, fill = layer)) +
   geom_raster(aes(fill=layer)) +
-  #scale_fill_gradientn(colours=brewer.pal(5, "RdBu")) +
-  scale_fill_gradientn(colours=brewer.pal(6, "YlOrRd"), name=NULL) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  scale_fill_gradientn(colours=brewer.pal(6, "YlOrRd"), name=NULL, breaks = c(7.92, 7.96, 8.0, 8.04)) +
   coord_fixed(ratio = 1) +  # Fix aspect ratio so the plot is not distorted
   #ggtitle("Rasterized ph_mean")  +
-  theme_bw(base_size = 26) + xlim(c(-125, -114)) + ylim(c(32, 46)) +
+  theme_bw(base_size = 26) + #xlim(c(-126, -117)) + ylim(c(32, 47)) +
   labs(x = "Longitude", y = "Latitude") + 
-  theme(legend.title = element_text(size = 20), legend.text = element_text(size = 20), legend.position = c(0.75, 0.53), legend.background = element_rect(color = "black", fill = "white", size = 0.5, linetype = "solid"))
+  theme(legend.title = element_text(size = 20), legend.text = element_text(size = 20), legend.position = c(0.75, 0.53), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
   #theme(plot.title = element_text(hjust=0.5))
 dev.off()
 
