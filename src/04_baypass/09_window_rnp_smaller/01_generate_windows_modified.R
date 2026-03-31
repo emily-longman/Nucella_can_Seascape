@@ -69,32 +69,32 @@ dev.off()
 # ================================================================================== #
 
 # Load pooldata object
-load("data/raw/pooldata/pooldata.RData")
+#load("data/raw/pooldata/pooldata.RData")
 
 # Extract SNP info for all SNPs
-pooldata@snp.info %>%
-  as.data.frame() %>% mutate(rs.id = rownames(.)) ->
-  pooldata.snp.info
+#pooldata@snp.info %>%
+#  as.data.frame() %>% mutate(rs.id = rownames(.)) ->
+#  pooldata.snp.info
 
 # Rename columns
-names(pooldata.snp.info)[1:2] = c("chr","pos")
+#names(pooldata.snp.info)[1:2] = c("chr","pos")
 
 # Make snp_id column
-pooldata.snp.info<- pooldata.snp.info %>%
-  mutate(SNP_id = paste(chr, pos, sep = "_"))
+#pooldata.snp.info<- pooldata.snp.info %>%
+#  mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 # Filter GDS snp.dt to only sites in pooldata snp.info
-snp.dt.filt <- snp.dt %>% filter(SNP_id %in% pooldata.snp.info$SNP_id)
+#snp.dt.filt <- snp.dt %>% filter(SNP_id %in% pooldata.snp.info$SNP_id)
 
 ######
 
 # How many SNPs are on each contig:
-SNPS_density_filt <- snp.dt.filt %>% group_by(chr) %>% summarize(n=n())
+#SNPS_density_filt <- snp.dt.filt %>% group_by(chr) %>% summarize(n=n())
 
 # Graph SNP density
-pdf("output/figures/baypass/window_summary/glm_chr_nSNP_filt_density.pdf", width = 8, height = 8)
-ggplot(SNPS_density_filt, aes(x=n))+ geom_density() + xlim(0,150)
-dev.off()
+#pdf("output/figures/baypass/window_summary/glm_chr_nSNP_filt_density.pdf", width = 8, height = 8)
+#ggplot(SNPS_density_filt, aes(x=n))+ geom_density() + xlim(0,150)
+#dev.off()
 # Use this information to determine level to filter for number of SNPs in a given window
 
 # ================================================================================== #
@@ -104,24 +104,25 @@ snpdet <- read.table("data/processed/baypass/input_files/snpdet", header=F)
 # Re-name snp metadata
 colnames(snpdet) <- c("chr", "pos", "allele1", "allele2")
 
-
-SNPS_snpdet_sum <- snpdet %>% group_by(chr) %>% summarize(n=n())
+# Make snp_id column
+snpdet <- snpdet %>%
+  mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 # ================================================================================== #
 
 # Create windows
 
 # Define window and step size
-win.bp <- 100000
-step.bp <- 50000
+win.bp <- 50000
+step.bp <- 25000
 
 # Generate windows
-wins <- foreach(chr.i=unique(snp.dt.filt$chr), .combine="rbind", .errorhandling="remove")%do%{
+wins <- foreach(chr.i=unique(snpdet$chr), .combine="rbind", .errorhandling="remove")%do%{
       # State chromosome
       message(chr.i)
 
       # Filter data for focal chromosome
-      tmp <- snp.dt.filt %>%
+      tmp <- snpdet %>%
       filter(chr == chr.i)
 
       # Number of SNPs on chromosome
@@ -145,19 +146,19 @@ wins <- foreach(chr.i=unique(snp.dt.filt$chr), .combine="rbind", .errorhandling=
 # Add window index
 wins[,i:=1:dim(wins)[1]]
 
-# Check dimensions - 12,318 windows
+# Check dimensions - 37,101 windows
 dim(wins)
 
 # ================================================================================== #
 
 # Group the backbone names into ~500
-group(wins, n=25, method = "greedy") -> wins_guide_file_array
+group(wins, n=75, method = "greedy") -> wins_guide_file_array
 
 # Write the table
-write.table(wins_guide_file_array, "guide_files/wins_guide_file_array.txt", col.names = F, row.names = F, quote = F)
-# Note guide_file_array has dimensions: 12318, 5, - 493 groups
+write.table(wins_guide_file_array, "guide_files/wins_50kb_guide_file_array.txt", col.names = F, row.names = F, quote = F)
+# Note guide_file_array has dimensions: 37101, 5, - 495 groups
 
 # ================================================================================== #
 
 # Save windows
-save(wins_guide_file_array, file="data/processed/baypass/window_summary/windows.RData")
+save(wins_guide_file_array, file="data/processed/baypass/window_summary/windows_50kb.RData")
