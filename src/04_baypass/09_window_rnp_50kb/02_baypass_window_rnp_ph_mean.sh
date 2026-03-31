@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=baypass_window_rnp_Mtross_mean_win50kb
+#SBATCH --job-name=baypass_window_rnp_ph_mean_win50kb
 
 # Specify partition
 #SBATCH --partition=general
@@ -70,15 +70,15 @@ echo "Window group:" ${SLURM_ARRAY_TASK_ID}
 cd $WORKING_FOLDER/data/processed/baypass/window_summary
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "window_50kb_chunk_analysis_Mtross_mean" ]
-then echo "Working window_50kb_chunk_analysis_Mtross_mean folder exist"; echo "Let's move on."; date
-else echo "Working window_50kb_chunk_analysis_Mtross_mean folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/window_summary/window_50kb_chunk_analysis_Mtross_mean; date
+if [ -d "window_50kb_chunk_analysis_ph_mean" ]
+then echo "Working window_50kb_chunk_analysis_ph_mean folder exist"; echo "Let's move on."; date
+else echo "Working window_50kb_chunk_analysis_ph_mean folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/window_summary/window_50kb_chunk_analysis_ph_mean; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/04_baypass/09_window_rnp_50kb/02_baypass_window_rnp_Mtross_mean.R "${SLURM_ARRAY_TASK_ID}"
+Rscript --vanilla $WORKING_FOLDER/src/04_baypass/09_window_rnp_50kb/02_baypass_window_rnp_ph_mean.R "${SLURM_ARRAY_TASK_ID}"
 
 #--------------------------------------------------------------------------------
 
