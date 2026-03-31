@@ -104,10 +104,6 @@ snpdet <- read.table("data/processed/baypass/input_files/snpdet", header=F)
 # Re-name snp metadata
 colnames(snpdet) <- c("chr", "pos", "allele1", "allele2")
 
-# Make snp_id column
-snpdet <- snpdet %>%
-  mutate(SNP_id = paste(chr, pos, sep = "_"))
-
 # ================================================================================== #
 
 # Create windows

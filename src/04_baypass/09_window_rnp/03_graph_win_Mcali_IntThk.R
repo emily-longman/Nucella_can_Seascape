@@ -1,4 +1,4 @@
-# Create windows
+# Analyze windows
 
 # Clear memory
 rm(list=ls())
