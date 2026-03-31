@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=baypass_window_rnp_ph_mean
+#SBATCH --job-name=baypass_window_rnp_Mtross_mean_win50kb
 
 # Specify partition
 #SBATCH --partition=general
@@ -20,7 +20,7 @@
 #SBATCH --mem=2G 
 
 # Submit job array
-#SBATCH --array=1-493%100
+#SBATCH --array=1-495%100
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -47,7 +47,7 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 #--------------------------------------------------------------------------------
 
 # Guide file 
-guide_file=$WORKING_FOLDER/guide_files/wins_guide_file_array.txt
+guide_file=$WORKING_FOLDER/guide_files/wins_50kb_guide_file_array.txt
 
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers. 
 # Chr            nSNPs  Start   End    win_i   group
@@ -70,15 +70,15 @@ echo "Window group:" ${SLURM_ARRAY_TASK_ID}
 cd $WORKING_FOLDER/data/processed/baypass/window_summary
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "window_chunk_analysis_ph_mean" ]
-then echo "Working window_chunk_analysis_ph_mean folder exist"; echo "Let's move on."; date
-else echo "Working window_chunk_analysis_ph_mean folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/window_summary/window_chunk_analysis_ph_mean; date
+if [ -d "window_50kb_chunk_analysis_Mtross_mean" ]
+then echo "Working window_50kb_chunk_analysis_Mtross_mean folder exist"; echo "Let's move on."; date
+else echo "Working window_50kb_chunk_analysis_Mtross_mean folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/window_summary/window_50kb_chunk_analysis_Mtross_mean; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/04_baypass/09_window_rnp/02_baypass_window_rnp_ph_mean.R "${SLURM_ARRAY_TASK_ID}"
+Rscript --vanilla $WORKING_FOLDER/src/04_baypass/09_window_rnp/02_baypass_window_rnp_Mtross_mean.R "${SLURM_ARRAY_TASK_ID}"
 
 #--------------------------------------------------------------------------------
 

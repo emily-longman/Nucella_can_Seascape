@@ -78,7 +78,7 @@ fi
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/03_baypass/09_window_rnp/02_baypass_window_rnp_Mtross_mean.R "${SLURM_ARRAY_TASK_ID}"
+Rscript --vanilla $WORKING_FOLDER/src/04_baypass/09_window_rnp/02_baypass_window_rnp_Mtross_mean.R "${SLURM_ARRAY_TASK_ID}"
 
 #--------------------------------------------------------------------------------
 
