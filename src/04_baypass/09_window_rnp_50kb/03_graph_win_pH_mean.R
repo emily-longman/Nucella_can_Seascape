@@ -113,6 +113,11 @@ ggplot(win.out.order, aes(y=-log10(rnp.binom.POD), x=chr.unique)) +
   geom_line( ) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed") +
   theme_bw(base_size=26) + theme(legend.position = "none", axis.text.x = element_blank(), axis.ticks.x = element_blank()) 
 dev.off()
+pdf("output/figures/baypass/window_summary/baypass_window_50kb_ph_mean_rnpPOD_geomline_wider.pdf", width = 12, height = 3)
+ggplot(win.out.order, aes(y=-log10(rnp.binom.POD), x=chr.unique)) + 
+  geom_line( ) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed") +
+  theme_bw(base_size=26) + theme(legend.position = "none", axis.text.x = element_blank(), axis.ticks.x = element_blank()) 
+dev.off()
 
 # ================================================================================== #
 
