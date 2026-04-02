@@ -117,7 +117,7 @@ dev.off()
 # ================================================================================== #
 
 # Extract outliers
-win.out.order.outliers <- win.out %>% filter(-log10(rnp.binom.POD) > -log10(pr.i))
+win.out.order.outliers <- win.out.order %>% filter(-log10(rnp.binom.POD) > -log10(pr.i))
 
 # Save outliers
 write.csv(win.out.order.outliers, "data/processed/baypass/window_summary/window_analysis_50kb_ph_mean_outliers.csv", row.names=FALSE)
