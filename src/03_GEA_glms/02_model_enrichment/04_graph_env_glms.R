@@ -185,6 +185,21 @@ ggplot(summary_abiotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, me
   theme_bw(base_size=30) + 
   theme(axis.text.x = element_blank(), axis.ticks = element_blank())
 dev.off()
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Abiotic_rr_color_taller.pdf", width = 11, height = 8.5)
+ggplot(summary_abiotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mean_rr_log2), color = col)) + 
+  #geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
+  geom_point(size=9)+ 
+  scale_color_identity() +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "red") +  
+  xlim(-0.365, 0.365) + 
+  labs(x = "Log2(Relative rate \nof model enrichment)",
+       y = "") +
+  theme_minimal()+
+  coord_flip()+
+  theme_bw(base_size=40) + 
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank())
+dev.off()
+
 
 # Create group based on if beat 2sd or 1sd
 summary_biotic <- summary_biotic %>% 
@@ -221,31 +236,17 @@ ggplot(summary_biotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mea
   theme_bw(base_size=40) + 
   theme(axis.text.x = element_blank(), axis.ticks = element_blank())
 dev.off()
-
-# Graph relative rate of model enrichment - mean and sd
-#pdf("output/figures/GEA/glms/GLM_rr_sum_SD.pdf", width = 8, height = 8)
-#ggplot(summary, aes(x = reorder(variable, mean_rr_log2), y = mean_rr_log2)) + 
-#  geom_errorbar(aes(ymin=mean_rr_log2-sd_rr_log2, ymax=mean_rr_log2+sd_rr_log2))+ 
-#  geom_point()+ 
-#  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +  
-#  labs(title = "Mean ± SD",
-#       x = "",
-#       y = "Log2(Relative rate of model enrichment)") +
-#  theme_minimal()+
-#  coord_flip()+
-#  theme_bw(base_size=20)
-#dev.off()
-
-# Graph relative rate of model enrichment  - mean and 95% CI
-#pdf("output/figures/GEA/glms/GLM_rr_sum_CI.pdf", width = 8, height = 8)
-#ggplot(summary, aes(x = reorder(variable, mean_rr_log2), y = mean_rr_log2)) +
-#  geom_errorbar(aes(ymin = ci_low, ymax = ci_high)) +  # Use 95% CI
-#  geom_point() +
-#  geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
-#  labs(title = "Mean ± 95% CI Plot",
-#       x = "",
-#       y = "Log2(Relative rate of model enrichment)") +
-#  theme_minimal() +
-#  coord_flip() + 
-#  theme_bw(base_size=20)
-#dev.off()
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Biotic_rr_color_taller.pdf", width = 15, height = 8.5)
+ggplot(summary_biotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mean_rr_log2), color = col)) + 
+  #geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
+  geom_point(size=9)+ 
+  scale_color_identity() +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "red") +  
+  xlim(-0.365, 0.365) + 
+  labs(x = "Log2(Relative rate \nof model enrichment)",
+       y = "") +
+  theme_minimal()+
+  coord_flip()+
+  theme_bw(base_size=40) + 
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank())
+dev.off()
