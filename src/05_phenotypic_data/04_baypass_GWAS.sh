@@ -34,7 +34,7 @@
 
 #--------------------------------------------------------------------------------
 
-# This script will perform the first step in running baypass. 
+# This script will run 5 iterations of Baypass with the phenotypic drilling data. 
 
 # Load modules 
 module load gcc/13.3.0-xp3epyt
