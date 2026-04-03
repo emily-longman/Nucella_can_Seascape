@@ -14,13 +14,16 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=3-00:00:00 
+#SBATCH --time=2-00:00:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
 #SBATCH --mem=30G 
 
 # Request CPU
 #SBATCH --cpus-per-task=25
+
+# Submit job array
+#SBATCH --array=1-5
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%j.out # Standard output
@@ -47,6 +50,11 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 #--------------------------------------------------------------------------------
 
+# Echo slurm array task ID
+echo "Doing Baypass run:" ${SLURM_ARRAY_TASK_ID}
+
+#--------------------------------------------------------------------------------
+
 # Generate Folders and files
 
 # Move to working directory
@@ -70,5 +78,10 @@ $baypass -npop 11 \
 -omegafile $WORKING_FOLDER/data/processed/phenotypic_data/omega/NC_pheno_mat_omega.out \
 -efile $WORKING_FOLDER/data/raw/phenotypic_data/Pheno_drilling_baypass_efile.txt \
 -d0yij 4 \
--outprefix NC_pheno \
+-outprefix NC_pheno_run${SLURM_ARRAY_TASK_ID} \
 -npilot 100 -nthreads 25
+
+#--------------------------------------------------------------------------------
+
+# Say done
+echo "done"

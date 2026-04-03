@@ -69,22 +69,22 @@ dev.off()
 # ================================================================================== #
 
 # Load pooldata object
-load("data/raw/pooldata/pooldata.RData")
+#load("data/raw/pooldata/pooldata.RData")
 
 # Extract SNP info for all SNPs
-pooldata@snp.info %>%
-  as.data.frame() %>% mutate(rs.id = rownames(.)) ->
-  pooldata.snp.info
+#pooldata@snp.info %>%
+#  as.data.frame() %>% mutate(rs.id = rownames(.)) ->
+#  pooldata.snp.info
 
 # Rename columns
-names(pooldata.snp.info)[1:2] = c("chr","pos")
+#names(pooldata.snp.info)[1:2] = c("chr","pos")
 
 # Make snp_id column
-pooldata.snp.info<- pooldata.snp.info %>%
-  mutate(SNP_id = paste(chr, pos, sep = "_"))
+#pooldata.snp.info<- pooldata.snp.info %>%
+#  mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 # Filter GDS snp.dt to only sites in pooldata snp.info
-snp.dt.filt <- snp.dt %>% filter(SNP_id %in% pooldata.snp.info$SNP_id)
+#snp.dt.filt <- snp.dt %>% filter(SNP_id %in% pooldata.snp.info$SNP_id)
 
 ######
 
@@ -99,6 +99,13 @@ dev.off()
 
 # ================================================================================== #
 
+# Read in SNP data
+snpdet <- read.table("data/processed/baypass/input_files/snpdet", header=F)
+# Re-name snp metadata
+colnames(snpdet) <- c("chr", "pos", "allele1", "allele2")
+
+# ================================================================================== #
+
 # Create windows
 
 # Define window and step size
@@ -106,12 +113,12 @@ win.bp <- 100000
 step.bp <- 50000
 
 # Generate windows
-wins <- foreach(chr.i=unique(snp.dt.filt$chr), .combine="rbind", .errorhandling="remove")%do%{
+wins <- foreach(chr.i=unique(snpdet$chr), .combine="rbind", .errorhandling="remove")%do%{
       # State chromosome
       message(chr.i)
 
       # Filter data for focal chromosome
-      tmp <- snp.dt.filt %>%
+      tmp <- snpdet %>%
       filter(chr == chr.i)
 
       # Number of SNPs on chromosome
@@ -150,4 +157,4 @@ write.table(wins_guide_file_array, "guide_files/wins_guide_file_array.txt", col.
 # ================================================================================== #
 
 # Save windows
-save(wins_guide_file_array, file="data/processed/baypass/window_summary/windows.RData")
+save(wins_guide_file_array, file="data/processed/baypass/window_summary/windows_100kb.RData")

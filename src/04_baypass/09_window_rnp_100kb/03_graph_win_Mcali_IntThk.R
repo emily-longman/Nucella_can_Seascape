@@ -59,6 +59,7 @@ str(win.out)
 
 # Save merged data
 save(win.out, file = "data/processed/baypass/window_summary/window_analysis_Mcali_IntThk.RData")
+load("data/processed/baypass/window_summary/window_analysis_Mcali_IntThk.RData")
 
 # ================================================================================== #
 
@@ -96,6 +97,17 @@ dev.off()
 # Graph rnp geomline
 pdf("output/figures/baypass/window_summary/baypass_window_Mcali_IntThk_rnpPOD_geomline.pdf", width = 12, height = 6)
 ggplot(win.out, aes(y=-log10(rnp.binom.POD), x=chr.unique)) + 
+  geom_line( ) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed") +
+  theme_bw(base_size=26) + theme(legend.position = "none")
+dev.off()
+pdf("output/figures/baypass/window_summary/baypass_window_Mcali_IntThk_rnpPOD_geomline_wider.pdf", width = 12, height = 3)
+ggplot(win.out, aes(y=-log10(rnp.binom.POD), x=chr.unique)) + 
+  geom_line( ) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed") +
+  theme_bw(base_size=26) + theme(legend.position = "none")
+dev.off()
+
+pdf("output/figures/baypass/window_summary/baypass_window_Mcali_IntThk_rnpPOD_geomline_bywindows.pdf", width = 12, height = 3)
+ggplot(win.out, aes(y=-log10(rnp.binom.POD), x=win)) + 
   geom_line( ) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed") +
   theme_bw(base_size=26) + theme(legend.position = "none")
 dev.off()
