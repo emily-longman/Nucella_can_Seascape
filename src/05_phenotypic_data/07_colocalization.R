@@ -81,6 +81,14 @@ ggplot(bf.ph.mean.sum.pheno, aes(x=bf_db, y=bf_db.mean)) +
   theme_classic(base_size = 20)
 dev.off()
 
+pdf("output/figures/phenotypic_data/BF_pheno_vs_ph_posBF.pdf", width = 8, height = 8)
+ggplot(bf.ph.mean.sum.pheno[which(bf.ph.mean.sum.pheno$bf_db>0 & bf.ph.mean.sum.pheno$bf_db.mean>0),], aes(x=bf_db, y=bf_db.mean)) + 
+  labs(x = "BF Pheno", y = "BF pH") +
+  geom_point(alpha=0.6) + 
+  geom_hline(yintercept=bf.POD.thr.ph$bf_db.mean[which(bf.POD.thr.ph$thr==0.999)], col="red") +
+  theme_classic(base_size = 20)
+dev.off()
+
 # ================================================================================== #
 
 # Join pheno and M. tross
@@ -95,6 +103,14 @@ ggplot(bf.Mtross.mean.sum.pheno, aes(x=bf_db, y=bf_db.mean)) +
   theme_classic(base_size = 20)
 dev.off()
 
+pdf("output/figures/phenotypic_data/BF_pheno_vs_Mtross_posBF.pdf", width = 8, height = 8)
+ggplot(bf.Mtross.mean.sum.pheno[which(bf.Mtross.mean.sum.pheno$bf_db>0 & bf.Mtross.mean.sum.pheno$bf_db.mean>0),], aes(x=bf_db, y=bf_db.mean)) + 
+  labs(x = "BF Pheno", y = "BF Mtross") +
+  geom_point(alpha=0.6) + 
+  geom_hline(yintercept=bf.POD.thr.Mtross$bf_db.mean[which(bf.POD.thr.Mtross$thr==0.999)], col="red") +
+  theme_classic(base_size = 20)
+dev.off()
+
 # ================================================================================== #
 
 # Join pheno and Mcali Thk
@@ -103,6 +119,14 @@ bf.McaliIntThk.mean.sum.pheno <- left_join(bf.McaliIntThk.mean.sum, bf.drilling,
 # Graph phenotypic data vs ph
 pdf("output/figures/phenotypic_data/BF_pheno_vs_Mcalithk.pdf", width = 8, height = 8)
 ggplot(bf.McaliIntThk.mean.sum.pheno, aes(x=bf_db, y=bf_db.mean)) + 
+  labs(x = "BF Pheno", y = "BF Mcali_thk") +
+  geom_point(alpha=0.6) + 
+  geom_hline(yintercept=bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)], col="red") +
+  theme_classic(base_size = 20)
+dev.off()
+
+pdf("output/figures/phenotypic_data/BF_pheno_vs_Mcalithk_posBF.pdf", width = 8, height = 8)
+ggplot(bf.McaliIntThk.mean.sum.pheno[which(bf.McaliIntThk.mean.sum.pheno$bf_db>0 & bf.McaliIntThk.mean.sum.pheno$bf_db.mean>0),], aes(x=bf_db, y=bf_db.mean)) + 
   labs(x = "BF Pheno", y = "BF Mcali_thk") +
   geom_point(alpha=0.6) + 
   geom_hline(yintercept=bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)], col="red") +
