@@ -34,7 +34,7 @@ win_group = as.numeric(args[1])
 # State variable name
 message(paste("Window group:", win_group))
 # Load windows
-load("data/processed/baypass/window_summary/windows.RData")
+load("data/processed/baypass/window_summary/windows_100kb.RData")
 # Extract windows of interest based on win_group
 wins_group_i <- wins_guide_file_array %>% filter(.groups == win_group)
 
