@@ -17,8 +17,9 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-install.packages(c('poolfstat'))
+install.packages(c('poolfstat', 'foreach'))
 library(poolfstat)
+library(foreach)
 
 # Baypass functions
 source("/gpfs1/home/e/l/elongman/software/baypass_public/utils/baypass_utils.R")
@@ -28,10 +29,8 @@ source("/gpfs1/home/e/l/elongman/software/baypass_public/utils/baypass_utils.R")
 # Generate Folders and files
 
 # Make output directories
-data_phenotypic_data="data/processed/phenotypic_data"
-if (!dir.exists(data_phenotypic_data)) {dir.create(data_phenotypic_data)}
-data_phenotypic_data_baypass="data/processed/phenotypic_data/baypass_input_files"
-if (!dir.exists(data_phenotypic_data_baypass)) {dir.create(data_phenotypic_data_baypass)}
+data_phenotypic_PODs="data/processed/phenotypic_data/PODs"
+if (!dir.exists(data_phenotypic_PODs)) {dir.create(data_phenotypic_PODs)}
 
 # ================================================================================== #
 
@@ -41,9 +40,25 @@ load("data/raw/pooldata/pooldata.RData")
 # Subset data - cutting sites: PSG, KH, FR, PL, PSN, HZD, OCT, STR
 pooldata.subset <- pooldata.subset(pooldata, pool.index=c(2,3,4,5,6,7,10,13,15,17,18))
 
-# Convert to BayPass input file
-pooldata2genobaypass(pooldata.subset, writing.dir = "data/processed/phenotypic_data/baypass_input_files", subsamplesize = -1)
-# Three output files = genobaypass (allele counts), poolsize (haploid size per pool), & snpdet (snp info matrix). 
-# Subsample size can be used to sample to a smaller number of SNPs. If the subsample size is <0, then all SNPs are included in the BayPass files.
-
 # ================================================================================== #
+
+# Create PODs
+
+# Get estimates (post. mean) of both the a_pi and b_pi parameters of the Pi Beta distribution
+pi.beta.coef <- read.table("data/processed/phenotypic_data/omega/NC_pheno_summary_beta_params.out", h=T)$Mean
+
+# Omega file
+omega <- as.matrix(read.table("data/processed/phenotypic_data/omega/NC_pheno_mat_omega.out"))
+
+# Set working directory
+setwd("data/processed/phenotypic_data/PODs")
+
+# Create PODs - ~8M SNPs (match # SNPs of poolobject)
+foreach(i=1:5, .errorhandling="remove")%do%{
+    suffix <- paste("POD8M.", i, sep="")
+    simulate.baypass(omega.mat=omega, nsnp = pooldata.subset@nsnp, beta.pi=pi.beta.coef, sample.size=pooldata.subset@poolsizes, suffix=suffix)
+}
+foreach(i=6:10, .errorhandling="remove")%do%{
+    suffix <- paste("POD8M.", i, sep="")
+    simulate.baypass(omega.mat=omega, nsnp = pooldata.subset@nsnp, beta.pi=pi.beta.coef, sample.size=pooldata.subset@poolsizes, suffix=suffix)
+}

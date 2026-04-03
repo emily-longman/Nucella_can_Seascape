@@ -106,7 +106,7 @@ win.out <- foreach(window.w=1:dim(wins_group_i)[1], .combine = "rbind", .errorha
 # Generate folders and save output
 
 # Folder name for window group i
-folder_name <- paste("data/processed/baypass/window_summary/window_chunk_analysis_ph_mean")
+folder_name <- paste("data/processed/baypass/window_summary/window_100kb_chunk_analysis_ph_mean")
 
 # Save file for chunk w
 file_name <- paste0("window_chunks_", win_group)

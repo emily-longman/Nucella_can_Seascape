@@ -70,7 +70,7 @@ load("data/processed/baypass/biotic/bf.Mtross.mean.sum.Rdata")
 # Load POD thresholds
 load("data/processed/baypass/biotic/Mtross_mean_POD_thr.Rdata")
 
-# Create the ECDF (empirical cumulative distribution functio) function
+# Create the ECDF (empirical cumulative distribution function) function
 my_ecdf <- ecdf(bf.Mtross.mean.sum$bf_db.mean)
 
 # Find the probability for a given value

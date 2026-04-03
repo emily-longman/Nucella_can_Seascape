@@ -47,7 +47,7 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 #--------------------------------------------------------------------------------
 
 # Guide file 
-guide_file=$WORKING_FOLDER/guide_files/wins_guide_file_array.txt
+guide_file=$WORKING_FOLDER/guide_files/wins_10kb_guide_file_array.txt
 
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers. 
 # Chr            nSNPs  Start   End    win_i   group
@@ -70,9 +70,9 @@ echo "Window group:" ${SLURM_ARRAY_TASK_ID}
 cd $WORKING_FOLDER/data/processed/baypass/window_summary
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "window_chunk_analysis_ph_mean" ]
-then echo "Working window_chunk_analysis_ph_mean folder exist"; echo "Let's move on."; date
-else echo "Working window_chunk_analysis_ph_mean folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/window_summary/window_chunk_analysis_ph_mean; date
+if [ -d "window_100kb_chunk_analysis_ph_mean" ]
+then echo "Working window_100kb_chunk_analysis_ph_mean folder exist"; echo "Let's move on."; date
+else echo "Working window_100kb_chunk_analysis_ph_mean folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/baypass/window_summary/window_100kb_chunk_analysis_ph_mean; date
 fi
 
 #--------------------------------------------------------------------------------

@@ -151,7 +151,7 @@ dim(wins)
 group(wins, n=25, method = "greedy") -> wins_guide_file_array
 
 # Write the table
-write.table(wins_guide_file_array, "guide_files/wins_guide_file_array.txt", col.names = F, row.names = F, quote = F)
+write.table(wins_guide_file_array, "guide_files/wins_10kb_guide_file_array.txt", col.names = F, row.names = F, quote = F)
 # Note guide_file_array has dimensions: 12318, 5, - 493 groups
 
 # ================================================================================== #

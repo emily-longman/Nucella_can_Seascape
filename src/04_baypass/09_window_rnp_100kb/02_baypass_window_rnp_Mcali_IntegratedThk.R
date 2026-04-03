@@ -34,7 +34,7 @@ win_group = as.numeric(args[1])
 # State variable name
 message(paste("Window group:", win_group))
 # Load windows
-load("data/processed/baypass/window_summary/windows.RData")
+load("data/processed/baypass/window_summary/windows_100kb.RData")
 # Extract windows of interest based on win_group
 wins_group_i <- wins_guide_file_array %>% filter(.groups == win_group)
 
@@ -106,7 +106,7 @@ win.out <- foreach(window.w=1:dim(wins_group_i)[1], .combine = "rbind", .errorha
 # Generate folders and save output
 
 # Folder name for window group i
-folder_name <- paste("data/processed/baypass/window_summary/window_chunk_analysis_Mcali_IntThk")
+folder_name <- paste("data/processed/baypass/window_summary/window_100kb_chunk_analysis_Mcali_IntThk")
 
 # Save file for chunk w
 file_name <- paste0("window_chunks_", win_group)
