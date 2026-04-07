@@ -93,7 +93,7 @@ load("data/processed/baypass/abiotic/bf.ph.mean.sum.Rdata")
 # Load POD thresholds
 load("data/processed/baypass/abiotic/ph_mean_POD_thr.Rdata")
 
-# Create the ECDF (empirical cumulative distribution functio) function
+# Create the ECDF (empirical cumulative distribution function) function
 my_ecdf <- ecdf(bf.ph.mean.sum$bf_db.mean)
 
 # Find the probability for a given value
@@ -167,6 +167,68 @@ outlier.win.SNPs <- outlier.win.SNPs %>% mutate(SNP_id = paste(chr, pos, sep = "
 write.csv(outlier.win.SNPs, "data/processed/baypass/window_summary/window_100kb_ph_mean_outlier_SNPs.csv", row.names=FALSE)
 
 #--------------------------------------------------------------------------------
+
+# Extract annotation data for each SNP of interest
+
+annotation <- foreach(i=1:dim(outlier.win.SNPs)[1], .combine = "rbind", .errorhandling = "remove")%do%{
+
+  message(i)
+  # Reset filter
+  seqResetFilter(genofile)
+  # Extract SNP_id for SNP i
+  tmp.i = outlier.win.SNPs[i,]$SNP_id
+  # Extract snp.dt information for SNP i
+  pos.tmp = snp.dt %>% filter(SNP_id %in% tmp.i) %>% .$id
+  # Set filter for SNP i
+  seqSetFilter(genofile, variant.id = pos.tmp)
+  # Extract annotation
+  ann_data <- seqGetData(genofile, "annotation/info/ANN")$data
+  # Identify if multiple annotation
+  L = length(ann_data)
+
+  # Loop through annotations for SNP i
+  annotate.list =
+  
+  foreach(k=1:L, .combine = "rbind")%do%{
+
+    tmp = ann_data[k] 
+    tmp2= str_split(tmp, "\\|")
+  
+    data.frame(
+      id=pos.tmp,
+      SNP_id = tmp.i,
+      annotation.id=k,
+      Allele = tmp2[[1]][1],
+      Annotation = tmp2[[1]][2],
+      Annotation_Impact = tmp2[[1]][3],
+      Gene_Name = tmp2[[1]][4],
+      Gene_ID = tmp2[[1]][5],
+      Feature_Type = tmp2[[1]][6],
+      Feature_ID = tmp2[[1]][7],
+      Transcript_BioType = tmp2[[1]][8],
+      Rank = tmp2[[1]][9],
+      HGVS.c = tmp2[[1]][10],
+      HGVS.p = tmp2[[1]][11],
+      cDNA.pos.cDNA.length = tmp2[[1]][12],
+      CDS.pos.CDS.length = tmp2[[1]][13],
+      AA.pos.AA.length = tmp2[[1]][14],
+      Distance = tmp2[[1]][15]
+      )
+  }
+return(annotate.list)
+}
+
+# Join annotation and SNP information
+outlier.win.SNPs.annotated <- left_join(outlier.win.SNPs, annotation, by = join_by(SNP_id), relationship = "many-to-many")
+outlier.win.SNPs.annotated <- outlier.win.SNPs.annotated %>% distinct()
+# Write output
+write.csv(outlier.win.SNPs.annotated, "data/processed/baypass/window_summary/outlier.win.SNPs.annotated.ph_mean.csv", row.names = F, quote = F)
+
+
+#--------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------
+
 
 # Load BUSCO table
 BUSCO <- fread("data/processed/BUSCO/N_canaliculata/run_mollusca_odb12/full_table.tsv", skip = 2, fill=TRUE)
@@ -268,66 +330,4 @@ outlier.win.SNPs.busco.annotated <- left_join(outlier.win.SNPs.busco, annotation
 
 # Write output
 write.csv(outlier.win.SNPs.busco.annotated, "data/processed/baypass/window_summary/outlier.win.SNPs.busco.annotated.ph_mean.csv", row.names = F, quote = F)
-
-
-
-
-#--------------------------------------------------------------------------------
-#--------------------------------------------------------------------------------
-#--------------------------------------------------------------------------------
-
-# Extract annotation data for each SNP of interest
-
-annotation <- foreach(i=1:dim(outlier.win.SNPs)[1], .combine = "rbind", .errorhandling = "remove")%do%{
-
-  message(i)
-  # Reset filter
-  seqResetFilter(genofile)
-  # Extract SNP_id for SNP i
-  tmp.i = outlier.win.SNPs[i,]$SNP_id
-  # Extract snp.dt information for SNP i
-  pos.tmp = snp.dt %>% filter(SNP_id %in% tmp.i) %>% .$id
-  # Set filter for SNP i
-  seqSetFilter(genofile, variant.id = pos.tmp)
-  # Extract annotation
-  ann_data <- seqGetData(genofile, "annotation/info/ANN")$data
-  # Identify if multiple annotation
-  L = length(ann_data)
-
-  # Loop through annotations for SNP i
-  annotate.list =
-  
-  foreach(k=1:L, .combine = "rbind")%do%{
-
-    tmp = ann_data[k] 
-    tmp2= str_split(tmp, "\\|")
-  
-    data.frame(
-      id=pos.tmp,
-      SNP_id = tmp.i,
-      annotation.id=k,
-      Allele = tmp2[[1]][1],
-      Annotation = tmp2[[1]][2],
-      Annotation_Impact = tmp2[[1]][3],
-      Gene_Name = tmp2[[1]][4],
-      Gene_ID = tmp2[[1]][5],
-      Feature_Type = tmp2[[1]][6],
-      Feature_ID = tmp2[[1]][7],
-      Transcript_BioType = tmp2[[1]][8],
-      Rank = tmp2[[1]][9],
-      HGVS.c = tmp2[[1]][10],
-      HGVS.p = tmp2[[1]][11],
-      cDNA.pos.cDNA.length = tmp2[[1]][12],
-      CDS.pos.CDS.length = tmp2[[1]][13],
-      AA.pos.AA.length = tmp2[[1]][14],
-      Distance = tmp2[[1]][15]
-      )
-  }
-return(annotate.list)
-}
-
-# Join annotation and SNP information
-outlier.win.SNPs.annotated <- left_join(outlier.win.SNPs, annotation, by = join_by(SNP_id), relationship = "many-to-many")
-# Write output
-write.csv(outlier.win.SNPs.annotated, "data/processed/baypass/window_summary/outlier.win.SNPs.annotated.ph_mean.csv", row.names = F, quote = F)
 
