@@ -45,12 +45,12 @@ nb.cols <- 19
 mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
 
 # Graph biplot
-pdf("output/figures/GEA/enviro/Bio-oracle/Bio-oracle_biplot.pdf", width = 10, height = 10)
+pdf("output/figures/enviro/Bio-oracle/Bio-oracle_biplot.pdf", width = 10, height = 10)
 biplot(pca_bio_oracle_sites_2010)
 dev.off()
 
 # Graph biplot with ggplot and ggfortify
-pdf("output/figures/GEA/enviro/Bio-oracle/Bio-oracle_biplot.pdf", width = 11, height = 10)
+pdf("output/figures/enviro/Bio-oracle/Bio-oracle_biplot.pdf", width = 11, height = 10)
 autoplot(pca_bio_oracle_sites_2010, data=bio_oracle_sites_2010, color="black", fill="location", size=6, shape=21,
 loadings=TRUE, loadings.label=TRUE, loadings.label.size=6) + scale_fill_manual(values=mycolors) + ylim(-0.48,0.48) + xlim(-0.48,0.48)+
 theme_bw(base_size=20)

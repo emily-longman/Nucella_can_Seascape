@@ -5,6 +5,8 @@
 
 # Clear memory
 rm(list=ls()) 
+# Global setting to stop scientific notation
+options(scipen = 999)
 
 # ================================================================================== #
 
@@ -20,7 +22,7 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-install.packages(c('data.table', 'tidyverse', 'ggplot2', 'RColorBrewer', 'viridis', 'terra', 'raster', 'SeqArray', 'poolfstat', 'vegan'))
+install.packages(c('data.table', 'tidyverse', 'ggplot2', 'RColorBrewer', 'viridis', 'terra', 'raster', 'SeqArray', 'poolfstat', 'vegan', 'cowplot', 'psych'))
 library(data.table)
 library(tidyverse)
 library(ggplot2)
@@ -30,17 +32,12 @@ library(terra)
 library(raster)
 require(poolfstat)
 require(vegan)
+library(cowplot)
+library(psych)
 
 # Load gradientForest
 install.packages("gradientForest", repos="http://R-Forge.R-project.org")
 require(gradientForest)
-
-# Load SeqArray
-if (!require("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
-BiocManager::install(version = "3.20")
-BiocManager::install("SeqArray")
-library(SeqArray)
 
 # ================================================================================== #
 
@@ -56,8 +53,10 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 
 # ================================================================================== #
 
-# Load SNPs of interest (baypass POD outlier SNPs - 3,095 SNPs SNPs)
-baypass_POD_sig_SNPs <- read.table("data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs_threshold_0.01", header=T)
+# Load SNPs of interest (baypass POD outlier SNPs - 8914 SNPs SNPs)
+load("data/processed/genomic_offset/NC.xtx.pos.Rdata")
+# Create SNP_id column for outlier SNP list
+NC.xtx.pos <- NC.xtx.pos %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 # Bio-oracle data
 # Load bio-oracle environmental data - present (2000-2010)
@@ -68,19 +67,6 @@ bio_oracle_sites_ssp585_2090 <- read.csv("data/processed/GEA/enviro_data/Bio-ora
 # Load pooldata
 load("data/raw/pooldata/pooldata.RData")
 
-# Open the GDS file - alternative to using poolobject to calc AF
-#genofile <- seqOpen("data/processed/outlier_analyses/snpeff/N.canaliculata_SNPs.annotate.gds")
-# Metadata
-#meta <- read.csv("data/raw/pooldata/Populations_metadata.csv", header=T)
-
-# ================================================================================== #
-# ================================================================================== #
-
-# Format data
-
-# Create SNP_id column for outlier SNP list
-baypass_POD_sig_SNPs <- baypass_POD_sig_SNPs %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
-
 # ================================================================================== #
 
 # For environmental data need a Site-by-Enviro matrix
@@ -90,15 +76,25 @@ names(bio_oracle_sites_2010)[names(bio_oracle_sites_2010) == "location"] <- "Sit
 
 # Rename rows
 row.names(bio_oracle_sites_2010) <- bio_oracle_sites_2010$Site
-
 # Subset bio-oracle data so just environmental variables
 bio_oracle_sites_2010_sub <- bio_oracle_sites_2010[, c(4:12)]
 
 # Rename rows of future data as sites
 rownames(bio_oracle_sites_ssp585_2090) <- rownames(bio_oracle_sites_2010_sub)
-
 # Subset bio-oracle data so just environmental variables
 bio_oracle_sites_ssp585_2090_sub <- bio_oracle_sites_ssp585_2090[, c(4:12)]
+
+# ================================================================================== #
+
+# Select only non-correlated variables - based on biplot
+
+# Bivariate scatter plots below the diagonal, histograms on the diagonal, and the Pearson correlation above the diagonal
+pdf("output/figures/genomic_offset/Correlations.pdf", width = 10, height = 10)
+pairs.panels(bio_oracle_sites_2010_sub, scale=T)
+dev.off()
+
+# Keep variables that are most relevant based on model enrichment
+bio_oracle_sites_2010_notcorr <- bio_oracle_sites_2010_sub[,c(1,5,8)]
 
 # ================================================================================== #
 # ================================================================================== #
@@ -107,7 +103,7 @@ bio_oracle_sites_ssp585_2090_sub <- bio_oracle_sites_ssp585_2090[, c(4:12)]
 
 # Subset pooldata for Baypass outlier SNPs
 
-# Extract SNP info for all SNPs
+# Extract SNP info for all SNPs and make snp_id column
 pooldata@snp.info %>%
   as.data.frame() %>% mutate(rs.id = rownames(.)) ->
   snp.info
@@ -118,7 +114,7 @@ names(snp.info)[1:2] = c("chr","pos")
 snp.info %>% mutate(SNP_id = paste(chr, pos, sep = "_")) -> snp.info
 
 # Filter pooldata for Baypass SNPs of interest
-selected_SNPs <- snp.info %>% filter(snp.info$SNP_id %in% baypass_POD_sig_SNPs$SNP_id)
+selected_SNPs <- snp.info %>% filter(snp.info$SNP_id %in% NC.xtx.pos$SNP_id)
 # Get index of SNPs
 selected_SNPs_index <- as.integer(selected_SNPs$rs.id)
 
@@ -136,7 +132,6 @@ pooldata_subset@snp.info %>%
 
 # Rename columns
 names(snp.info.subset)[1:2] = c("chr","pos")
-
 # Make snp_id column
 snp.info.subset %>% mutate(SNP_id = paste(chr, pos, sep = "_")) -> snp.info.subset
 
@@ -165,7 +160,7 @@ allele_freqs <- ref_count/coverage
 
 # Change to data frame
 allele_freqs %>% as.data.frame -> afs
-# Rename columns (19 sites plus SNP_id)
+# Rename columns (19 sites)
 names(afs) = c(pooldata_subset@poolnames)
 
 # Transpose allele freqs
@@ -179,7 +174,7 @@ colnames(afs_t) <- snp.info.subset$SNP_id
 # Sample size of each pool
 nSnail=20
 
-# Calcualte mean effective coverage 
+# Calculate mean effective coverage
 nEff <- round((cov_t*2*nSnail)/(cov_t+2*nSnail-1))
 # Calculate the effective allele freq
 af_nEff <- round((afs_t*nEff)/nEff)
@@ -194,7 +189,7 @@ which(is.na(af_nEff))
 
 # Check size of input data
 nSites <- dim(bio_oracle_sites_2010_sub)[1] #19
-nSpec <- dim(af_nEff)[2] #3095
+nSpec <- dim(af_nEff)[2] #8914
 
 # Calc maximum number of splits for conditional permutation
 maxLevel <- log2(nSites * 0.368/2)
@@ -213,7 +208,9 @@ gf <- gradientForest(cbind(af_nEff, bio_oracle_sites_2010_sub), predictor.vars =
 
 gf
 # Important variables:
-# [1] thetao_min   thetao_range thetao_mean  thetao_max   ph_mean 
+# [1] thetao_min   thetao_range thetao_mean  thetao_max   ph_mean
+#UPDATED
+# [1] thetao_min   thetao_range thetao_mean  o2_mean      thetao_max  
 
 # ================================================================================== #
 
@@ -303,8 +300,7 @@ predOUT_2090 <- predict(gf, bio_oracle_sites_ssp585_2090_sub)
 df_diff_squared <- data.frame(
   lapply(1:ncol(predOUT_2090), function(i) {
     (predOUT_2090[,i] - predOUT_present[,i])^2
-  })
-)
+  }))
 # Rename columns
 colnames(df_diff_squared) <- colnames(predOUT_2090)
 
@@ -313,8 +309,8 @@ check_rsq <- gf$res
 
 # Summarize R2
 # Mean R2 of the individual SNP models can serve as a measure of deviance explained
-mean(check_rsq$rsq)*100 #18.58943
-range(check_rsq$rsq)*100 #0.3465249 66.1185934
+mean(check_rsq$rsq)*100 #13.19323
+range(check_rsq$rsq)*100 #0.00535867 66.29889841
 
 # ================================================================================== #
 
@@ -354,7 +350,7 @@ df_long$Site <- factor(df_long$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "
 df_long$Variable <- factor(df_long$Variable, levels=c("Temperature (min)", "Temperature (mean)", "Temperature (range)", "Temperature (max)", 
 "pH (mean)", "O2 (mean)", "Salinity (mean)", "Chlorophyll (mean)", "pH (min)"))
 
-# Color palette 
+# Color palette
 nb.cols <- 19
 mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
 
@@ -363,6 +359,20 @@ pdf("output/figures/genomic_offset/genomic_offset.pdf", width = 12, height = 8)
 ggplot(df_long, aes(x = Site, y = Value, fill = Site)) + geom_col() +  
 facet_wrap(~ Variable, scales = "free_y") +
 scale_fill_manual(values = mycolors) +
+xlab("Site") + ylab("Genomic offset") +
+theme_minimal(base_size=16) +
+theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
+theme(strip.text = element_text(face = "bold", size = 16)) +
+guides(fill = "none")
+dev.off()
+
+# Change color pallet
+viridiscolors <- viridis(n=19)
+# Graph offset
+pdf("output/figures/genomic_offset/genomic_offset_viridis.pdf", width = 12, height = 8)
+ggplot(df_long, aes(x = Site, y = Value, fill = Site)) + geom_col() +  
+facet_wrap(~ Variable, scales = "free_y") +
+scale_fill_manual(values = viridiscolors) +
 xlab("Site") + ylab("Genomic offset") +
 theme_minimal(base_size=16) +
 theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
@@ -388,6 +398,14 @@ ggplot(df_diff_squared, aes(x = Site, y = sum_all_columns, fill = Site)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  # Rotate x-axis labels
   labs(x = "Site", y = "Genomic offset")+
   scale_fill_manual(values = mycolors) + guides(fill = "none")
+  dev.off()
+pdf("output/figures/genomic_offset/genomic_offset_diff_sq_viridis.pdf", width = 12, height = 8)
+ggplot(df_diff_squared, aes(x = Site, y = sum_all_columns, fill = Site)) +
+  geom_col() +  # Use geom_col() for bar plot, or geom_point() for scatter
+  theme_minimal(base_size=16) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  # Rotate x-axis labels
+  labs(x = "Site", y = "Genomic offset")+
+  scale_fill_manual(values = viridiscolors) + guides(fill = "none")
   dev.off()
 
 # ================================================================================== #
@@ -418,21 +436,21 @@ pcaToRaster <- function(snpPreds, rast, mapCells){
   
   pca <- prcomp(snpPreds, center=TRUE, scale.=FALSE)
   
-  ##assigns to colors, edit as needed to maximize color contrast, etc.
+  # Assigns to colors, edit as needed to maximize color contrast, etc.
   a1 <- pca$x[,1]; a2 <- pca$x[,2]; a3 <- pca$x[,3]
   r <- a1+a2; g <- -a2; b <- a3+a2-a1
   
-  ##scales colors
+  # Scales colors
   scalR <- (r-min(r))/(max(r)-min(r))*255
   scalG <- (g-min(g))/(max(g)-min(g))*255
   scalB <- (b-min(b))/(max(b)-min(b))*255
   
-  ##assigns color to raster
+  # Assigns color to raster
   rast1 <- rast2 <- rast3 <- rast
   rast1[mapCells] <- scalR
   rast2[mapCells] <- scalG
   rast3[mapCells] <- scalB
-  ##stacks color rasters
+  # Stacks color rasters
   outRast <- stack(rast1, rast2, rast3)
   return(outRast)
 }
@@ -581,29 +599,21 @@ colnames(mask_df) <- c("Longitude", "Latitude", "Genomic_Offset")
 pdf("output/figures/genomic_offset/genomic_offset_ggplot.pdf", width = 8, height = 6)
 ggplot(mask_df, aes(x = Longitude, y = Latitude, fill = Genomic_Offset)) +
   geom_raster() +
-  scale_fill_viridis(option = "inferno", na.value = "transparent", name = "Genomic Offset") + 
-  theme_minimal() +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  #scale_fill_gradientn(colours=brewer.pal(5, "RdBu")) +
+  scale_fill_gradientn(colours=brewer.pal(10, "RdGy")) +
+  #scale_fill_viridis(option = "inferno", na.value = "transparent", name = "Genomic Offset") + 
+  theme_minimal(base_size = 12) +
   coord_fixed() +  # Keeps aspect ratio
   xlab("Longitude") + ylab("Latitude") + 
-  theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title = element_text(size = 10), axis.text = element_text(size = 10))
+  theme(plot.title = element_text(hjust = 0.5, size = 16), axis.title = element_text(size = 16), axis.text = element_text(size = 16))
 dev.off()
 
 # Make better resolution - increase resolution to 2x
 mask_highres <- disaggregate(mask, fact = 2) 
 mask_highres <- as.data.frame(rasterToPoints(mask_highres))
 colnames(mask_highres) <- c("Longitude", "Latitude", "Genomic_Offset")
-
-# Graph with ggplot2
-# Note: Use geom_tile instead of geom_raster for higher res
-pdf("output/figures/genomic_offset/genomic_offset_ggplot2_viridis.pdf", width = 8, height = 6)
-ggplot(mask_highres, aes(x = Longitude, y = Latitude, fill = Genomic_Offset)) +
-  geom_tile() +
-  scale_fill_viridis(option = "inferno", na.value = "transparent", name = "Genomic Offset") + 
-  theme_minimal() +
-  coord_fixed() +
-  xlab("Longitude") + ylab("Latitude") + 
-  theme(plot.title = element_text(hjust = 0.5, size = 12), axis.title = element_text(size = 10), axis.text = element_text(size = 10))
-dev.off()
 
 # Graph with ggplot2
 # Note: Use geom_tile instead of geom_raster for higher res
@@ -618,80 +628,4 @@ ggplot(mask_highres, aes(x = Longitude, y = Latitude, fill = Genomic_Offset)) +
 dev.off()
 
 
-
-
-
-
-
-
-
-
-
-
-# ================================================================================== #
-# ================================================================================== #
-# ================================================================================== #
-
-# Alternate way to get allele frequencies
-
-# Get SNP data
-
-# Extract SNP data from GDS
-snp.dt <- data.table(
-        chr=seqGetData(genofile, "chromosome"),
-        pos=seqGetData(genofile, "position"),
-        nAlleles=seqGetData(genofile, "$num_allele"),
-        variant.id=seqGetData(genofile, "variant.id"),
-        allele=seqGetData(genofile, "allele")) %>%
-    mutate(SNP_id = paste(chr, pos, sep = "_"))
-
-# ================================================================================== #
-
-# Filter for sig SNPs
-
-# Filter snp.dt for only significant SNPs
-sig_SNPs <- snp.dt %>% filter(snp.dt$SNP_id %in% baypass_POD_sig_SNPs$SNP_id)
-
-# Reset filter
-seqResetFilter(genofile)
-
-# Set filter in GDS to only those SNPs
-seqSetFilter(genofile, variant.id = sig_SNPs$variant.id)
-
-# Extract sample id and variant id
-sample.id = seqGetData(genofile, "sample.id")
-variant.id = seqGetData(genofile, "variant.id")
-
-# ================================================================================== #
-
-# Extract allele depth ('ad') of alternate allele for sig SNPs
-
-# Extract allele depth
-ad <- seqGetData(genofile, "annotation/format/AD") %>% .$data
-# Indexes for alternate allele
-even_indexes <- seq(2,ncol(ad),2) # Question: why is there 6193 (ncol(ad)) rather than 6190 (i.e., 3095*2)
-# Extract only alternate allele depth
-ad_alt <- ad %>% .[,even_indexes]
-row.names(ad_alt) = sample.id
-#colnames(ad_alt) = variant.id #Doesn't work bc numbers don't align
-
-# Extract total depth ('dp') for sig SNP 
-dp <- seqGetData(genofile, "annotation/format/DP")
-row.names(dp) = sample.id
-colnames(dp) = variant.id
-
-# Transpose and add variant id column
-dp %>% t() %>% as.data.frame() %>% mutate(variant.id = variant.id) -> dp.test
-# Restructure data so long format
-reshape2::melt(dp, id = "variant.id", variable.name = "Site", value.name = "dp") -> dp.melt
-
-
-# Can't calculate af because ad and dp are not same dimensions
-# Calculate allele freq
-af <- data.table(ad_alt/dp)
-
-# Merge allele freq table af_i and snp.dt
-af_snp <- merge(af, snp.dt, by="variant.id")
-
-# ================================================================================== #
 
