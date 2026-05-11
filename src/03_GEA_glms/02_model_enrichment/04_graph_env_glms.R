@@ -61,6 +61,26 @@ biotic_vars <- var_full_names$variable[which(var_full_names$group=="Biotic")]
 
 # ================================================================================== #
 
+# Summarize for all vars
+summary <- all_ratios %>%
+  group_by(variable) %>%
+  drop_na() %>%
+  summarise(n = n(),  # Number of observations,
+            mean_rr_log2 = mean(rr_ratio_log2),
+            sd_rr_log2 = sd(rr_ratio_log2),
+            se_rr_log2 = sd_rr_log2 / sqrt(n),  # Calculate standard error
+            ci_low = mean_rr_log2 - 1.96 * se_rr_log2,
+            ci_high = mean_rr_log2 + 1.96 * se_rr_log2,
+            quantile_0.05 = quantile(rr_ratio_log2, 0.05),
+            quantile_0.95 = quantile(rr_ratio_log2, 0.95),
+            quantile_0.5 = quantile(rr_ratio_log2, 0.5)) %>%
+  ungroup()
+# Join with full names
+summary <- left_join(summary, var_full_names, by="variable")
+# Write table
+write.csv(summary, "data/processed/GEA/glms/glms_summary/All_vars_rr_sum.csv", row.names=FALSE)
+
+
 # Summarize for abiotic vars
 summary_abiotic <- all_ratios %>%
   filter(variable %in% abiotic_vars) %>%
@@ -81,7 +101,8 @@ summary_abiotic <- left_join(summary_abiotic, var_full_names, by="variable")
 # Write table
 write.csv(summary_abiotic, "data/processed/GEA/glms/glms_summary/Abiotic_vars_rr_sum.csv", row.names=FALSE)
 
-# Summarize for abiotic vars
+
+# Summarize for biotic vars
 summary_biotic <- all_ratios %>%
   filter(variable %in% biotic_vars) %>%
   group_by(variable) %>%
@@ -104,6 +125,19 @@ write.csv(summary_biotic, "data/processed/GEA/glms/glms_summary/Biotic_vars_rr_s
 # ================================================================================== #
 
 # Graph summary
+
+# Graph relative rate of model enrichment for all vars - mean and 2*sd
+pdf("output/figures/GEA/glms/model_enrichment/GLM_rr_sum_2SD.pdf", width = 8, height = 8)
+ggplot(summary, aes(x = reorder(variable_full_name, mean_rr_log2), y = mean_rr_log2, col=group)) + 
+  geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
+  geom_point()+ scale_color_manual(values = c("black", "#757474")) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +  
+  ylim(-0.65, 0.65) +
+  labs(x = "",
+       y = "Log2(Relative rate of model enrichment)") +
+  coord_flip()+
+  theme_bw(base_size=18)
+dev.off()
 
 # Graph relative rate of model enrichment for abiotic - mean and 2*sd
 pdf("output/figures/GEA/glms/model_enrichment/GLM_Abiotic_rr_sum_2SD.pdf", width = 6.75, height = 8)
