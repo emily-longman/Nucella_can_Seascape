@@ -129,7 +129,7 @@ dev.off()
 pdf("output/figures/phenotypic_data/BF_pheno_vs_ph_posBF.pdf", width = 8, height = 8)
 ggplot(bf.ph.mean.sum.pheno[which(bf.ph.mean.sum.pheno$bf_db_pheno.mean>0 & bf.ph.mean.sum.pheno$bf_db.mean>0),], 
     aes(x=bf_db_pheno.mean, y=bf_db.mean)) + 
-  labs(x = "BF Pheno", y = "BF pH") +
+  labs(x = "BF Pheno", y = "BF pH") + ylim(0,60) + xlim(0,25) +
   geom_point(alpha=0.6) +
   geom_hline(yintercept=bf.POD.thr.ph$bf_db.mean[which(bf.POD.thr.ph$thr==0.999)], col="red") +
   geom_vline(xintercept=bf.POD.thr.pheno$bf_db.mean[which(bf.POD.thr.pheno$thr==0.999)], col="red") +
@@ -174,7 +174,7 @@ dev.off()
 pdf("output/figures/phenotypic_data/BF_pheno_vs_Mtross_posBF.pdf", width = 8, height = 8)
 ggplot(bf.Mtross.mean.sum.pheno[which(bf.Mtross.mean.sum.pheno$bf_db_pheno.mean>0 & bf.Mtross.mean.sum.pheno$bf_db.mean>0),], 
     aes(x=bf_db_pheno.mean, y=bf_db.mean)) + 
-  labs(x = "BF Pheno", y = "BF Mtross") +
+  labs(x = "BF Pheno", y = "BF Mtross") + ylim(0,60) + xlim(0,25) +
   geom_point(alpha=0.6) +
   geom_hline(yintercept=bf.POD.thr.Mtross$bf_db.mean[which(bf.POD.thr.Mtross$thr==0.999)], col="red") +
   geom_vline(xintercept=bf.POD.thr.pheno$bf_db.mean[which(bf.POD.thr.pheno$thr==0.999)], col="red") +
@@ -220,7 +220,7 @@ dev.off()
 pdf("output/figures/phenotypic_data/BF_pheno_vs_Mcalithk_posBF.pdf", width = 8, height = 8)
 ggplot(bf.McaliIntThk.mean.sum.pheno[which(bf.McaliIntThk.mean.sum.pheno$bf_db_pheno.mean>0 & bf.McaliIntThk.mean.sum.pheno$bf_db.mean>0),], 
     aes(x=bf_db_pheno.mean, y=bf_db.mean)) + 
-  labs(x = "BF Pheno", y = "BF Mcali_thk") +
+  labs(x = "BF Pheno", y = "BF Mcali_thk") + ylim(0,60) + xlim(0,25) +
   geom_point(alpha=0.6) +
   geom_hline(yintercept=bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)], col="red") +
   geom_vline(xintercept=bf.POD.thr.pheno$bf_db.mean[which(bf.POD.thr.pheno$thr==0.999)], col="red") +
