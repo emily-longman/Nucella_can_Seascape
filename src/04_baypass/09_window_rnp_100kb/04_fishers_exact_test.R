@@ -23,13 +23,6 @@ library(tidyverse)
 library(foreach)
 library(dplyr)
 
-# Load SeqArray
-#if (!require("BiocManager", quietly = TRUE))
-#  install.packages("BiocManager")
-#BiocManager::install(version = "3.20")
-#BiocManager::install("SeqArray")
-library(SeqArray)
-
 # ================================================================================== #
 
 # Generate output directories
@@ -57,14 +50,17 @@ ann[is.na(ann)] <- 0
 row.names(ann) <- ann$Annotation
 ann <- ann[,c(2:4)]
 
+# Subset for just common ann
+ann.sub <- ann[c("3_prime_UTR_variant", "5_prime_UTR_variant", "downstream_gene_variant", "intergenic_region", "intron_variant", "missense_variant", "synonymous_variant", "upstream_gene_variant"),]
+
 pdf("output/figures/baypass/window_summary/mosaic_plot.pdf", width = 12, height = 6)
-mosaicplot(ann, color = TRUE)
+mosaicplot(ann.sub, color = TRUE)
 dev.off()
 
 # Fishers exact test (Monte Carlo simulation with 2,000 simulations)
-ftest <- fisher.test(ann, simulate.p.value = TRUE, B = 2000)
+ftest <- fisher.test(ann.sub, simulate.p.value = TRUE, B = 2000)
 
 # Chi-sq test
-chisq.test(ann)
+chisq.test(ann.sub)
 
-# So they are different, but there are a ton of categories so that feels less surprising
+# So they are different, but is it bc pH just has more outliers overall?
