@@ -2,9 +2,9 @@
 
 srun -N 1 -n 1 --mem=50G -t 8:00:00 --pty bash
 
-srun -N 1 --mem=200G -t 14:00:00 --pty bash
+srun -N 1 --mem=200G -t 8:00:00 --pty bash
 
 srun -N 1 --mem=200G -t 8:00:00 --cpus-per-task=5 --pty bash
 
-srun -N 1 --mem=400G -t 8:00:00 --pty bash
+srun -N 1 --mem=400G -t 14:00:00 --pty bash
 

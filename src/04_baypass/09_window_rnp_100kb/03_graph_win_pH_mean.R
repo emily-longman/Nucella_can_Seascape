@@ -224,7 +224,6 @@ outlier.win.SNPs.annotated <- outlier.win.SNPs.annotated %>% distinct()
 # Write output
 write.csv(outlier.win.SNPs.annotated, "data/processed/baypass/window_summary/outlier.win.SNPs.annotated.ph_mean.csv", row.names = F, quote = F)
 
-
 #--------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------
