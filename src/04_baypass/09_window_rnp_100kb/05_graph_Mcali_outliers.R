@@ -1,4 +1,4 @@
-# Analyze windows
+# Graph pH outliers
 
 # Clear memory
 rm(list=ls())
@@ -127,20 +127,4 @@ ggplot(afs.ph.BF, aes(x=AF, y=ph_mean, fill=Site)) +
   facet_wrap(~SNP_id, ncol = 4) + scale_fill_manual(values = viridiscolors) +
   scale_x_continuous(breaks = seq(0, 1, by = 0.5)) +
   theme_bw(base_size = 26) + theme(legend.position="none")
-dev.off()
-
-# Graph and color by Site
-pdf("output/figures/baypass/outliers/pH_g27343_BF19.pdf", width = 14, height = 9)
-ggplot(afs.ph.BF19, aes(x=AF, y=ph_mean, fill=Site)) +
-  geom_point(alpha=0.6, size = 4, shape = 21) + labs(x="Allele Freq", y="pH") +
-  facet_wrap(~SNP_id) + scale_fill_manual(values = viridiscolors) +
-  theme_bw(base_size = 26)
-dev.off()
-
-# Graph and color by Site
-pdf("output/figures/baypass/outliers/pH_g27343_BF18.pdf", width = 16, height = 12)
-ggplot(afs.ph.BF18, aes(x=AF, y=ph_mean, fill=Site)) +
-  geom_point(alpha=0.6, size = 4, shape = 21) + labs(x="Allele Freq", y="pH") +
-  facet_wrap(~SNP_id) + scale_fill_manual(values = viridiscolors) +
-  theme_bw(base_size = 26)
 dev.off()

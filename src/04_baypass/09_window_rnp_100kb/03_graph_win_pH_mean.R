@@ -154,8 +154,8 @@ outlier.win.SNPs <- foreach(win.i=unique(win.out.order.outliers$win), .combine="
     # Extract SNPs in window from baypass output
     baypass.tmp <- bf.ph.mean.sum %>% filter(
         bf.ph.mean.sum$chr == win.tmp$chr & 
-        bf.ph.mean.sum$pos > win.tmp$pos_min &
-        bf.ph.mean.sum$pos < win.tmp$pos_max)
+        bf.ph.mean.sum$pos >= win.tmp$pos_min &
+        bf.ph.mean.sum$pos <= win.tmp$pos_max)
 }
 
 # ================================================================================== #
@@ -168,7 +168,7 @@ write.csv(outlier.win.SNPs, "data/processed/baypass/window_summary/window_100kb_
 
 #--------------------------------------------------------------------------------
 
-# Extract annotation data for each SNP of interest
+# Extract annotation data for each SNP of interest (note: did not reannotate SNPs after added SNPs on either end of window)
 
 annotation <- foreach(i=1:dim(outlier.win.SNPs)[1], .combine = "rbind", .errorhandling = "remove")%do%{
 
@@ -226,107 +226,34 @@ write.csv(outlier.win.SNPs.annotated, "data/processed/baypass/window_summary/out
 
 #--------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------
-#--------------------------------------------------------------------------------
 
 
-# Load BUSCO table
-BUSCO <- fread("data/processed/BUSCO/N_canaliculata/run_mollusca_odb12/full_table.tsv", skip = 2, fill=TRUE)
-colnames(BUSCO) <- c("Busco_id", "Status", "Sequence", "Gene_Start", "Gene_End", "Strand", "Score", "Length", "OrthoDB_url", "Description")
+# Extract SNPs within top outlier window (i.e., on chr ntLink_3821)
+outlier.win.ntlink3821 <- outlier.win.SNPs %>% filter(chr == "ntLink_3821")
 
-# Filter for just complete
-BUSCO.complete <- BUSCO %>% filter(Status == "Complete")
+# Graph BF for each SNP
+pdf("output/figures/baypass/window_summary/baypass_ph_mean_BF_ntLink_3821.pdf", width = 6, height = 4)
+ggplot(outlier.win.ntlink3821, aes(y=bf_db.mean, x=pos/1000)) + labs(x="Position (kb)", y="BF") +
+  geom_rect(aes(xmin=268/1000, xmax=62689/1000, ymin=-Inf, ymax=Inf), fill="grey", alpha=0.5) +
+  geom_point(alpha=0.8, size=3.5, aes(colour = cut(bf_db.mean, c(-Inf, 20, Inf)))) + 
+  scale_color_manual(values = c("(-Inf,20]" = "black", "(20, Inf]" = "blue")) +
+  geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red", linetype="dashed") +
+  theme_bw(base_size=26) + theme(legend.position = "none")
+dev.off()
 
-# Get SNPs in each complete BUSCO
-BUSCO.complete.SNPs <- foreach(busco.i=unique(BUSCO.complete$Busco_id), .combine="rbind", .errorhandling="remove")%do%{
-    
-    # Extract window
-    busco.tmp <- BUSCO.complete[which(BUSCO.complete$Busco_id==busco.i),]
+# Graph BF for each SNP - geom_line
+pdf("output/figures/baypass/window_summary/baypass_ph_mean_BF_ntLink_3821_geomline.pdf", width = 8, height = 4)
+ggplot(outlier.win.ntlink3821, aes(y=bf_db.mean, x=pos)) + labs(x="Position", y="BF") +
+  geom_line() + geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red", linetype="dashed") +
+  theme_bw(base_size=26) + theme(legend.position = "none")
+dev.off()
 
-    # Extract SNPs in window from baypass output
-    snpdet %>% filter(
-        snpdet$chr == busco.tmp$Sequence & 
-        snpdet$pos > busco.tmp$Gene_Start &
-        snpdet$pos < busco.tmp$Gene_End)
-}
 
-# Create SNP_id columns
-BUSCO.complete.SNPs <- BUSCO.complete.SNPs %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
-outlier.win.SNPs <- outlier.win.SNPs %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 
-# Find overlap
-overlap_SNP_id <- intersect(BUSCO.complete.SNPs$SNP_id, outlier.win.SNPs$SNP_id)
 
-# Extract SNPs in outlier windows in complete BUSCOs (2,896 SNPs)
-outlier.win.SNPs.busco <- outlier.win.SNPs %>% filter(SNP_id %in% overlap_SNP_id)
 
-# ================================================================================== #
 
-# Open the GDS file
-genofile <- seqOpen("data/processed/outlier_analyses/snpeff/N.canaliculata_annotated_SNPs.gds")
 
-# Extract SNP data from GDS
-snp.dt <- data.table(
-        chr=seqGetData(genofile, "chromosome"),
-        pos=seqGetData(genofile, "position"),
-        nAlleles=seqGetData(genofile, "$num_allele"),
-        id=seqGetData(genofile, "variant.id")) %>%
-    mutate(SNP_id = paste(chr, pos, sep = "_"))
 
-# Extract annotation data for each SNP of interest
 
-annotation <- foreach(i=1:dim(outlier.win.SNPs.busco)[1], .combine = "rbind", .errorhandling = "remove")%do%{
-
-  message(i)
-  # Reset filter
-  seqResetFilter(genofile)
-  # Extract SNP_id for SNP i
-  tmp.i = outlier.win.SNPs.busco[i,]$SNP_id
-  # Extract snp.dt information for SNP i
-  pos.tmp = snp.dt %>% filter(SNP_id %in% tmp.i) %>% .$id
-  # Set filter for SNP i
-  seqSetFilter(genofile, variant.id = pos.tmp)
-  # Extract annotation
-  ann_data <- seqGetData(genofile, "annotation/info/ANN")$data
-  # Identify if multiple annotation
-  L = length(ann_data)
-
-  # Loop through annotations for SNP i
-  annotate.list =
-  
-  foreach(k=1:L, .combine = "rbind")%do%{
-
-    tmp = ann_data[k] 
-    tmp2= str_split(tmp, "\\|")
-  
-    data.frame(
-      id=pos.tmp,
-      SNP_id = tmp.i,
-      annotation.id=k,
-      Allele = tmp2[[1]][1],
-      Annotation = tmp2[[1]][2],
-      Annotation_Impact = tmp2[[1]][3],
-      Gene_Name = tmp2[[1]][4],
-      Gene_ID = tmp2[[1]][5],
-      Feature_Type = tmp2[[1]][6],
-      Feature_ID = tmp2[[1]][7],
-      Transcript_BioType = tmp2[[1]][8],
-      Rank = tmp2[[1]][9],
-      HGVS.c = tmp2[[1]][10],
-      HGVS.p = tmp2[[1]][11],
-      cDNA.pos.cDNA.length = tmp2[[1]][12],
-      CDS.pos.CDS.length = tmp2[[1]][13],
-      AA.pos.AA.length = tmp2[[1]][14],
-      Distance = tmp2[[1]][15]
-      )
-  }
-return(annotate.list)
-}
-
-#--------------------------------------------------------------------------------
-
-# Join annotation and SNP information
-outlier.win.SNPs.busco.annotated <- left_join(outlier.win.SNPs.busco, annotation, by = join_by(SNP_id), relationship = "many-to-many")
-
-# Write output
-write.csv(outlier.win.SNPs.busco.annotated, "data/processed/baypass/window_summary/outlier.win.SNPs.busco.annotated.ph_mean.csv", row.names = F, quote = F)
 
