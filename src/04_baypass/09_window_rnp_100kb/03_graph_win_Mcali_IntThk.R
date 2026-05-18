@@ -168,6 +168,19 @@ write.csv(outlier.win.SNPs, "data/processed/baypass/window_summary/window_100kb_
 
 #--------------------------------------------------------------------------------
 
+# Open the GDS file
+genofile <- seqOpen("data/processed/outlier_analyses/snpeff/N.canaliculata_annotated_SNPs.gds")
+
+# Extract SNP data from GDS
+snp.dt <- data.table(
+        chr=seqGetData(genofile, "chromosome"),
+        pos=seqGetData(genofile, "position"),
+        nAlleles=seqGetData(genofile, "$num_allele"),
+        id=seqGetData(genofile, "variant.id")) %>%
+    mutate(SNP_id = paste(chr, pos, sep = "_"))
+
+#--------------------------------------------------------------------------------
+
 # Extract annotation data for each SNP of interest (note: did not reannotate SNPs after added SNPs on either end of window)
 
 annotation <- foreach(i=1:dim(outlier.win.SNPs)[1], .combine = "rbind", .errorhandling = "remove")%do%{

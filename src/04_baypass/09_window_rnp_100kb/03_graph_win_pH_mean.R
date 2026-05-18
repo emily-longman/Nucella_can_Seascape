@@ -168,6 +168,19 @@ write.csv(outlier.win.SNPs, "data/processed/baypass/window_summary/window_100kb_
 
 #--------------------------------------------------------------------------------
 
+# Open the GDS file
+genofile <- seqOpen("data/processed/outlier_analyses/snpeff/N.canaliculata_annotated_SNPs.gds")
+
+# Extract SNP data from GDS
+snp.dt <- data.table(
+        chr=seqGetData(genofile, "chromosome"),
+        pos=seqGetData(genofile, "position"),
+        nAlleles=seqGetData(genofile, "$num_allele"),
+        id=seqGetData(genofile, "variant.id")) %>%
+    mutate(SNP_id = paste(chr, pos, sep = "_"))
+
+#--------------------------------------------------------------------------------
+
 # Extract annotation data for each SNP of interest (note: did not reannotate SNPs after added SNPs on either end of window)
 
 annotation <- foreach(i=1:dim(outlier.win.SNPs)[1], .combine = "rbind", .errorhandling = "remove")%do%{
@@ -232,13 +245,14 @@ write.csv(outlier.win.SNPs.annotated, "data/processed/baypass/window_summary/out
 outlier.win.ntlink3821 <- outlier.win.SNPs %>% filter(chr == "ntLink_3821")
 
 # Graph BF for each SNP
-pdf("output/figures/baypass/window_summary/baypass_ph_mean_BF_ntLink_3821.pdf", width = 6, height = 4)
+pdf("output/figures/baypass/window_summary/baypass_ph_mean_BF_ntLink_3821.pdf", width = 10, height = 4)
 ggplot(outlier.win.ntlink3821, aes(y=bf_db.mean, x=pos/1000)) + labs(x="Position (kb)", y="BF") +
   geom_rect(aes(xmin=268/1000, xmax=62689/1000, ymin=-Inf, ymax=Inf), fill="grey", alpha=0.5) +
   geom_point(alpha=0.8, size=3.5, aes(colour = cut(bf_db.mean, c(-Inf, 20, Inf)))) + 
   scale_color_manual(values = c("(-Inf,20]" = "black", "(20, Inf]" = "blue")) +
   geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red", linetype="dashed") +
-  theme_bw(base_size=26) + theme(legend.position = "none")
+  geom_hline(yintercept=0, col="black", linetype="solid") +
+  theme_bw(base_size=30) + theme(legend.position = "none")
 dev.off()
 
 # Graph BF for each SNP - geom_line
