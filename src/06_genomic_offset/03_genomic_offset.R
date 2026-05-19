@@ -1,6 +1,7 @@
 # Perform genomic offset analyses with Bio-Oracle data
 # Note: prior to running the R script, need to load R and GDAL module on the VACC
 # module load R/4.4.1
+# module load gcc/13.3.0-xp3epyt
 # module load gdal
 
 # Clear memory
@@ -54,9 +55,9 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 # ================================================================================== #
 
 # Load SNPs of interest (baypass POD outlier SNPs - 8914 SNPs SNPs)
-load("data/processed/genomic_offset/NC.xtx.pos.Rdata")
+load("data/processed/genomic_offset/NC.xtx.sum.pos.Rdata")
 # Create SNP_id column for outlier SNP list
-NC.xtx.pos <- NC.xtx.pos %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
+NC.xtx.pos <- NC.xtx.sum.pos %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 # Bio-oracle data
 # Load bio-oracle environmental data - present (2000-2010)
@@ -189,7 +190,7 @@ which(is.na(af_nEff))
 
 # Check size of input data
 nSites <- dim(bio_oracle_sites_2010_sub)[1] #19
-nSpec <- dim(af_nEff)[2] #8914
+nSpec <- dim(af_nEff)[2] #8914 --- now 272
 
 # Calc maximum number of splits for conditional permutation
 maxLevel <- log2(nSites * 0.368/2)
@@ -210,7 +211,7 @@ gf
 # Important variables:
 # [1] thetao_min   thetao_range thetao_mean  thetao_max   ph_mean
 #UPDATED
-# [1] thetao_min   thetao_range thetao_mean  o2_mean      thetao_max  
+# [1] thetao_min   thetao_range thetao_mean  o2_mean      thetao_max
 
 # ================================================================================== #
 
