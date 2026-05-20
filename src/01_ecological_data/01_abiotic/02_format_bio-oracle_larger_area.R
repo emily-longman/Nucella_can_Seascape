@@ -37,6 +37,13 @@ o2 <- read.csv("data/raw/Bio-oracle/present/o2_baseline_2000_2018_depthsurf_larg
 ph <- read.csv("data/raw/Bio-oracle/present/ph_baseline_2000_2018_depthsurf_larger_area.csv", header=T)
 so <- read.csv("data/raw/Bio-oracle/present/so_baseline_2000_2019_depthsurf_larger_area.csv", header=T)
 
+# Read in future Bio-oracle data
+sst_future <- read.csv("data/raw/Bio-oracle/future/thetao_ssp585_2020_2100_depthsurf_larger_area.csv", header=T)
+chl_future <- read.csv("data/raw/Bio-oracle/future/chl_ssp585_2020_2100_depthsurf_larger_area.csv", header=T)
+o2_future <- read.csv("data/raw/Bio-oracle/future/o2_ssp585_2020_2100_depthsurf_larger_area.csv", header=T)
+ph_future <- read.csv("data/raw/Bio-oracle/future/ph_ssp585_2020_2100_depthsurf_larger_area.csv", header=T)
+so_future <- read.csv("data/raw/Bio-oracle/future/so_ssp585_2020_2100_depthsurf_larger_area.csv", header=T)
+
 # ================================================================================== #
 
 # Combine datasets into one large dataset
@@ -56,3 +63,18 @@ write.csv(bio_oracle, "data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_larg
 
 # ================================================================================== #
 # ================================================================================== #
+
+# Combine datasets into one large dataset
+bio_oracle_future <- reduce(list(sst_future, chl_future, o2_future, ph_future, so_future), full_join, by = c("time", "latitude", "longitude"))
+
+# Remove first row (i.e. units)
+bio_oracle_future <- bio_oracle_future[-1,]
+
+# Change latitude and longitude to numeric
+bio_oracle_future <- bio_oracle_future %>%
+mutate(latitude = as.numeric(latitude), longitude = as.numeric(longitude))
+
+# ================================================================================== #
+
+# Write table
+write.csv(bio_oracle_future, "data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_future_larger_area.csv", row.names=FALSE)

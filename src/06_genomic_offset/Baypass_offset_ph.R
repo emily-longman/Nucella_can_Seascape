@@ -89,6 +89,7 @@ Ncan_GO <- compute_genetic_offset(
 # regfile - BayPass output file with estimates of the regression coefficients
 # scalecov - if TRUE all covariables are scaled with respect to mean and variance of original covariable value
 # compute.rona - if true, calculate the RONA statistic from Rellstab et al. 2016
+#   Rona is  related to the square root of the geometric GO (times √2/π)
 
 # ================================================================================== #
 
@@ -225,11 +226,11 @@ ggplot(data = west_coast) +
   geom_point(data = go.scaled.output, aes(x = Long, y = Lat, fill = GO.scaled), shape = 21, size = 8) + 
   #scale_fill_gradient(low = "cyan1", high = "gray27") + 
   #scale_fill_viridis(option="viridis", direction = -1) +
-  scale_fill_gradientn(colours=brewer.pal(6, "YlOrRd"), name="GO.scaled") +
+  scale_fill_gradientn(colours=rev(brewer.pal(6, "BrBG")), name="gGO") +
              coord_fixed(1.3) +
   xlim(c(-125, -114)) +
-  xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 24) + 
-  theme(legend.title = element_text(size = 20), legend.text = element_text(size = 16), legend.position = c(0.98, 0.52))
+  xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 27) + 
+  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 16), legend.position = c(0.98, 0.52))
 dev.off()
 
 # ================================================================================== #

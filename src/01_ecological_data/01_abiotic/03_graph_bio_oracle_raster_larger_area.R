@@ -38,10 +38,14 @@ if (!dir.exists(out_dir_fig)) {dir.create(out_dir_fig)}
 
 # Read in Bio-oracle present data
 bio_oracle <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_larger_area.csv", header=T)
+bio_oracle_future <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_future_larger_area.csv", header=T)
 
 # Extract the most recent data (i.e., 2010-01-01T00:00:00Z, which represents 2010-2020)
 bio_oracle_2010 <- bio_oracle %>% 
   filter(time == "2010-01-01T00:00:00Z")
+
+bio_oracle_future <- bio_oracle_future %>% 
+  filter(time == "2090-01-01T00:00:00Z")
 
 # ================================================================================== #
 
@@ -89,10 +93,17 @@ bio_oracle_2010_temp_mean <- bio_oracle_2010 %>%
 bio_oracle_2010_ph_mean <- bio_oracle_2010 %>% 
   dplyr::select(longitude, latitude, ph_mean)
 
+# Extract one future variable - ph mean 
+bio_oracle_future_ph_mean <- bio_oracle_future %>% 
+  dplyr::select(longitude, latitude, ph_mean)
+
 # Rasterize temperature data
 temp_raster <- rasterize(coordinates, study_raster, bio_oracle_2010_temp_mean$thetao_mean, fun = mean, na.rm = TRUE)
 # Rasterize ph data
 ph_raster <- rasterize(coordinates, study_raster, bio_oracle_2010_ph_mean$ph_mean, fun = mean, na.rm = TRUE)
+
+# Rasterize ph data
+ph_future_raster <- rasterize(coordinates, study_raster, bio_oracle_future_ph_mean$ph_mean, fun = mean, na.rm = TRUE)
 
 # Look at structure
 str(temp_raster)
@@ -107,7 +118,14 @@ dev.off()
 pdf("output/figures/enviro/Bio-oracle/Test_Raster_bio-oracle_ph_mean.pdf", width = 3.25, height = 5)
 plot(ph_raster, col = mycolors, axes = TRUE, box = FALSE,
 xlim = c(-125, 114), ylim = c(32, 46), 
-xlab="Longitude", ylab="Latitude", main = "Rasterized thetao_mean")
+xlab="Longitude", ylab="Latitude", main = "Rasterized ph_mean")
+dev.off()
+
+# Graph future ph raster
+pdf("output/figures/enviro/Bio-oracle/Test_Raster_bio-oracle_ph_mean_future.pdf", width = 3.25, height = 5)
+plot(ph_future_raster, col = mycolors, axes = TRUE, box = FALSE,
+xlim = c(-125, 114), ylim = c(32, 46), 
+xlab="Longitude", ylab="Latitude", main = "Rasterized ph_mean future")
 dev.off()
 
 # Write raster tif file
@@ -117,6 +135,8 @@ writeRaster(temp_raster, filename = "output/figures/enviro/Bio-oracle/Test_bioor
 # Change to data frame
 raster_df_temp <- as.data.frame(temp_raster, xy = TRUE, na.rm = TRUE)
 raster_df_ph <- as.data.frame(ph_raster, xy = TRUE, na.rm = TRUE)
+
+raster_df_ph_future <- as.data.frame(ph_future_raster, xy = TRUE, na.rm = TRUE)
 
 # Graph temp
 pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_temp_mean_ggplot.pdf", width = 3.5, height = 5)
@@ -129,7 +149,7 @@ ggplot(raster_df_temp, aes(x = x, y = y, fill = layer)) +
   theme_void() +
   theme(legend.title = element_blank(), plot.title = element_text(hjust=0.5))
 dev.off()
-# Graph pH (reversed colors since low pH is the stressor)
+# Graph pH (note: reversed colors since low pH is the stressor)
 pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_ph_mean_ggplot_alt.pdf",  width = 6, height = 8) 
 ggplot(raster_df_ph, aes(x = x, y = y, fill = layer)) +
   geom_raster(aes(fill=layer)) +
@@ -144,114 +164,17 @@ ggplot(raster_df_ph, aes(x = x, y = y, fill = layer)) +
   #theme(plot.title = element_text(hjust=0.5))
 dev.off()
 
-# ================================================================================== #
-# ================================================================================== #
 
-# Create rasters for present day data
-
-# Environmental variables
-env_variables <- c("thetao_max",   "thetao_min",   "thetao_range", "thetao_mean", "chl_mean", "o2_mean", "ph_min", "ph_mean", "so_mean")  # List all env variables here
-
-# Loop through environmental variables and rasterize each dataset
-for (var in env_variables) {
-  
-  # Ensure that each env variable column exists
-  if (var %in% colnames(bio_oracle_2010)) {
-    
-    # Select the relevant column from bio_oracle_sites_present
-    env_data <- bio_oracle_2010 %>% dplyr::select(longitude, latitude, all_of(var))
-    
-    # Convert the data to matrix of coordinates and values
-    coordinates <- cbind(env_data$longitude, env_data$latitude)
-    
-    # Rasterize the data onto the study_raster template
-    env_raster <- rasterize(coordinates, study_raster, env_data[[var]], fun = mean, na.rm = TRUE)
-    common_zlim <- c(10, 26)
-    
-    # Plot the raster for the current environmental variable
-    pdf(paste("output/figures/enviro/Bio-oracle/Raster_bio-oracle_present_",var,".pdf", sep = ""), width = 3.1, height = 5)
-    plot(env_raster, xlim = c(-130, 115), ylim = c(33, 46), col = mycolors, axes = TRUE, box = FALSE, xlab="Longitude", ylab="Latitude") 
-    dev.off()
- 
-    # Save the raster to a file
-    raster_filename <- paste0("data/processed/GEA/enviro_data/Bio-oracle/tif_files/bio-oracle_present_", var, "_raster.tif")
-    writeRaster(env_raster, filename = raster_filename, format = "GTiff", overwrite = TRUE)
-  } else {
-    warning(paste("Environmental variable", var, "not found in bio_oracle_2010"))
-  }
-}
-
-# ================================================================================== #
-
-# Save full path of tif files as envtif
-env_tif <- list.files("data/processed/GEA/enviro_data/Bio-oracle/tif_files/", pattern ="bio-oracle_present_", full.names = TRUE)
-
-# Stack tif files
-env_stack <- stack(env_tif)
-
-# ================================================================================== #
-
-# Convert the raster stack to a dataframe
-env_values <- as.data.frame(raster::extract(env_stack, 1:ncell(env_stack), df = TRUE))
-env_values$cell <- 1:nrow(env_values)
-
-# ================================================================================== #
-
-# Save the raster stack
-writeRaster(env_stack, "data/processed/GEA/enviro_data/Bio-oracle/tif_files/bio-oracle_env_present_stack_raster.tif", format = "GTiff")
-
-# ================================================================================== #
-# ================================================================================== #
-
-# Create rasters for future data
-
-# Loop through environmental variables and rasterize each dataset
-for (var in env_variables) {
-  
-  # Ensure that each env variable column exists
-  if (var %in% colnames(bio_oracle_ssp585_2090)) {
-    
-    # Select the relevant column from bio_oracle_sites_present
-    env_data <- bio_oracle_ssp585_2090 %>% dplyr::select(longitude, latitude, all_of(var))
-    
-    # Convert the data to matrix of coordinates and values
-    coordinates <- cbind(env_data$longitude, env_data$latitude)
-    
-    # Rasterize the data onto the study_raster template
-    env_raster <- rasterize(coordinates, study_raster, env_data[[var]], fun = mean, na.rm = TRUE)
-    common_zlim <- c(10, 26)
-    
-    # Plot the raster for the current environmental variable
-    pdf(paste("output/figures/enviro/Bio-oracle/Raster_bio-oracle_ssp585_",var,".pdf", sep = ""), width = 3.1, height = 5)
-    plot(env_raster, xlim = c(-130, 115), ylim = c(33, 46), col = mycolors, axes = TRUE, box = FALSE, xlab="Longitude", ylab="Latitude") 
-    dev.off()
- 
-    # Save the raster to a file
-    raster_filename <- paste0("data/processed/GEA/enviro_data/Bio-oracle/tif_files/bio-oracle_ssp585", var, "_raster.tif")
-    writeRaster(env_raster, filename = raster_filename, format = "GTiff", overwrite = TRUE)
-  } else {
-    warning(paste("Environmental variable", var, "not found in bio_oracle_ssp585_2090"))
-  }
-}
-
-# ================================================================================== #
-
-# Save full path of tif files as envtif
-env_ssp585_tif <- list.files("data/processed/GEA/enviro_data/Bio-oracle/tif_files/", pattern ="bio-oracle_ssp585", full.names = TRUE)
-
-# Stack tif files
-env_ssp585_stack <- stack(env_ssp585_tif)
-
-# ================================================================================== #
-
-# Convert the raster stack to a dataframe
-env_ssp585_values <- as.data.frame(raster::extract(env_ssp585_stack, 1:ncell(env_ssp585_stack), df = TRUE))
-env_ssp585_values$cell <- 1:nrow(env_ssp585_values)
-
-# ================================================================================== #
-
-# Save the raster stack
-writeRaster(env_ssp585_stack, "data/processed/GEA/enviro_data/Bio-oracle/tif_files/bio-oracle_env_ssp585_stack_raster.tif", format = "GTiff")
-
-# ================================================================================== #
-
+# Graph pH future (note: reversed colors since low pH is the stressor)
+pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_ph_mean_FUTURE_ggplot_alt.pdf",  width = 6, height = 8) 
+ggplot(raster_df_ph_future, aes(x = x, y = y, fill = layer)) +
+  geom_raster(aes(fill=layer)) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  scale_fill_gradientn(colours=rev(brewer.pal(6, "YlOrRd")), name="ph future", breaks = c(7.62, 7.66, 7.70, 7.74)) +
+  coord_fixed(ratio = 1) +  # Fix aspect ratio so the plot is not distorted
+  theme_bw(base_size = 27) + #xlim(c(-126, -117)) + ylim(c(32, 47)) +
+  labs(x = "Longitude", y = "Latitude") +
+  theme(legend.title = element_text(size = 20), legend.text = element_text(size = 16), legend.position = c(0.75, 0.53), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+  #theme(plot.title = element_text(hjust=0.5))
+dev.off()

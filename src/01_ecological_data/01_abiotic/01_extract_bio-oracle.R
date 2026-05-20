@@ -187,5 +187,5 @@ for (dataset in datasets) {
 
 
 # Check list of files in output directory
-list.files(out_dir)
+list.files(out_dir_future)
 
