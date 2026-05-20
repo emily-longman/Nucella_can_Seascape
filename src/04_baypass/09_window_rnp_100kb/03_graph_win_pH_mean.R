@@ -118,21 +118,17 @@ ggplot(win.out.order, aes(y=-log10(rnp.binom.POD), x=chr.unique)) +
 dev.off()
 
 # Graph rnp geomline
-pdf("output/figures/baypass/window_summary/baypass_window_ph_mean_rnpPOD_geomline.pdf", width = 12, height = 6)
-ggplot(win.out.order, aes(y=-log10(rnp.binom.POD), x=chr.unique)) + 
-  geom_line( ) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed") +
-  theme_bw(base_size=26) + theme(legend.position = "none")
-dev.off()
 pdf("output/figures/baypass/window_summary/baypass_window_ph_mean_rnpPOD_geomline_wider.pdf", width = 12, height = 3)
-ggplot(win.out.order, aes(y=-log10(rnp.binom.POD), x=chr.unique)) + 
+ggplot(win.out.order, aes(y=-log10(rnp.binom.POD), x=chr.unique)) + ylab("100kb Window\nEnrichment") + xlab("Scaffold") +
   geom_line( ) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed") +
-  theme_bw(base_size=26) + theme(legend.position = "none")
+  theme_bw(base_size=18) + theme(legend.position = "none") + theme(plot.margin = margin(t = 40, r = 30, b = 20, l = 20, unit = "pt"))
 dev.off()
 
+# Graph Windows
 pdf("output/figures/baypass/window_summary/baypass_window_ph_mean_rnpPOD_geomline_bywindows.pdf", width = 12, height = 3)
-ggplot(win.out.order, aes(y=-log10(rnp.binom.POD), x=win)) + 
+ggplot(win.out.order, aes(y=-log10(rnp.binom.POD), x=win)) + ylab("100kb Window\nEnrichment") + xlab("               Window") +
   geom_line( ) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed") +
-  theme_bw(base_size=24) + theme(legend.position = "none")
+  theme_bw(base_size=18) + theme(legend.position = "none") #+ theme(plot.margin = margin(t = 40, r = 30, b = 20, l = 20, unit = "pt"))
 dev.off()
 
 # ================================================================================== #
@@ -165,6 +161,7 @@ outlier.win.SNPs <- outlier.win.SNPs %>% mutate(SNP_id = paste(chr, pos, sep = "
 
 # Save outlier SNPs
 write.csv(outlier.win.SNPs, "data/processed/baypass/window_summary/window_100kb_ph_mean_outlier_SNPs.csv", row.names=FALSE)
+outlier.win.SNPs <- read.csv("data/processed/baypass/window_summary/window_100kb_ph_mean_outlier_SNPs.csv", header=T)
 
 #--------------------------------------------------------------------------------
 
@@ -240,14 +237,24 @@ write.csv(outlier.win.SNPs.annotated, "data/processed/baypass/window_summary/out
 #--------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------
 
+# Load windows
+win.out.order.outliers <- read.csv("data/processed/baypass/window_summary/window_100kb_analysis_ph_mean_outliers.csv", header=T)
 
-# Extract SNPs within top outlier window (i.e., on chr ntLink_3821)
-outlier.win.ntlink3821 <- outlier.win.SNPs %>% filter(chr == "ntLink_3821")
+# Extract just top window (ntLink_3821, pos: 268 to 100162)
+top.win <- win.out.order.outliers[which(win.out.order.outliers$rnp.binom.POD == min(win.out.order.outliers$rnp.binom.POD)),]
+
+# Extract bf for top win
+outlier.win.SNPs.top.win <- outlier.win.SNPs[which(outlier.win.SNPs$chr == top.win$chr & 
+      outlier.win.SNPs$pos >= top.win$pos_min & 
+      outlier.win.SNPs$pos <= top.win$pos_max), ]
+
+# Extract SNPs within top outlier window (i.e., on chr ntLink_3821) - faster way
+#outlier.win.ntlink3821 <- outlier.win.SNPs %>% filter(chr == "ntLink_3821")
 
 # Graph BF for each SNP
-pdf("output/figures/baypass/window_summary/baypass_ph_mean_BF_ntLink_3821.pdf", width = 10, height = 4)
-ggplot(outlier.win.ntlink3821, aes(y=bf_db.mean, x=pos/1000)) + labs(x="Position (kb)", y="BF") +
-  geom_rect(aes(xmin=268/1000, xmax=62689/1000, ymin=-Inf, ymax=Inf), fill="grey", alpha=0.5) +
+pdf("output/figures/baypass/window_summary/baypass_ph_mean_BF_topwin.pdf", width = 8.25, height = 4.5)
+ggplot(outlier.win.SNPs.top.win, aes(y=bf_db.mean, x=pos/1000)) + labs(x="Position (kb)", y="BF") +
+  geom_rect(aes(xmin=1/1000, xmax=58041/1000, ymin=-Inf, ymax=Inf), fill="grey", alpha=0.5) +
   geom_point(alpha=0.8, size=3.5, aes(colour = cut(bf_db.mean, c(-Inf, 20, Inf)))) + 
   scale_color_manual(values = c("(-Inf,20]" = "black", "(20, Inf]" = "blue")) +
   geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red", linetype="dashed") +
@@ -255,14 +262,15 @@ ggplot(outlier.win.ntlink3821, aes(y=bf_db.mean, x=pos/1000)) + labs(x="Position
   theme_bw(base_size=30) + theme(legend.position = "none")
 dev.off()
 
-# Graph BF for each SNP - geom_line
-pdf("output/figures/baypass/window_summary/baypass_ph_mean_BF_ntLink_3821_geomline.pdf", width = 8, height = 4)
-ggplot(outlier.win.ntlink3821, aes(y=bf_db.mean, x=pos)) + labs(x="Position", y="BF") +
-  geom_line() + geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red", linetype="dashed") +
-  theme_bw(base_size=26) + theme(legend.position = "none")
+pdf("output/figures/baypass/window_summary/baypass_ph_mean_BF_topwin_wider.pdf", width = 10, height = 4.5)
+ggplot(outlier.win.SNPs.top.win, aes(y=bf_db.mean, x=pos/1000)) + labs(x="Position (kb)", y="BF") +
+  geom_rect(aes(xmin=1/1000, xmax=58041/1000, ymin=-Inf, ymax=Inf), fill="grey", alpha=0.5) +
+  geom_point(alpha=0.8, size=3.5, aes(colour = cut(bf_db.mean, c(-Inf, 20, Inf)))) + 
+  scale_color_manual(values = c("(-Inf,20]" = "black", "(20, Inf]" = "blue")) +
+  geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red", linetype="dashed") +
+  geom_hline(yintercept=0, col="black", linetype="solid") +
+  theme_bw(base_size=30) + theme(legend.position = "none")
 dev.off()
-
-
 
 
 
