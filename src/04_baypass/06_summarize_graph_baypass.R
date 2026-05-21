@@ -346,14 +346,14 @@ bf.McaliIntThk.mean.sum <- bf.McaliIntThk.mean %>% group_by(chr, pos, allele1, a
             bf_db.var=var(bf_db), eBPis.mean=mean(eBPis), eBPis.median=median(eBPis), eBPis.var=var(eBPis))
 
 # Save
-save(bf.McaliIntThk.mean.sum, file="data/processed/baypass/biotic/bf.Mcali.IntThk.sum.Rdata")
+save(bf.McaliIntThk.mean.sum, file="data/processed/baypass/biotic/bf.Mcali.IntThk.sum.17pop.Rdata")
 
-#load("data/processed/baypass/biotic/bf.Mcali.IntThk.sum.Rdata")
+#load("data/processed/baypass/biotic/bf.Mcali.IntThk.sum.17pop.Rdata")
 
 # ================================================================================== #
 
 # Graph BF with 0.001 POD threshold
-pdf("output/figures/baypass/baypass_BF_Mcali_IntegratedThk_repmeans.pdf", width = 12, height = 8)
+pdf("output/figures/baypass/baypass_BF_Mcali_IntegratedThk_17pop_repmeans.pdf", width = 12, height = 8)
 ggplot(bf.McaliIntThk.mean.sum, aes(y=bf_db.mean, x=chr)) + 
   labs(x = "Position", y = "BF (in dB)") +
   geom_point(alpha=0.6) + 
@@ -364,7 +364,7 @@ ggplot(bf.McaliIntThk.mean.sum, aes(y=bf_db.mean, x=chr)) +
 dev.off()
 
 # Graph BF with 0.001 POD threshold - only BF > 0
-pdf("output/figures/baypass/baypass_BF_Mcali_IntegratedThk_repmeans_posBF.pdf", width = 12, height = 8)
+pdf("output/figures/baypass/baypass_BF_Mcali_IntegratedThk_17pop_repmeans_posBF.pdf", width = 12, height = 8)
 ggplot(bf.McaliIntThk.mean.sum[which(bf.McaliIntThk.mean.sum$bf_db.mean>0),], aes(y=bf_db.mean, x=chr)) + 
   labs(x = "Position", y = "BF (in dB)") +
   geom_point(alpha=0.6) + 
@@ -378,8 +378,8 @@ dev.off()
 
 # Identify patterns in bayes factors
 
-# Mcali Integrated Thk - XXXX SNPs with BF > threshold
+# Mcali Integrated Thk - 3,712 SNPs with BF > threshold
 bf.McaliIntThk.mean.sum.outliers <- bf.McaliIntThk.mean.sum[which(bf.McaliIntThk.mean.sum$bf_db.mean > bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)]),]
 bf.McaliIntThk.mean.sum.outliers <- bf.McaliIntThk.mean.sum.outliers %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
-write.csv(bf.McaliIntThk.mean.sum.outliers, "data/processed/baypass/bf.McaliIntThk.mean.sum.outliers.csv", row.names = F, quote = F)
+write.csv(bf.McaliIntThk.mean.sum.outliers, "data/processed/baypass/bf.McaliIntThk.mean.sum.17pop.outliers.csv", row.names = F, quote = F)
 
