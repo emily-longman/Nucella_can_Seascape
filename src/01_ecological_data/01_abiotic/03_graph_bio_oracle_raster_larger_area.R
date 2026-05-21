@@ -135,8 +135,13 @@ writeRaster(temp_raster, filename = "output/figures/enviro/Bio-oracle/Test_bioor
 # Change to data frame
 raster_df_temp <- as.data.frame(temp_raster, xy = TRUE, na.rm = TRUE)
 raster_df_ph <- as.data.frame(ph_raster, xy = TRUE, na.rm = TRUE)
-
+# Future
 raster_df_ph_future <- as.data.frame(ph_future_raster, xy = TRUE, na.rm = TRUE)
+# Join raster files and calc diff
+raster_df_ph.tmp <- raster_df_ph %>% rename(current = layer)
+raster_df_ph_future.tmp <- raster_df_ph_future %>% rename(future = layer)
+raster_df_ph_diff <- left_join(raster_df_ph.tmp, raster_df_ph_future.tmp)
+raster_df_ph_diff <- raster_df_ph_diff %>% mutate(diff = future-current)
 
 # Graph temp
 pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_temp_mean_ggplot.pdf", width = 3.5, height = 5)
@@ -172,6 +177,21 @@ ggplot(raster_df_ph_future, aes(x = x, y = y, fill = layer)) +
   scale_x_continuous(expand = c(0, 0)) +
   scale_y_continuous(expand = c(0, 0)) +
   scale_fill_gradientn(colours=rev(brewer.pal(6, "YlOrRd")), name="ph future", breaks = c(7.62, 7.66, 7.70, 7.74)) +
+  coord_fixed(ratio = 1) +  # Fix aspect ratio so the plot is not distorted
+  theme_bw(base_size = 27) + #xlim(c(-126, -117)) + ylim(c(32, 47)) +
+  labs(x = "Longitude", y = "Latitude") +
+  theme(legend.title = element_text(size = 20), legend.text = element_text(size = 16), legend.position = c(0.75, 0.53), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+  #theme(plot.title = element_text(hjust=0.5))
+dev.off()
+
+
+# Graph pH future (note: reversed colors since low pH is the stressor)
+pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_ph_mean_TEMPORAL_DIFF_ggplot_alt.pdf",  width = 6, height = 8) 
+ggplot(raster_df_ph_diff, aes(x = x, y = y, fill = diff)) +
+  geom_raster(aes(fill=diff)) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  scale_fill_gradientn(colours=rev(brewer.pal(6, "YlOrRd")), name="ph diff") +
   coord_fixed(ratio = 1) +  # Fix aspect ratio so the plot is not distorted
   theme_bw(base_size = 27) + #xlim(c(-126, -117)) + ylim(c(32, 47)) +
   labs(x = "Longitude", y = "Latitude") +

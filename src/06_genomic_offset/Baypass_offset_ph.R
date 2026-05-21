@@ -183,7 +183,7 @@ Ncan_GO_scaled <- compute_genetic_offset(
         beta.coef = NULL, 
         regfile = "data/processed/baypass/abiotic/ph_mean/NC_abiotic_ph_mean_run_all_summary_betai_reg.out", 
         covfile = "guide_files/Baypass_ph_mean_scaled.txt",
-        newenv = ph.cov.file.future, scalecov = TRUE, compute.rona = TRUE)
+        newenv = ph.cov.file.future.scaled, scalecov = TRUE, compute.rona = TRUE)
 
 # Extract matrix of gGO estimates between all reference (rows) and target environments (columns)
 go.scaled.matrix <- Ncan_GO_scaled$go
@@ -232,6 +232,8 @@ ggplot(data = west_coast) +
   xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 27) + 
   theme(legend.title = element_text(size = 24), legend.text = element_text(size = 16), legend.position = c(0.98, 0.52))
 dev.off()
+
+
 
 # ================================================================================== #
 # ================================================================================== #
