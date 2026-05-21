@@ -222,14 +222,7 @@ ggplot(baypass.ph.xtx.sum.top.win, aes(y=XtXst_mean, x=pos/1000)) + labs(x="Posi
   theme_bw(base_size=30) + theme(legend.position = "none")
 dev.off()
 
-pdf("output/figures/baypass/window_summary/baypass_ph_mean_xtx_corrected_topwin.pdf", width = 8, height = 4.5)
-ggplot(baypass.ph.xtx.sum.top.win, aes(y=M_XtX_mean, x=pos/1000)) + labs(x="Position (kb)", y=expression(paste(italic("XtX"), "corrected")))+
-  geom_rect(aes(xmin=1/1000, xmax=58041/1000, ymin=-Inf, ymax=Inf), fill="grey", alpha=0.5) +
-  geom_point(alpha=0.8, size=3.5) + ylim(0,35) +
-  geom_hline(yintercept=baypass.ph.xtx.POD.thr$M_XtX_mean[which(baypass.ph.xtx.POD.thr$thr==0.999)], col="red", linetype="dashed") +
-  theme_bw(base_size=30) + theme(legend.position = "none")
-dev.off()
-
+# Graph xtx for each SNP within window - geom_line
 pdf("output/figures/baypass/window_summary/baypass_ph_mean_xtx_topwin_geomline.pdf", width = 8, height = 4.5)
 ggplot(baypass.ph.xtx.sum.top.win, aes(y=XtXst_mean, x=pos/1000)) + labs(x="Position (kb)", y="XtX") +
   geom_rect(aes(xmin=1/1000, xmax=58041/1000, ymin=-Inf, ymax=Inf), fill="grey", alpha=0.5) +
@@ -238,4 +231,12 @@ ggplot(baypass.ph.xtx.sum.top.win, aes(y=XtXst_mean, x=pos/1000)) + labs(x="Posi
   theme_bw(base_size=30) + theme(legend.position = "none")
 dev.off()
 
+# Graph corrected xtx for each SNP within window
+pdf("output/figures/baypass/window_summary/baypass_ph_mean_xtx_corrected_topwin.pdf", width = 8, height = 4.5)
+ggplot(baypass.ph.xtx.sum.top.win, aes(y=M_XtX_mean, x=pos/1000)) + labs(x="Position (kb)", y=expression(paste(italic("XtX"), "corrected")))+
+  geom_rect(aes(xmin=1/1000, xmax=58041/1000, ymin=-Inf, ymax=Inf), fill="grey", alpha=0.5) +
+  geom_point(alpha=0.8, size=3.5) + ylim(0,35) +
+  geom_hline(yintercept=baypass.ph.xtx.POD.thr$M_XtX_mean[which(baypass.ph.xtx.POD.thr$thr==0.999)], col="red", linetype="dashed") +
+  theme_bw(base_size=30) + theme(legend.position = "none")
+dev.off()
 
