@@ -33,22 +33,31 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 
 # ================================================================================== #
 
-# Load data
-outlier.win.SNPs.annotated.ph_mean <- read.csv("data/processed/baypass/window_summary/outlier.win.SNPs.annotated.ph_mean.csv", header=T)
-outlier.win.SNPs.annotated.Mtross_mean <- read.csv("data/processed/baypass/window_summary/outlier.win.SNPs.annotated.Mtross_mean.csv", header=T)
-outlier.win.SNPs.annotated.McaliIntThk <- read.csv("data/processed/baypass/window_summary/outlier.win.SNPs.annotated.McaliIntThk.csv", header=T)
+# Read in SNP data
+snp.meta <- read.table("data/processed/baypass/input_files/snpdet", header=F)
+# Re-name snp metadata
+colnames(snp.meta) <- c("chr", "pos", "allele1", "allele2")
+
+# Load data - outliers for pH and Mcali based on beating POD BF threshold
+bf.ph.mean.sum.outliers.annotated <- read.csv("data/processed/baypass/bf.ph.mean.sum.outliers.annotated.csv", header = T)
+bf.McaliIntThk.mean.sum.outliers.annotated <- read.csv("data/processed/baypass/bf.McaliIntThk.mean.sum.outliers.annotated.csv", header = T)
+
+# ================================================================================== #
 
 # Summarize each list based on annotation
-ph_ann_sum <- outlier.win.SNPs.annotated.ph_mean %>% count(Annotation) %>% rename(ph = n)
-Mtross_ann_sum <- outlier.win.SNPs.annotated.Mtross_mean %>% count(Annotation) %>% rename(Mtross = n)
-McaliIntThk_ann_sum <- outlier.win.SNPs.annotated.McaliIntThk %>% count(Annotation) %>% rename(McaliIntThk = n)
+ph_ann_sum <- bf.ph.mean.sum.outliers.annotated %>% count(Annotation) %>% rename(ph = n)
+McaliIntThk_ann_sum <- bf.McaliIntThk.mean.sum.outliers.annotated %>% count(Annotation) %>% rename(McaliIntThk = n)
 
 # Join data
-ann <- full_join(ph_ann_sum, Mtross_ann_sum)
-ann <- full_join(ann, McaliIntThk_ann_sum)
+ann <- full_join(ph_ann_sum, McaliIntThk_ann_sum)
 ann[is.na(ann)] <- 0
 row.names(ann) <- ann$Annotation
-ann <- ann[,c(2:4)]
+
+# ================================================================================== #
+
+
+
+
 
 # Subset for just common ann
 ann.sub <- ann[c("3_prime_UTR_variant", "5_prime_UTR_variant", "downstream_gene_variant", "intergenic_region", "intron_variant", "missense_variant", "synonymous_variant", "upstream_gene_variant"),]
@@ -60,7 +69,3 @@ dev.off()
 # Fishers exact test (Monte Carlo simulation with 2,000 simulations)
 ftest <- fisher.test(ann.sub, simulate.p.value = TRUE, B = 2000)
 
-# Chi-sq test
-chisq.test(ann.sub)
-
-# So they are different, but is it bc pH just has more outliers overall?

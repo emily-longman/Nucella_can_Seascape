@@ -113,6 +113,35 @@ dev.off()
 # ================================================================================== #
 # ================================================================================== #
 
+# Rename cols
+bf.ph.mean.sum <- bf.ph.mean.sum %>% rename(bf_db.mean.ph = bf_db.mean, bf_db.median.ph = bf_db.median, bf_db.var.ph = bf_db.var, 
+eBPis.mean.ph = eBPis.mean, eBPis.median.ph = eBPis.median, eBPis.var.ph = eBPis.var)
+
+# pH and Mcali
+bf.ph.Mcali.sum <- left_join(bf.ph.mean.sum, bf.McaliIntThk.mean.sum, by=c("chr", "pos", "allele1", "allele2", "MRK"))
+
+# Graph phenotypic data vs ph
+pdf("output/figures/baypass/BF_ph_vs_Mcali.pdf", width = 8, height = 8)
+ggplot(bf.ph.Mcali.sum, aes(x=bf_db.mean.ph, y=bf_db.mean)) +
+  labs(x = "BF pH", y = "BF Mcali") +
+  geom_point(alpha=0.6) +
+  geom_vline(xintercept=bf.POD.thr.ph$bf_db.mean[which(bf.POD.thr.ph$thr==0.999)], col="red") +
+  geom_hline(yintercept=bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)], col="red") +
+  theme_classic(base_size = 26)
+dev.off()
+
+pdf("output/figures/baypass/BF_ph_vs_Mcali_posBF.pdf", width = 8, height = 8)
+ggplot(bf.ph.Mcali.sum[which(bf.ph.Mcali.sum$bf_db.mean.ph>0 & bf.ph.Mcali.sum$bf_db.mean>0),], aes(x=bf_db.mean.ph, y=bf_db.mean)) +
+  labs(x = "BF pH", y = "BF Mcali") +
+  geom_point(alpha=0.6) +
+  geom_vline(xintercept=bf.POD.thr.ph$bf_db.mean[which(bf.POD.thr.ph$thr==0.999)], col="red") +
+  geom_hline(yintercept=bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)], col="red") +
+  theme_classic(base_size = 26)
+dev.off()
+
+# ================================================================================== #
+# ================================================================================== #
+
 # Join pheno and pH
 bf.ph.mean.sum.pheno <- left_join(bf.ph.mean.sum, bf.drilling.mean.sum, by=c("chr", "pos", "allele1", "allele2", "MRK"))
 

@@ -116,17 +116,24 @@ afs.ph <- afs.ph %>% mutate(Site = factor(Site, levels = lat.order))
 viridiscolors <- viridis(n=19)
 
 # Subset so only SNPs with BF > 20 or >18
-afs.ph.BF <- afs.ph %>% filter(SNP_id %in% bf.ph.mean.g27343[which(bf.ph.mean.g27343$bf_db.mean > 20),]$SNP_id)
+afs.ph.BF.20 <- afs.ph %>% filter(SNP_id %in% bf.ph.mean.g27343[which(bf.ph.mean.g27343$bf_db.mean > 20),]$SNP_id)
 afs.ph.BF19 <- afs.ph %>% filter(SNP_id %in% bf.ph.mean.g27343[which(bf.ph.mean.g27343$bf_db.mean > 19),]$SNP_id)
 afs.ph.BF18 <- afs.ph %>% filter(SNP_id %in% bf.ph.mean.g27343[which(bf.ph.mean.g27343$bf_db.mean > 18),]$SNP_id)
 
 # Graph and color by Site
 pdf("output/figures/baypass/outliers/pH_g27343_BF20.pdf", width = 18, height = 4)
-ggplot(afs.ph.BF, aes(x=AF, y=ph_mean, fill=Site)) +
+ggplot(afs.ph.BF.20, aes(x=AF, y=ph_mean, fill=Site)) +
   geom_point(alpha=0.6, size = 4, shape = 21) + labs(x="Allele Frequency", y="pH") +
   facet_wrap(~SNP_id, ncol = 4) + scale_fill_manual(values = viridiscolors) +
   scale_x_continuous(breaks = seq(0, 1, by = 0.5)) +
   theme_bw(base_size = 26) + theme(legend.position="none")
+dev.off()
+pdf("output/figures/baypass/outliers/pH_g27343_BF20_2col.pdf", width = 9, height = 8)
+ggplot(afs.ph.BF.20, aes(x=AF, y=ph_mean, fill=Site)) +
+  geom_point(alpha=0.6, size = 4, shape = 21) + labs(x="Allele Frequency", y="pH") +
+  facet_wrap(~SNP_id, ncol = 2) + scale_fill_manual(values = viridiscolors) +
+  scale_x_continuous(breaks = seq(0, 1, by = 0.5)) +
+  theme_bw(base_size = 30) + theme(legend.position="none")
 dev.off()
 
 # Graph and color by Site
@@ -216,6 +223,13 @@ baypass.ph.xtx.sum.top.win <- baypass.ph.xtx.sum[which(baypass.ph.xtx.sum$chr ==
 # Graph xtx for each SNP within window
 pdf("output/figures/baypass/window_summary/baypass_ph_mean_xtx_topwin.pdf", width = 8, height = 4.5)
 ggplot(baypass.ph.xtx.sum.top.win, aes(y=XtXst_mean, x=pos/1000)) + labs(x="Position (kb)", y=expression(italic("XtX")))+
+  geom_rect(aes(xmin=1/1000, xmax=58041/1000, ymin=-Inf, ymax=Inf), fill="grey", alpha=0.5) +
+  geom_point(alpha=0.8, size=3.5) + ylim(0,50) +
+  geom_hline(yintercept=baypass.ph.xtx.POD.thr$XtXst_mean[which(baypass.ph.xtx.POD.thr$thr==0.999)], col="red", linetype="dashed") +
+  theme_bw(base_size=30) + theme(legend.position = "none")
+dev.off()
+pdf("output/figures/baypass/window_summary/baypass_ph_mean_xtx_topwin_wider.pdf", width = 9.815, height = 4.5)
+ggplot(baypass.ph.xtx.sum.top.win, aes(y=XtXst_mean, x=pos/1000)) + labs(x="Position (kb)", y="XtX")+
   geom_rect(aes(xmin=1/1000, xmax=58041/1000, ymin=-Inf, ymax=Inf), fill="grey", alpha=0.5) +
   geom_point(alpha=0.8, size=3.5) + ylim(0,50) +
   geom_hline(yintercept=baypass.ph.xtx.POD.thr$XtXst_mean[which(baypass.ph.xtx.POD.thr$thr==0.999)], col="red", linetype="dashed") +
