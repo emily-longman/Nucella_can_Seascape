@@ -236,3 +236,83 @@ dev.off()
 bf.McaliIntThk.mean.sum.outliers <- bf.McaliIntThk.mean.sum[which(bf.McaliIntThk.mean.sum$bf_db.mean > bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)]),]
 bf.McaliIntThk.mean.sum.outliers <- bf.McaliIntThk.mean.sum.outliers %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 write.csv(bf.McaliIntThk.mean.sum.outliers, "data/processed/baypass/bf.McaliIntThk.mean.sum.outliers.csv", row.names = F, quote = F)
+
+
+
+
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
+
+
+
+# Load POD thresholds
+load("data/processed/baypass/abiotic/ph_mean_scaled_POD_thr.Rdata")
+
+# Read in Baypass pH mean files
+
+# Load BF output for 5 replicate Baypass runs
+bf.ph.scaled.mean <- foreach(i=1:5, .combine = rbind)%do%{
+    message(i)
+    tmp <- fread(paste("data/processed/baypass/abiotic/ph_mean_scaled/NC_abiotic_ph_mean_scaled_run", i, "_summary_betai_reg.out", sep=""))
+    tmp[,rep:=i]
+    tmp <- cbind(snp.meta, tmp)
+    return(tmp)
+}
+
+# Change column names
+setnames(bf.ph.scaled.mean, "BF(dB)", "bf_db")
+
+# ================================================================================== #
+
+# Average BF across replicate runs
+bf.ph.scaled.mean.sum <- bf.ph.scaled.mean %>% group_by(chr, pos, allele1, allele2, MRK) %>% 
+    reframe(bf_db.mean = mean(bf_db), bf_db.median = median(bf_db),
+            bf_db.var=var(bf_db), eBPis.mean=mean(eBPis), eBPis.median=median(eBPis), eBPis.var=var(eBPis))
+
+# Save
+save(bf.ph.scaled.mean.sum, file="data/processed/baypass/abiotic/bf.ph.scaled.mean.sum.Rdata")
+
+#load("data/processed/baypass/abiotic/bf.ph.scaled.mean.sum.Rdata")
+
+# ================================================================================== #
+
+# Graph BF with 0.001 POD threshold
+pdf("output/figures/baypass/baypass_BF_ph_mean_scaled_repmeans.pdf", width = 12, height = 8)
+ggplot(bf.ph.scaled.mean.sum, aes(y=bf_db.mean, x=chr)) + 
+  labs(x = "Position", y = "BF (in dB)") +
+  geom_point(alpha=0.6) + 
+  geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red") +
+  theme_classic(base_size = 20) +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(),
+        axis.text.y = element_text(size = 12))
+dev.off()
+
+# Graph BF with 0.001 POD threshold - only BF > 0
+pdf("output/figures/baypass/baypass_BF_ph_mean_scaled_repmeans_posBF.pdf", width = 12, height = 8)
+ggplot(bf.ph.scaled.mean.sum[which(bf.ph.scaled.mean.sum$bf_db.mean>0),], aes(y=bf_db.mean, x=chr)) + 
+  labs(x = "Position", y = "BF (in dB)") +
+  geom_point(alpha=0.6) + 
+  geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red") +
+  theme_classic(base_size = 20) +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(),
+        axis.text.y = element_text(size = 12))
+dev.off()
+
+# ================================================================================== #
+
+# Identify patterns in bayes factors
+
+# pH mean - 1,810 SNPs with BF > threshold
+bf.ph.scaled.mean.sum.outliers <- bf.ph.scaled.mean.sum[which(bf.ph.scaled.mean.sum$bf_db.mean > bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)]),]
+bf.ph.scaled.mean.sum.outliers <- bf.ph.scaled.mean.sum.outliers %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
+write.csv(bf.ph.scaled.mean.sum.outliers, "data/processed/baypass/bf.ph.scaled.mean.sum.outliers.csv", row.names = F, quote = F)
