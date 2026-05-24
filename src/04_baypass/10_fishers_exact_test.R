@@ -23,6 +23,13 @@ library(tidyverse)
 library(foreach)
 library(dplyr)
 
+# Load SeqArray
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install(version = "3.20")
+BiocManager::install("SeqArray")
+library(SeqArray)
+
 # ================================================================================== #
 
 # Generate output directories
@@ -53,11 +60,47 @@ ann <- full_join(ph_ann_sum, McaliIntThk_ann_sum)
 ann[is.na(ann)] <- 0
 row.names(ann) <- ann$Annotation
 
+#--------------------------------------------------------------------------------
+
+# Open the GDS file
+genofile <- seqOpen("data/processed/outlier_analyses/snpeff/N.canaliculata_annotated_SNPs.gds")
+
+#--------------------------------------------------------------------------------
+
+# Extract SNP data from GDS
+snp.dt <- data.table(
+        chr=seqGetData(genofile, "chromosome"),
+        pos=seqGetData(genofile, "position"),
+        nAlleles=seqGetData(genofile, "$num_allele"),
+        id=seqGetData(genofile, "variant.id")) %>%
+    mutate(SNP_id = paste(chr, pos, sep = "_"))
+
 # ================================================================================== #
 
+# Summarize specific fields
+
+seqResetFilter(genofile)
+# Extract SNP_id for SNP i
+tmp.i = snp.dt[1,]$SNP_id
+pos.tmp = snp.dt %>% filter(SNP_id %in% tmp.i) %>% .$id
+
+seqSetFilter(genofile, variant.id = pos.tmp)
+
+
+ann_data <- seqGetData(genofile, "annotation/info/ANN")$data
 
 
 
+  foreach(k=1:L, .combine = "rbind")%do%{
+    tmp = ann_data[k] 
+    tmp2= str_split(tmp, "\\|")
+  
+    data.frame(
+      Annotation = tmp2[[1]][2],
+      )
+      }
+
+### FIRST PASS
 
 # Subset for just common ann
 ann.sub <- ann[c("3_prime_UTR_variant", "5_prime_UTR_variant", "downstream_gene_variant", "intergenic_region", "intron_variant", "missense_variant", "synonymous_variant", "upstream_gene_variant"),]
