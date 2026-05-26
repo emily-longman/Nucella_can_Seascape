@@ -23,19 +23,12 @@ library(tidyverse)
 library(foreach)
 library(dplyr)
 
-# Load SeqArray
-if (!require("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
-BiocManager::install(version = "3.20")
-BiocManager::install("SeqArray")
-library(SeqArray)
-
 # ================================================================================== #
 
 # Generate output directories
 
 # Figure directory
-out_fig_dir <- paste("output/figures/baypass/window_summary")
+out_fig_dir <- paste("output/figures/outlier_analyses")
 if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 
 # ================================================================================== #
@@ -49,6 +42,9 @@ colnames(snp.meta) <- c("chr", "pos", "allele1", "allele2")
 bf.ph.mean.sum.outliers.annotated <- read.csv("data/processed/baypass/bf.ph.mean.sum.outliers.annotated.csv", header = T)
 bf.McaliIntThk.mean.sum.outliers.annotated <- read.csv("data/processed/baypass/bf.McaliIntThk.mean.sum.outliers.annotated.csv", header = T)
 
+# Load annotation
+load("data/processed/outlier_analyses/Ncan.pooldata.annotations.RData")
+
 # ================================================================================== #
 
 # Summarize each list based on annotation
@@ -57,58 +53,55 @@ McaliIntThk_ann_sum <- bf.McaliIntThk.mean.sum.outliers.annotated %>% count(Anno
 
 # Join data
 ann <- full_join(ph_ann_sum, McaliIntThk_ann_sum)
+
+# Summarize full SNP list
+all_ann <- o.merge.filt %>% count(col) %>% rename(Annotation = col, genome = n)
+
+# Join data
+ann <- full_join(ann, all_ann)
 ann[is.na(ann)] <- 0
-row.names(ann) <- ann$Annotation
 
 #--------------------------------------------------------------------------------
 
-# Open the GDS file
-genofile <- seqOpen("data/processed/outlier_analyses/snpeff/N.canaliculata_annotated_SNPs.gds")
+# Subset data for common var
+ann.focal <- c("missense_variant", "synonymous_variant", "intron_variant", "intergenic_region", "upstream_gene_variant", "downstream_gene_variant")
+ann.sub <- ann %>% filter(Annotation %in% ann.focal)
 
-#--------------------------------------------------------------------------------
+# Loop through annotations and perform Fishers exact test
 
-# Extract SNP data from GDS
-snp.dt <- data.table(
-        chr=seqGetData(genofile, "chromosome"),
-        pos=seqGetData(genofile, "position"),
-        nAlleles=seqGetData(genofile, "$num_allele"),
-        id=seqGetData(genofile, "variant.id")) %>%
-    mutate(SNP_id = paste(chr, pos, sep = "_"))
-
-# ================================================================================== #
-
-# Summarize specific fields
-
-seqResetFilter(genofile)
-# Extract SNP_id for SNP i
-tmp.i = snp.dt[1,]$SNP_id
-pos.tmp = snp.dt %>% filter(SNP_id %in% tmp.i) %>% .$id
-
-seqSetFilter(genofile, variant.id = pos.tmp)
-
-
-ann_data <- seqGetData(genofile, "annotation/info/ANN")$data
-
-
-
-  foreach(k=1:L, .combine = "rbind")%do%{
-    tmp = ann_data[k] 
-    tmp2= str_split(tmp, "\\|")
+ftests <- foreach(i=ann.focal, .combine = "rbind", .errorhandling = "remove")%do%{
   
-    data.frame(
-      Annotation = tmp2[[1]][2],
-      )
-      }
+  # Create matrix for significance of focal annotation
+  ann.tmp <- matrix(c(
+            ann$ph[which(ann$Annotation==i)],
+            ann$McaliIntThk[which(ann$Annotation==i)],
+            ann$genome[which(ann$Annotation==i)]-ann$ph[which(ann$Annotation==i)],
+            ann$genome[which(ann$Annotation==i)]-ann$McaliIntThk[which(ann$Annotation==i)]),
+            nrow = 2)
 
-### FIRST PASS
+  # Fishers exact test
+  ftest_i <- fisher.test(ann.tmp)
 
-# Subset for just common ann
-ann.sub <- ann[c("3_prime_UTR_variant", "5_prime_UTR_variant", "downstream_gene_variant", "intergenic_region", "intron_variant", "missense_variant", "synonymous_variant", "upstream_gene_variant"),]
+  # Create data frame with output
+  data.frame(
+      class = i,
+      p.fet = ftest_i$p.value,
+      OR = ftest_i$estimate,
+      lci = ftest_i$conf.int[1],
+      uci = ftest_i$conf.int[2]
+    )
+}
 
-pdf("output/figures/baypass/window_summary/mosaic_plot.pdf", width = 12, height = 6)
-mosaicplot(ann.sub, color = TRUE)
+#--------------------------------------------------------------------------------
+
+# Change class to factor
+ftests$class <- factor(ftests$class, levels = ann.focal)
+
+# Graph OR of Fishers exact tests
+pdf("output/figures/outlier_analyses/Fishers_exact_test.pdf", width = 6, height = 6)
+ggplot(ftests, aes(y=log2(OR), x = class)) + 
+  geom_point(size=3.5) + 
+  geom_linerange(aes(ymin = log2(lci), ymax = log2(uci))) + 
+  geom_hline(yintercept = 0, col="black", linetype="dashed") + xlab("") +
+  theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 dev.off()
-
-# Fishers exact test (Monte Carlo simulation with 2,000 simulations)
-ftest <- fisher.test(ann.sub, simulate.p.value = TRUE, B = 2000)
-
