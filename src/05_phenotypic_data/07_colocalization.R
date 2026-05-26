@@ -113,6 +113,8 @@ dev.off()
 # ================================================================================== #
 # ================================================================================== #
 
+# Compare pH and Mcali
+
 # Rename cols
 bf.ph.mean.sum <- bf.ph.mean.sum %>% rename(bf_db.mean.ph = bf_db.mean, bf_db.median.ph = bf_db.median, bf_db.var.ph = bf_db.var, 
 eBPis.mean.ph = eBPis.mean, eBPis.median.ph = eBPis.median, eBPis.var.ph = eBPis.var)
@@ -138,6 +140,9 @@ ggplot(bf.ph.Mcali.sum[which(bf.ph.Mcali.sum$bf_db.mean.ph>0 & bf.ph.Mcali.sum$b
   geom_hline(yintercept=bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)], col="red") +
   theme_classic(base_size = 26)
 dev.off()
+
+# Which SNPs are closest to cross
+topSNP <- bf.ph.Mcali.sum[which(bf.ph.Mcali.sum$bf_db.mean.ph > 14 & bf.ph.Mcali.sum$bf_db.mean > 12),]
 
 # ================================================================================== #
 # ================================================================================== #
