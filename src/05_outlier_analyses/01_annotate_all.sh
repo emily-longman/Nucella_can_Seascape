@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=endemism
+#SBATCH --job-name=annotate_SNPs
 
 # Specify partition
 #SBATCH --partition=general
@@ -49,7 +49,7 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 # Run R script
 
-Rscript --vanilla $WORKING_FOLDER/src/06_endemism/01_endemism.R "${SLURM_ARRAY_TASK_ID}"
+Rscript --vanilla $WORKING_FOLDER/src/05_outlier_analyses/01_annotate_all.R "${SLURM_ARRAY_TASK_ID}"
 # The --vanilla option prevents restoring or saving workspaces
 
 #--------------------------------------------------------------------------------
