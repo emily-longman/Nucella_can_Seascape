@@ -23,7 +23,7 @@
 #SBATCH --cpus-per-task=25
 
 # Submit job array
-#SBATCH --array=3,5 #1-5
+#SBATCH --array=1-5
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%j.out # Standard output

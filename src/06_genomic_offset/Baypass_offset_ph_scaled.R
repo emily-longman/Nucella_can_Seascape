@@ -145,7 +145,7 @@ ggplot(data = west_coast) +
   #scale_fill_gradient(low = "cyan1", high = "gray27") + 
   #scale_fill_viridis(option="viridis", direction = -1) +
   scale_fill_gradientn(colours=brewer.pal(9, "RdPu"), name="gGO", breaks = c(0.085, 0.090, 0.095)) +
-             coord_fixed(1.3) +
+  coord_fixed(1.3) +
   xlim(c(-125, -114)) +
   xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 27) + 
   theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.9, 0.52))

@@ -1,4 +1,4 @@
-# Analyze windows
+# Fisher's Exact Test of SNP types
 
 # Clear memory
 rm(list=ls())
@@ -17,11 +17,12 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'doMC'))
+#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'RColorBrewer'))
 library(data.table)
 library(tidyverse)
 library(foreach)
 library(dplyr)
+library(RColorBrewer)
 
 # ================================================================================== #
 
@@ -64,11 +65,11 @@ ann[is.na(ann)] <- 0
 #--------------------------------------------------------------------------------
 
 # Subset data for common var
-ann.focal <- c("missense_variant", "synonymous_variant", "intron_variant", "intergenic_region", "upstream_gene_variant", "downstream_gene_variant")
+ann.focal <- c("missense_variant", "synonymous_variant", "intron_variant", "intergenic_region", 
+"upstream_gene_variant", "downstream_gene_variant", "3_prime_UTR_variant", "5_prime_UTR_variant")
 ann.sub <- ann %>% filter(Annotation %in% ann.focal)
 
 # Loop through annotations and perform Fishers exact test
-
 ftests <- foreach(i=ann.focal, .combine = "rbind", .errorhandling = "remove")%do%{
   
   # Create matrix for significance of focal annotation
@@ -82,7 +83,7 @@ ftests <- foreach(i=ann.focal, .combine = "rbind", .errorhandling = "remove")%do
   # Fishers exact test
   ftest_i <- fisher.test(ann.tmp)
 
-  # Create data frame with output
+  # Create data frame with output (i, p.value, odds ratio, and 95% CI)
   data.frame(
       class = i,
       p.fet = ftest_i$p.value,
@@ -94,14 +95,30 @@ ftests <- foreach(i=ann.focal, .combine = "rbind", .errorhandling = "remove")%do
 
 #--------------------------------------------------------------------------------
 
-# Change class to factor
-ftests$class <- factor(ftests$class, levels = ann.focal)
+# Create new column for graphing
+ftests$class_graphing <- ftests$class
+ftests$class_graphing <- str_remove_all(ftests$class_graphing, "_variant")
+ftests$class_graphing <- gsub("_", " ", ftests$class_graphing)
+
+# Order classes based on OR
+ftests <- ftests %>% mutate(class_graphing = fct_reorder(class_graphing, OR))
 
 # Graph OR of Fishers exact tests
 pdf("output/figures/outlier_analyses/Fishers_exact_test.pdf", width = 6, height = 6)
-ggplot(ftests, aes(y=log2(OR), x = class)) + 
+ggplot(ftests, aes(y = log2(OR), x = class_graphing)) + 
   geom_point(size=3.5) + 
   geom_linerange(aes(ymin = log2(lci), ymax = log2(uci))) + 
   geom_hline(yintercept = 0, col="black", linetype="dashed") + xlab("") +
-  theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+  theme_bw(base_size=22) + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+dev.off()
+
+# Graph OR of Fishers exact tests - flip direction
+pdf("output/figures/outlier_analyses/Fishers_exact_test_alt.pdf", width = 10, height = 6)
+ggplot(ftests, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet))) + 
+  geom_linerange(aes(xmin = log2(lci), xmax = log2(uci)), size = 1) +
+  geom_point(shape = 21, size = 5) +
+  scale_fill_gradient(low = "#e6e4e4", high = "#b55c04", name="-log10(p)") +
+  #scale_fill_gradientn(colours=brewer.pal(9, "Greens"), name="-log10(p)") + 
+  geom_vline(xintercept = 0, col="black", linetype="dashed") + ylab("") +
+  theme_bw(base_size=22)
 dev.off()

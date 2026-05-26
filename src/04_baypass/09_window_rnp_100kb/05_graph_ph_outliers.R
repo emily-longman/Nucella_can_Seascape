@@ -105,7 +105,7 @@ afs.melt <- reshape2::melt(afs, id = "SNP_id", variable.name = "Site", value.nam
 # Join with pH data
 afs.ph <- left_join(afs.melt, ph, by="Site")
 
-# Remove rows w/ NAs - since not all sites have drilling data
+# Remove rows w/ NAs 
 afs.ph <- na.omit(afs.ph)
 
 # Make Site an ordered factor
