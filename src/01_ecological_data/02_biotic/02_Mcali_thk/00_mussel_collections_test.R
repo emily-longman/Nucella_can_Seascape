@@ -28,7 +28,7 @@ library(RColorBrewer)
 # Read in metadata 
 metadata <- read.csv("guide_files/Populations_metadata.csv", header=T)
 # Filter metadata for 2019 sites
-metadata_sub <- metadata %>% filter(Site.Code %in% c("FC", "SH", "ARA", "VD", "BMR", "SBR"))
+metadata_sub <- metadata %>% filter(Site %in% c("FC", "SH", "ARA", "VD", "BMR", "SBR"))
 
 # Load 2019 mussel data
 mussels <- read.csv("data/raw/Mcali_thk/Mcal_shell_thickness_2019.csv")
