@@ -47,6 +47,19 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 #--------------------------------------------------------------------------------
 
+# Generate Folders and files
+
+# Move to working directory
+cd $WORKING_FOLDER/data/processed/outlier_analyses
+
+# Generate folder
+if [ -d "annotate_all" ]
+then echo "Working annotate_all folder exist"; echo "Let's move on."; date
+else echo "Working annotate_all folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/outlier_analyses/annotate_all; date
+fi
+
+#--------------------------------------------------------------------------------
+
 # Run R script
 
 Rscript --vanilla $WORKING_FOLDER/src/05_outlier_analyses/01_annotate_all.R "${SLURM_ARRAY_TASK_ID}"

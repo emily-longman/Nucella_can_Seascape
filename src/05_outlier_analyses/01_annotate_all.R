@@ -1,5 +1,4 @@
-# Endemism analysis
-# Modified from L. Proud; Original from A. Bergland
+# Annotate all SNPs - parts of code was originally from Alan Bergland
 
 # Clear memory
 rm(list=ls())
@@ -18,14 +17,20 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('SeqArray', 'data.table', 'tidyverse', 'dplyr', 'geodist', 'foreach', 'doMC'))
-library(SeqArray)
+#install.packages(c('data.table', 'tidyverse', 'dplyr', 'geodist', 'foreach', 'doMC'))
 library(data.table)
 library(tidyverse)
 library(dplyr)
 library(geodist)
 library(foreach)
 library(doMC)
+
+# Load SeqArray
+#if (!require("BiocManager", quietly = TRUE))
+#  install.packages("BiocManager")
+#BiocManager::install(version = "3.20")
+#BiocManager::install("SeqArray")
+library(SeqArray)
 
 # Register
 registerDoMC(20)
@@ -57,6 +62,7 @@ genofile <- seqOpen("data/processed/outlier_analyses/snpeff/N.canaliculata_SNPs.
 
 # Metadata
 meta <- read.csv("guide_files/Populations_metadata.csv")
+names(meta)[1] <- "sample"
 
 # ================================================================================== #
 
@@ -71,7 +77,6 @@ snp.dt <- data.table(
         allele=seqGetData(genofile, "allele")) %>%
     mutate(SNP_id = paste(chr, pos, sep = "_"))
 
-
 #head(snp.dt[,list(minPos=min(pos), maxPos=max(pos)), list(chr)])
 
 # ================================================================================== #
@@ -82,7 +87,8 @@ seqSetFilter(genofile, snp.dt$variant.id) # 14,691,690 SNPs
 
 # ================================================================================== #
 
-# Chunk snp.dt - i.e., create a bin column that goes from 1 to 500 which can be used to subset snp.dt
+# Split snp.dt into 500 chunks
+# i.e., create a bin column in snp.dt that goes from 1 to 500 which can be used to subset snp.dt
 
 numJobs <- 500
 
@@ -134,37 +140,25 @@ setnames(m, c("value.x", "value.y"), c("ad", "dp"))
 head(m)
 
 # Merge table with meta
-m <- data.table(merge(meta, m, by.x="Site.Code", by.y="sample"))
+m <- data.table(merge(meta, m, by="sample"))
 
 # Calculate allele frequency
 m$freq <- m$ad/m$dp
 
 # ================================================================================== #
 
-# Summarize
-setkey(m, Site.Code)
+# Summarize which 
+setkey(m, sample)
 
 m.ag <- m[,list(nSamps_poly=sum(freq>0 & freq<1, na.rm=T), 
                 nSamps_fixed=sum(freq==0 | freq==1, na.rm=T),
                 nSamps_missing=sum(is.na(freq)),
-
-                nLocales_poly=length(unique(na.omit(Site.Code[freq>0 & freq<1]))),
-                #nSamps2_poly=length(unique(na.omit(sampleId[freq>0 & freq<1]))), #Unlike the flies, I don't have multiple samples per site
-
-                nLocales_fixed=length(unique(na.omit(Site.Code[freq==0 | freq==1]))),
-                #nSamps2_fixed=length(unique(na.omit(sampleId[freq==0 & freq==1]))),
-
+                nLocales_poly=length(unique(na.omit(sample[freq>0 & freq<1]))),
+                nLocales_fixed=length(unique(na.omit(sample[freq==0 | freq==1]))),
                 global_af=sum(ad, na.rm=T)/sum(dp, na.rm=T),
                 poly_af=mean(freq[freq>0 & freq<1 & !is.na(freq)], na.rm=T),
-                poly_ad_mean=mean(ad[freq>0 & freq<1 & !is.na(freq)], na.rm=T)+.00001,
-                poly_ad_median=median(ad[freq>0 & freq<1 & !is.na(freq)], na.rm=T)+.00001,
-                poly_min_ad=min(ad[freq>0 & freq<1 & !is.na(freq)], na.rm=T)+.00001,
-                poly_max_ad=max(ad[freq>0 & freq<1 & !is.na(freq)], na.rm=T)+.00001,
-                poly_samps=paste(Site.Code[freq>0 & freq<1 & !is.na(freq)], collapse=";")
-                #poly_locales=paste(sort(unique(na.omit(locality[freq>0 & freq<1]))), collapse=";")
-
+                poly_samps=paste(sample[freq>0 & freq<1 & !is.na(freq)], collapse=";")
                   ),
-
                   list(variant)]
 
 m.ag <- m.ag[nSamps_poly!=0]
@@ -181,7 +175,9 @@ message("Annotations")
 seqResetFilter(genofile)
 seqSetFilter(genofile, variant.id=m.ag[nSamps_poly!=0]$variant)
 tmp <- seqGetData(genofile, "annotation/info/ANN")
+# Num annotations per variant
 len1 <- tmp$length
+# Annotation data
 len2 <- tmp$data
 
 snp.dt1 <- data.table(
@@ -194,27 +190,18 @@ snp.dt1[,class:=tstrsplit(snp.dt1$ann,"\\|")[[2]]]
 snp.dt1[,gene:=tstrsplit(snp.dt1$ann,"\\|")[[4]]]
 
 # Collapse additional annotations to original SNP vector length
-snp.dt1.an <- snp.dt1[,list(n=length(class), col= paste(class, collapse=","), gene=paste((gene), collapse=",")),
+snp.dt1.an <- snp.dt1[,list(n_ann=length(class), col= paste(class, collapse=","), gene=paste((gene), collapse=",")),
                        list(variant.id=id)]
 
-    
+# Split the col and gene columns if there is a comma and only keep the first; also replace empty with NA
 snp.dt1.an[,col:=tstrsplit(snp.dt1.an$col,"\\,")[[1]]]
 snp.dt1.an[,gene:=tstrsplit(snp.dt1.an$gene,"\\,")[[1]]]
 
+# Merge
 m.ag <- merge(m.ag, snp.dt1.an, by.x="variant", by.y="variant.id")
 
-#table(m.ag$col=="stop_gained", m.ag$nSamps_poly)
-#m.ag[col=="stop_gained" & nSamps_poly==5]
+# Add bin column
 o <- merge(snp.dt[bin==i], m.ag, by.x="variant.id", by.y="variant")
 
-      
-#o <- rbindlist(o)
-
-#system("mkdir /scratch/aob2x/private_v3_slices")
-
-x <- o[nSamps_poly>0]
-x
-
-save(x, file= paste("data/processed/endemism/chunks/slice_", i, ".Rdata", sep=""))
-  
-##  save(o, file=paste("/scratch/aob2x/private_v5_slices/slice", job, ".Rdata", sep=""))
+# Save output
+save(o, file= paste("data/processed/outlier_analyses/annotate_all/chunk_", i, ".Rdata", sep=""))
