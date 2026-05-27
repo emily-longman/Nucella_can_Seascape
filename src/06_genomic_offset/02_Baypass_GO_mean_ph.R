@@ -1,4 +1,4 @@
-# Try genomic offset with baypass
+# Geometric genetic offset
 
 # Clear memory
 rm(list=ls())
@@ -43,9 +43,6 @@ load("data/raw/pooldata/pooldata.RData")
 # Load metadata
 meta <- read.csv("guide_files/Populations_metadata.csv", header=T)
 
-# Load regression file (test with just one file)
-#regfile_run1 <- read.table("data/processed/baypass/abiotic/ph_mean/NC_abiotic_ph_mean_run1_summary_betai_reg.out", header=T)
-
 # ================================================================================== #
 
 # Load regfile and summarise
@@ -60,10 +57,6 @@ regfile_all <- foreach(w=file_names_v, .combine = rbind)%do%{
     message(w)
     # Load file
     tmp = fread(w, header=T)
-    # Add column with identifier
-    #tmp <- tmp %>% mutate(run = w) %>% mutate(run = str_remove(run, pattern = "data/processed/baypass/abiotic/ph_mean/NC_abiotic_ph_mean_run*"))
-    # Remove end of chunk name
-    #tmp <- tmp %>% mutate(run = str_remove(run, pattern = "_summary_betai_reg.out"))
     #Return
     return(tmp)
 }
@@ -73,14 +66,15 @@ regfile <- regfile_all %>% group_by(COVARIABLE, MRK) %>% summarise(across(everyt
 regfile <-  data.table(regfile)
 
 # Save output
-write.table(regfile, "data/processed/baypass/abiotic/ph_mean/NC_abiotic_ph_mean_run_all_summary_betai_reg.out", row.names=FALSE, col.names=TRUE)
+write.table(regfile, "data/processed/baypass/abiotic/NC_abiotic_ph_mean_run_all_summary_betai_reg.out", row.names=FALSE, col.names=TRUE)
+regfile <- read.table("data/processed/baypass/abiotic/NC_abiotic_ph_mean_run_all_summary_betai_reg.out", header=T)
 
 # ================================================================================== #
 
 # Compute offset
 Ncan_GO <- compute_genetic_offset(
         beta.coef = NULL, 
-        regfile = "data/processed/baypass/abiotic/ph_mean/NC_abiotic_ph_mean_run_all_summary_betai_reg.out", 
+        regfile = "data/processed/baypass/abiotic/NC_abiotic_ph_mean_run_all_summary_betai_reg.out", 
         covfile = "guide_files/Baypass_ph_mean.txt",
         newenv = ph.cov.file.future, scalecov = FALSE, compute.rona = TRUE)
 
@@ -112,11 +106,12 @@ go.output <- left_join(meta, go.output, by="Site")
 
 # ================================================================================== #
 
+# Graph GO values per pop
+
 # Color pallet
 viridiscolors <- viridis(n=19)
 
 # Order
-#go.output$Site <- factor(go.output$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 go.output$Site <- factor(go.output$Site, levels=c("STR", "OCT", "HZD", "PB", "PSN", "SBR", "PL", "PGP", "BMR", "FR", "VD", "KH", "STC", "PSG", "CBL", "ARA", "SH", "SLR", "FC"))
 
 # Graph GO
@@ -160,30 +155,20 @@ dev.off()
 # ================================================================================== #
 # ================================================================================== #
 
-# Redo analyses and scale covariable
+# Redo analyses with scale covariable and original regression coefficients
 
-# Read ph cov file
-ph.cov.file <- read.table("guide_files/Baypass_ph_mean.txt")
-
-# Calc mean
-ph.mean <- mean(t(ph.cov.file))
-# Calc sd
-ph.sd <- sd(t(ph.cov.file))
-
-# Scale
-ph.cov.file.scaled <- (ph.cov.file - ph.mean)/ph.sd
-# Write file
-write.table(ph.cov.file.scaled, "guide_files/Baypass_ph_mean_scaled.txt", col.names=F, row.names=F)
-
-# Scale future
-ph.cov.file.future.scaled <- (ph.cov.file.future - ph.mean)/ph.sd
+# Read current and future scaled ph cov file
+ph.cov.file.scaled <- read.table("guide_files/Baypass_ph_mean_scaled.txt")
+ph.cov.file.future.scaled <- read.table("guide_files/Baypass_ph_mean_future_scaled.txt")
 
 # Calc GO for scaled pH covar
 Ncan_GO_scaled <- compute_genetic_offset(
         beta.coef = NULL, 
-        regfile = "data/processed/baypass/abiotic/ph_mean/NC_abiotic_ph_mean_run_all_summary_betai_reg.out", 
+        regfile = "data/processed/baypass/abiotic/NC_abiotic_ph_mean_run_all_summary_betai_reg.out", 
         covfile = "guide_files/Baypass_ph_mean_scaled.txt",
         newenv = ph.cov.file.future.scaled, scalecov = TRUE, compute.rona = TRUE)
+
+# ================================================================================== #
 
 # Extract matrix of gGO estimates between all reference (rows) and target environments (columns)
 go.scaled.matrix <- Ncan_GO_scaled$go
@@ -220,86 +205,25 @@ states <- map_data("state")
 west_coast <- subset(states, region %in% c("california", "oregon"))
 
 # Graph gGO
-pdf("output/figures/genomic_offset/Baypass_scaled_GO_map.pdf", width = 8, height = 8)
+pdf("output/figures/genomic_offset/Baypass_scaled_GO_map.pdf", width = 8, height = 8)s
 ggplot(data = west_coast) + 
   geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
-  geom_point(data = go.scaled.output, aes(x = Long, y = Lat, fill = GO.scaled), shape = 21, size = 8) + 
-  #scale_fill_gradient(low = "cyan1", high = "gray27") + 
-  #scale_fill_viridis(option="viridis", direction = -1) +
+  geom_point(data = go.scaled.output, aes(x = Long, y = Lat, fill = GO.scaled), shape = 21, size = 9) + 
+  scale_fill_gradientn(colours=brewer.pal(9, "RdPu"), name="gGO", breaks = c(0.085, 0.090, 0.095)) +
+  coord_fixed(1.3) +
+  xlim(c(-125, -114)) +
+  xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 32) + 
+  theme(legend.title = element_text(size = 28), legend.text = element_text(size = 20), legend.position = c(0.91, 0.51))
+dev.off()
+# Graph gGO - alt coloring
+pdf("output/figures/genomic_offset/Baypass_scaled_GO_map_alt.pdf", width = 8, height = 8)
+ggplot(data = west_coast) + 
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
+  geom_point(data = go.scaled.output, aes(x = Long, y = Lat, fill = GO.scaled), shape = 21, size = 9) + 
   scale_fill_gradientn(colours=rev(brewer.pal(6, "BrBG")), name="gGO") +
              coord_fixed(1.3) +
   xlim(c(-125, -114)) +
-  xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 27) + 
-  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 16), legend.position = c(0.98, 0.52))
+  xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 32) + 
+  theme(legend.title = element_text(size = 28), legend.text = element_text(size = 16), legend.position = c(0.9, 0.51))
 dev.off()
 
-
-
-# ================================================================================== #
-# ================================================================================== #
-# ================================================================================== #
-
-# Perform analyses on subset of SNPs - just pos selected for pH - NOT WORKING
-
-# Read in SNP data
-snp.meta <- read.table("data/processed/baypass/input_files/snpdet", header=F)
-# Re-name snp metadata
-colnames(snp.meta) <- c("chr", "pos", "allele1", "allele2")
-
-# Load and merge xtx data
-NC.xtx <- foreach(i=1:5, .combine = rbind)%do%{
-    message(i)
-    tmp <- fread(paste("data/processed/baypass/xtx/NC_run", i, "_summary_pi_xtx.out", sep=""))
-    tmp[,rep:=i]
-    tmp <- cbind(snp.meta, tmp)
-    return(tmp)
-}
-colnames(NC.xtx) <- c("chr", "pos", "allele1", "allele2", "MRK", "M_P", "SD_P", "M_XtX", "SD_XtX", "XtXst", "log10.1.pval.", "rep")
-# Average xtx across replicate runs
-NC.xtx.sum <- NC.xtx %>% group_by(chr, pos, allele1, allele2, MRK) %>% 
-    reframe(XtXst.mean = mean(XtXst), XtXst.median = median(XtXst), log10.1.pval.mean = mean(log10.1.pval.), log10.1.pval.median = median(log10.1.pval.))
-
-
-# Calculate mean xtx
-mean.xtx <- mean(NC.xtx.sum$XtXst.mean)
-# Standardize xtx
-NC.xtx.sum <- NC.xtx.sum %>% mutate(XtXst.mean.standardize = XtXst.mean - mean.xtx)
-# Identify SNPs with XtXst higher than the mean and are significant
-NC.xtx.sum.pos <- NC.xtx.sum %>% filter(XtXst.mean.standardize > 0 & log10.1.pval.mean > -log10(0.001))
-# Identify indices of SNPs
-indices <- which(NC.xtx.sum$XtXst.mean.standardize > 0 & NC.xtx.sum$log10.1.pval.mean > -log10(0.001))
-
-# Load SNPs of interest - SNPs undergoing positive selection (baypass POD outlier SNPs - 8914 SNPs SNPs)
-#load("data/processed/genomic_offset/NC.xtx.sum.pos.Rdata")
-
-#####
-# Load Baypass pH output
-load("data/processed/baypass/abiotic/bf.ph.mean.sum.Rdata")
-load("data/processed/baypass/abiotic/ph_mean_POD_thr.Rdata")
-# Identify SNPs which beat POD threshold
-bf.ph.mean.sum.outliers <- bf.ph.mean.sum[which(bf.ph.mean.sum$bf_db.mean > bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)]),]
-
-# Identify indices of SNPs
-bf.ph.mean.sum.outliers.MRK <- bf.ph.mean.sum$MRK[which(bf.ph.mean.sum$bf_db.mean > bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)])]
-
-# Compute offset
-Ncan_GO_pos <- compute_genetic_offset(
-        beta.coef = NULL, 
-        regfile = "data/processed/baypass/abiotic/ph_mean/NC_abiotic_ph_mean_run_all_summary_betai_reg.out", 
-        covfile = "guide_files/Baypass_ph_mean.txt",
-        newenv = ph.cov.file.future, scalecov = FALSE,
-        candidate.snp = bf.ph.mean.sum.outliers.MRK)
-# Get error: "Error in eigen(BtB, symmetric = TRUE) : non-square matrix in 'eigen'""
-
-
-# ================================================================================== #
-# ================================================================================== #
-# ================================================================================== #
-
-install.packages(c("terra", "geodata", "fields", "maps", "LEA"))
-
-library(terra)
-library(geodata)
-library(fields)
-library(maps)
-library(LEA)
