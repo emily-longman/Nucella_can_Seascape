@@ -40,7 +40,7 @@ if (!dir.exists(out_dir_fig)) {dir.create(out_dir_fig)}
 bio_oracle <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_larger_area.csv", header=T)
 bio_oracle_future <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_future_larger_area.csv", header=T)
 
-# Extract the most recent data (i.e., 2010-01-01T00:00:00Z, which represents 2010-2020)
+# Extract the most recent data (i.e., 2010-01-01T00:00:00Z, which represents 2010-~2020)
 bio_oracle_2010 <- bio_oracle %>% 
   filter(time == "2010-01-01T00:00:00Z")
 

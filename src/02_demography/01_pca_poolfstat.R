@@ -108,11 +108,21 @@ viridiscolors <- viridis(n=19)
 
 # Plot PC1 and PC2 with ggplot
 pdf("output/figures/demography/PCA_all_SNPs_PC1_PC2_ggplot_bigger_NvsS.pdf", width = 12, height = 9)
-ggplot(pca.df.order, aes(x=PC1, y=PC2, shape=shape, fill = factor(site))) + geom_jitter(size=16, width = 0.015, height = 0.015) + 
+ggplot(pca.df.order, aes(x=PC1, y=PC2, shape=shape, fill = factor(site))) + geom_jitter(size=16, width = 0.01, height = 0.01) + 
 scale_shape_manual(values = c(21, 23)) + scale_fill_manual(values = viridiscolors) +
 ylim(-0.51, 0.51) + xlim(-0.51, 0.51) + 
 ylab(paste0("PC",2," (",round(pooldata.pca$perc.var[2],2),"%)")) + xlab(paste0("PC",1," (",round(pooldata.pca$perc.var[1],2),"%)")) +
-theme_linedraw(base_size = 36) +
+theme_linedraw(base_size = 40) +
+geom_vline(xintercept = 0, color = "black", linetype = "dashed") + geom_hline(yintercept = 0, color = "black", linetype = "dashed") + 
+guides(fill = guide_legend(override.aes = list(shape = c(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 23, 23, 23, 23, 23, 23, 23), size = 8)), shape = "none") +
+labs(fill = "Site")
+dev.off()
+pdf("output/figures/demography/PCA_all_SNPs_PC1_PC2_ggplot_bigger_NvsS_nojitter.pdf", width = 12, height = 9)
+ggplot(pca.df.order, aes(x=PC1, y=PC2, shape=shape, fill = factor(site))) + geom_point(size=16) + 
+scale_shape_manual(values = c(21, 23)) + scale_fill_manual(values = viridiscolors) +
+ylim(-0.51, 0.51) + xlim(-0.51, 0.51) + 
+ylab(paste0("PC",2," (",round(pooldata.pca$perc.var[2],2),"%)")) + xlab(paste0("PC",1," (",round(pooldata.pca$perc.var[1],2),"%)")) +
+theme_linedraw(base_size = 40) +
 geom_vline(xintercept = 0, color = "black", linetype = "dashed") + geom_hline(yintercept = 0, color = "black", linetype = "dashed") + 
 guides(fill = guide_legend(override.aes = list(shape = c(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 23, 23, 23, 23, 23, 23, 23), size = 8)), shape = "none") +
 labs(fill = "Site")

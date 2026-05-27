@@ -230,7 +230,7 @@ ggplot(summary_abiotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, me
        y = "") +
   theme_minimal()+
   coord_flip()+
-  theme_bw(base_size=40) + 
+  theme_bw(base_size=45) + labs(title="Abiotic Variables") + theme(plot.title = element_text(hjust = 0.5)) +
   theme(axis.text.x = element_blank(), axis.ticks = element_blank())
 dev.off()
 
@@ -281,6 +281,6 @@ ggplot(summary_biotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mea
        y = "") +
   theme_minimal()+
   coord_flip()+
-  theme_bw(base_size=40) + 
+  theme_bw(base_size=45) + labs(title="Biotic Variables") + theme(plot.title = element_text(hjust = 0.5)) +
   theme(axis.text.x = element_blank(), axis.ticks = element_blank())
 dev.off()
