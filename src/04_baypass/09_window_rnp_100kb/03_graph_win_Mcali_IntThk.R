@@ -134,6 +134,11 @@ ggplot(win.out.order, aes(y=-log10(rnp.binom.POD), x=win)) +
   geom_line( ) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed") +
   theme_bw(base_size=24) + theme(legend.position = "none")
 dev.off()
+pdf("output/figures/baypass/window_summary/baypass_window_Mcali_IntThk_rnpPOD_geomline_bywindows_alt.pdf", width = 15, height = 3)
+ggplot(win.out.order, aes(y=-log10(rnp.binom.POD), x=win)) + ylab("Enrichment") + xlab("Window (100kb)") +
+  geom_line(linewidth=1.5) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed", linewidth=1.5) +
+  theme_bw(base_size=22) + theme(legend.position = "none") #+ theme(plot.margin = margin(t = 40, r = 30, b = 20, l = 20, unit = "pt"))
+dev.off()
 
 # ================================================================================== #
 

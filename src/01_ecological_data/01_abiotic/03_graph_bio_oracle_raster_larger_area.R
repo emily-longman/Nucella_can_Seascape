@@ -160,10 +160,9 @@ ggplot(raster_df_ph, aes(x = x, y = y, fill = layer)) +
   geom_raster(aes(fill=layer)) +
   scale_x_continuous(expand = c(0, 0)) +
   scale_y_continuous(expand = c(0, 0)) +
-  scale_fill_gradientn(colours=rev(brewer.pal(6, "YlOrRd")), name=NULL, breaks = c(7.92, 7.96, 8.0, 8.04)) +
+  scale_fill_gradientn(colours=rev(brewer.pal(6, "YlOrRd")), name="mean pH", breaks = c(7.92, 7.96, 8.0, 8.04)) +
   coord_fixed(ratio = 1) +  # Fix aspect ratio so the plot is not distorted
-  #ggtitle("Rasterized ph_mean")  +
-  theme_bw(base_size = 27) + #xlim(c(-126, -117)) + ylim(c(32, 47)) +
+  theme_bw(base_size = 32) + #xlim(c(-126, -117)) + ylim(c(32, 47)) +
   labs(x = "Longitude", y = "Latitude") + 
   theme(legend.title = element_text(size = 20), legend.text = element_text(size = 20), legend.position = c(0.75, 0.53), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
   #theme(plot.title = element_text(hjust=0.5))
