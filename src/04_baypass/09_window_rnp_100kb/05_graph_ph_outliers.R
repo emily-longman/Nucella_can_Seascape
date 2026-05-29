@@ -230,6 +230,16 @@ ggplot(bf.ph.mean.sum.top.win, aes(y=bf_db.mean, x=pos/1000)) + labs(x="Position
   theme_bw(base_size=30) + theme(legend.position = "none")
 dev.off()
 
+pdf("output/figures/baypass/window_summary/baypass_ph_mean_BF_topwin_wider_coltopSNPs_SNP21.pdf", width = 10, height = 4)
+ggplot(bf.ph.mean.sum.top.win, aes(y=bf_db.mean, x=pos/1000)) + labs(x="Position (kb)", y="BF")+
+  geom_rect(aes(xmin=1/1000, xmax=58041/1000, ymin=-Inf, ymax=Inf), fill="grey", alpha=0.5) +
+  geom_point(alpha=0.75, size=4, shape=21, aes(fill = cut(bf_db.mean, c(-Inf, 22, Inf)))) + 
+  scale_fill_manual(values = c("(-Inf,22]" = "black", "(22, Inf]" = "#24dafa")) +
+  geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red", linetype="dashed") +
+  geom_hline(yintercept=0, col="black", linetype="solid") +
+  theme_bw(base_size=30) + theme(legend.position = "none")
+dev.off()
+
 # ================================================================================== #
 # ================================================================================== #
 
@@ -310,6 +320,13 @@ pdf("output/figures/baypass/window_summary/baypass_ph_mean_xtx_topwin_wider.pdf"
 ggplot(baypass.ph.xtx.sum.top.win, aes(y=XtXst_mean, x=pos/1000)) + labs(x="Position (kb)", y="XtX")+
   geom_rect(aes(xmin=1/1000, xmax=58041/1000, ymin=-Inf, ymax=Inf), fill="grey", alpha=0.5) +
   geom_point(alpha=0.75, size=3.5) + ylim(0,50) +
+  geom_hline(yintercept=baypass.ph.xtx.POD.thr$XtXst_mean[which(baypass.ph.xtx.POD.thr$thr==0.999)], col="red", linetype="dashed") +
+  theme_bw(base_size=30) + theme(legend.position = "none")
+dev.off()
+pdf("output/figures/baypass/window_summary/baypass_ph_mean_xtx_topwin_wider_alt.pdf", width = 9.815, height = 4)
+ggplot(baypass.ph.xtx.sum.top.win, aes(y=XtXst_mean, x=pos/1000)) + labs(x="Position (kb)", y="XtX")+
+  geom_rect(aes(xmin=1/1000, xmax=58041/1000, ymin=-Inf, ymax=Inf), fill="grey", alpha=0.5) +
+  geom_point(alpha=0.75, size=4, shape=21, fill="black") + ylim(0,50) +
   geom_hline(yintercept=baypass.ph.xtx.POD.thr$XtXst_mean[which(baypass.ph.xtx.POD.thr$thr==0.999)], col="red", linetype="dashed") +
   theme_bw(base_size=30) + theme(legend.position = "none")
 dev.off()
