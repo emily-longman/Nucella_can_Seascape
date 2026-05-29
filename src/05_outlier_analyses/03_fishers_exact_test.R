@@ -104,14 +104,14 @@ ftests_ph$class_graphing <- gsub("_", " ", ftests_ph$class_graphing)
 ftests_ph <- ftests_ph %>% mutate(class_graphing = fct_reorder(class_graphing, OR))
 
 # Graph OR of Fishers exact tests
-pdf("output/figures/outlier_analyses/Fishers_exact_test_pH.pdf", width = 10, height = 8)
+pdf("output/figures/outlier_analyses/Fishers_exact_test_pH.pdf", width = 12, height = 8)
 ggplot(ftests_ph, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet))) + 
+  geom_vline(xintercept = 0, col="black", linetype="dashed") + ylab("") + 
   geom_linerange(aes(xmin = log2(lci), xmax = log2(uci)), linewidth = 1) +
-  geom_point(shape = 21, size = 5) +
+  geom_point(shape = 21, size = 8) +
   scale_fill_gradient(low = "#e6e4e4", high = "#b55c04", name="-log10(p)") +
-  geom_vline(xintercept = 0, col="black", linetype="dashed") + ylab("") + labs(title="Mean pH") +
-  theme_bw(base_size=25) + theme(plot.title = element_text(hjust = 0.5)) +
-  theme(legend.title = element_text(size = 22), legend.text = element_text(size = 20), legend.position = c(0.86, 0.25), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+  theme_bw(base_size=36) + theme(plot.title = element_text(hjust = 0.5)) +
+  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 22), legend.position = c(0.86, 0.22), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
 
 
@@ -148,15 +148,15 @@ ftests_Mcali$class_graphing <- gsub("_", " ", ftests_Mcali$class_graphing)
 ftests_Mcali <- ftests_Mcali %>% mutate(class_graphing = fct_reorder(class_graphing, OR))
 
 # Graph OR of Fishers exact tests
-pdf("output/figures/outlier_analyses/Fishers_exact_test_Mcali.pdf", width = 10, height = 8)
+pdf("output/figures/outlier_analyses/Fishers_exact_test_Mcali.pdf", width = 12, height = 8)
 ggplot(ftests_Mcali, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet))) + 
-  geom_linerange(aes(xmin = log2(lci), xmax = log2(uci)), linewidth = 1) +
-  geom_point(shape = 21, size = 5) +
-  scale_fill_gradient(low = "#e6e4e4", high = "#b55c04", name="-log10(p)") + 
   geom_vline(xintercept = 0, col="black", linetype="dashed") + ylab("") + 
-  labs(title = expression(paste(italic("M. californianus"), " cross-sectional thickness"))) +
-  theme_bw(base_size=25) + theme(plot.title = element_text(hjust = 0.5)) + theme(plot.margin = margin(t = 10, r = 50, b = 10, l = 10,, unit = "pt")) +
-  theme(legend.title = element_text(size = 22), legend.text = element_text(size = 20), legend.position = c(0.15, 0.8), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+  geom_linerange(aes(xmin = log2(lci), xmax = log2(uci)), linewidth = 1) +
+  geom_point(shape = 21, size = 8) +
+  scale_fill_gradient(low = "#e6e4e4", high = "#b55c04", name="-log10(p)") + 
+  #labs(title = expression(paste(italic("M. californianus"), " cross-sectional thickness"))) +
+  theme_bw(base_size=36) + theme(plot.title = element_text(hjust = 0.5)) + theme(plot.margin = margin(t = 10, r = 50, b = 10, l = 10,, unit = "pt")) +
+  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 22), legend.position = c(0.15, 0.81), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
 
 #--------------------------------------------------------------------------------

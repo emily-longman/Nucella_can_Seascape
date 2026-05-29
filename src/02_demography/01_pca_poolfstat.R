@@ -117,6 +117,16 @@ geom_vline(xintercept = 0, color = "black", linetype = "dashed") + geom_hline(yi
 guides(fill = guide_legend(override.aes = list(shape = c(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 23, 23, 23, 23, 23, 23, 23), size = 8)), shape = "none") +
 labs(fill = "Site")
 dev.off()
+pdf("output/figures/demography/PCA_all_SNPs_PC1_PC2_ggplot_bigger_NvsS_alt.pdf", width = 12, height = 9)
+ggplot(pca.df.order, aes(x=PC1, y=PC2, shape=shape, fill = factor(site))) + geom_jitter(size=16, width = 0.01, height = 0.01, alpha=0.8) + 
+scale_shape_manual(values = c(21, 23)) + scale_fill_manual(values = viridiscolors) +
+ylim(-0.51, 0.51) + xlim(-0.51, 0.51) + 
+ylab(paste0("PC",2," (",round(pooldata.pca$perc.var[2],2),"%)")) + xlab(paste0("PC",1," (",round(pooldata.pca$perc.var[1],2),"%)")) +
+theme_linedraw(base_size = 40) +
+geom_vline(xintercept = 0, color = "black", linetype = "dashed") + geom_hline(yintercept = 0, color = "black", linetype = "dashed") + 
+guides(fill = guide_legend(override.aes = list(shape = c(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 23, 23, 23, 23, 23, 23, 23), size = 8)), shape = "none") +
+labs(fill = "Site")
+dev.off()
 pdf("output/figures/demography/PCA_all_SNPs_PC1_PC2_ggplot_bigger_NvsS_nojitter.pdf", width = 12, height = 9)
 ggplot(pca.df.order, aes(x=PC1, y=PC2, shape=shape, fill = factor(site))) + geom_point(size=16) + 
 scale_shape_manual(values = c(21, 23)) + scale_fill_manual(values = viridiscolors) +
@@ -127,14 +137,13 @@ geom_vline(xintercept = 0, color = "black", linetype = "dashed") + geom_hline(yi
 guides(fill = guide_legend(override.aes = list(shape = c(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 23, 23, 23, 23, 23, 23, 23), size = 8)), shape = "none") +
 labs(fill = "Site")
 dev.off()
-
-# Plot with base R
-pdf("output/figures/demography/PCA_all_SNPs_PC1_PC2.pdf", width = 8, height = 8)
-par(mar=c(5,6,4,1)+.1) # Adjust margins
-pca <- plot(pooldata.pca$pop.loadings[,1],pooldata.pca$pop.loadings[,2],
-xlab=paste0("PC",1," (",round(pooldata.pca$perc.var[1],2),"%)"),
-ylab=paste0("PC",2," (",round(pooldata.pca$perc.var[2],2),"%)"),
-col="black", bg=colors.reorder, pch=21, cex = 5, cex.lab = 3)
-abline(h=0,lty=2,col="grey"); abline(v=0,lty=2,col="grey")
+pdf("output/figures/demography/PCA_all_SNPs_PC1_PC2_ggplot_bigger_NvsS_nojitter_alt.pdf", width = 12, height = 9)
+ggplot(pca.df.order, aes(x=PC1, y=PC2, shape=shape, fill = factor(site))) + geom_point(size=16, alpha=0.7) + 
+scale_shape_manual(values = c(21, 23)) + scale_fill_manual(values = viridiscolors) +
+ylim(-0.51, 0.51) + xlim(-0.51, 0.51) + 
+ylab(paste0("PC",2," (",round(pooldata.pca$perc.var[2],2),"%)")) + xlab(paste0("PC",1," (",round(pooldata.pca$perc.var[1],2),"%)")) +
+theme_linedraw(base_size = 40) +
+geom_vline(xintercept = 0, color = "black", linetype = "dashed") + geom_hline(yintercept = 0, color = "black", linetype = "dashed") + 
+guides(fill = guide_legend(override.aes = list(shape = c(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 23, 23, 23, 23, 23, 23, 23), size = 8)), shape = "none") +
+labs(fill = "Site")
 dev.off()
-

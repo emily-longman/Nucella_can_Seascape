@@ -179,44 +179,29 @@ ggplot(afs.ph.BF20, aes(x=AF, y=ph_mean, shape=shape, fill=Site)) +
 dev.off()
 
 # Graph and color by Site - BF19
-pdf("output/figures/baypass/outliers/pH_g27343_BF19.pdf", width = 14, height = 9)
+pdf("output/figures/baypass/outliers/pH_g27343_BF19.pdf", width = 16, height = 9)
 ggplot(afs.ph.BF19, aes(x=AF, y=ph_mean, shape=shape, fill=Site)) +
-  geom_point(alpha=0.7, size = 5) + scale_shape_manual(values = c(21, 23)) + labs(x="Allele Freq", y="mean pH") +
+  geom_point(alpha=0.7, size = 6) + scale_shape_manual(values = c(21, 23)) + labs(x="Allele Freq", y="mean pH") +
+  scale_x_continuous(breaks = seq(0, 1, by = 0.5)) + scale_y_continuous(breaks = c(7.95, 8.00)) +
   facet_wrap(~SNP_id) + scale_fill_manual(values = viridiscolors) +
   theme_bw(base_size = 26)
 dev.off()
 # Graph and color by Site - BF18
-pdf("output/figures/baypass/outliers/pH_g27343_BF18.pdf", width = 16, height = 12)
+pdf("output/figures/baypass/outliers/pH_g27343_BF18.pdf", width = 18, height = 12)
 ggplot(afs.ph.BF18, aes(x=AF, y=ph_mean, shape=shape, fill=Site)) +
-  geom_point(alpha=0.7, size = 5) + scale_shape_manual(values = c(21, 23)) + labs(x="Allele Freq", y="mean pH") +
+  geom_point(alpha=0.7, size = 6) + scale_shape_manual(values = c(21, 23)) + labs(x="Allele Freq", y="mean pH") +
+  scale_x_continuous(breaks = seq(0, 1, by = 0.5)) + scale_y_continuous(breaks = c(7.95, 8.00)) +
   facet_wrap(~SNP_id) + scale_fill_manual(values = viridiscolors) +
-  theme_bw(base_size = 26)
+  theme_bw(base_size = 26) + guides(fill = guide_legend(override.aes = list(shape = c(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 23, 23, 23, 23, 23, 23, 23), size = 8)), shape = "none")
 dev.off()
 
 # ================================================================================== #
 # ================================================================================== #
 
-# Graph BF for top window
+# Graph BF for top win
 
-# Use the POD threshold to come up with p-val
-
-# Load mean bf data from 5 baypass runs
-load("data/processed/baypass/abiotic/bf.ph.mean.sum.Rdata")
 # Load POD thresholds
 load("data/processed/baypass/abiotic/ph_mean_POD_thr.Rdata")
-
-# Create the ECDF (empirical cumulative distribution function) function
-my_ecdf <- ecdf(bf.ph.mean.sum$bf_db.mean)
-
-# Find the probability for a given value
-probability <- my_ecdf(bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)])
-
-# Calc pr.i as the opposite of the probability
-pr.i <- c(1-probability)
-
-# ================================================================================== #
-
-# Graph BF for top win
 
 # Graph BF for each SNP within window
 pdf("output/figures/baypass/window_summary/baypass_ph_mean_BF_topwin.pdf", width = 8, height = 4)
