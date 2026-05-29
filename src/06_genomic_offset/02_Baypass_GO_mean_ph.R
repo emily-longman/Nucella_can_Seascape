@@ -83,7 +83,7 @@ Ncan_GO <- compute_genetic_offset(
 # regfile - BayPass output file with estimates of the regression coefficients
 # scalecov - if TRUE all covariables are scaled with respect to mean and variance of original covariable value
 # compute.rona - if true, calculate the RONA statistic from Rellstab et al. 2016
-#   Rona is  related to the square root of the geometric GO (times √2/π)
+# Rona is  related to the square root of the geometric GO (times √2/π)
 
 # ================================================================================== #
 
@@ -194,7 +194,7 @@ go.scaled.output$Site <- factor(go.scaled.output$Site, levels=c("STR", "OCT", "H
 pdf("output/figures/genomic_offset/Baypass_scaled_GO.pdf", width = 8, height = 14)
 ggplot(go.scaled.output, aes(x = Site, y = GO.scaled, fill = Site)) + geom_col() + 
 scale_fill_manual(values = rev(viridiscolors)) + ylab("gGO scaled") +
-coord_flip() + 
+coord_flip() +
 theme_bw(base_size = 24) + theme(legend.position="none")
 dev.off()
 
@@ -205,7 +205,7 @@ states <- map_data("state")
 west_coast <- subset(states, region %in% c("california", "oregon"))
 
 # Graph gGO
-pdf("output/figures/genomic_offset/Baypass_scaled_GO_map.pdf", width = 8, height = 8)s
+pdf("output/figures/genomic_offset/Baypass_scaled_GO_map.pdf", width = 8, height = 8)
 ggplot(data = west_coast) + 
   geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
   geom_point(data = go.scaled.output, aes(x = Long, y = Lat, fill = GO.scaled), shape = 21, size = 9) + 
@@ -217,7 +217,7 @@ ggplot(data = west_coast) +
 dev.off()
 # Graph gGO - alt coloring
 pdf("output/figures/genomic_offset/Baypass_scaled_GO_map_alt.pdf", width = 8, height = 8)
-ggplot(data = west_coast) + 
+ggplot(data = west_coast) +
   geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
   geom_point(data = go.scaled.output, aes(x = Long, y = Lat, fill = GO.scaled), shape = 21, size = 9) + 
   scale_fill_gradientn(colours=rev(brewer.pal(6, "BrBG")), name="gGO") +
