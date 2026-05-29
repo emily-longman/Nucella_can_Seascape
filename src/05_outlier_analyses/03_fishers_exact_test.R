@@ -114,6 +114,7 @@ ggplot(ftests_ph, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet))) +
   theme(legend.title = element_text(size = 24), legend.text = element_text(size = 22), legend.position = c(0.86, 0.22), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
 
+#--------------------------------------------------------------------------------
 
 # Loop through annotations and perform Fishers exact test - M californianus
 ftests_Mcali <- foreach(i=ann.focal, .combine = "rbind", .errorhandling = "remove")%do%{
@@ -157,6 +158,16 @@ ggplot(ftests_Mcali, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet))) 
   #labs(title = expression(paste(italic("M. californianus"), " cross-sectional thickness"))) +
   theme_bw(base_size=36) + theme(plot.title = element_text(hjust = 0.5)) + theme(plot.margin = margin(t = 10, r = 50, b = 10, l = 10,, unit = "pt")) +
   theme(legend.title = element_text(size = 24), legend.text = element_text(size = 22), legend.position = c(0.15, 0.81), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+dev.off()
+pdf("output/figures/outlier_analyses/Fishers_exact_test_Mcali_taller.pdf", width = 12, height = 10)
+ggplot(ftests_Mcali, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet))) + 
+  geom_vline(xintercept = 0, col="black", linetype="dashed") + ylab("") + 
+  geom_linerange(aes(xmin = log2(lci), xmax = log2(uci)), linewidth = 1) +
+  geom_point(shape = 21, size = 8) +
+  scale_fill_gradient(low = "#e6e4e4", high = "#b55c04", name="-log10(p)") + 
+  #labs(title = expression(paste(italic("M. californianus"), " cross-sectional thickness"))) +
+  theme_bw(base_size=36) + theme(plot.title = element_text(hjust = 0.5)) + theme(plot.margin = margin(t = 10, r = 50, b = 10, l = 10,, unit = "pt")) +
+  theme(legend.title = element_text(size = 26), legend.text = element_text(size = 25), legend.position = c(0.17, 0.85), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
 
 #--------------------------------------------------------------------------------

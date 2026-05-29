@@ -1,0 +1,100 @@
+# Co-localization of BF of GWAS and GEA
+
+# Clear memory
+rm(list=ls())
+
+# ================================================================================== #
+
+# Set path as main Github repo
+# Install and load package
+install.packages(c('rprojroot'))
+library(rprojroot)
+# Specify root path
+root_path <- find_root_file(criterion = has_file("README.md"))
+# Set working directory as path from root
+setwd(root_path)
+
+# ================================================================================== #
+
+# Load packages
+install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'groupdata2', 'poolfstat', 'RColorBrewer', 'viridis'))
+library(data.table)
+library(tidyverse)
+library(foreach)
+library(dplyr)
+library(groupdata2)
+library(poolfstat)
+library(RColorBrewer)
+library(viridis)
+
+# ================================================================================== #
+
+# Load data
+
+# Load GEA data
+# pH Data
+load("data/processed/baypass/abiotic/bf.ph.mean.sum.Rdata")
+# M. cali thk
+load("data/processed/baypass/biotic/bf.Mcali.IntThk.sum.Rdata")
+
+# Load thresholds
+load("data/processed/baypass/abiotic/ph_mean_POD_thr.Rdata")
+bf.POD.thr.ph <- bf.POD.thr
+load("data/processed/baypass/biotic/Mcali_IntegratedThk_POD_thr.Rdata")
+bf.POD.thr.McaliThk <- bf.POD.thr
+
+# ================================================================================== #
+
+# Compare pH and Mcali
+
+# Rename cols
+bf.ph.mean.sum <- bf.ph.mean.sum %>% rename(bf_db.mean.ph = bf_db.mean, bf_db.median.ph = bf_db.median, bf_db.var.ph = bf_db.var, 
+eBPis.mean.ph = eBPis.mean, eBPis.median.ph = eBPis.median, eBPis.var.ph = eBPis.var)
+
+# pH and Mcali
+bf.ph.Mcali.sum <- left_join(bf.ph.mean.sum, bf.McaliIntThk.mean.sum, by=c("chr", "pos", "allele1", "allele2", "MRK"))
+
+# Graph phenotypic data vs ph
+pdf("output/figures/outlier_analyses/BF_ph_vs_Mcali.pdf", width = 8, height = 8)
+ggplot(bf.ph.Mcali.sum, aes(x=bf_db.mean.ph, y=bf_db.mean)) +
+  labs(x = "BF mean pH", y = "BF M. californianus thickness") +
+  geom_point(alpha=0.6) +
+  geom_vline(xintercept=bf.POD.thr.ph$bf_db.mean[which(bf.POD.thr.ph$thr==0.999)], col="red") +
+  geom_hline(yintercept=bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)], col="red") +
+  theme_classic(base_size = 26)
+dev.off()
+
+pdf("output/figures/outlier_analyses/BF_ph_vs_Mcali_posBF.pdf", width = 8, height = 8)
+ggplot(bf.ph.Mcali.sum[which(bf.ph.Mcali.sum$bf_db.mean.ph>0 & bf.ph.Mcali.sum$bf_db.mean>0),], aes(x=bf_db.mean.ph, y=bf_db.mean)) +
+  labs(x = "BF mean pH", y = expression(paste("BF ", italic("M. californianus"), " thickness"))) +
+  geom_point(alpha=0.6) +
+  geom_vline(xintercept=bf.POD.thr.ph$bf_db.mean[which(bf.POD.thr.ph$thr==0.999)], col="red") +
+  geom_hline(yintercept=bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)], col="red") +
+  theme_classic(base_size = 26)
+dev.off()
+
+pdf("output/figures/outlier_analyses/BF_ph_vs_Mcali_posBF_lowersig.pdf", width = 8, height = 8)
+ggplot(bf.ph.Mcali.sum[which(bf.ph.Mcali.sum$bf_db.mean.ph>0 & bf.ph.Mcali.sum$bf_db.mean>0),], aes(x=bf_db.mean.ph, y=bf_db.mean)) +
+  labs(x = "BF mean pH", y = expression(paste("BF ", italic("M. californianus"), " thickness"))) +
+  geom_point(alpha=0.6) +
+  geom_vline(xintercept=bf.POD.thr.ph$bf_db.mean[which(bf.POD.thr.ph$thr==0.999)], col="red") +
+  geom_hline(yintercept=bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)], col="red") +
+  geom_vline(xintercept=bf.POD.thr.ph$bf_db.mean[which(bf.POD.thr.ph$thr==0.999)]-5.0, col="red", linetype="dashed") +
+  geom_hline(yintercept=bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)]-5.0, col="red", linetype="dashed") +
+  theme_classic(base_size = 26)
+dev.off()
+
+# ================================================================================== #
+
+# Which SNPs are closest to cross
+topSNP <- bf.ph.Mcali.sum[
+    which(bf.ph.Mcali.sum$bf_db.mean.ph > bf.POD.thr.ph$bf_db.mean[which(bf.POD.thr.ph$thr==0.999)]-1.0 
+          & bf.ph.Mcali.sum$bf_db.mean > bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)]-1.0),]
+
+# Extend range a bit (BF ph > 9.37 and BF Mcali > 8.5)
+topSNP_extra <- bf.ph.Mcali.sum[
+    which(bf.ph.Mcali.sum$bf_db.mean.ph > bf.POD.thr.ph$bf_db.mean[which(bf.POD.thr.ph$thr==0.999)]-5.0 
+          & bf.ph.Mcali.sum$bf_db.mean > bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)]-5.0),]
+
+# ================================================================================== #
+

@@ -18,12 +18,13 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-install.packages(c('data.table', 'tidyverse', 'ggplot2', 'RColorBrewer', 'Hmisc'))
+install.packages(c('data.table', 'tidyverse', 'ggplot2', 'RColorBrewer', 'Hmisc', 'lmerTest'))
 library(data.table)
 library(tidyverse)
 library(ggplot2)
 library(RColorBrewer)
 library(Hmisc)
+library(lmerTest)
 
 # ================================================================================== #
 
@@ -123,6 +124,7 @@ Mcali_data_sub <- rbind(Mcali_data_sub, Mcali[1097,])
 write.csv(Mcali_data_sub, "data/processed/GEA/enviro_data/Mcali_thk/Mcalifornianus_data_subset.csv", row.names=F)
 # Read data
 Mcali_data_sub <- read.csv("data/processed/GEA/enviro_data/Mcali_thk/Mcalifornianus_data_subset.csv")
+
 
 # ================================================================================== #
 
