@@ -219,7 +219,7 @@ ggplot(summary_abiotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, me
   theme_bw(base_size=30) + 
   theme(axis.text.x = element_blank(), axis.ticks = element_blank())
 dev.off()
-pdf("output/figures/GEA/glms/model_enrichment/GLM_Abiotic_rr_color_taller.pdf", width = 11, height = 8.5)
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Abiotic_rr_color_taller.pdf", width = 11, height = 10.5)
 ggplot(summary_abiotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mean_rr_log2), color = col)) + 
   #geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
   geom_point(size=9)+ 
@@ -230,7 +230,7 @@ ggplot(summary_abiotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, me
        y = "") +
   theme_minimal()+
   coord_flip()+
-  theme_bw(base_size=45) + labs(title="Abiotic Variables") + theme(plot.title = element_text(hjust = 0.5)) +
+  theme_linedraw(base_size=45) + labs(title="Abiotic Variables") + theme(plot.title = element_text(hjust = 0.5)) +
   theme(axis.text.x = element_blank(), axis.ticks = element_blank())
 dev.off()
 
@@ -270,7 +270,7 @@ ggplot(summary_biotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mea
   theme_bw(base_size=40) + 
   theme(axis.text.x = element_blank(), axis.ticks = element_blank())
 dev.off()
-pdf("output/figures/GEA/glms/model_enrichment/GLM_Biotic_rr_color_taller.pdf", width = 15, height = 8.5)
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Biotic_rr_color_taller.pdf", width = 15, height = 10.5)
 ggplot(summary_biotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mean_rr_log2), color = col)) + 
   #geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
   geom_point(size=9)+ 
@@ -281,6 +281,6 @@ ggplot(summary_biotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mea
        y = "") +
   theme_minimal()+
   coord_flip()+
-  theme_bw(base_size=45) + labs(title="Biotic Variables") + theme(plot.title = element_text(hjust = 0.5)) +
+  theme_linedraw(base_size=45) + labs(title="Biotic Variables") + theme(plot.title = element_text(hjust = 0.5)) +
   theme(axis.text.x = element_blank(), axis.ticks = element_blank())
 dev.off()

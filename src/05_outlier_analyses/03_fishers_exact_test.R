@@ -110,7 +110,7 @@ ggplot(ftests_ph, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet))) +
   geom_linerange(aes(xmin = log2(lci), xmax = log2(uci)), linewidth = 1) +
   geom_point(shape = 21, size = 8) +
   scale_fill_gradient(low = "#e6e4e4", high = "#b55c04", name="-log10(p)") +
-  theme_bw(base_size=36) + theme(plot.title = element_text(hjust = 0.5)) +
+  theme_linedraw(base_size=36) + theme(plot.title = element_text(hjust = 0.5)) +
   theme(legend.title = element_text(size = 24), legend.text = element_text(size = 22), legend.position = c(0.86, 0.22), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
 
@@ -166,7 +166,7 @@ ggplot(ftests_Mcali, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet))) 
   geom_point(shape = 21, size = 8) +
   scale_fill_gradient(low = "#e6e4e4", high = "#b55c04", name="-log10(p)") + 
   #labs(title = expression(paste(italic("M. californianus"), " cross-sectional thickness"))) +
-  theme_bw(base_size=36) + theme(plot.title = element_text(hjust = 0.5)) + theme(plot.margin = margin(t = 10, r = 50, b = 10, l = 10,, unit = "pt")) +
+  theme_linedraw(base_size=36) + theme(plot.title = element_text(hjust = 0.5)) + theme(plot.margin = margin(t = 10, r = 50, b = 10, l = 10,, unit = "pt")) +
   theme(legend.title = element_text(size = 26), legend.text = element_text(size = 25), legend.position = c(0.17, 0.85), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
 
