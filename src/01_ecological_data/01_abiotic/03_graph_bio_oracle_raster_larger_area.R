@@ -53,7 +53,7 @@ bio_oracle_future <- bio_oracle_future %>%
 
 # Set geographic constraints
 latitude_range <- c(32, 46.5)
-longitude_range <- c(-126, -116)
+longitude_range <- c(-128, -116)
 
 # Set study extent
 study_extent <- extent(longitude_range[1], longitude_range[2], latitude_range[1], latitude_range[2])
@@ -155,16 +155,20 @@ ggplot(raster_df_temp, aes(x = x, y = y, fill = layer)) +
   theme(legend.title = element_blank(), plot.title = element_text(hjust=0.5))
 dev.off()
 # Graph pH (note: reversed colors since low pH is the stressor)
-pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_ph_mean_ggplot_alt.pdf",  width = 6, height = 8) 
+pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_ph_mean_ggplot_alt.pdf",  width = 7, height = 8) 
 ggplot(raster_df_ph, aes(x = x, y = y, fill = layer)) +
   geom_raster(aes(fill=layer)) +
-  scale_x_continuous(expand = c(0, 0)) +
+  scale_x_continuous(expand = c(0, 0), breaks = c(-125, -122, -119)) +
   scale_y_continuous(expand = c(0, 0)) +
-  scale_fill_gradientn(colours=rev(brewer.pal(6, "YlOrRd")), name="mean pH", breaks = c(7.92, 7.96, 8.0, 8.04)) +
+  scale_fill_gradientn(colours=rev(brewer.pal(6, "YlOrRd")), name="mean pH", breaks = c(7.92, 7.98, 8.04)) +
   coord_fixed(ratio = 1) +  # Fix aspect ratio so the plot is not distorted
-  theme_bw(base_size = 32) + #xlim(c(-126, -117)) + ylim(c(32, 47)) +
   labs(x = "Longitude", y = "Latitude") + 
-  theme(legend.title = element_text(size = 20), legend.text = element_text(size = 20), legend.position = c(0.75, 0.53), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+  theme_linedraw(base_size = 32) + 
+  theme(
+    panel.grid.major = element_blank(), # Removes major grid lines
+    panel.grid.minor = element_blank(), # Removes minor grid lines
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
+  theme(legend.title = element_text(size = 26), legend.text = element_text(size = 20), legend.position = c(0.75, 0.80), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
   #theme(plot.title = element_text(hjust=0.5))
 dev.off()
 

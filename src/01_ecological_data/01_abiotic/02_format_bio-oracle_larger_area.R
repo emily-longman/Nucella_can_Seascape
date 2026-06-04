@@ -21,9 +21,6 @@ setwd(root_path)
 install.packages(c('data.table', 'tidyverse', 'ggplot2', 'RColorBrewer', 'psych'))
 library(data.table)
 library(tidyverse)
-library(ggplot2)
-library(RColorBrewer)
-library(psych)
 
 # ================================================================================== #
 # ================================================================================== #
