@@ -311,18 +311,6 @@ ggplot(data = west_coast) +
   xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 24) + #ggtitle("Integrated Shell Thickness Projections") + 
   theme(legend.title = element_text(size = 20), legend.text = element_text(size = 16), legend.position = c(0.98, 0.52))
 dev.off()
-# Graph Mean Integrated Thk 2024 data (alt)
-pdf("output/figures/enviro/Mcali_thk/Mcali_integrated_thick_18sites_2024_altsize.pdf", width = 8, height = 8)
-ggplot(data = west_coast) + 
-  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
-  geom_point(data = Mcali_data_sub_sum.18, aes(x = Long, y = Lat, fill = mean_integrated_thk), shape = 21, size = 8) + 
-  #scale_fill_gradient(low = "cyan1", high = "gray27") + 
-  scale_fill_gradientn(colours=brewer.pal(6, "YlOrRd"), name=NULL) +
-             coord_fixed(1.3) +
-  xlim(c(-125, -114)) +
-  xlab("Longitude") + ylab("Latitude") + theme_bw(base_size = 26) + #ggtitle("Integrated Shell Thickness Projections") + 
-  theme(legend.title = element_text(size = 20), legend.text = element_text(size = 20), legend.position = c(0.80, 0.53), legend.background = element_rect(color = "black", fill = "white", size = 0.5, linetype = "solid"))
-dev.off()
 # Graph Mean Integrated Thk 2024 data (alt colors)
 pdf("output/figures/enviro/Mcali_thk/Mcali_integrated_thick_18sites_2024_altsizecol.pdf", width = 8, height = 8)
 ggplot(data = west_coast) + 
@@ -335,15 +323,24 @@ ggplot(data = west_coast) +
   xlab("Longitude") + ylab("Latitude") + theme_bw(base_size = 26) + #ggtitle("Integrated Shell Thickness Projections") + 
   theme(legend.title = element_text(size = 20), legend.text = element_text(size = 20), legend.position = c(0.80, 0.53), legend.background = element_rect(color = "black", fill = "white", size = 0.5, linetype = "solid"))
 dev.off()
-# Graph Mean Integrated Thk 2024 data (biger)
-pdf("output/figures/enviro/Mcali_thk/Mcali_integrated_thick_18sites_2024_bigger.pdf", width = 8, height = 8)
+
+# Graph Mean Integrated Thk 2024 data (bigger)
+pdf("output/figures/enviro/Mcali_thk/Mcali_integrated_thick_18sites_2024_bigger.pdf", width = 9, height = 9)
 ggplot(data = west_coast) + 
   geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
-  geom_point(data = Mcali_data_sub_sum.18, aes(x = Long, y = Lat, fill = mean_integrated_thk), shape = 21, size = 8) + 
+  geom_point(data = Mcali_data_sub_sum.18, aes(x = Long, y = Lat, fill = mean_integrated_thk), shape = 21, size = 12) + 
   scale_fill_gradientn(colours=brewer.pal(6, "YlGnBu"), name="Thickness") +
              coord_fixed(1.3) +
-  xlim(c(-125, -112)) +
+  #xlim(c(-125, -112.5)) +
+   scale_x_continuous(
+    limits = c(-125, -113),
+    breaks = seq(-125, -113, by = 3) # Tick marks every 0.5 units
+  ) +
   #ylim(c(32, 46)) +
-  xlab("Longitude") + ylab("Latitude") + theme_bw(base_size = 26) + #ggtitle("Integrated Shell Thickness Projections") + 
-  theme(legend.title = element_text(size = 20), legend.text = element_text(size = 20), legend.position = c(0.80, 0.47), legend.background = element_rect(color = "black", fill = "white", size = 0.5, linetype = "solid"))
+  xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 28) + #ggtitle("Integrated Shell Thickness Projections") +
+  theme(
+    panel.grid.major = element_blank(), # Removes major grid lines
+    panel.grid.minor = element_blank(), # Removes minor grid lines
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) + 
+  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 22), legend.position = c(0.78, 0.515))
 dev.off()

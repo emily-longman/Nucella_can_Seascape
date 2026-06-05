@@ -55,7 +55,7 @@ eBPis.mean.ph = eBPis.mean, eBPis.median.ph = eBPis.median, eBPis.var.ph = eBPis
 # pH and Mcali
 bf.ph.Mcali.sum <- left_join(bf.ph.mean.sum, bf.McaliIntThk.mean.sum, by=c("chr", "pos", "allele1", "allele2", "MRK"))
 
-# Graph phenotypic data vs ph
+# Graph ph vs Mcali
 pdf("output/figures/outlier_analyses/BF_ph_vs_Mcali.pdf", width = 8, height = 8)
 ggplot(bf.ph.Mcali.sum, aes(x=bf_db.mean.ph, y=bf_db.mean)) +
   labs(x = "BF mean pH", y = "BF M. californianus thickness") +
@@ -71,18 +71,7 @@ ggplot(bf.ph.Mcali.sum[which(bf.ph.Mcali.sum$bf_db.mean.ph>0 & bf.ph.Mcali.sum$b
   geom_point(alpha=0.6) +
   geom_vline(xintercept=bf.POD.thr.ph$bf_db.mean[which(bf.POD.thr.ph$thr==0.999)], col="red") +
   geom_hline(yintercept=bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)], col="red") +
-  theme_classic(base_size = 26)
-dev.off()
-
-pdf("output/figures/outlier_analyses/BF_ph_vs_Mcali_posBF_lowersig.pdf", width = 8, height = 8)
-ggplot(bf.ph.Mcali.sum[which(bf.ph.Mcali.sum$bf_db.mean.ph>0 & bf.ph.Mcali.sum$bf_db.mean>0),], aes(x=bf_db.mean.ph, y=bf_db.mean)) +
-  labs(x = "BF mean pH", y = expression(paste("BF ", italic("M. californianus"), " thickness"))) +
-  geom_point(alpha=0.6) +
-  geom_vline(xintercept=bf.POD.thr.ph$bf_db.mean[which(bf.POD.thr.ph$thr==0.999)], col="red") +
-  geom_hline(yintercept=bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)], col="red") +
-  geom_vline(xintercept=bf.POD.thr.ph$bf_db.mean[which(bf.POD.thr.ph$thr==0.999)]-5.0, col="red", linetype="dashed") +
-  geom_hline(yintercept=bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)]-5.0, col="red", linetype="dashed") +
-  theme_classic(base_size = 26)
+  theme_linedraw(base_size = 27)
 dev.off()
 
 # ================================================================================== #
