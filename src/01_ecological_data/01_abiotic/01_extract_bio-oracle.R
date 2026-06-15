@@ -19,7 +19,7 @@ root_path <- find_root_file(criterion = has_file("README.md"))
 setwd(root_path)
 #raw_data_path_from_root <- find_root_file("data", "raw", "Bio-oracle", criterion = has_file("README.md"))
 # Set working directory as path from root
-setwd(raw_data_path_from_root)
+#setwd(raw_data_path_from_root)
 
 # ================================================================================== #
 
