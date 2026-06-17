@@ -31,11 +31,11 @@ library(lmerTest)
 # Generate output directories
 
 # Data directory
-out_dir <- paste("data/processed/GEA/enviro_data/Mcali_thk")
+out_dir <- paste("data/processed/GEA/enviro/Mcali_thk")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # Figure directory
-out_dir_fig <- paste("output/figures/enviro_data/Mcali_thk")
+out_dir_fig <- paste("output/figures/enviroMcali_thk")
 if (!dir.exists(out_dir_fig)) {dir.create(out_dir_fig)}
 
 # ================================================================================== #
@@ -332,10 +332,7 @@ ggplot(data = west_coast) +
   scale_fill_gradientn(colours=brewer.pal(6, "YlGnBu"), name="Thickness") +
              coord_fixed(1.3) +
   #xlim(c(-125, -112.5)) +
-   scale_x_continuous(
-    limits = c(-125, -113),
-    breaks = seq(-125, -113, by = 3) # Tick marks every 0.5 units
-  ) +
+   scale_x_continuous(limits = c(-125, -113), breaks = seq(-125, -113, by = 3)) +
   #ylim(c(32, 46)) +
   xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 28) + #ggtitle("Integrated Shell Thickness Projections") +
   theme(
@@ -343,4 +340,19 @@ ggplot(data = west_coast) +
     panel.grid.minor = element_blank(), # Removes minor grid lines
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) + 
   theme(legend.title = element_text(size = 24), legend.text = element_text(size = 22), legend.position = c(0.78, 0.515))
+dev.off()
+
+pdf("output/figures/enviro/Mcali_thk/Mcali_integrated_thick_18sites_2024_smaller.pdf", width = 8, height = 8)
+ggplot(data = west_coast) + 
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
+  geom_point(data = Mcali_data_sub_sum.18, aes(x = Long, y = Lat, fill = mean_integrated_thk), shape = 21, size = 12) + 
+  scale_fill_gradientn(colours=brewer.pal(6, "YlGnBu"), name="Thickness") +
+             coord_fixed(1.3) +
+   scale_x_continuous(limits = c(-125, -112), breaks = seq(-125, -113, by = 3)) +
+  xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 28) + #ggtitle("Integrated Shell Thickness Projections") +
+  theme(
+    panel.grid.major = element_blank(), # Removes major grid lines
+    panel.grid.minor = element_blank(), # Removes minor grid lines
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) + 
+  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 22), legend.position = c(0.78, 0.51))
 dev.off()
