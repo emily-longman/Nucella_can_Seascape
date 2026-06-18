@@ -470,7 +470,7 @@ baypass.cor.g27343.PC1.lat.join <- rbind(baypass.cor.g27343.PC1.lat, baypass.cor
 # Graph
 pdf("output/figures/baypass/outliers/Correlation_abs_ph_baypass_PC1_lat_density_fill.pdf", width = 11, height = 4)
 ggplot(baypass.cor.g27343.PC1.lat.join, aes(x = abs.estimate, fill = group)) +
-  geom_density(alpha = 0.7, lwd = 0.5) + xlim(0,1) +
+  geom_density(alpha = 0.7, lwd = 0.5) + xlim(0,0.5) +
   scale_fill_manual(values = cols) + 
   labs(x = "|Correlation|", y = "Density") +
   theme_linedraw(base_size = 30)

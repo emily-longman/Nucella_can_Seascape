@@ -172,7 +172,6 @@ ggplot(raster_df_ph, aes(x = x, y = y, fill = layer)) +
   #theme(plot.title = element_text(hjust=0.5))
 dev.off()
 
-
 # Graph pH future (note: reversed colors since low pH is the stressor)
 pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_ph_mean_FUTURE_ggplot_alt.pdf",  width = 6, height = 8) 
 ggplot(raster_df_ph_future, aes(x = x, y = y, fill = layer)) +

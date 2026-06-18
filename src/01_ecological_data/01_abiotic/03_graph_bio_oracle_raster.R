@@ -124,7 +124,7 @@ writeRaster(temp_raster, filename = "output/figures/enviro/Bio-oracle/Test_bioor
 # Change to data frame
 raster_df_temp <- as.data.frame(temp_raster, xy = TRUE, na.rm = TRUE)
 raster_df_ph <- as.data.frame(ph_raster, xy = TRUE, na.rm = TRUE)
-# Graph 
+# Graph
 pdf("output/figures/enviro/Bio-oracle/Test_Raster_bio-oracle_temp_mean_ggplot.pdf", width = 3.5, height = 5)
 ggplot(raster_df_temp, aes(x = x, y = y, fill = layer)) +
   geom_raster(aes(fill=layer)) +
@@ -135,7 +135,7 @@ ggplot(raster_df_temp, aes(x = x, y = y, fill = layer)) +
   theme_void() +
   theme(legend.title = element_blank(), plot.title = element_text(hjust=0.5))
 dev.off()
-# Graph 
+# Graph
 pdf("output/figures/enviro/Bio-oracle/Test_Raster_bio-oracle_ph_mean_ggplot.pdf",  width = 8, height = 8)
 ggplot(raster_df_ph, aes(x = x, y = y, fill = layer)) +
   geom_raster(aes(fill=layer)) +
