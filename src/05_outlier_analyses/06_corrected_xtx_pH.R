@@ -28,8 +28,14 @@ library(poolfstat)
 
 # Load pooldata object
 load("data/raw/pooldata/pooldata.RData")
-
 pops <- data.frame(Site = pooldata@poolnames, POP = 1:length(pooldata@poolnames))
+
+# Read in SNP data
+snp.meta <- read.table("data/processed/baypass/input_files/snpdet", header=F)
+# Re-name snp metadata
+colnames(snp.meta) <- c("chr", "pos", "allele1", "allele2")
+snp.meta$MRK <- c(1:dim(snp.meta)[1])
+snp.meta <- snp.meta %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 # ================================================================================== #
 
@@ -54,7 +60,10 @@ baypass.ph.sum <- baypass.ph %>% group_by(POP, MRK) %>%
 # Join pops with Baypass output
 baypass.ph.sum <- left_join(baypass.ph.sum, pops, by = "POP")
 
+# Join with metadata
+baypass.ph.sum <- left_join(baypass.ph.sum, snp.meta, by = "MRK")
+
 # ================================================================================== #
 
 # Save output
-save(baypass.ph.sum, "data/processed/baypass/abiotic/baypass.ph.sum.RData")
+save(baypass.ph.sum, file = "data/processed/baypass/abiotic/baypass.ph.sum.RData")

@@ -17,7 +17,7 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'poolfstat', 'RColorBrewer', 'viridis'))
+#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'poolfstat', 'RColorBrewer', 'viridis', 'stats', 'fastglm'))
 library(data.table)
 library(tidyverse)
 library(foreach)
@@ -25,6 +25,8 @@ library(dplyr)
 library(poolfstat)
 library(RColorBrewer)
 library(viridis)
+library(stats)
+library(fastglm)
 
 # ================================================================================== #
 
@@ -138,6 +140,33 @@ ph.cohens.fsq.PC1 <- foreach(i=1:length(unique(ph.outliers.af$SNP_id)), .combine
 }
 
 
+# Use baypass corrected AF
+# Extract outliers and join with baypass data
+ph.outliers.baypass <- left_join(ph.outliers.af, baypass.ph.sum, by = join_by(chr, pos, SNP_id, Site)) 
+ph.outliers.baypass <- left_join(ph.outliers.baypass, PC1)
+# Calculate local effect size (Cohen's f2)
+ph.cohens.fsq.PC1.lat <- foreach(i=1:length(unique(ph.outliers.baypass$SNP_id)), .combine = "rbind", .errorhandling = "remove")%do%{
+    
+    # Extract rows associated with SNP
+    tmp.i = ph.outliers.baypass %>% filter(SNP_id == unique(ph.outliers.baypass$SNP_id)[i])
+    # Model - full
+    mod.full.i = lm(M_P.mean~ph_mean+PC1+latitude, data = tmp.i)
+    # Extract r2 - full mod
+    r2.full.i = summary(mod.full.i)$r.squared
+    # Model - reduced
+    mod.reduced.i = lm(M_P.mean~PC1+latitude, data = tmp.i)
+    # Extract r2 - full mod
+    r2.reduced.i = summary(mod.reduced.i)$r.squared
+    # Calculate effect size (Cohen's F sq)
+    fsq.i = (r2.full.i-r2.reduced.i)/(1-r2.full.i)
+
+    # Make table
+    data.frame(
+        SNP_id = unique(ph.outliers.baypass$SNP_id)[i],
+        cohens.fsq = fsq.i,
+        group = "ph")
+}
+
 # Biotic
 #Mcali.cohens.fsq <- foreach(i=1:length(unique(Mcali.outliers$SNP_id)), .combine = "rbind", .errorhandling = "remove")%do%{
 #    
@@ -178,7 +207,35 @@ Mcali.cohens.fsq.PC1 <- foreach(i=1:length(unique(Mcali.outliers$SNP_id)), .comb
     data.frame(
         SNP_id = unique(Mcali.outliers$SNP_id)[i],
         cohens.fsq = fsq.i,
-        group = "ph")
+        group = "Mcali")
+}
+
+
+# Use baypass corrected AF
+# Extract outliers and join with baypass data
+Mcali.outliers.baypass <- left_join(Mcali.outliers, baypass.Mcali.sum, by = join_by(chr, pos, SNP_id, Site)) 
+Mcali.outliers.baypass <- left_join(Mcali.outliers.baypass, PC1)
+# Calculate local effect size (Cohen's f2)
+Mcali.cohens.fsq.PC1.lat <- foreach(i=1:length(unique(Mcali.outliers.baypass$SNP_id)), .combine = "rbind", .errorhandling = "remove")%do%{
+    
+    # Extract rows associated with SNP
+    tmp.i = Mcali.outliers.baypass %>% filter(SNP_id == unique(Mcali.outliers.baypass$SNP_id)[i])
+    # Model - full
+    mod.full.i = lm(M_P.mean~mean_integrated_thk+PC1+latitude, data = tmp.i)
+    # Extract r2 - full mod
+    r2.full.i = summary(mod.full.i)$r.squared
+    # Model - reduced
+    mod.reduced.i = lm(M_P.mean~PC1+latitude, data = tmp.i)
+    # Extract r2 - full mod
+    r2.reduced.i = summary(mod.reduced.i)$r.squared
+    # Calculate effect size (Cohen's F sq)
+    fsq.i = (r2.full.i-r2.reduced.i)/(1-r2.full.i)
+
+    # Make table
+    data.frame(
+        SNP_id = unique(Mcali.outliers$SNP_id)[i],
+        cohens.fsq = fsq.i,
+        group = "Mcali")
 }
 
 # ================================================================================== #
@@ -189,6 +246,9 @@ Mcali.cohens.fsq.PC1 <- foreach(i=1:length(unique(Mcali.outliers$SNP_id)), .comb
 
 ph.cohens.fsq.PC1.bf <- left_join(bf.ph.mean.sum.outliers, ph.cohens.fsq.PC1)
 Mcali.cohens.fsq.PC1.bf <- left_join(bf.McaliIntThk.mean.sum.outliers, Mcali.cohens.fsq.PC1)
+
+ph.cohens.fsq.PC1.lat.bf <- left_join(bf.ph.mean.sum.outliers, ph.cohens.fsq.PC1.lat)
+Mcali.cohens.fsq.PC1.lat.bf <- left_join(bf.McaliIntThk.mean.sum.outliers, Mcali.cohens.fsq.PC1.lat)
 
 # ================================================================================== #
 
@@ -221,6 +281,24 @@ ggplot(ph.cohens.fsq.PC1, aes(x = reorder(SNP_id, cohens.fsq), y = cohens.fsq)) 
 dev.off()
 
 
+# Graphs with bypass alpha
+# Graph BF vs Cohen's f2
+pdf("output/figures/outlier_analyses/Cohensf2_BF_ph_baypass_PC1_lat.pdf", width = 8, height = 6)
+ggplot(ph.cohens.fsq.PC1.lat.bf, aes(x = bf_db.mean, y = cohens.fsq)) +
+  geom_point(alpha = 0.6) + 
+  xlim(bf.POD.thr.ph$bf_db.mean[which(bf.POD.thr.ph$thr==0.999)], 30.5) +
+  labs(x = "BF mean pH", y = "Cohen's f2") + 
+  theme_linedraw(base_size = 30)
+dev.off()
+
+# Graph and order top SNPs by Cohen's f2
+pdf("output/figures/outlier_analyses/Cohensf2_ph_order_baypass_PC1_lat.pdf", width = 8, height = 6)
+ggplot(ph.cohens.fsq.PC1.lat.bf, aes(x = reorder(SNP_id, cohens.fsq), y = cohens.fsq)) +
+  geom_point() + ylim(0,17.5) +
+  labs(y = "Cohen's f2", x = "Top pH SNPs") + 
+  theme_linedraw(base_size = 30) + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank(), panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank())
+dev.off()
+
 # Biotic
 #pdf("output/figures/outlier_analyses/CohensF_BF_Mcali.pdf", width = 8, height = 6)
 #ggplot(Mcali.cohens.fsq.bf, aes(x = bf_db.mean, y = cohens.fsq)) +
@@ -251,11 +329,43 @@ ggplot(Mcali.cohens.fsq.PC1, aes(x = reorder(SNP_id, cohens.fsq), y = cohens.fsq
   theme_linedraw(base_size = 30) + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank(), panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank())
 dev.off()
 
+# Graphs with bypass alpha
+# Graph BF vs Cohen's f2
+pdf("output/figures/outlier_analyses/Cohensf2_BF_Mcali_baypass_PC1_lat.pdf", width = 8, height = 6)
+ggplot(Mcali.cohens.fsq.PC1.lat.bf, aes(x = bf_db.mean, y = cohens.fsq)) +
+  geom_point(alpha = 0.6, size = 6, aes(color = cohens.fsq >= 8 & bf_db.mean >= 25)) + 
+  scale_color_manual(values = cols) +
+  ylim(0,16.5) + xlim(bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)], 30.5) +
+  labs(x = "BF", y = "Cohen's f2") + 
+  theme_linedraw(base_size = 30) + theme(legend.position = "none")
+dev.off()
+pdf("output/figures/outlier_analyses/Cohensf2_log2_BF_Mcali_baypass_PC1_lat.pdf", width = 8, height = 6)
+ggplot(Mcali.cohens.fsq.PC1.lat.bf, aes(x = bf_db.mean, y = log2(cohens.fsq))) +
+  geom_point(alpha = 0.6, size = 6, aes(color = cohens.fsq >= 8 & bf_db.mean >= 25)) + 
+  scale_color_manual(values = cols) +
+  geom_hline(yintercept = log2(0.02), col="red") +
+  geom_hline(yintercept = log2(0.2), col="red") +
+  geom_hline(yintercept = log2(0.4), col="red") +
+  #ylim(0,16.5) + xlim(bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)], 30.5) +
+  labs(x = "BF", y = "Log2(Cohen's f2)") + 
+  theme_linedraw(base_size = 30) + theme(legend.position = "none")
+dev.off()
+
+# Graph and order top SNPs by Cohen's f2
+pdf("output/figures/outlier_analyses/Cohensf2_Mcali_order_baypass_PC1_lat.pdf", width = 8, height = 6)
+ggplot(Mcali.cohens.fsq.PC1.lat.bf, aes(x = reorder(SNP_id, cohens.fsq), y = cohens.fsq)) +
+  geom_point() + ylim(0,17.5) +
+  labs(y = "Cohen's f2", x = "Top McaliThk SNPs") + 
+  theme_linedraw(base_size = 30) + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank(), panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank())
+dev.off()
+
 
 # ================================================================================== #
 
 # Extract outlier (ntLink_3488_113935)
 Mcali.top.outlier <- Mcali.cohens.fsq.PC1.bf[which(Mcali.cohens.fsq.PC1.bf$cohens.fsq > 8),]
+Mcali.top.outlier <- Mcali.cohens.fsq.PC1.lat.bf[which(Mcali.cohens.fsq.PC1.lat.bf$cohens.fsq > 8 & Mcali.cohens.fsq.PC1.lat.bf$bf_db.mean >= 25),]
+Mcali.cohensf2.outliers <- Mcali.cohens.fsq.PC1.lat.bf[which(Mcali.cohens.fsq.PC1.lat.bf$cohens.fsq > 11),]
 
 # Get AF for top outlier SNP
 Mcali.outliers.outlier <- Mcali.outliers[which(Mcali.outliers$SNP_id == Mcali.top.outlier$SNP_id),]
@@ -288,3 +398,79 @@ ggplot(Mcali.outliers.outlier, aes(x = AF, y = mean_integrated_thk, shape = shap
   theme_linedraw(base_size = 30) + 
   guides(fill = guide_legend(override.aes = list(shape = c(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 23, 23, 23, 23, 23, 23, 23), size = 8)), shape = "none")
 dev.off()
+
+
+
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
+
+
+
+
+
+
+# ================================================================================== #
+
+######## TEST GLM
+# Doesn't make the most sense bc doesn't have a clear r2 so can't calculate an effect size easily
+# Define anova function for comparing glms
+anovaFun <- function(m1, m2) {
+  ll1 <- as.numeric(logLik(m1))
+  ll2 <- as.numeric(logLik(m2))
+  parameter <- abs(attr(logLik(m1), "df") -  attr(logLik(m2), "df"))
+  chisq <- -2*(ll1-ll2)
+  1-pchisq(chisq, parameter)
+    }
+
+# GlM approach to include nEff in model
+ph.glm <- foreach(i=1:length(unique(ph.outliers.af$SNP_id)), .combine = "rbind", .errorhandling = "remove")%do%{
+    
+    # Extract rows associated with SNP
+    tmp.i = ph.outliers.af %>% filter(SNP_id == unique(ph.outliers.af$SNP_id)[i])
+
+    # Sample size of each pool
+    nSnail=20
+    # Calculate the mean effective coverage ('nEff') (note: each pool consists of 20 dogwhelks)
+    tmp.i <- tmp.i %>% mutate(nEff = round((Cov*2*nSnail)/(2*nSnail+Cov-1)))
+    # Calculate the effective allele freq
+    tmp.i <- tmp.i %>% mutate(AF_nEff = round(AF*nEff)/nEff)
+    # Model allele freq
+    # GLMs - a reduced model with just demography (PC1) and a model with demography and mean pH
+    y <- tmp.i$AF_nEff
+    X.reduced <- model.matrix(~PC1, tmp.i)
+    X.full <- model.matrix(~PC1+ph_mean, tmp.i)
+    t1.reduced <- fastglm(x=X.reduced, y=y, family=binomial(), weights=tmp.i$nEff, method=0)
+    t1.full <- fastglm(x=X.full, y=y, family=binomial(), weights=tmp.i$nEff, method=0)
+
+    # Make table
+    data.frame(
+        SNP_id = unique(ph.outliers.af$SNP_id)[i],
+        AIC_reduced = c(AIC(t1.reduced)),
+        AIC_full = c(AIC(t1.full)),
+        p_lrt = anovaFun(t1.reduced, t1.full),
+        group = "ph")
+}
+ph.glm <- ph.glm %>% mutate(AIC_delta = AIC_reduced-AIC_full)
+
+ph.glm.bf <- left_join(bf.ph.mean.sum.outliers, ph.glm)
+
+# Graph BF vs delta AIC
+pdf("output/figures/outlier_analyses/Delta_AIC_BF_ph.pdf", width = 8, height = 6)
+ggplot(ph.glm.bf, aes(x = bf_db.mean, y = cohens.fsq)) +
+  geom_point(alpha = 0.6) + 
+  xlim(bf.POD.thr.ph$bf_db.mean[which(bf.POD.thr.ph$thr==0.999)], 30.5) +
+  labs(x = "BF mean pH", y = "Cohen's f2") + 
+  theme_linedraw(base_size = 30)
+dev.off()
+
+# Graph and order top SNPs by delta AIC
+pdf("output/figures/outlier_analyses/Delta_ph_order.pdf", width = 8, height = 6)
+ggplot(ph.cohens.fsq.PC1, aes(x = reorder(SNP_id, cohens.fsq), y = cohens.fsq)) +
+  geom_point() + ylim(0,24) +
+  labs(y = "Cohen's f2", x = "Top pH SNPs") + 
+  theme_linedraw(base_size = 30) + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank(), panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank())
+dev.off()
+
+######## TEST GLM

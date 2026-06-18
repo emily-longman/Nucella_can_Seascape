@@ -113,6 +113,15 @@ ggplot(ftests_ph, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet))) +
   theme_linedraw(base_size=30) + theme(plot.title = element_text(hjust = 0.5)) +
   theme(legend.title = element_text(size = 24), legend.text = element_text(size = 22), legend.position = c(0.81, 0.25), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
+pdf("output/figures/outlier_analyses/Fishers_exact_test_pH_taller.pdf", width = 9.5, height = 8.14)
+ggplot(ftests_ph, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet))) + 
+  geom_vline(xintercept = 0, col="black", linetype="dashed") + ylab("") + 
+  geom_linerange(aes(xmin = log2(lci), xmax = log2(uci)), linewidth = 1) +
+  geom_point(shape = 21, size = 8) +
+  scale_fill_gradient(low = "#e6e4e4", high = "#b55c04", name="-log10(p)", breaks=c(0,2,4)) +
+  theme_linedraw(base_size=30) + theme(plot.title = element_text(hjust = 0.5)) +
+  theme(legend.title = element_text(size = 26), legend.text = element_text(size = 25), legend.position = c(0.81, 0.2), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+dev.off()
 
 #--------------------------------------------------------------------------------
 
@@ -159,7 +168,7 @@ ggplot(ftests_Mcali, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet))) 
   theme_bw(base_size=36) + theme(plot.title = element_text(hjust = 0.5)) + theme(plot.margin = margin(t = 10, r = 50, b = 10, l = 10,, unit = "pt")) +
   theme(legend.title = element_text(size = 24), legend.text = element_text(size = 22), legend.position = c(0.15, 0.81), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
-pdf("output/figures/outlier_analyses/Fishers_exact_test_Mcali_taller.pdf", width = 9.5, height = 8)
+pdf("output/figures/outlier_analyses/Fishers_exact_test_Mcali_taller.pdf", width = 9.9175, height = 8.14)
 ggplot(ftests_Mcali, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet))) + 
   geom_vline(xintercept = 0, col="black", linetype="dashed") + ylab("") + 
   geom_linerange(aes(xmin = log2(lci), xmax = log2(uci)), linewidth = 1) +
@@ -193,51 +202,3 @@ ggplot(ftests_all, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet), sha
   theme_bw(base_size=22) 
 dev.off()
 
-
-#--------------------------------------------------------------------------------
-#--------------------------------------------------------------------------------
-
-# Directly compare pH and Mcali models
-
-# Loop through annotations and perform Fishers exact test
-ftests <- foreach(i=ann.focal, .combine = "rbind", .errorhandling = "remove")%do%{
-  
-  # Create matrix for significance of focal annotation
-  ann.tmp <- matrix(c(
-            ann$ph[which(ann$Annotation==i)],
-            ann$McaliIntThk[which(ann$Annotation==i)],
-            ann$genome[which(ann$Annotation==i)]-ann$ph[which(ann$Annotation==i)],
-            ann$genome[which(ann$Annotation==i)]-ann$McaliIntThk[which(ann$Annotation==i)]),
-            nrow = 2)
-
-  # Fishers exact test
-  ftest_i <- fisher.test(ann.tmp)
-
-  # Create data frame with output (i, p.value, odds ratio, and 95% CI)
-  data.frame(
-      class = i,
-      p.fet = ftest_i$p.value,
-      OR = ftest_i$estimate,
-      lci = ftest_i$conf.int[1],
-      uci = ftest_i$conf.int[2]
-    )
-}
-
-# Create new column for graphing
-ftests$class_graphing <- ftests$class
-ftests$class_graphing <- str_remove_all(ftests$class_graphing, "_variant")
-ftests$class_graphing <- gsub("_", " ", ftests$class_graphing)
-
-# Order classes based on OR
-ftests <- ftests %>% mutate(class_graphing = fct_reorder(class_graphing, OR))
-
-# Graph OR of Fishers exact tests
-pdf("output/figures/outlier_analyses/Fishers_exact_test.pdf", width = 10, height = 6)
-ggplot(ftests, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet))) + 
-  geom_linerange(aes(xmin = log2(lci), xmax = log2(uci)), linewidth = 1) +
-  geom_point(shape = 21, size = 5) +
-  scale_fill_gradient(low = "#e6e4e4", high = "#b55c04", name="-log10(p)") +
-  #scale_fill_gradientn(colours=brewer.pal(9, "Greens"), name="-log10(p)") + 
-  geom_vline(xintercept = 0, col="black", linetype="dashed") + ylab("") +
-  theme_bw(base_size=22)
-dev.off()
