@@ -42,7 +42,7 @@ snp.meta <- snp.meta %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 # ================================================================================== #
 
-# Read in Baypass mean pH  files
+# Read in Baypass mean Mcali files
 
 # Load BF output for 5 replicate Baypass runs
 baypass.Mcali <- foreach(i=1:5, .combine = rbind)%do%{

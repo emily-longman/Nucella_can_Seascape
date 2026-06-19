@@ -18,11 +18,12 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-install.packages(c('data.table', 'tidyverse', 'ggplot2', 'RColorBrewer', 'Hmisc', 'lmerTest'))
+install.packages(c('data.table', 'tidyverse', 'ggplot2', 'RColorBrewer', 'viridis', 'Hmisc', 'lmerTest'))
 library(data.table)
 library(tidyverse)
 library(ggplot2)
 library(RColorBrewer)
+library(viridis)
 library(Hmisc)
 library(lmerTest)
 
@@ -157,7 +158,7 @@ Mcali_sub_sum <- Mcali_data_sub %>%
 # Graph STI
 
 # Graph by population - mean and se
-pdf("output/figures/GEA/enviro/Mcali_thk/Mcali_STI_mean_se.pdf", width = 10, height = 14)
+pdf("output/figures/enviro/Mcali_thk/Mcali_STI_mean_se.pdf", width = 10, height = 14)
 ggplot(data = Mcali_sub_sum, aes(x=mean_STI, y=Site.Code, colour = Site.Code)) + 
 geom_point(data = Mcali_sub_sum, size=4, shape = 21, color = mycolors, fill = mycolors) + 
 geom_errorbar(data = Mcali_sub_sum, aes(xmin=mean_STI-se_STI, xmax=mean_STI+se_STI), width=.5) +
@@ -168,7 +169,7 @@ theme_classic(base_size = 24)
 dev.off()
 
 # Graph by population - raw points and pointrange
-pdf("output/figures/GEA/enviro/Mcali_thk/Mcali_STI_raw_pointrange.pdf", width = 10, height = 14)
+pdf("output/figures/enviro/Mcali_thk/Mcali_STI_raw_pointrange.pdf", width = 10, height = 14)
 ggplot(data = Mcali_data_sub, aes(x=STI, y=Site.Code)) + 
 geom_jitter(data = Mcali_data_sub, aes(x=STI, y=Site.Code), colour="darkgrey", height = 0.1) +
 stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="pointrange", color=mycolors) + 
@@ -182,7 +183,7 @@ dev.off()
 # Graph Integrated thk
 
 # Graph by population - mean and se
-pdf("output/figures/GEA/enviro/Mcali_thk/Mcali_integrated_thk_mean_se.pdf", width = 10, height = 14)
+pdf("output/figures/enviro/Mcali_thk/Mcali_integrated_thk_mean_se.pdf", width = 10, height = 14)
 ggplot(data = Mcali_sub_sum, aes(x=mean_integrated_thk, y=Site.Code, colour = Site.Code)) + 
 geom_point(data = Mcali_sub_sum, size=4, shape = 21, color = mycolors, fill = mycolors) + 
 geom_errorbar(data = Mcali_sub_sum, aes(xmin=mean_integrated_thk-se_integrated_thk, xmax=mean_integrated_thk+se_integrated_thk), width=.5) +
@@ -193,7 +194,7 @@ theme_classic(base_size = 24)
 dev.off()
 
 # Graph by population - raw points and pointrange
-pdf("output/figures/GEA/enviro/Mcali_thk/Mcali_integrated_thk_raw_pointrange.pdf", width = 10, height = 14)
+pdf("output/figures/enviro/Mcali_thk/Mcali_integrated_thk_raw_pointrange.pdf", width = 10, height = 14)
 ggplot(data = Mcali_data_sub, aes(x=Integrated.Thk, y=Site.Code)) + 
 geom_jitter(data = Mcali_data_sub, aes(x=Integrated.Thk, y=Site.Code), colour="darkgrey", height = 0.1) +
 stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="pointrange", color=mycolors) + 
@@ -201,12 +202,31 @@ theme_classic(base_size = 24) + xlim(0, 5) +
 xlab("M. californianus Integrated Thickness (mm)") + ylab("")
 dev.off()
 
+# Color palette
+viridiscolors <- viridis(n=19)
+viridiscolors <- viridiscolors[-4]
+
+# Remove ARA
+Mcali_data_sub_noARA <- Mcali_data_sub %>% filter(Site.Code != "ARA")
+Mcali_sub_sum_noARA <- Mcali_sub_sum %>% filter(Site.Code != "ARA")
+
+# Graph by population - raw points and pointrange
+pdf("output/figures/enviro/Mcali_thk/Mcali_integrated_thk_raw_pointrange_viridis.pdf", width = 7, height = 7.75)
+ggplot(data = Mcali_data_sub_noARA, aes(x=Integrated.Thk, y=Site.Code)) + 
+geom_jitter(data = Mcali_data_sub_noARA, aes(x=Integrated.Thk, y=Site.Code), colour="darkgrey", height = 0.1, size = 2, alpha = 0.8) +
+#geom_linerange(data = Mcali_sub_sum_noARA, aes(xmin=mean_integrated_thk-se_integrated_thk, xmax=mean_integrated_thk+se_integrated_thk), width=.5) +
+geom_point(data = Mcali_sub_sum_noARA, aes(x=mean_integrated_thk, y=Site.Code), fill=rev(viridiscolors), size = 8, shape = 21) + 
+#stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="pointrange", fill=rev(viridiscolors), size = 1, shape = 21) + 
+theme_linedraw(base_size = 30) + xlim(0, 4.75) +
+xlab("M. californianus cross-sectional thickness") + ylab("")
+dev.off()
+
 # ================================================================================== #
 
 # Graph Max thk
 
 # Graph by population - mean and se
-pdf("output/figures/GEA/enviro/Mcali_thk/Mcali_max_thk_mean_se.pdf", width = 10, height = 14)
+pdf("output/figures/enviro/Mcali_thk/Mcali_max_thk_mean_se.pdf", width = 10, height = 14)
 ggplot(data = Mcali_sub_sum, aes(x=mean_max_thk, y=Site.Code, colour = Site.Code)) + 
 geom_point(data = Mcali_sub_sum, size=4, shape = 21, color = mycolors, fill = mycolors) + 
 geom_errorbar(data = Mcali_sub_sum, aes(xmin=mean_max_thk-se_max_thk, xmax=mean_max_thk+se_max_thk), width=.5) +
@@ -217,7 +237,7 @@ theme_classic(base_size = 24)
 dev.off()
 
 # Graph by population - raw points and pointrange
-pdf("output/figures/GEA/enviro/Mcali_thk/Mcali_max_thk_raw_pointrange.pdf", width = 10, height = 14)
+pdf("output/figures/enviro/Mcali_thk/Mcali_max_thk_raw_pointrange.pdf", width = 10, height = 14)
 ggplot(data = Mcali_data_sub, aes(x=Max.thk, y=Site.Code)) + 
 geom_jitter(data = Mcali_data_sub, aes(x=Max.thk, y=Site.Code), colour="darkgrey", height = 0.1) +
 stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="pointrange", color=mycolors) + 
@@ -230,7 +250,7 @@ dev.off()
 # Graph Min thk
 
 # Graph by population - mean and se
-pdf("output/figures/GEA/enviro/Mcali_thk/Mcali_min_thk_mean_se.pdf", width = 10, height = 14)
+pdf("output/figures/enviro/Mcali_thk/Mcali_min_thk_mean_se.pdf", width = 10, height = 14)
 ggplot(data = Mcali_sub_sum, aes(x=mean_min_thk, y=Site.Code, colour = Site.Code)) + 
 geom_point(data = Mcali_sub_sum, size=4, shape = 21, color = mycolors, fill = mycolors) + 
 geom_errorbar(data = Mcali_sub_sum, aes(xmin=mean_min_thk-se_min_thk, xmax=mean_min_thk+se_min_thk), width=.5) +
@@ -241,7 +261,7 @@ theme_classic(base_size = 24)
 dev.off()
 
 # Graph by population - raw points and pointrange
-pdf("output/figures/GEA/enviro/Mcali_thk/Mcali_min_thk_raw_pointrange.pdf", width = 10, height = 14)
+pdf("output/figures/enviro/Mcali_thk/Mcali_min_thk_raw_pointrange.pdf", width = 10, height = 14)
 ggplot(data = Mcali_data_sub, aes(x=Min.thk, y=Site.Code)) + 
 geom_jitter(data = Mcali_data_sub, aes(x=Min.thk, y=Site.Code), colour="darkgrey", height = 0.1) +
 stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="pointrange", color=mycolors) + 
@@ -285,33 +305,8 @@ Mcali_data_sub_sum_meta <- left_join(Mcali_data_sub_sum, meta, by="Site.Code")
 # Cut ARA since outlier for collection
 Mcali_data_sub_sum.18 <- Mcali_data_sub_sum_meta[-which(Mcali_data_sub_sum_meta$Site.Code == "ARA"),]
 
-# Graph STI 2024 data
-pdf("output/figures/enviro/Mcali_thk/Mcali_STI_2024_18sites_altcolors.pdf", width = 8, height = 8)
-ggplot(data = west_coast) + 
-  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
-  geom_point(data = Mcali_data_sub_sum.18, aes(x = Long, y = Lat, fill = mean_STI), shape = 21, size = 8) + 
-  #scale_fill_gradient(low = "cyan1", high = "gray27") + 
-  #scale_fill_viridis(option="viridis", direction = -1) +
-  scale_fill_gradientn(colours=brewer.pal(6, "YlOrRd"), name="STI") +
-             coord_fixed(1.3) +
-  xlim(c(-125, -114)) +
-  xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 24) + #ggtitle("STI Shell Thickness Projections") +
-  theme(legend.title = element_text(size = 20), legend.text = element_text(size = 16), legend.position = c(0.98, 0.52))
-dev.off()
 
 # Graph Mean Integrated Thk 2024 data
-pdf("output/figures/enviro/Mcali_thk/Mcali_integrated_thick_18sites_2024_altcolors.pdf", width = 8, height = 8)
-ggplot(data = west_coast) + 
-  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
-  geom_point(data = Mcali_data_sub_sum.18, aes(x = Long, y = Lat, fill = mean_integrated_thk), shape = 21, size = 8) + 
-  #scale_fill_gradient(low = "cyan1", high = "gray27") + 
-  scale_fill_gradientn(colours=brewer.pal(6, "YlOrRd"), name="Integrated Thickness") +
-             coord_fixed(1.3) +
-  xlim(c(-125, -114)) +
-  xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 24) + #ggtitle("Integrated Shell Thickness Projections") + 
-  theme(legend.title = element_text(size = 20), legend.text = element_text(size = 16), legend.position = c(0.98, 0.52))
-dev.off()
-# Graph Mean Integrated Thk 2024 data (alt colors)
 pdf("output/figures/enviro/Mcali_thk/Mcali_integrated_thick_18sites_2024_altsizecol.pdf", width = 8, height = 8)
 ggplot(data = west_coast) + 
   geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
@@ -342,17 +337,18 @@ ggplot(data = west_coast) +
   theme(legend.title = element_text(size = 24), legend.text = element_text(size = 22), legend.position = c(0.78, 0.515))
 dev.off()
 
-pdf("output/figures/enviro/Mcali_thk/Mcali_integrated_thick_18sites_2024_smaller.pdf", width = 8, height = 8)
+pdf("output/figures/enviro/Mcali_thk/Mcali_integrated_thick_18sites_2024_wider.pdf", width = 10, height = 10.5)
 ggplot(data = west_coast) + 
   geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
-  geom_point(data = Mcali_data_sub_sum.18, aes(x = Long, y = Lat, fill = mean_integrated_thk), shape = 21, size = 12) + 
-  scale_fill_gradientn(colours=brewer.pal(6, "YlGnBu"), name="Thickness") +
+  geom_point(data = Mcali_data_sub_sum.18, aes(x = Long, y = Lat, fill = mean_integrated_thk), shape = 21, size = 15) + 
+  #scale_fill_gradientn(colours=rev(brewer.pal(9, "BrBG")), name="Thickness", breaks = c(1.6, 1.9, 2.2)) +
+  scale_fill_viridis(option="mako", name="Thickness", breaks = c(1.6, 1.9, 2.2), direction = -1) +
              coord_fixed(1.3) +
-   scale_x_continuous(limits = c(-125, -112), breaks = seq(-125, -113, by = 3)) +
-  xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 28) + #ggtitle("Integrated Shell Thickness Projections") +
+   scale_x_continuous(limits = c(-125, -113), breaks = seq(-125, -113, by = 5)) +
+  xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 30) + #ggtitle("Integrated Shell Thickness Projections") +
   theme(
     panel.grid.major = element_blank(), # Removes major grid lines
     panel.grid.minor = element_blank(), # Removes minor grid lines
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) + 
-  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 22), legend.position = c(0.78, 0.51))
+  theme(legend.title = element_text(size = 30), legend.text = element_text(size = 28), legend.position = c(0.82, 0.44), legend.margin = margin(0, 0, 0, 0))
 dev.off()

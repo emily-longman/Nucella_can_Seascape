@@ -324,23 +324,23 @@ ph.g27343 <- left_join(afs.ph.g27343.BF.POD, baypass.ph.sum, by = c("SNP_id", "S
 ph.g27343 <- left_join(ph.g27343, ph)
 
 # Calculate correlation coef between AF and mean pH for 51 SNPs
-baypass.cor.g27343 <- foreach(i=1:length(unique(ph.g27343$SNP_id)), .combine = "rbind", .errorhandling = "remove")%do%{
-    
-    # Extract rows associated with SNP
-    tmp.i = ph.g27343 %>% filter(SNP_id == unique(ph.g27343$SNP_id)[i])
-    # Do correlation test
-    cor.i = cor.test(formula = ~ M_P.mean + ph_mean, data = tmp.i)
-
-    # Make table
-    data.frame(
-        SNP_id = unique(ph.g27343$SNP_id)[i],
-        statistic = cor.i[1],
-        p.value = cor.i[3],
-        estimate = cor.i[4],
-        group = "outliers")
-}
+#baypass.cor.g27343 <- foreach(i=1:length(unique(ph.g27343$SNP_id)), .combine = "rbind", .errorhandling = "remove")%do%{
+#    
+#    # Extract rows associated with SNP
+#    tmp.i = ph.g27343 %>% filter(SNP_id == unique(ph.g27343$SNP_id)[i])
+#    # Do correlation test
+#    cor.i = cor.test(formula = ~ M_P.mean + ph_mean, data = tmp.i)
+#
+#    # Make table
+#    data.frame(
+#        SNP_id = unique(ph.g27343$SNP_id)[i],
+#        statistic = cor.i[1],
+#        p.value = cor.i[3],
+#        estimate = cor.i[4],
+#        group = "outliers")
+#}
 # Create column with absolute value of cor
-baypass.cor.g27343$abs.estimate <- abs(baypass.cor.g27343$estimate)
+#baypass.cor.g27343$abs.estimate <- abs(baypass.cor.g27343$estimate)
 
 #####
 
@@ -355,14 +355,14 @@ baypass.ph.sum.ag <- baypass.ph.sum %>% group_by(MRK, chr, pos, allele1, allele2
 # Extract summary AF data for all outlier SNPs in g27343
 baypass.ph.sum.ag.g27343 <- baypass.ph.sum.ag %>% filter(SNP_id %in% unique(afs.ph.g27343.BF.POD$SNP_id))
 # Calc summary stats
-baypass.g27343.mean.AF <- mean(baypass.ph.sum.ag.g27343$mean_M_P)
-baypass.g27343.sd.AF <- sd(baypass.ph.sum.ag.g27343$mean_M_P)
-baypass.g27343.range.AF <- range(baypass.ph.sum.ag.g27343$mean_M_P)
+baypass.g27343.mean.MP <- mean(baypass.ph.sum.ag.g27343$mean_M_P)
+baypass.g27343.sd.MP <- sd(baypass.ph.sum.ag.g27343$mean_M_P)
+baypass.g27343.range.MP <- range(baypass.ph.sum.ag.g27343$mean_M_P)
 
 # Extract a sample of 1000 SNPs that aren't on that contig and have a mean AF within one sd of the mean AF for g27343
 baypass.ph.sum.ag.sample <- baypass.ph.sum.ag %>% 
     filter(SNP_id != unique(baypass.ph.sum.ag.g27343$chr)) %>% 
-    filter(mean_M_P > baypass.g27343.mean.AF-baypass.g27343.sd.AF & mean_M_P < baypass.g27343.mean.AF+baypass.g27343.sd.AF) |> 
+    filter(mean_M_P > baypass.g27343.mean.MP-baypass.g27343.sd.MP & mean_M_P < baypass.g27343.mean.MP+baypass.g27343.sd.MP) |> 
     slice_sample(n = 1000)
 
 #####
@@ -373,41 +373,43 @@ ph.sample <- baypass.ph.sum %>% filter(SNP_id %in% baypass.ph.sum.ag.sample$SNP_
 # Join with pH data
 ph.sample <- left_join(ph.sample, ph, by="Site")
 
-# Calculate correlation coef between AF and mean pH for 51 SNPs
-baypass.cor.sample <- foreach(i=1:length(unique(ph.sample$SNP_id)), .combine = "rbind", .errorhandling = "remove")%do%{
-    
-    # Extract rows associated with SNP
-    tmp.i = ph.sample %>% filter(SNP_id == unique(ph.sample$SNP_id)[i])
-    # Do correlation test
-    cor.i = cor.test(formula = ~ M_P.mean + ph_mean, data = tmp.i)
+#####
 
-    # Make table
-    data.frame(
-        SNP_id = unique(ph.sample$SNP_id)[i],
-        statistic = cor.i[1],
-        p.value = cor.i[3],
-        estimate = cor.i[4],
-        group = "sample")
-}
+# Calculate correlation coef between AF and mean pH for 51 SNPs
+#baypass.cor.sample <- foreach(i=1:length(unique(ph.sample$SNP_id)), .combine = "rbind", .errorhandling = "remove")%do%{
+#    
+#    # Extract rows associated with SNP
+#    tmp.i = ph.sample %>% filter(SNP_id == unique(ph.sample$SNP_id)[i])
+#    # Do correlation test
+#    cor.i = cor.test(formula = ~ M_P.mean + ph_mean, data = tmp.i)
+#
+#    # Make table
+#    data.frame(
+#        SNP_id = unique(ph.sample$SNP_id)[i],
+#        statistic = cor.i[1],
+#        p.value = cor.i[3],
+#        estimate = cor.i[4],
+#        group = "sample")
+#}
 # Create column with absolute value of cor
-baypass.cor.sample$abs.estimate <- abs(baypass.cor.sample$estimate)
+#baypass.cor.sample$abs.estimate <- abs(baypass.cor.sample$estimate)
 
 #####
 
 # Join - PC1 incorporated
-baypass.cor.g27343.join <- rbind(baypass.cor.g27343, baypass.cor.sample)
+#baypass.cor.g27343.join <- rbind(baypass.cor.g27343, baypass.cor.sample)
 
 # Set colors
 cols <- c("#ff7b00", "#757474")
 
 # Graph
-pdf("output/figures/baypass/outliers/Correlation_abs_ph_baypass_density_fill.pdf", width = 11, height = 4)
-ggplot(baypass.cor.g27343.join, aes(x = abs.estimate, fill = group)) +
-  geom_density(alpha = 0.7, lwd = 0.5) + xlim(0,1) +
-  scale_fill_manual(values = cols) + 
-  labs(x = "|Correlation|", y = "Density") +
-  theme_linedraw(base_size = 30)
-dev.off()
+#pdf("output/figures/baypass/outliers/Correlation_abs_ph_baypass_density_fill.pdf", width = 11, height = 4)
+#ggplot(baypass.cor.g27343.join, aes(x = abs.estimate, fill = group)) +
+#  geom_density(alpha = 0.7, lwd = 0.5) + xlim(0,1) +
+#  scale_fill_manual(values = cols) + 
+#  labs(x = "|Correlation|", y = "Density") +
+#  theme_linedraw(base_size = 30)
+#dev.off()
 
 
 ######
@@ -464,7 +466,7 @@ baypass.cor.sample.PC1.lat$abs.estimate <- abs(baypass.cor.sample.PC1.lat$estima
 
 #####
 
-# Join - PC1 incorporated
+# Join - PC1 and lat incorporated
 baypass.cor.g27343.PC1.lat.join <- rbind(baypass.cor.g27343.PC1.lat, baypass.cor.sample.PC1.lat)
 
 # Graph

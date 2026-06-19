@@ -243,3 +243,23 @@ ggplot(data = west_coast) +
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) + # Keeps outer rectangle
   theme(legend.title = element_text(size = 28), legend.text = element_text(size = 20), legend.position = c(0.818, 0.51))
 dev.off()
+
+pdf("output/figures/genomic_offset/Baypass_scaled_GO_map_alt2.pdf", width = 8, height = 8.5)
+ggplot(data = west_coast) + 
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
+  geom_point(data = go.scaled.output, aes(x = Long, y = Lat, fill = GO.scaled), shape = 21, size = 12) + 
+  #scale_fill_viridis(option="rocket", breaks = c(0.085, 0.090, 0.095)) +
+  scale_fill_gradientn(colours=brewer.pal(6, "Oranges"), name="gGO", breaks = c(0.085, 0.090, 0.095)) +
+  coord_fixed(1.3) +
+  scale_x_continuous(
+    limits = c(-125, -114.1),
+    breaks = seq(-125, -114.1, by = 3) # Tick marks every 0.5 units
+  ) + ylim(32, 48) +
+  #xlim(c(-125, -112.5)) +
+  xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 30) + 
+  theme(
+    panel.grid.major = element_blank(), # Removes major grid lines
+    panel.grid.minor = element_blank(), # Removes minor grid lines
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) + # Keeps outer rectangle
+  theme(legend.title = element_text(size = 28), legend.text = element_text(size = 20), legend.position = c(0.75, 0.83), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+dev.off()

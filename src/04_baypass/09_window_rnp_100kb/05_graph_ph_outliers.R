@@ -136,8 +136,6 @@ ph.all[which(ph.all$SNP_id=="ntLink_3821_41192"),]
 # Join with pH data
 afs.ph <- left_join(ph.all, ph, by="Site")
 
-# Remove rows w/ NAs
-#afs.ph <- na.omit(afs.ph)
 
 # Make Site an ordered factor
 lat.order <- c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR")
@@ -183,6 +181,15 @@ ggplot(afs.ph.BF20, aes(x=AF, y=ph_mean, shape=shape, fill=Site)) +
   facet_wrap(~SNP_id, ncol = 2) + scale_fill_manual(values = viridiscolors) +
   scale_x_continuous(breaks = seq(0, 1, by = 0.5)) + scale_y_continuous(limits = c(7.92, 8.03), breaks = c(7.95, 8.0)) +
   theme_linedraw(base_size = 30) + theme(strip.background =element_rect(fill="grey"), strip.text = element_text(colour = 'black')) +
+  theme(legend.position="none")
+dev.off()
+pdf("output/figures/baypass/outliers/pH_g27343_BF20_taller.pdf", width = 4.5, height = 8.5)
+ggplot(afs.ph.BF20, aes(x=AF, y=ph_mean, shape=shape, fill=Site)) +
+  geom_point(alpha=0.7, size = 7) + scale_shape_manual(values = c(21, 23)) + labs(x="Allele Frequency", y="mean pH") +
+  facet_wrap(~SNP_id, ncol = 1) + scale_fill_manual(values = viridiscolors) +
+  scale_x_continuous(breaks = seq(0, 1, by = 0.5)) + scale_y_continuous(limits = c(7.92, 8.03), breaks = c(7.95, 8.0)) +
+  theme_linedraw(base_size = 30) + 
+  theme(strip.background = element_rect(fill="grey"), strip.text = element_text(colour = 'black', size = 18, margin = margin(t=6, r=6, b=6, l=6))) +
   theme(legend.position="none")
 dev.off()
 # Graph and color by Site - BF19
@@ -354,14 +361,13 @@ ggplot(baypass.ph.top.win, aes(y=bf_db.mean, x=pos/1000, col = M_XtX_mean)) + la
   geom_hline(yintercept=0, col="black", linetype="solid") +
   theme_linedraw(base_size=30) + theme(legend.position = "none")
 dev.off()
-
-pdf("output/figures/baypass/window_summary/baypass_ph_mean_BF_xtx_topwin_wider_alt.pdf", width = 9.36, height = 4)
-ggplot(baypass.ph.top.win, aes(y=bf_db.mean, x=pos/1000, fill = M_XtX_mean)) + labs(x="Position (kb)", y="BF")+
+pdf("output/figures/baypass/window_summary/baypass_ph_mean_BF_xtx_topwin_alt.pdf", width = 8.85, height = 4.5)
+ggplot(baypass.ph.top.win, aes(y=bf_db.mean, x=pos/1000, col = M_XtX_mean)) + labs(x="Position (kb)", y="BF")+
   geom_rect(aes(xmin=1/1000, xmax=58041/1000, ymin=-Inf, ymax=Inf), color="grey" , fill="grey", alpha=0.5) +
   #geom_point(alpha=0.75, size=6) + 
   geom_point(alpha=0.75, size=7, aes(shape = cut(bf_db.mean, c(-Inf, 20, Inf)))) + 
-  scale_shape_manual(values = c(21, 22)) + scale_fill_gradient(low = "#d7dbf6", high = "black", name=expression(italic("X"^T*"X")))  +
-  #scale_color_gradientn(colours=rev(brewer.pal(9, "RdYlBu")), name=expression(italic("X"^T*"X"))) +
+  #scale_color_gradient(low = "#d7dbf6", high = "blue", name=expression(italic("X"^T*"X"))) + 
+  scale_color_gradientn(colours=rev(brewer.pal(9, "RdYlBu")), name=expression(italic("X"^T*"X"))) +
   geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red", linetype="dashed") +
   geom_hline(yintercept=0, col="black", linetype="solid") +
   theme_linedraw(base_size=30) + theme(legend.position = "none")
