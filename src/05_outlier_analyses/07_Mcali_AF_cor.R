@@ -48,6 +48,9 @@ load("data/processed/baypass/biotic/bf.Mcali.IntThk.sum.Rdata")
 # Load Baypass alpha(ij)
 load("data/processed/baypass/biotic/baypass.Mcali.sum.RData")
 
+# Load Cohen's f2
+load("data/processed/baypass/biotic/Mcali.cohens.fsq.PC1.lat.bf.RData")
+
 # Load M californianus shell thickness data
 Mcalifornianus_data <- read.csv("data/processed/GEA/enviro_data/Mcali_thk/Mcalifornianus_data_clean_18pop.csv", header=T)
 Mcali <- Mcalifornianus_data[,c(1,3,4,7)]
@@ -113,7 +116,7 @@ baypass.Mcali.mean.MP <- baypass.Mcali.sum.ag.out$mean_M_P
 # Extract a sample of 1000 SNPs that aren't on that contig and have a mean alpha within 0.15
 baypass.Mcali.sum.ag.sample <- baypass.Mcali.sum.ag %>% 
     filter(SNP_id != unique(baypass.Mcali.sum.ag.out$chr)) %>% 
-    filter(mean_M_P > baypass.g27343.mean.MP-0.15 & mean_M_P < baypass.g27343.mean.MP+0.15) |> 
+    filter(mean_M_P > baypass.Mcali.mean.MP-0.15 & mean_M_P < baypass.Mcali.mean.MP+0.15) |> 
     slice_sample(n = 1000)
 
 # ================================================================================== #
@@ -151,20 +154,20 @@ baypass.cor.Mcali.sample.PC1.lat <- foreach(i=1:length(unique(Mcali.sample$SNP_i
 # Create column with absolute value of cor
 baypass.cor.Mcali.sample.PC1.lat$abs.estimate <- abs(baypass.cor.Mcali.sample.PC1.lat$estimate)
 
-
 # ================================================================================== #
 
 # Graph correlation of outlier SNP compared to sample
 
 # Set colors
-cols <- c("#757474", "#29b3e6")
+#cols <- c("#757474", "#29b3e6")
+cols <- c("#757474", "#9e03a9")
 
 # Graph
 pdf("output/figures/outlier_analyses/Correlation_abs_Mcali_baypass_PC1_lat_density_fill.pdf", width = 6, height = 6)
 ggplot(baypass.cor.Mcali.sample.PC1.lat, aes(x = abs.estimate, fill = "group")) +
   geom_density(alpha = 0.7, lwd = 0.5) + 
   scale_fill_manual(values = cols[1]) + 
-  geom_vline(xintercept = baypass.cor.Mcali.out.PC1.lat$abs.estimate, color = cols[2]) +
+  geom_vline(xintercept = baypass.cor.Mcali.out.PC1.lat$abs.estimate, color = cols[2], lwd = 3) +
   xlim(0,1) + ylim(0,3) +
   labs(x = "|Correlation|", y = "Density") +
   theme_linedraw(base_size = 30) + theme(legend.position = "none")

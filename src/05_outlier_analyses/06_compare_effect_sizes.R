@@ -17,7 +17,7 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'poolfstat', 'RColorBrewer', 'viridis', 'stats', 'fastglm'))
+#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'poolfstat', 'RColorBrewer', 'viridis', 'stats'))
 library(data.table)
 library(tidyverse)
 library(foreach)
@@ -26,7 +26,6 @@ library(poolfstat)
 library(RColorBrewer)
 library(viridis)
 library(stats)
-library(fastglm)
 
 # ================================================================================== #
 
@@ -103,28 +102,28 @@ Mcali.outliers <- left_join(Mcali.outliers, Mcali) %>% drop_na(mean_integrated_t
 # Abiotic
 
 # Allele freq
-ph.outliers.af <- left_join(ph.outliers.af, PC1)
-ph.cohens.fsq.PC1 <- foreach(i=1:length(unique(ph.outliers.af$SNP_id)), .combine = "rbind", .errorhandling = "remove")%do%{
-    
-    # Extract rows associated with SNP
-    tmp.i = ph.outliers.af %>% filter(SNP_id == unique(ph.outliers.af$SNP_id)[i])
-    # Model - full
-    mod.full.i = lm(AF~ph_mean+PC1, data = tmp.i)
-    # Extract r2 - full mod
-    r2.full.i = summary(mod.full.i)$r.squared
-    # Model - reduced
-    mod.reduced.i = lm(AF~PC1, data = tmp.i)
-    # Extract r2 - full mod
-    r2.reduced.i = summary(mod.reduced.i)$r.squared
-    # Calculate effect size (Cohen's F sq)
-    fsq.i = (r2.full.i-r2.reduced.i)/(1-r2.full.i)
-
-    # Make table
-    data.frame(
-        SNP_id = unique(ph.outliers.af$SNP_id)[i],
-        cohens.fsq = fsq.i,
-        group = "ph")
-}
+#ph.outliers.af <- left_join(ph.outliers.af, PC1)
+#ph.cohens.fsq.PC1 <- foreach(i=1:length(unique(ph.outliers.af$SNP_id)), .combine = "rbind", .errorhandling = "remove")%do%{
+#    
+#    # Extract rows associated with SNP
+#    tmp.i = ph.outliers.af %>% filter(SNP_id == unique(ph.outliers.af$SNP_id)[i])
+#    # Model - full
+#    mod.full.i = lm(AF~ph_mean+PC1, data = tmp.i)
+#    # Extract r2 - full mod
+#    r2.full.i = summary(mod.full.i)$r.squared
+#    # Model - reduced
+#    mod.reduced.i = lm(AF~PC1, data = tmp.i)
+#    # Extract r2 - full mod
+#    r2.reduced.i = summary(mod.reduced.i)$r.squared
+#    # Calculate effect size (Cohen's F sq)
+#    fsq.i = (r2.full.i-r2.reduced.i)/(1-r2.full.i)
+#
+#    # Make table
+#    data.frame(
+#        SNP_id = unique(ph.outliers.af$SNP_id)[i],
+#        cohens.fsq = fsq.i,
+#        group = "ph")
+#}
 
 
 # Use baypass alpha
@@ -159,28 +158,28 @@ ph.cohens.fsq.PC1.lat <- foreach(i=1:length(unique(ph.outliers.baypass$SNP_id)),
 # Biotic
 
 # Allele freq
-Mcali.outliers <- left_join(Mcali.outliers, PC1)
-Mcali.cohens.fsq.PC1 <- foreach(i=1:length(unique(Mcali.outliers$SNP_id)), .combine = "rbind", .errorhandling = "remove")%do%{
-    
-    # Extract rows associated with SNP
-    tmp.i = Mcali.outliers %>% filter(SNP_id == unique(Mcali.outliers$SNP_id)[i])
-    # Model - full
-    mod.full.i = lm(AF~mean_integrated_thk+PC1, data = tmp.i)
-    # Extract r2 - full mod
-    r2.full.i = summary(mod.full.i)$r.squared
-    # Model - reduced
-    mod.reduced.i = lm(AF~PC1, data = tmp.i)
-    # Extract r2 - full mod
-    r2.reduced.i = summary(mod.reduced.i)$r.squared
-    # Calculate effect size (Cohen's F sq)
-    fsq.i = (r2.full.i-r2.reduced.i)/(1-r2.full.i)
-
-    # Make table
-    data.frame(
-        SNP_id = unique(Mcali.outliers$SNP_id)[i],
-        cohens.fsq = fsq.i,
-        group = "Mcali")
-}
+#Mcali.outliers <- left_join(Mcali.outliers, PC1)
+#Mcali.cohens.fsq.PC1 <- foreach(i=1:length(unique(Mcali.outliers$SNP_id)), .combine = "rbind", .errorhandling = "remove")%do%{
+#    
+#    # Extract rows associated with SNP
+#    tmp.i = Mcali.outliers %>% filter(SNP_id == unique(Mcali.outliers$SNP_id)[i])
+#    # Model - full
+#    mod.full.i = lm(AF~mean_integrated_thk+PC1, data = tmp.i)
+#    # Extract r2 - full mod
+#    r2.full.i = summary(mod.full.i)$r.squared
+#    # Model - reduced
+#    mod.reduced.i = lm(AF~PC1, data = tmp.i)
+#    # Extract r2 - full mod
+#    r2.reduced.i = summary(mod.reduced.i)$r.squared
+#    # Calculate effect size (Cohen's F sq)
+#    fsq.i = (r2.full.i-r2.reduced.i)/(1-r2.full.i)
+#
+#    # Make table
+#    data.frame(
+#        SNP_id = unique(Mcali.outliers$SNP_id)[i],
+#        cohens.fsq = fsq.i,
+#        group = "Mcali")
+#}
 
 
 # Use baypass alpha
@@ -213,12 +212,15 @@ Mcali.cohens.fsq.PC1.lat <- foreach(i=1:length(unique(Mcali.outliers.baypass$SNP
 # ================================================================================== #
 
 # Join with BF
-ph.cohens.fsq.PC1.bf <- left_join(bf.ph.mean.sum.outliers, ph.cohens.fsq.PC1)
-Mcali.cohens.fsq.PC1.bf <- left_join(bf.McaliIntThk.mean.sum.outliers, Mcali.cohens.fsq.PC1)
+#ph.cohens.fsq.PC1.bf <- left_join(bf.ph.mean.sum.outliers, ph.cohens.fsq.PC1)
+#Mcali.cohens.fsq.PC1.bf <- left_join(bf.McaliIntThk.mean.sum.outliers, Mcali.cohens.fsq.PC1)
 
 # Join with BF - alpha
 ph.cohens.fsq.PC1.lat.bf <- left_join(bf.ph.mean.sum.outliers, ph.cohens.fsq.PC1.lat)
 Mcali.cohens.fsq.PC1.lat.bf <- left_join(bf.McaliIntThk.mean.sum.outliers, Mcali.cohens.fsq.PC1.lat)
+
+# Save M cali data for following script
+save(Mcali.cohens.fsq.PC1.lat.bf, file = "data/processed/baypass/biotic/Mcali.cohens.fsq.PC1.lat.bf.RData")
 
 # ================================================================================== #
 
@@ -227,20 +229,20 @@ Mcali.cohens.fsq.PC1.lat.bf <- left_join(bf.McaliIntThk.mean.sum.outliers, Mcali
 # Abiotic
 
 # Graph BF vs Cohen's f2
-pdf("output/figures/outlier_analyses/Cohensf2_BF_ph_PC1.pdf", width = 8, height = 6)
-ggplot(ph.cohens.fsq.PC1.bf, aes(x = bf_db.mean, y = cohens.fsq)) +
-  geom_point(alpha = 0.6) + 
-  xlim(bf.POD.thr.ph$bf_db.mean[which(bf.POD.thr.ph$thr==0.999)], 30.5) +
-  labs(x = "BF mean pH", y = "Cohen's f2") + 
-  theme_linedraw(base_size = 30)
-dev.off()
+#pdf("output/figures/outlier_analyses/Cohensf2_BF_ph_PC1.pdf", width = 8, height = 6)
+#ggplot(ph.cohens.fsq.PC1.bf, aes(x = bf_db.mean, y = cohens.fsq)) +
+#  geom_point(alpha = 0.6) + 
+#  xlim(bf.POD.thr.ph$bf_db.mean[which(bf.POD.thr.ph$thr==0.999)], 30.5) +
+#  labs(x = "BF mean pH", y = "Cohen's f2") + 
+#  theme_linedraw(base_size = 30)
+#dev.off()
 # Graph and order top SNPs by Cohen's f2
-pdf("output/figures/outlier_analyses/Cohensf2_ph_order_PC1.pdf", width = 8, height = 6)
-ggplot(ph.cohens.fsq.PC1, aes(x = reorder(SNP_id, cohens.fsq), y = cohens.fsq)) +
-  geom_point() + ylim(0,24) +
-  labs(y = "Cohen's f2", x = "Top pH SNPs") + 
-  theme_linedraw(base_size = 30) + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank(), panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank())
-dev.off()
+#pdf("output/figures/outlier_analyses/Cohensf2_ph_order_PC1.pdf", width = 8, height = 6)
+#ggplot(ph.cohens.fsq.PC1, aes(x = reorder(SNP_id, cohens.fsq), y = cohens.fsq)) +
+#  geom_point() + ylim(0,24) +
+#  labs(y = "Cohen's f2", x = "Top pH SNPs") + 
+#  theme_linedraw(base_size = 30) + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank(), panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank())
+#dev.off()
 
 
 # Graphs with bypass alpha
@@ -263,30 +265,31 @@ dev.off()
 # Biotic
 
 # Set colors
-cols <- c("#757474", "#29b3e6")
+#cols <- c("#757474", "#29b3e6")
+cols <- c("#757474", "#9e03a9")
 
 # Graph BF vs Cohen's f2
-pdf("output/figures/outlier_analyses/Cohensf2_BF_Mcali_PC1.pdf", width = 8, height = 6)
-ggplot(Mcali.cohens.fsq.PC1.bf, aes(x = bf_db.mean, y = cohens.fsq)) +
-  geom_point(alpha = 0.6, size = 6, aes(color = cohens.fsq >= 8)) + 
-  scale_color_manual(values = cols) +
-  ylim(0,10) + xlim(bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)], 30.5) +
-  labs(x = "BF", y = "Cohen's f2") + 
-  theme_linedraw(base_size = 30) + theme(legend.position = "none")
-dev.off()
+#pdf("output/figures/outlier_analyses/Cohensf2_BF_Mcali_PC1.pdf", width = 8, height = 6)
+#ggplot(Mcali.cohens.fsq.PC1.bf, aes(x = bf_db.mean, y = cohens.fsq)) +
+#  geom_point(alpha = 0.6, size = 6, aes(color = cohens.fsq >= 8)) + 
+#  scale_color_manual(values = cols) +
+#  ylim(0,10) + xlim(bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)], 30.5) +
+#  labs(x = "BF", y = "Cohen's f2") + 
+#  theme_linedraw(base_size = 30) + theme(legend.position = "none")
+#dev.off()
 # Graph and order top SNPs by Cohen's f2
-pdf("output/figures/outlier_analyses/Cohensf2_Mcali_order_PC1.pdf", width = 8, height = 6)
-ggplot(Mcali.cohens.fsq.PC1, aes(x = reorder(SNP_id, cohens.fsq), y = cohens.fsq)) +
-  geom_point() + ylim(0,24) +
-  labs(y = "Cohen's f2", x = "Top McaliThk SNPs") + 
-  theme_linedraw(base_size = 30) + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank(), panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank())
-dev.off()
+#pdf("output/figures/outlier_analyses/Cohensf2_Mcali_order_PC1.pdf", width = 8, height = 6)
+#ggplot(Mcali.cohens.fsq.PC1, aes(x = reorder(SNP_id, cohens.fsq), y = cohens.fsq)) +
+#  geom_point() + ylim(0,24) +
+#  labs(y = "Cohen's f2", x = "Top McaliThk SNPs") + 
+#  theme_linedraw(base_size = 30) + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank(), panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank())
+#dev.off()
 
 # Graphs with bypass alpha
 # Graph BF vs Cohen's f2
 pdf("output/figures/outlier_analyses/Cohensf2_BF_Mcali_baypass_PC1_lat.pdf", width = 6.3, height = 6)
 ggplot(Mcali.cohens.fsq.PC1.lat.bf, aes(x = bf_db.mean, y = cohens.fsq)) +
-  geom_point(alpha = 0.6, size = 6, aes(color = cohens.fsq >= 8 & bf_db.mean >= 25)) + 
+  geom_point(alpha = 0.7, size = 6, aes(color = cohens.fsq >= 8 & bf_db.mean >= 25)) + 
   scale_color_manual(values = cols) +
   ylim(0,16.5) + xlim(bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)], 30.5) +
   labs(x = "BF", y = expression(paste("Cohen's ", italic("f"^2)))) + 
@@ -337,7 +340,7 @@ viridiscolors <- viridis(n=19)
 viridiscolors <- viridiscolors[-4]
 
 # Graph AF vs Mcali thickness
-pdf("output/figures/outlier_analyses/Mcali_AF_McaliThk.pdf", width = 6, height = 6)
+pdf("output/figures/outlier_analyses/Mcali_AF_McaliThk.pdf", width = 6.28, height = 6)
 ggplot(Mcali.outliers.outlier, aes(x = AF, y = mean_integrated_thk, shape = shape, fill = Site)) +
   geom_point(alpha=0.8, size = 9) + scale_shape_manual(values = c(21, 23)) + scale_fill_manual(values = viridiscolors) + 
   scale_x_continuous(breaks = seq(0, 1, by = 0.5)) +

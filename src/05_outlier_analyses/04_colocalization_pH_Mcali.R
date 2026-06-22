@@ -62,16 +62,17 @@ ggplot(bf.ph.Mcali.sum, aes(x=bf_db.mean.ph, y=bf_db.mean)) +
   geom_point(alpha=0.6) +
   geom_vline(xintercept=bf.POD.thr.ph$bf_db.mean[which(bf.POD.thr.ph$thr==0.999)], col="red") +
   geom_hline(yintercept=bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)], col="red") +
-  theme_classic(base_size = 26)
+  theme_classic(base_size = 30)
 dev.off()
 
-pdf("output/figures/outlier_analyses/BF_ph_vs_Mcali_posBF.pdf", width = 8, height = 8)
+pdf("output/figures/outlier_analyses/BF_ph_vs_Mcali_posBF.pdf", width = 8.5, height = 8.14)
 ggplot(bf.ph.Mcali.sum[which(bf.ph.Mcali.sum$bf_db.mean.ph>0 & bf.ph.Mcali.sum$bf_db.mean>0),], aes(x=bf_db.mean.ph, y=bf_db.mean)) +
   labs(x = "BF mean pH", y = expression(paste("BF ", italic("M. californianus"), " thickness"))) +
-  geom_point(alpha=0.6) +
+  geom_point(alpha=0.6, col="#4a4949") +
   geom_vline(xintercept=bf.POD.thr.ph$bf_db.mean[which(bf.POD.thr.ph$thr==0.999)], col="red") +
   geom_hline(yintercept=bf.POD.thr.McaliThk$bf_db.mean[which(bf.POD.thr.McaliThk$thr==0.999)], col="red") +
-  theme_linedraw(base_size = 27)
+  geom_point(data = bf.ph.Mcali.sum[which(bf.ph.Mcali.sum$bf_db.mean.ph>14 & bf.ph.Mcali.sum$bf_db.mean>12),], aes(x=bf_db.mean.ph, y=bf_db.mean), col="black",) +
+  theme_linedraw(base_size = 30)
 dev.off()
 
 # ================================================================================== #
