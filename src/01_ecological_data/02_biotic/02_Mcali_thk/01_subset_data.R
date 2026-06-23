@@ -204,21 +204,29 @@ dev.off()
 
 # Color palette
 viridiscolors <- viridis(n=19)
-viridiscolors <- viridiscolors[-4]
+viridiscolors18 <- viridiscolors[-4]
 
 # Remove ARA
 Mcali_data_sub_noARA <- Mcali_data_sub %>% filter(Site.Code != "ARA")
 Mcali_sub_sum_noARA <- Mcali_sub_sum %>% filter(Site.Code != "ARA")
 
-# Graph by population - raw points and pointrange
-pdf("output/figures/enviro/Mcali_thk/Mcali_integrated_thk_raw_pointrange_viridis.pdf", width = 7, height = 7.75)
-ggplot(data = Mcali_data_sub_noARA, aes(x=Integrated.Thk, y=Site.Code)) + 
-geom_jitter(data = Mcali_data_sub_noARA, aes(x=Integrated.Thk, y=Site.Code), colour="darkgrey", height = 0.1, size = 2, alpha = 0.8) +
-#geom_linerange(data = Mcali_sub_sum_noARA, aes(xmin=mean_integrated_thk-se_integrated_thk, xmax=mean_integrated_thk+se_integrated_thk), width=.5) +
-geom_point(data = Mcali_sub_sum_noARA, aes(x=mean_integrated_thk, y=Site.Code), fill=rev(viridiscolors), size = 8, shape = 21) + 
-#stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="pointrange", fill=rev(viridiscolors), size = 1, shape = 21) + 
-theme_linedraw(base_size = 30) + xlim(0, 4.75) +
-xlab("M. californianus cross-sectional thickness") + ylab("")
+Mcali_data_sub_noARA_thk_sum <- Mcali_data_sub_noARA %>% 
+  group_by(Site.Code) %>%
+    summarise(mean_integrated_thk = mean(Integrated.Thk), max_integrated_thk = max(Integrated.Thk), min_integrated_thk = min(Integrated.Thk))
+
+# Add column that highlights N, and S
+Mcali_data_sub_noARA_thk_sum <- Mcali_data_sub_noARA_thk_sum %>% mutate(shape = case_when(Site.Code %in% c("STR", "OCT", "HZD", "PB", "PSN", "SBR", "PL") ~ "S", 
+                   Site.Code %in% c("PGP", "BMR", "FR", "VD", "KH", "STC", "PSG", "CBL", "ARA", "SH", "SLR", "FC") ~ "N"))
+
+# Graph
+pdf("output/figures/enviro/Mcali_thk/Mcali_thk_sites.pdf", width = 6, height = 7.18)
+ggplot(Mcali_data_sub_noARA_thk_sum, aes(x = mean_integrated_thk, y = Site.Code, shape = shape)) +
+  #geom_jitter(data = Mcali_data_sub_noARA, aes(x=Integrated.Thk, y=Site.Code), colour="darkgrey", height = 0.1, size = 2, alpha = 0.8) +
+  geom_linerange(data = Mcali_data_sub_noARA_thk_sum, aes(xmin = min_integrated_thk, xmax = max_integrated_thk)) +
+  scale_shape_manual(values = c(21, 23)) +
+  geom_point(size = 6, color = "black", fill = rev(viridiscolors18)) +
+  labs(x = "Thickness", y = "") +
+  theme_linedraw(base_size = 30) + theme(legend.position = "none")
 dev.off()
 
 # ================================================================================== #

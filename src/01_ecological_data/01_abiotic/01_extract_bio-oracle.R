@@ -117,8 +117,6 @@ for (dataset in datasets) {
 # Check list of files in output directory
 list.files(out_dir_present)
 
-# Note: upload these files to the appropriate folder on the VACC
-
 # ================================================================================== #
 # ================================================================================== #
 
