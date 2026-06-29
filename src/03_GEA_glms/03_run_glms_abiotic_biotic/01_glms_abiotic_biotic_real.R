@@ -133,7 +133,7 @@ glm.model.output =
   foreach(i=1:dim(data_chunk_filt)[1], .combine = "rbind")%do%{
     
     # Reset filter
-    seqResetFilter(genofile)
+    seqResetFilter(genofile, verbose = F)
 
     ###############################################################
 
