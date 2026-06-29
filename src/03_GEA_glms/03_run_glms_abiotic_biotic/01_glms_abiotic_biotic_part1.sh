@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_Mcali_part1_perm76:100
+#SBATCH --job-name=glms_abiotic_biotic_part1_real
 
 # Specify partition
 #SBATCH --partition=general
@@ -14,7 +14,7 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=25:00:00 #for perm  5:00:00 for real
+#SBATCH --time=5:00:00 #25:00:00 for perm
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
 #SBATCH --mem=30G 
@@ -49,7 +49,7 @@ module load R/4.4.1
 WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 # Script folder.
-SCRIPT_FOLDER=$WORKING_FOLDER/src/03_GEA_glms/01_run_glms_biotic/02_Mcali_18pop
+SCRIPT_FOLDER=$WORKING_FOLDER/src/03_GEA_glms/03_run_glms_abiotic_biotic
 
 #--------------------------------------------------------------------------------
 
@@ -88,20 +88,20 @@ cat scaffold.names.${SLURM_ARRAY_TASK_ID}.txt
 cd $WORKING_FOLDER/data/processed/GEA/glms
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "glms_chunk_analysis_Mcali" ]
-then echo "Working glms_chunk_analysis_Mcali folder exist"; echo "Let's move on."; date
-else echo "Working glms_chunk_analysis_Mcali folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_chunk_analysis_Mcali; date
+if [ -d "glms_chunk_analysis_abiotic_biotic" ]
+then echo "Working glms_chunk_analysis_abiotic_biotic folder exist"; echo "Let's move on."; date
+else echo "Working glms_chunk_analysis_abiotic_biotic folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Run R script
 
-#Rscript $SCRIPT_FOLDER/01_glms_Mcali_real.R "${SLURM_ARRAY_TASK_ID}"
+Rscript $SCRIPT_FOLDER/01_glms_abiotic_biotic_real.R "${SLURM_ARRAY_TASK_ID}"
 #Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm1:25.R "${SLURM_ARRAY_TASK_ID}"
 #Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm26:50.R "${SLURM_ARRAY_TASK_ID}"
 #Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm51:75.R "${SLURM_ARRAY_TASK_ID}"
-Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm76:100.R "${SLURM_ARRAY_TASK_ID}"
+#Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm76:100.R "${SLURM_ARRAY_TASK_ID}"
 
 #--------------------------------------------------------------------------------
 
