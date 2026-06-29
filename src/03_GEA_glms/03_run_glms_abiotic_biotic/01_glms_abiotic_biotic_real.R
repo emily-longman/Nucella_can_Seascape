@@ -179,7 +179,7 @@ glm.model.output =
     ###############################################################
   
     # Run model for each variable
-    real_estimates =
+    #real_estimates =
       #foreach(j=enviro_vars_names, .combine = "rbind", .errorhandling = "remove")%do%{
         
         # Extract data for 'j' environmental variable
@@ -227,7 +227,7 @@ glm.model.output =
 
       ###############################################################
  
-    return(real_estimates)
+    #return(real_estimates)
   }
 
 # ================================================================================== #
