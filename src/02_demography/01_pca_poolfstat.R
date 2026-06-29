@@ -1,7 +1,7 @@
 # Use poolfstat to convert VCF to Baypass input file
 
 # Clear memory
-rm(list=ls()) 
+rm(list=ls())
 
 # ================================================================================== #
 
@@ -146,4 +146,46 @@ theme_linedraw(base_size = 40) +
 geom_vline(xintercept = 0, color = "black", linetype = "dashed") + geom_hline(yintercept = 0, color = "black", linetype = "dashed") + 
 guides(fill = guide_legend(override.aes = list(shape = c(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 23, 23, 23, 23, 23, 23, 23), size = 8)), shape = "none") +
 labs(fill = "Site")
+dev.off()
+
+# ================================================================================== #
+
+# Graph map of sites
+
+# Get state data
+states <- map_data("state")
+# Subset data for only California and Oregon
+west_coast <- subset(states, region %in% c("california", "oregon"))
+
+# Coordinates of sites
+sites <- data.frame(
+  longitude = c(-124.0593, -124.0848, -124.1148, -124.4015, -124.5647, -124.2529, -124.0809, -123.7895, -123.8036, 
+                -123.2551, -123.0740, -122.3976, -121.9537, -121.9290, -121.3187, -121.2868, -120.8838, -120.6399, -120.6157),
+  latitude = c(44.83777, 44.50540, 44.24999, 43.30402, 42.84097, 41.77121, 40.03011, 39.60461, 39.28090, 38.51198, 38.31900, 
+               37.18506, 36.51939, 36.44750, 35.72893, 35.66549, 35.28994, 34.88117, 34.73024),
+  site.abrev = c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+
+sites <- sites %>% mutate(shape = case_when(site.abrev %in% c("STR", "OCT", "HZD", "PB", "PSN", "SBR", "PL") ~ "S", 
+                   site.abrev %in% c("PGP", "BMR", "FR", "VD", "KH", "STC", "PSG", "CBL", "ARA", "SH", "SLR", "FC") ~ "N"))
+sites <- sites %>% mutate(site.abrev = factor(site.abrev, levels = lat)) %>% arrange(site.abrev)
+
+
+# Coordinates of site labels
+lat.site.labels <- c(44.83777+0.08, 44.50540+0.02, 44.24999-0.08, 43.30402, 42.84097, 41.77121, 40.03011, 39.60461-0.04, 39.28090-0.07, 38.51198+0.05, 38.31900-0.11, 
+               37.18506+0.03, 36.51939+0.12, 36.44750-0.1, 35.72893+0.17, 35.66549-0.1, 35.28994-0.07, 34.88117-0.08, 34.73024-0.24)
+
+long.site.labels.abrev <- c(-124.0593-0.6, -124.0848-0.75, -124.1148-0.6, -124.4015-0.75, -124.5647-0.75, -124.2529-0.75, 
+                      -124.0809-0.75, -123.7895-0.5, -123.8036-0.64, -123.2551-0.6, -123.0740-0.75, -122.3976-0.75, 
+                      -121.9537-0.72, -121.9290-0.75, -121.3187-0.78, -121.2868-0.75, -120.8838-0.72, -120.6399-0.78, -120.6157-0.65)
+
+
+# Create site map (site codes)
+pdf("output/figures/Site_map.pdf", width = 8, height = 9)
+ggplot(data = west_coast) +
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
+  geom_point(data = sites, aes(x = longitude, y = latitude, shape = shape, fill = factor(site.abrev)), size = 8) + coord_fixed(1.3) +
+  scale_shape_manual(values = c(21, 23)) + scale_fill_manual(values = viridiscolors) +
+  geom_text(data=sites, aes(long.site.labels.abrev-0.4, lat.site.labels, label=site.abrev), size = 6)+ 
+  scale_x_continuous(limits = c(-126, -114), breaks = seq(-125, -114, by = 3)) +
+  xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 30) + theme(legend.position = "none", panel.grid = element_blank())
 dev.off()

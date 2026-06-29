@@ -372,3 +372,21 @@ ggplot(baypass.ph.top.win, aes(y=bf_db.mean, x=pos/1000, col = M_XtX_mean)) + la
   geom_hline(yintercept=0, col="black", linetype="solid") +
   theme_linedraw(base_size=30) + theme(legend.position = "none")
 dev.off()
+
+pdf("output/figures/baypass/window_summary/baypass_ph_mean_BF_xtx_topwin_alt2.pdf", width = 8.85, height = 4.5)
+ggplot(baypass.ph.top.win, aes(y=bf_db.mean, x=pos/1000, col = M_XtX_mean)) + labs(x="Position (kb)", y="BF")+
+  geom_rect(aes(xmin=1/1000, xmax=58041/1000, ymin=-Inf, ymax=Inf), color="grey" , fill="grey", alpha=0.5) +
+  #geom_point(alpha=0.75, size=6) + 
+  geom_point(alpha=0.75, size=7, aes(shape = cut(bf_db.mean, c(-Inf, 20, Inf)))) + 
+  geom_point(data = baypass.ph.top.win[which(baypass.ph.top.win$bf_db.mean>20),], size=7, aes(shape = cut(bf_db.mean, c(-Inf, 20, Inf)))) +
+  geom_point(data = baypass.ph.top.win[which(baypass.ph.top.win$bf_db.mean>20),], shape = 24, size = 7, color = "black", fill = "transparent") +
+  #geom_point(data = baypass.ph.top.win[which(baypass.ph.top.win$bf_db.mean>20),], aes(y=bf_db.mean, x=pos/1000, fill = M_XtX_mean), shape = 24, color = "black") +
+  ylim(-13,26.5) +
+  #scale_shape_manual(values = c(21, 24)) +
+  #scale_color_gradient(low = "#d7dbf6", high = "blue", name=expression(italic("X"^T*"X"))) + 
+  scale_color_gradientn(colours=rev(brewer.pal(9, "RdYlBu")), name=expression(italic("X"^T*"X"))) +
+  scale_fill_gradientn(colours=rev(brewer.pal(9, "RdYlBu")), name=expression(italic("X"^T*"X"))) +
+  geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red", linetype="dashed") +
+  geom_hline(yintercept=0, col="black", linetype="solid") +
+  theme_linedraw(base_size=30) + theme(legend.position = "none")
+dev.off()
