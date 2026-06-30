@@ -205,9 +205,9 @@ glm.model.output =
           AIC_dem_biotic = c(AIC(t1.dem.biotic)),
           AIC_dem_both = c(AIC(t1.dem.both)),
           AIC_dem_both_int = c(AIC(t1.dem.both.int)),
-          b_both_int = last(t1.dem.both.int$coef),
-          se_both_int = last(t1.dem.both.int$se),
-          p_both_int = summary(t1.dem.both.int)$coefficients[5,4])
+          b_int = last(t1.dem.both.int$coef),
+          se_int = last(t1.dem.both.int$se),
+          p_int = summary(t1.dem.both.int)$coefficients[5,4])
 
       ###############################################################
  
