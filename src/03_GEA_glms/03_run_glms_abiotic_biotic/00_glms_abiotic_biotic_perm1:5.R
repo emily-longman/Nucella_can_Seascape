@@ -189,12 +189,12 @@ glm.model.output =
         X.dem.biotic.perm <- model.matrix(~PC1+shuffle_mean_integrated_thk, af_i_snp_enviro)
         X.dem.both.perm <- model.matrix(~PC1+shuffle_ph_mean+shuffle_mean_integrated_thk, af_i_snp_enviro)
         X.dem.both.int.perm <- model.matrix(~PC1+shuffle_ph_mean*shuffle_mean_integrated_thk, af_i_snp_enviro)
-        t0.perm <- fastglm(x=X.null.perm, y=y.perm, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
-        t1.dem.perm <- fastglm(x=X.dem.perm, y=y.perm, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
-        t1.dem.abiotic.perm <- fastglm(x=X.dem.abiotic.perm, y=y.perm, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
-        t1.dem.biotic.perm <- fastglm(x=X.dem.biotic.perm, y=y.perm, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
-        t1.dem.both.perm <- fastglm(x=X.dem.both.perm, y=y.perm, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
-        t1.dem.both.int.perm <- fastglm(x=X.dem.both.int.perm, y=y.perm, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
+        t0.perm <- fastglm(x=X.null.perm, y=y, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
+        t1.dem.perm <- fastglm(x=X.dem.perm, y=y, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
+        t1.dem.abiotic.perm <- fastglm(x=X.dem.abiotic.perm, y=y, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
+        t1.dem.biotic.perm <- fastglm(x=X.dem.biotic.perm, y=y, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
+        t1.dem.both.perm <- fastglm(x=X.dem.both.perm, y=y, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
+        t1.dem.both.int.perm <- fastglm(x=X.dem.both.int.perm, y=y, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
         
         # Generate output table with t1.dem.env model information and model comparison info for each variable
         data.frame(
