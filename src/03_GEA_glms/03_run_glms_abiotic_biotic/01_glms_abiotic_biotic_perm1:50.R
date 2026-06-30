@@ -173,8 +173,8 @@ glm.model.output =
     ###############################################################
   
     # Run model
-        # Do 25 permutations
-        permutation_estimates = foreach(l=1:25, .combine = "rbind")%do%{
+        # Do 50 permutations
+        permutation_estimates = foreach(l=1:50, .combine = "rbind")%do%{
         set.seed(l)
 
         # Shuffle 
@@ -224,7 +224,7 @@ glm.model.output =
 # Generate folders and save output
 
 # Folder name
-folder_name <- paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/perm_1_25")
+folder_name <- paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/perm_1_50")
 if (!dir.exists(folder_name)) {dir.create(folder_name)}
 
 # Save file for chunk w

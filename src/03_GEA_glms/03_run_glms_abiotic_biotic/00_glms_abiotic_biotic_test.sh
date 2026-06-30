@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_abiotic_biotic_part1_real
+#SBATCH --job-name=glms_abiotic_biotic_test
 
 # Specify partition
 #SBATCH --partition=general
