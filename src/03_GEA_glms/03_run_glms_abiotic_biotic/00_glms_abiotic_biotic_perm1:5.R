@@ -47,8 +47,11 @@ w = as.numeric(args[1]) # Chunk: this is the chunk (1000 chunks each with 19 sca
 # Load data
 
 # Load txt file with scaffold names
-scaffold.names.df <- read.csv(paste("data/processed/GEA/glms/scaffold.names", w, "txt", sep = "."), sep = " ", header=F)
-scaffold.names <- scaffold.names.df$V1
+#scaffold.names.df <- read.csv(paste("data/processed/GEA/glms/scaffold.names", w, "txt", sep = "."), sep = " ", header=F)
+#scaffold.names <- scaffold.names.df$V1
+
+# Load SNP subset
+load("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/SNP_subset.Rdata")
 
 # Load bio-oracle environmental data
 bio_oracle_sites_2010 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", header=T)
@@ -120,10 +123,13 @@ snp.dt <- data.table(
 # ================================================================================== #
 
 # Filter snp.dt for a given chunk - i.e., identify all of the sig SNPs in a given set of scaffold names
-snp.dt %>% filter(snp.dt$chr %in% scaffold.names) -> data_chunk
+#snp.dt %>% filter(snp.dt$chr %in% scaffold.names) -> data_chunk
 
 # Filter GLM to only sites in pooldata snp.info
-data_chunk_filt <- data_chunk %>% filter(SNP_id %in% pooldata.snp.info$SNP_id)
+#data_chunk_filt <- data_chunk %>% filter(SNP_id %in% pooldata.snp.info$SNP_id)
+
+# Set data subset to data_chunk_silt
+data_chunk_filt <- snp.dt %>% filter(snp.dt$SNP_id %in% SNP_subset$SNP_id)
 
 # ================================================================================== #
 
@@ -168,13 +174,13 @@ glm.model.output =
     ###############################################################
 
     # Join with environmental data
-    left_join(af_i_snp, ecological_data, by ="sampleId") -> af_i_snp_enviro
+    left_join(af_i_snp, ecological_data, by ="sampleId") -> s
       
     ###############################################################
   
     # Run model
-        # Do 25 permutations
-        permutation_estimates = foreach(l=1:25, .combine = "rbind")%do%{
+        # Do 5 permutations
+        permutation_estimates = foreach(l=1:5, .combine = "rbind")%do%{
         set.seed(l)
 
         # Shuffle 
@@ -189,13 +195,13 @@ glm.model.output =
         X.dem.biotic.perm <- model.matrix(~PC1+shuffle_mean_integrated_thk, af_i_snp_enviro)
         X.dem.both.perm <- model.matrix(~PC1+shuffle_ph_mean+shuffle_mean_integrated_thk, af_i_snp_enviro)
         X.dem.both.int.perm <- model.matrix(~PC1+shuffle_ph_mean*shuffle_mean_integrated_thk, af_i_snp_enviro)
-        t0.perm <- fastglm(x=X.null.perm, y=y, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
-        t1.dem.perm <- fastglm(x=X.dem.perm, y=y, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
-        t1.dem.abiotic.perm <- fastglm(x=X.dem.abiotic.perm, y=y, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
-        t1.dem.biotic.perm <- fastglm(x=X.dem.biotic.perm, y=y, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
-        t1.dem.both.perm <- fastglm(x=X.dem.both.perm, y=y, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
-        t1.dem.both.int.perm <- fastglm(x=X.dem.both.int.perm, y=y, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
-        
+        t0.perm <- fastglm(x=X.null.perm, y=y.perm, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
+        t1.dem.perm <- fastglm(x=X.dem.perm, y=y.perm, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
+        t1.dem.abiotic.perm <- fastglm(x=X.dem.abiotic.perm, y=y.perm, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
+        t1.dem.biotic.perm <- fastglm(x=X.dem.biotic.perm, y=y.perm, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
+        t1.dem.both.perm <- fastglm(x=X.dem.both.perm, y=y.perm, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
+        t1.dem.both.int.perm <- fastglm(x=X.dem.both.int.perm, y=y.perm, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
+            
         # Generate output table with t1.dem.env model information and model comparison info for each variable
         data.frame(
           chr = unique(af_i_snp_enviro$chr),
@@ -224,7 +230,7 @@ glm.model.output =
 # Generate folders and save output
 
 # Folder name
-folder_name <- paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/perm_1_25")
+folder_name <- paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/perm_1_5_test")
 if (!dir.exists(folder_name)) {dir.create(folder_name)}
 
 # Save file for chunk w
