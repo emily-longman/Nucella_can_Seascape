@@ -39,8 +39,8 @@ library(SeqArray)
 # ================================================================================== #
 
 # Specify arguments
-args = commandArgs(trailingOnly=TRUE)
-w = as.numeric(args[1]) # Chunk: this is the chunk (1000 chunks each with 19 scaffolds in it)
+#args = commandArgs(trailingOnly=TRUE)
+#w = as.numeric(args[1]) # Chunk: this is the chunk (1000 chunks each with 19 scaffolds in it)
 
 # ================================================================================== #
 
@@ -174,7 +174,7 @@ glm.model.output =
     ###############################################################
 
     # Join with environmental data
-    left_join(af_i_snp, ecological_data, by ="sampleId") -> s
+    left_join(af_i_snp, ecological_data, by ="sampleId") -> af_i_snp_enviro
       
     ###############################################################
   

@@ -24,8 +24,6 @@ library(tidyverse)
 library(ggplot2)
 library(RColorBrewer)
 library(viridis)
-library(Hmisc)
-library(lmerTest)
 
 # ================================================================================== #
 
@@ -41,7 +39,7 @@ if (!dir.exists(out_dir_fig)) {dir.create(out_dir_fig)}
 
 # ================================================================================== #
 
-# Color palettes for graphing
+# Set colors
 nb.cols <- 19
 mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
 
@@ -126,7 +124,6 @@ write.csv(Mcali_data_sub, "data/processed/GEA/enviro_data/Mcali_thk/Mcalifornian
 # Read data
 Mcali_data_sub <- read.csv("data/processed/GEA/enviro_data/Mcali_thk/Mcalifornianus_data_subset.csv")
 
-
 # ================================================================================== #
 
 # Format data
@@ -153,54 +150,8 @@ Mcali_sub_sum <- Mcali_data_sub %>%
     mean_max_thk = mean(Max.thk), sd_max_thk = sd(Max.thk), se_max_thk = sd_max_thk/sqrt(num_shells),
     mean_min_thk = mean(Min.thk), sd_min_thk = sd(Min.thk), se_min_thk = sd_min_thk/sqrt(num_shells)) %>% as.data.frame() 
 
-# ================================================================================== #
-
-# Graph STI
-
-# Graph by population - mean and se
-pdf("output/figures/enviro/Mcali_thk/Mcali_STI_mean_se.pdf", width = 10, height = 14)
-ggplot(data = Mcali_sub_sum, aes(x=mean_STI, y=Site.Code, colour = Site.Code)) + 
-geom_point(data = Mcali_sub_sum, size=4, shape = 21, color = mycolors, fill = mycolors) + 
-geom_errorbar(data = Mcali_sub_sum, aes(xmin=mean_STI-se_STI, xmax=mean_STI+se_STI), width=.5) +
-scale_fill_manual(values=mycolors, guide="none") + 
-scale_colour_manual(values=mycolors, guide="none") +
-xlab("M. californianus Shell Thickness Index") + ylab("") + 
-theme_classic(base_size = 24)
-dev.off()
-
-# Graph by population - raw points and pointrange
-pdf("output/figures/enviro/Mcali_thk/Mcali_STI_raw_pointrange.pdf", width = 10, height = 14)
-ggplot(data = Mcali_data_sub, aes(x=STI, y=Site.Code)) + 
-geom_jitter(data = Mcali_data_sub, aes(x=STI, y=Site.Code), colour="darkgrey", height = 0.1) +
-stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="pointrange", color=mycolors) + 
-theme_classic(base_size = 24) + xlim(0,6.5) +
-xlab("M. californianus Shell Thickness Index") + ylab("")
-dev.off()
 
 # ================================================================================== #
-
-
-# Graph Integrated thk
-
-# Graph by population - mean and se
-pdf("output/figures/enviro/Mcali_thk/Mcali_integrated_thk_mean_se.pdf", width = 10, height = 14)
-ggplot(data = Mcali_sub_sum, aes(x=mean_integrated_thk, y=Site.Code, colour = Site.Code)) + 
-geom_point(data = Mcali_sub_sum, size=4, shape = 21, color = mycolors, fill = mycolors) + 
-geom_errorbar(data = Mcali_sub_sum, aes(xmin=mean_integrated_thk-se_integrated_thk, xmax=mean_integrated_thk+se_integrated_thk), width=.5) +
-scale_fill_manual(values=mycolors, guide="none") + 
-scale_colour_manual(values=mycolors, guide="none") +
-xlab("M. californianus Integrated Thickness (mm)") + ylab("") + 
-theme_classic(base_size = 24)
-dev.off()
-
-# Graph by population - raw points and pointrange
-pdf("output/figures/enviro/Mcali_thk/Mcali_integrated_thk_raw_pointrange.pdf", width = 10, height = 14)
-ggplot(data = Mcali_data_sub, aes(x=Integrated.Thk, y=Site.Code)) + 
-geom_jitter(data = Mcali_data_sub, aes(x=Integrated.Thk, y=Site.Code), colour="darkgrey", height = 0.1) +
-stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="pointrange", color=mycolors) + 
-theme_classic(base_size = 24) + xlim(0, 5) +
-xlab("M. californianus Integrated Thickness (mm)") + ylab("")
-dev.off()
 
 # Color palette
 viridiscolors <- viridis(n=19)
@@ -231,50 +182,58 @@ dev.off()
 
 # ================================================================================== #
 
-# Graph Max thk
+# Graph raw points, means and sd
 
-# Graph by population - mean and se
-pdf("output/figures/enviro/Mcali_thk/Mcali_max_thk_mean_se.pdf", width = 10, height = 14)
-ggplot(data = Mcali_sub_sum, aes(x=mean_max_thk, y=Site.Code, colour = Site.Code)) + 
-geom_point(data = Mcali_sub_sum, size=4, shape = 21, color = mycolors, fill = mycolors) + 
-geom_errorbar(data = Mcali_sub_sum, aes(xmin=mean_max_thk-se_max_thk, xmax=mean_max_thk+se_max_thk), width=.5) +
+# Graph STI
+pdf("output/figures/enviro/Mcali_thk/Mcali_STI_mean_sd.pdf", width = 7, height = 10)
+ggplot(data = Mcali_sub_sum_noARA, aes(x=mean_STI, y=Site.Code,)) + 
+geom_jitter(data = Mcali_data_sub_noARA, aes(x=STI, y=Site.Code), colour="darkgrey", height = 0.1, size = 3, alpha = 0.8) +
+geom_point(data = Mcali_sub_sum_noARA, size=6) + 
+geom_errorbar(data = Mcali_sub_sum_noARA, aes(xmin=mean_STI-sd_STI, xmax=mean_STI+sd_STI), width=.5) +
 scale_fill_manual(values=mycolors, guide="none") + 
 scale_colour_manual(values=mycolors, guide="none") +
-xlab("M. californianus Max Thickness (mm)") + ylab("") + 
-theme_classic(base_size = 24)
+xlim(0,7) +
+xlab("STI") + ylab("") + 
+theme_classic(base_size = 30)
 dev.off()
 
-# Graph by population - raw points and pointrange
-pdf("output/figures/enviro/Mcali_thk/Mcali_max_thk_raw_pointrange.pdf", width = 10, height = 14)
-ggplot(data = Mcali_data_sub, aes(x=Max.thk, y=Site.Code)) + 
-geom_jitter(data = Mcali_data_sub, aes(x=Max.thk, y=Site.Code), colour="darkgrey", height = 0.1) +
-stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="pointrange", color=mycolors) + 
-theme_classic(base_size = 24) + xlim(0,7) +
-xlab("M. californianus Max Thickness (mm)") + ylab("")
+# Graph Integrated thk
+pdf("output/figures/enviro/Mcali_thk/Mcali_integrated_thk_mean_sd.pdf", width = 7, height = 10)
+ggplot(data = Mcali_sub_sum_noARA, aes(x=mean_integrated_thk, y=Site.Code)) + 
+geom_jitter(data = Mcali_data_sub_noARA, aes(x=Integrated.Thk, y=Site.Code), colour="darkgrey", height = 0.1, size = 3, alpha = 0.8) +
+geom_point(data = Mcali_sub_sum_noARA, size=6) + 
+geom_errorbar(data = Mcali_sub_sum_noARA, aes(xmin=mean_integrated_thk-sd_integrated_thk, xmax=mean_integrated_thk+sd_integrated_thk), width=.5) +
+scale_fill_manual(values=mycolors, guide="none") + 
+scale_colour_manual(values=mycolors, guide="none") +
+xlim(0,7) +
+xlab("Cross-sectional Thickness") + ylab("") + 
+theme_classic(base_size = 30)
 dev.off()
 
-# ================================================================================== #
+# Graph Max thk
+pdf("output/figures/enviro/Mcali_thk/Mcali_max_thk_mean_sd.pdf", width = 7, height = 10)
+ggplot(data = Mcali_sub_sum_noARA, aes(x=mean_max_thk, y=Site.Code)) + 
+geom_jitter(data = Mcali_data_sub_noARA, aes(x=Max.thk, y=Site.Code), colour="darkgrey", height = 0.1, size = 3, alpha = 0.8) +
+geom_point(data = Mcali_sub_sum_noARA, size=6) + 
+geom_errorbar(data = Mcali_sub_sum_noARA, aes(xmin=mean_max_thk-sd_max_thk, xmax=mean_max_thk+sd_max_thk), width=.5) +
+scale_fill_manual(values=mycolors, guide="none") + 
+scale_colour_manual(values=mycolors, guide="none") +
+xlim(0,7) +
+xlab("Max Thickness") + ylab("") + 
+theme_classic(base_size = 30)
+dev.off()
 
 # Graph Min thk
-
-# Graph by population - mean and se
-pdf("output/figures/enviro/Mcali_thk/Mcali_min_thk_mean_se.pdf", width = 10, height = 14)
-ggplot(data = Mcali_sub_sum, aes(x=mean_min_thk, y=Site.Code, colour = Site.Code)) + 
-geom_point(data = Mcali_sub_sum, size=4, shape = 21, color = mycolors, fill = mycolors) + 
-geom_errorbar(data = Mcali_sub_sum, aes(xmin=mean_min_thk-se_min_thk, xmax=mean_min_thk+se_min_thk), width=.5) +
+pdf("output/figures/enviro/Mcali_thk/Mcali_min_thk_mean_sd.pdf", width = 7, height = 10)
+ggplot(data = Mcali_sub_sum_noARA, aes(x=mean_min_thk, y=Site.Code)) + 
+geom_jitter(data = Mcali_data_sub_noARA, aes(x=Min.thk, y=Site.Code), colour="darkgrey", height = 0.1, size = 3, alpha = 0.8) +
+geom_point(data = Mcali_sub_sum_noARA, size=6) + 
+geom_errorbar(data = Mcali_sub_sum_noARA, aes(xmin=mean_min_thk-sd_min_thk, xmax=mean_min_thk+sd_min_thk), width=.5) +
 scale_fill_manual(values=mycolors, guide="none") + 
 scale_colour_manual(values=mycolors, guide="none") +
-xlab("M. californianus Min Thickness (mm)") + ylab("") + 
-theme_classic(base_size = 24)
-dev.off()
-
-# Graph by population - raw points and pointrange
-pdf("output/figures/enviro/Mcali_thk/Mcali_min_thk_raw_pointrange.pdf", width = 10, height = 14)
-ggplot(data = Mcali_data_sub, aes(x=Min.thk, y=Site.Code)) + 
-geom_jitter(data = Mcali_data_sub, aes(x=Min.thk, y=Site.Code), colour="darkgrey", height = 0.1) +
-stat_summary(fun.data=mean_sdl, fun.args = list(mult=1), geom="pointrange", color=mycolors) + 
-theme_classic(base_size = 24) + xlim(0,3) +
-xlab("M. californianus Min Thickness (mm)") + ylab("")
+xlim(0,7) +
+xlab("Min Thickness") + ylab("") + 
+theme_classic(base_size = 30)
 dev.off()
 
 # ================================================================================== #
