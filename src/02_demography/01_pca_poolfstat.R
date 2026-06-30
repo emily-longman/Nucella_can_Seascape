@@ -189,3 +189,13 @@ ggplot(data = west_coast) +
   scale_x_continuous(limits = c(-126, -114), breaks = seq(-125, -114, by = 3)) +
   xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 30) + theme(legend.position = "none", panel.grid = element_blank())
 dev.off()
+
+pdf("output/figures/Site_map.pdf", width = 8, height = 14)
+ggplot(data = west_coast) +
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
+  geom_point(data = sites, aes(x = longitude, y = latitude, shape = shape, fill = factor(site.abrev)), size = 10) + coord_fixed(1.3) +
+  scale_shape_manual(values = c(21, 23)) + scale_fill_manual(values = viridiscolors) +
+  geom_text(data=sites, aes(long.site.labels.abrev-0.4, lat.site.labels, label=site.abrev), size = 8)+ 
+  scale_x_continuous(limits = c(-126, -114.1), breaks = seq(-125, -114.1, by = 3), expand = expansion(mult = c(0.05, 0.01))) +
+  xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 30) + theme(legend.position = "none", panel.grid = element_blank())
+dev.off()

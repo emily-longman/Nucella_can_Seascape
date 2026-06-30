@@ -108,13 +108,13 @@ snp.dt <- data.table(
 # ================================================================================== #
 
 # Define anova function for comparing glms
-anovaFun <- function(m1, m2) {
-  ll1 <- as.numeric(logLik(m1))
-  ll2 <- as.numeric(logLik(m2))
-  parameter <- abs(attr(logLik(m1), "df") -  attr(logLik(m2), "df"))
-  chisq <- -2*(ll1-ll2)
-  1-pchisq(chisq, parameter)
-    }
+#anovaFun <- function(m1, m2) {
+#  ll1 <- as.numeric(logLik(m1))
+#  ll2 <- as.numeric(logLik(m2))
+#  parameter <- abs(attr(logLik(m1), "df") -  attr(logLik(m2), "df"))
+#  chisq <- -2*(ll1-ll2)
+#  1-pchisq(chisq, parameter)
+#    }
 
 # ================================================================================== #
 # ================================================================================== #
@@ -169,21 +169,10 @@ glm.model.output =
 
     # Join with environmental data
     left_join(af_i_snp, ecological_data, by ="sampleId") -> af_i_snp_enviro
-    
-    # Create long format data table with the enviro data in column labeled "value" and the specific variable identified in the column "column"
-    #af_i_snp_enviro %>% as_tibble %>% gather(key = "enviro_var", value = "value", `mean_STI`:`mean_min_thk`) -> gathered_data
-    
-    # Get names of environmental variables
-    #unique(gathered_data$enviro_var) -> enviro_vars_names
       
     ###############################################################
   
-    # Run model for each variable
-    #real_estimates =
-      #foreach(j=enviro_vars_names, .combine = "rbind", .errorhandling = "remove")%do%{
-        
-        # Extract data for 'j' environmental variable
-        #gathered_data %>% filter(enviro_var == j) -> inner.tmp
+    # Run model
         
         # Model allele freq
         # Generate 3 models - a null model (t0), a model with just demography (t1.dem) and a model with demography and "j" enviro var (t1.dem.env)
@@ -216,18 +205,12 @@ glm.model.output =
           AIC_dem_biotic = c(AIC(t1.dem.biotic)),
           AIC_dem_both = c(AIC(t1.dem.both)),
           AIC_dem_both_int = c(AIC(t1.dem.both.int)),
-          b_enviro = last(t1.dem.both$coef),
-          se_enviro = last(t1.dem.both$se),
-          b_enviro_int = last(t1.dem.both.int$coef),
-          se_enviro_int = last(t1.dem.both.int$se),
-          p_lrt = anovaFun(t1.dem, t1.dem.both),
-          p_lrt_int = anovaFun(t1.dem, t1.dem.both.int),
-          p_lrt_both_int = anovaFun(t1.dem.both, t1.dem.both.int))
-      #} # End for enviro var
+          b_both_int = last(t1.dem.both.int$coef),
+          se_both_int = last(t1.dem.both.int$se),
+          p_both_int = summary(t1.dem.both.int)$coefficients[5,4])
 
       ###############################################################
  
-    #return(real_estimates)
   }
 
 # ================================================================================== #

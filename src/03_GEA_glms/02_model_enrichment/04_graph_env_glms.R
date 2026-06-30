@@ -201,16 +201,16 @@ ggplot(summary_abiotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, me
   theme_linedraw(base_size=45) + labs(title="Abiotic Variables") + theme(plot.title = element_text(hjust = 0.5)) +
   theme(axis.text.x = element_blank(), axis.ticks = element_blank())
 dev.off()
-pdf("output/figures/GEA/glms/model_enrichment/GLM_Abiotic_rr_sum_alt.pdf", width = 8, height = 8)
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Abiotic_rr_sum_alt.pdf", width = 9, height = 6)
 ggplot(summary_abiotic, aes(x = reorder(variable_full_name_edit, mean_rr_log2), y = mean_rr_log2, color = col)) + 
   #geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
   geom_point(size = 8) + 
   scale_color_identity() +
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
-  ylim(-0.23, 0.38) +
-  labs(title="Abiotic Variables", x = "", y = expression(Log[2]*(Relative~Rate~Enrichment))) +
+  ylim(-0.27, 0.37) +
+  labs(title="Abiotic Variables", x = "", y = expression(Log[2]*(RR~Enrichment))) +
   coord_flip() +
-  theme_linedraw(base_size=30) + theme(legend.position = "none", plot.title = element_text(hjust = 0.5), axis.title.x = element_text(margin = margin(t = 10), hjust = 0))
+  theme_linedraw(base_size=30) + theme(legend.position = "none", plot.title = element_text(hjust = 0.5), axis.title.x = element_text(margin = margin(t = 10), hjust = 0), axis.text.y = element_text(size = 24))
 dev.off()
 
 
@@ -249,14 +249,13 @@ ggplot(summary_biotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mea
 dev.off()
 
 
-pdf("output/figures/GEA/glms/model_enrichment/GLM_Biotic_rr_sum_alt.pdf", width = 12, height = 14)
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Biotic_rr_sum_alt.pdf", width = 10.25, height = 10)
 ggplot(summary_biotic, aes(x = reorder(variable_full_name_edit, mean_rr_log2), y = mean_rr_log2, color = col)) + 
-  #geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
   geom_point(size = 8) + 
   scale_color_identity() +
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
-  ylim(-0.3, 0.4) +
-  labs(title="Biotic Variables", x = "", y = expression(Log[2]*(Relative~Rate~Enrichment))) +
+  ylim(-0.27, 0.37) +
+  labs(title="Biotic Variables", x = "", y = expression(Log[2]*(RR~Enrichment))) +
   coord_flip() +
-  theme_linedraw(base_size=30) + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
+  theme_linedraw(base_size=30) + theme(legend.position = "none", plot.title = element_text(hjust = 0.5), axis.text.y = element_text(size = 24))
 dev.off()
