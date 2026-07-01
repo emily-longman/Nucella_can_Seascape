@@ -171,12 +171,12 @@ sites <- sites %>% mutate(site.abrev = factor(site.abrev, levels = lat)) %>% arr
 
 
 # Coordinates of site labels
-lat.site.labels <- c(44.83777+0.09, 44.50540+0.02, 44.24999-0.09, 43.30402, 42.84097, 41.77121, 40.03011, 39.60461-0.04, 39.28090-0.07, 38.51198+0.05, 38.31900-0.11, 
-               37.18506+0.05, 36.51939+0.15, 36.44750-0.1, 35.72893+0.17, 35.66549-0.1, 35.28994-0.07, 34.88117-0.08, 34.73024-0.27)
+lat.site.labels <- c(44.83777+0.09, 44.50540+0.02, 44.24999-0.09, 43.30402, 42.84097, 41.77121, 40.03011, 39.60461-0.04, 39.28090-0.09, 38.51198+0.05, 38.31900-0.11, 
+               37.18506+0.05, 36.51939+0.15, 36.44750-0.1, 35.72893+0.15, 35.66549-0.13, 35.28994-0.11, 34.88117-0.09, 34.73024-0.29)
 
-long.site.labels.abrev <- c(-124.0593-0.59, -124.0848-0.75, -124.1148-0.59, -124.4015-0.75, -124.5647-0.72, -124.2529-0.75, 
-                      -124.0809-0.75, -123.7895-0.5, -123.8036-0.64, -123.2551-0.6, -123.0740-0.75, -122.3976-0.75, 
-                      -121.9537-0.7, -121.9290-0.75, -121.3187-0.78, -121.2868-0.75, -120.8838-0.72, -120.6399-0.78, -120.6157-0.65)
+long.site.labels.abrev <- c(-124.0593-0.5, -124.0848-0.67, -124.1148-0.58, -124.4015-0.62, -124.5647-0.60, -124.2529-0.65, 
+                      -124.0809-0.65, -123.7895-0.5, -123.8036-0.58, -123.2551-0.6, -123.0740-0.75, -122.3976-0.7, 
+                      -121.9537-0.7, -121.9290-0.75, -121.3187-0.78, -121.2868-0.5, -120.8838-0.72, -120.6399-0.78, -120.6157-0.62)
 
 
 # Create site map (site codes)
@@ -209,10 +209,11 @@ ggplot(data = west_coast) +
   geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
   geom_point(data = sites, aes(x = longitude, y = latitude, shape = shape, fill = PC1), size = 11) + coord_fixed(1.3) +
   scale_shape_manual(values = c(21, 23)) + #scale_fill_manual(values = viridiscolors) +
-  scale_fill_gradientn(colours=brewer.pal(9, "RdGy"), breaks = c(-0.2, 0.00)) +
+  #scale_fill_gradientn(colours=brewer.pal(9, "RdGy"), breaks = c(-0.2, 0.00)) +
+  scale_fill_gradientn(colours=brewer.pal(9, "RdGy"), breaks = c(-0.3, -0.15, 0.00, 0.15)) +
   geom_text(data=sites, aes(long.site.labels.abrev-0.35, lat.site.labels, label=site.abrev), size = 8) + 
   scale_x_continuous(limits = c(-125.75, -114.1), breaks = seq(-125, -114.1, by = 3), expand = expansion(mult = c(0.04, 0.01))) +
   xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 32) + 
-  theme(panel.grid = element_blank(), legend.title = element_text(size = 32), legend.text = element_text(size = 30), legend.key.size = unit(1.2, "cm"), legend.position = c(0.81, 0.53)) + 
+  theme(panel.grid = element_blank(), legend.title = element_text(size = 32), legend.text = element_text(size = 28), legend.key.size = unit(1.2, "cm"), legend.position = c(0.81, 0.53)) + 
   guides(shape = "none")
 dev.off()
