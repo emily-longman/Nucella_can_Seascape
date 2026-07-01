@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_abiotic_biotic_part2_real
+#SBATCH --job-name=glms_abiotic_biotic_part2_perm51:100
 
 # Specify partition
 #SBATCH --partition=general
@@ -14,7 +14,7 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=10:00:00 #30:00:00 for perm, 10:00:00 for real
+#SBATCH --time=30:00:00 #30:00:00 for perm, 10:00:00 for real
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
 #SBATCH --mem=30G 
@@ -23,7 +23,7 @@
 #SBATCH --cpus-per-task=5
 
 # Submit job array
-#SBATCH --array=865-996 #501-996%100
+#SBATCH --array=501-996%100
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -97,8 +97,9 @@ fi
 
 # Run R script
 
-Rscript $SCRIPT_FOLDER/01_glms_abiotic_biotic_real.R "${SLURM_ARRAY_TASK_ID}"
+#Rscript $SCRIPT_FOLDER/01_glms_abiotic_biotic_real.R "${SLURM_ARRAY_TASK_ID}"
 #Rscript $SCRIPT_FOLDER/01_glms_abiotic_biotic_perm1:50.R "${SLURM_ARRAY_TASK_ID}"
+Rscript $SCRIPT_FOLDER/01_glms_abiotic_biotic_perm51:100.R "${SLURM_ARRAY_TASK_ID}"
 
 #--------------------------------------------------------------------------------
 

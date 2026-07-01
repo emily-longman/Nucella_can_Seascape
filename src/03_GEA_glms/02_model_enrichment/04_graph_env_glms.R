@@ -17,11 +17,12 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr'))
+#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'ggtext'))
 library(data.table)
 library(tidyverse)
 library(foreach)
 library(dplyr)
+library(ggtext)
 
 # ================================================================================== #
 
@@ -258,4 +259,21 @@ ggplot(summary_biotic, aes(x = reorder(variable_full_name_edit, mean_rr_log2), y
   labs(title="Biotic Variables", x = "", y = expression(Log[2]*(RR~Enrichment))) +
   coord_flip() +
   theme_linedraw(base_size=30) + theme(legend.position = "none", plot.title = element_text(hjust = 0.5, margin = margin(b = -1)), axis.text.y = element_text(size = 22))
+dev.off()
+
+
+summary_biotic$variable_full_name_edit2 <- c("*B. glandula* (hmean)", "*B. glandula* (mean)", "*C. dalli* (hmean)", "*C. dalli* (mean)",
+"*M. californianus* (hmean)", "*M. californianus* (mean)", "*M. trossulus* (hmean)", "*M. trossulus* (mean)", 
+"*N. canaliculata* (hmean)", "*N. canaliculata* (mean)","*N. ostrina* (hmean)", "*N. ostrina* (mean)", 
+"*P. ochraceus* (hmean)", "*P. ochraceus* (mean)", "STI (mean)", "Cross-sectional thk (mean)", "Max thk (mean)", "Min thk (mean)")
+
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Biotic_rr_sum_alt_italics.pdf", width = 10, height = 9.5)
+ggplot(summary_biotic, aes(x = reorder(variable_full_name_edit2, mean_rr_log2), y = mean_rr_log2, color = col)) + 
+  geom_point(size = 10) + 
+  scale_color_identity() +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
+  ylim(-0.27, 0.369) +
+  labs(title="Biotic Variables", x = "", y = expression(Log[2]*(RR~Enrichment))) +
+  coord_flip() +
+  theme_linedraw(base_size=30) + theme(legend.position = "none", plot.title = element_text(hjust = 0.5, margin = margin(b = -1)), axis.text.y = element_markdown(size = 22))
 dev.off()
