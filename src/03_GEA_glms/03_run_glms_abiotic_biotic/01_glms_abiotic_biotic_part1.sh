@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_abiotic_biotic_part1_perm1:50
+#SBATCH --job-name=glms_abiotic_biotic_part1_perm51:100
 
 # Specify partition
 #SBATCH --partition=general
@@ -98,7 +98,8 @@ fi
 # Run R script
 
 #Rscript $SCRIPT_FOLDER/01_glms_abiotic_biotic_real.R "${SLURM_ARRAY_TASK_ID}"
-Rscript $SCRIPT_FOLDER/01_glms_abiotic_biotic_perm1:50.R "${SLURM_ARRAY_TASK_ID}"
+#Rscript $SCRIPT_FOLDER/01_glms_abiotic_biotic_perm1:50.R "${SLURM_ARRAY_TASK_ID}"
+Rscript $SCRIPT_FOLDER/01_glms_abiotic_biotic_perm51:100.R "${SLURM_ARRAY_TASK_ID}"
 
 #--------------------------------------------------------------------------------
 
