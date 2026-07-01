@@ -44,7 +44,7 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/03_GEA_glms/03_run_glms_abiotic_biotic/032_merge_glms.R
+Rscript --vanilla $WORKING_FOLDER/src/03_GEA_glms/03_run_glms_abiotic_biotic/02_merge_glms.R
 
 #--------------------------------------------------------------------------------
 
