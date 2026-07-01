@@ -39,7 +39,7 @@ file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("dat
 
 # Check number of files
 length(file_names_v)
-file_names_v=file_names_v[1:3]
+
 # Read all the files and add a column with the chunk
 glm.model.collated.real =  foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
     # State which file loading
