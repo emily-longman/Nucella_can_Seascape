@@ -39,8 +39,8 @@ library(SeqArray)
 # ================================================================================== #
 
 # Specify arguments
-args = commandArgs(trailingOnly=TRUE)
-w = as.numeric(args[1]) # Chunk: this is the chunk (1000 chunks each with 19 scaffolds in it)
+#args = commandArgs(trailingOnly=TRUE)
+#w = as.numeric(args[1]) # Chunk: this is the chunk (1000 chunks each with 19 scaffolds in it)
 
 # Prevent scientific notation
 options(scipen=999)
@@ -50,8 +50,8 @@ options(scipen=999)
 # Load data
 
 # Load txt file with scaffold names
-scaffold.names.df <- read.csv(paste("data/processed/GEA/glms/scaffold.names", w, "txt", sep = "."), sep = " ", header=F)
-scaffold.names <- scaffold.names.df$V1
+#scaffold.names.df <- read.csv(paste("data/processed/GEA/glms/scaffold.names", w, "txt", sep = "."), sep = " ", header=F)
+#scaffold.names <- scaffold.names.df$V1
 
 # Load bio-oracle environmental data
 bio_oracle_sites_2010 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", header=T)
@@ -66,6 +66,9 @@ genofile <- seqOpen("data/processed/outlier_analyses/snpeff/N.canaliculata_SNPs.
 pca.df <- read.csv("data/processed/outlier_analyses/pca.csv")
 colnames(pca.df)[1] <- "sampleId"
   
+# Load missing
+load("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/missing_SNP_ids.Rdata")
+
 # ================================================================================== #
 
 # Load pooldata object
@@ -123,10 +126,10 @@ snp.dt <- data.table(
 # ================================================================================== #
 
 # Filter snp.dt for a given chunk - i.e., identify all of the sig SNPs in a given set of scaffold names
-snp.dt %>% filter(snp.dt$chr %in% scaffold.names) -> data_chunk
+#snp.dt %>% filter(snp.dt$chr %in% scaffold.names) -> data_chunk
 
 # Filter GLM to only sites in pooldata snp.info
-data_chunk_filt <- data_chunk %>% filter(SNP_id %in% pooldata.snp.info$SNP_id)
+data_chunk_filt <- snp.dt %>% filter(SNP_id %in% missing_SNP_ids)
 
 # ================================================================================== #
 
@@ -176,8 +179,48 @@ glm.model.output =
     ###############################################################
   
     # Run model
-        # Do 50 permutations
-        permutation_estimates = foreach(l=51:100, .combine = "rbind")%do%{
+        
+        # Model allele freq
+        # Generate 3 models - a null model (t0), a model with just demography (t1.dem) and a model with demography and "j" enviro var (t1.dem.env)
+        y <- af_i_snp_enviro$af_nEff
+        X.null <- model.matrix(~1, af_i_snp_enviro)
+        X.dem <- model.matrix(~PC1, af_i_snp_enviro)
+        X.dem.abiotic <- model.matrix(~PC1+ph_mean, af_i_snp_enviro)
+        X.dem.biotic <- model.matrix(~PC1+mean_integrated_thk, af_i_snp_enviro)
+        X.dem.both <- model.matrix(~PC1+ph_mean+mean_integrated_thk, af_i_snp_enviro)
+        X.dem.both.int <- model.matrix(~PC1+ph_mean*mean_integrated_thk, af_i_snp_enviro)
+        t0 <- fastglm(x=X.null, y=y, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
+        t1.dem <- fastglm(x=X.dem, y=y, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
+        t1.dem.abiotic <- fastglm(x=X.dem.abiotic, y=y, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
+        t1.dem.biotic <- fastglm(x=X.dem.biotic, y=y, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
+        t1.dem.both <- fastglm(x=X.dem.both, y=y, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
+        t1.dem.both.int <- fastglm(x=X.dem.both.int, y=y, family=binomial(), weights=af_i_snp_enviro$nEff, method=0)
+        
+        # Generate output table with t1.dem.env model information and model comparison info for each variable
+        real_estimates = data.frame(
+          chr = unique(af_i_snp_enviro$chr),
+          pos = unique(af_i_snp_enviro$pos),
+          SNP_id = unique(af_i_snp_enviro$SNP_id),
+          variable = "abiotic_biotic",
+          missing = seqMissing(genofile),
+          perm = 0,
+          data = "real",
+          AIC_null = c(AIC(t0)),
+          AIC_dem = c(AIC(t1.dem)),
+          AIC_dem_abiotic = c(AIC(t1.dem.abiotic)),
+          AIC_dem_biotic = c(AIC(t1.dem.biotic)),
+          AIC_dem_both = c(AIC(t1.dem.both)),
+          AIC_dem_both_int = c(AIC(t1.dem.both.int)),
+          b_int = last(t1.dem.both.int$coef),
+          se_int = last(t1.dem.both.int$se),
+          p_int = summary(t1.dem.both.int)$coefficients[5,4])
+
+      ###############################################################
+ ###############################################################
+  
+    # Run model
+        # Do 100 permutations
+        permutation_estimates = foreach(l=1:100, .combine = "rbind")%do%{
         set.seed(l)
 
         # Shuffle 
@@ -219,7 +262,7 @@ glm.model.output =
           p_int = summary(t1.dem.both.int.perm)$coefficients[5,4])
         }
       ###############################################################
-  return(permutation_estimates)
+  return(rbind(real_estimates, permutation_estimates))
   }
 
 # ================================================================================== #
@@ -227,11 +270,11 @@ glm.model.output =
 # Generate folders and save output
 
 # Folder name
-folder_name <- paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/perm_51_100")
+folder_name <- paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic")
 if (!dir.exists(folder_name)) {dir.create(folder_name)}
 
 # Save file for chunk w
-file_name <- paste("GLM_chunk_", w, sep = "")
+file_name <- paste("GLM_chunk_missing")
 save(glm.model.output, file = paste(folder_name, "/" , file_name, ".Rdata", sep = "") )
 
 message("done")

@@ -42,6 +42,9 @@ library(SeqArray)
 args = commandArgs(trailingOnly=TRUE)
 w = as.numeric(args[1]) # Chunk: this is the chunk (1000 chunks each with 19 scaffolds in it)
 
+# Prevent scientific notation
+options(scipen=999)
+
 # ================================================================================== #
 
 # Load data
