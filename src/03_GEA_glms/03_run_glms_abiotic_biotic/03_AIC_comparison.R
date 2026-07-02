@@ -1,4 +1,4 @@
-# Merge glms output
+# Use AIC to calc p-val
 
 # Clear memory
 rm(list=ls())
@@ -31,57 +31,81 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # ================================================================================== #
 
-# Load and merge data
+# Load data
 
-# Create list of file names
-file_names = as.list(dir(path = 'data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/', pattern = "glm.model.collated.*"))
-file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/"), x))))
-
-# Check number of files
-length(file_names_v)
-
-# Read all the files and add a column with the chunk
-glm.model.collated =  foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
-    # State which file loading
-    message(i)
-    # Load file
-    o = get(load(i))
-}
-
-# Check structure
-str(glm.model.collated)
-
-# ================================================================================== #
-
-# Save merged data
-save(glm.model.collated, file = paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.model.collated.Rdata"))
-
-# ================================================================================== #
-# ================================================================================== #
-
-# Test methods with just real
+# Real data
 load("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.model.collated.real.Rdata")
+glm.real <- glm.model.collated.real
+# Perm data
+load("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.model.collated.perm.Rdata")
+glm.perm <- perm
+
+# ================================================================================== #
+
+# Identify which model is best for the real data
 
 # Identify which column is the minimum
-glm.model.collated.real$minAIC <- names(glm.model.collated.real[, 8:13])[apply(glm.model.collated.real[, 8:13], MARGIN = 1, FUN = which.min)]
-glm.model.collated.real$minAIC_value <- do.call(pmin, c(glm.model.collated.real[, 8:13], na.rm = TRUE))
+#glm.real$minAIC <- names(glm.real[, 8:13])[apply(glm.real[, 8:13], MARGIN = 1, FUN = which.min)]
+glm.real$minAIC_value <- do.call(pmin, c(glm.real[, 8:13], na.rm = TRUE))
 
 # Calc delta AIC between AIC_dem_both_int and model with min AIC
-glm.model.collated.real <- glm.model.collated.real %>% mutate(deltaAIC = AIC_dem_both_int-minAIC_value)
+glm.real <- glm.real %>% mutate(deltaAIC = AIC_dem_both_int-minAIC_value)
 
-# Summarize
-glm.real.sum <- glm.model.collated.real %>% group_by(minAIC) |> tally()
-glm.real.sum <- glm.real.sum %>% mutate(perc = glm.real.sum$n/dim(glm.model.collated.real)[1]*100)
+# ================================================================================== #
 
-# Graph delta AIC
-pdf("output/figures/GEA/glms/Delta_AIC.pdf", width = 14, height = 6)
-ggplot(glm.model.collated.real, aes(x = deltaAIC)) + 
- geom_density(alpha = 0.7, lwd = 0.5) + 
-  theme_bw(base_size=30)
-dev.off()
+# Identify which model is best for the perm data
 
-pdf("output/figures/GEA/glms/Int_pval.pdf", width = 14, height = 6)
-ggplot(glm.model.collated.real, aes(x = p_int)) + 
- geom_density(alpha = 0.7, lwd = 0.5) + 
-  theme_bw(base_size=30)
-dev.off()
+# Identify which column is the minimum
+glm.perm$minAIC_value <- do.call(pmin, c(glm.perm[, 8:13], na.rm = TRUE))
+
+# Calc delta AIC between AIC_dem_both_int and model with min AIC
+glm.perm <- glm.perm %>% mutate(deltaAIC = AIC_dem_both_int-minAIC_value)
+
+# ================================================================================== #
+
+# Use permutations to calc p-value
+
+# Identify which SNPs in the real data have the model with the interaction as the best fit
+glm.real.int <- glm.real[which(glm.real$deltaAIC == 0),]
+# Identify which SNPs in the real data dont have the model with the interaction as the best fit
+glm.real.no.int <- glm.real[which(glm.real$deltaAIC != 0),]
+
+# Use permutations to calc p-val for SNPs where model with interaction is best fit 
+o.int = foreach(i=1:dim(glm.real.int)[1], .combine = "rbind")%do%{
+    
+    # Extract perm data for focal SNP
+    perm.tmp <- glm.perm[which(glm.perm$SNP_id == glm.real.int$SNP_id[i]),]
+
+    # Make data table and calculate p-val based on permutations
+    data.frame(
+          chr = unique(perm.tmp$chr),
+          pos = unique(perm.tmp$pos),
+          SNP_id = unique(perm.tmp$SNP_id),
+          p_val = c(1-length(which(perm.tmp$deltaAIC == 0))/dim(perm.tmp)[1]))
+}
+
+# For all models where the interaction is not the best fit, set p-val equal to 1
+o.no.int <- no.int[,1:3] %>% mutate(p_val = 1)
+
+# Join data
+o <- rbind(o.int, o.no.int)
+
+# ================================================================================== #
+
+# Save output
+save(o, file = paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.output.Rdata"))
+
+# ================================================================================== #
+# ================================================================================== #
+
+# Test
+#realtmp <- glm.model.collated.real[6,]
+#permtmp <- glm.model.collated.perm1.50[which(glm.model.collated.perm1.50$SNP_id==realtmp$SNP_id),]
+
+#1-length(which(permtmp$minAIC == "AIC_dem_both_int"))/50
+
+#pdf("output/figures/GEA/glms/test.pdf", width = 14, height = 6)
+#ggplot(permtmp, aes(x = deltaAIC)) +
+#    geom_density(alpha = 0.7, lwd = 1) +
+#    theme_bw(base_size=30)
+#dev.off()

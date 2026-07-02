@@ -51,7 +51,66 @@ glm.model.collated.real =  foreach(i=file_names_v, .combine="rbind", .errorhandl
 # Check structure
 str(glm.model.collated.real)
 
-# ================================================================================== #
-
 # Save merged data
 save(glm.model.collated.real, file = paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.model.collated.real.Rdata"))
+
+# ================================================================================== #
+# ================================================================================== #
+
+# Load and merge data
+
+# Create list of file names
+file_names = as.list(dir(path = 'data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/perm_1_50/', pattern = "GLM_chunk_*"))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/perm_1_50/"), x))))
+
+# Check number of files
+length(file_names_v)
+
+# Read all the files and add a column with the chunk
+glm.model.collated.perm1.50 =  foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
+    # State which file loading
+    message(i)
+    # Load file
+    o = get(load(i))
+}
+
+# Check structure
+str(glm.model.collated.perm1.50)
+
+# Save merged data
+#save(glm.model.collated.perm1.50, file = paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.model.collated.perm1.50.Rdata"))
+
+# ================================================================================== #
+# ================================================================================== #
+
+# Load and merge data
+
+# Create list of file names
+file_names = as.list(dir(path = 'data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/perm_51_100/', pattern = "GLM_chunk_*"))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/perm_51_100/"), x))))
+
+# Check number of files
+length(file_names_v)
+
+# Read all the files and add a column with the chunk
+glm.model.collated.perm51.100 =  foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
+    # State which file loading
+    message(i)
+    # Load file
+    o = get(load(i))
+}
+
+# Check structure
+str(glm.model.collated.perm51.100)
+
+# Save merged data
+#save(glm.model.collated.perm51.100, file = paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.model.collated.perm51.100.Rdata"))
+
+# ================================================================================== #
+# ================================================================================== #
+
+# Join the perm data
+perm <- rbind(glm.model.collated.perm1.50, glm.model.collated.perm51.100)
+
+# Save merged data
+save(perm, file = paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.model.collated.perm.Rdata"))
