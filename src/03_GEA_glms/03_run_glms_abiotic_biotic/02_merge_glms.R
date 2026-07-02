@@ -114,3 +114,6 @@ perm <- rbind(glm.model.collated.perm1.50, glm.model.collated.perm51.100)
 
 # Save merged data
 save(perm, file = paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.model.collated.perm.Rdata"))
+
+
+
