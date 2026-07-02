@@ -41,10 +41,8 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # Real data
 load("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.model.collated.real.Rdata")
-glm.real <- glm.model.collated.real
 # Perm data
 load("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.model.collated.perm.Rdata")
-glm.perm <- perm
 
 # Load snp info with groups
 load("data/processed/GEA/glms/snp.guide.file.Rdata")
@@ -65,7 +63,7 @@ glm.perm.chunk <- glm.perm %>% filter(SNP_id %in% snp.chunk$SNP_id)
 # Identify which model is best for the real data
 
 # Identify which column is the minimum
-#glm.real$minAIC <- names(glm.real[, 8:13])[apply(glm.real[, 8:13], MARGIN = 1, FUN = which.min)]
+glm.real.chunk$minAIC <- names(glm.real.chunk[, 8:13])[apply(glm.real.chunk[, 8:13], MARGIN = 1, FUN = which.min)]
 glm.real.chunk$minAIC_value <- do.call(pmin, c(glm.real.chunk[, 8:13], na.rm = TRUE))
 
 # Calc delta AIC between AIC_dem_both_int and model with min AIC
@@ -83,32 +81,54 @@ glm.perm.chunk <- glm.perm.chunk %>% mutate(deltaAIC = AIC_dem_both_int-minAIC_v
 
 # ================================================================================== #
 
+# Use permutations to calc p-val for SNPs where model with interaction is best fit 
+o = foreach(i=1:dim(glm.real.chunk)[1], .combine = "rbind")%do%{
+    
+    # Extract real data for focal SNP
+    real.tmp <- glm.real.chunk[i,]
+    
+    # Extract perm data for focal SNP
+    perm.tmp <- glm.perm.chunk[which(glm.perm.chunk$SNP_id == glm.real.chunk$SNP_id[i]),]
+
+    # Make data table and calculate p-val based on permutations (proportion of times that the perm data is less than the real data)
+    data.frame(
+          chr = unique(real.tmp$chr),
+          pos = unique(real.tmp$pos),
+          SNP_id = unique(real.tmp$SNP_id),
+          real_minAIC = c(real.tmp$minAIC),
+          real_AIC = c(real.tmp$deltaAIC),
+          p_val = c(mean(perm.tmp$deltaAIC <= real.tmp$deltaAIC)))
+}
+
+# ================================================================================== #
+# ================================================================================== #
+
 # Use permutations to calc p-value
 
 # Identify which SNPs in the real data have the model with the interaction as the best fit
-glm.real.chunk.int <- glm.real.chunk[which(glm.real.chunk$deltaAIC == 0),]
+#glm.real.chunk.int <- glm.real.chunk[which(glm.real.chunk$deltaAIC == 0),]
 # Identify which SNPs in the real data dont have the model with the interaction as the best fit
-glm.real.chunk.no.int <- glm.real.chunk[which(glm.real.chunk$deltaAIC != 0),]
+#glm.real.chunk.no.int <- glm.real.chunk[which(glm.real.chunk$deltaAIC != 0),]
 
 # Use permutations to calc p-val for SNPs where model with interaction is best fit 
-o.int = foreach(i=1:dim(glm.real.chunk.int)[1], .combine = "rbind")%do%{
-    
-    # Extract perm data for focal SNP
-    perm.tmp <- glm.perm.chunk[which(glm.perm.chunk$SNP_id == glm.real.chunk.int$SNP_id[i]),]
-
-    # Make data table and calculate p-val based on permutations
-    data.frame(
-          chr = unique(perm.tmp$chr),
-          pos = unique(perm.tmp$pos),
-          SNP_id = unique(perm.tmp$SNP_id),
-          p_val = c(1-length(which(perm.tmp$deltaAIC == 0))/dim(perm.tmp)[1]))
-}
+#o.int = foreach(i=1:dim(glm.real.chunk.int)[1], .combine = "rbind")%do%{
+#    
+#    # Extract perm data for focal SNP
+#    perm.tmp <- glm.perm.chunk[which(glm.perm.chunk$SNP_id == glm.real.chunk.int$SNP_id[i]),]
+#
+#    # Make data table and calculate p-val based on permutations
+#    data.frame(
+#          chr = unique(perm.tmp$chr),
+#          pos = unique(perm.tmp$pos),
+#          SNP_id = unique(perm.tmp$SNP_id),
+#          p_val = c(1-length(which(perm.tmp$deltaAIC == 0))/dim(perm.tmp)[1]))
+#}
 
 # For all models where the interaction is not the best fit, set p-val equal to 1
-o.no.int <- glm.real.chunk.no.int[,1:3] %>% mutate(p_val = 1)
+#o.no.int <- glm.real.chunk.no.int[,1:3] %>% mutate(p_val = 1)
 
 # Join data
-o <- rbind(o.int, o.no.int)
+#o <- rbind(o.int, o.no.int)
 
 # ================================================================================== #
 
