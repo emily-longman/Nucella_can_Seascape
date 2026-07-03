@@ -22,6 +22,7 @@ library(data.table)
 library(tidyverse)
 library(plyr)
 library(foreach)
+library(poolfstat)
 
 # ================================================================================== #
 
@@ -33,6 +34,22 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # ================================================================================== #
 # ================================================================================== #
+# ================================================================================== #
+
+# Load pooldata object
+load("data/raw/pooldata/pooldata.RData")
+
+# Extract SNP info for all SNPs
+pooldata@snp.info %>%
+  as.data.frame() %>% mutate(rs.id = rownames(.)) ->
+  pooldata.snp.info
+
+# Rename columns
+names(pooldata.snp.info)[1:2] = c("chr","pos")
+
+# Make snp_id column
+pooldata.snp.info <- pooldata.snp.info %>%
+  mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 # ================================================================================== #
 
