@@ -110,12 +110,26 @@ str(glm.perm51.100)
 glm.perm <- rbind(glm.perm1.50, glm.perm51.100)
 
 # Save merged data
-save(glm.perm, file = paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.model.collated.perm.Rdata"))
+save(glm.perm, file = paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.perm.Rdata"))
 
 
 # ================================================================================== #
+
+# Real data
+load("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.real.Rdata")
+# Perm data
+load("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.model.collated.perm.Rdata")
+glm.perm <- perm
+# Load missing
+load("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/GLM_chunk_missing.Rdata")
 
 real.missing <- glm.model.output[which(glm.model.output$data == "real"),]
 glm.real <- rbind(glm.real, real.missing)
 glm.real <- glm.real[order(match(glm.real$SNP_id, pooldata.snp.info$SNP_id)),]
 save(glm.real, file = paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.real.Rdata"))
+
+
+perm.missing <- glm.model.output[which(glm.model.output$data == "permutation"),]
+glm.perm <- rbind(glm.perm, perm.missing)
+glm.perm <- glm.perm[order(match(glm.perm$SNP_id, pooldata.snp.info$SNP_id)),]
+save(glm.perm, file = paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.perm.Rdata"))

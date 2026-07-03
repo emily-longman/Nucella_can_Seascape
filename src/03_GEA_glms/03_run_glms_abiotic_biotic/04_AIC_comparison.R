@@ -29,6 +29,9 @@ library(foreach)
 args = commandArgs(trailingOnly=TRUE)
 w = as.numeric(args[1]) # Chunk
 
+# Prevent scientific notation
+options(scipen=999)
+
 # ================================================================================== #
 
 # Generate output directories
@@ -40,9 +43,9 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 # Load data
 
 # Real data
-load("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.model.collated.real.Rdata")
+load("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.real.Rdata")
 # Perm data
-load("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.model.collated.perm.Rdata")
+load("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.perm.Rdata")
 
 # Load snp info with groups
 load("data/processed/GEA/glms/snp.guide.file.Rdata")
