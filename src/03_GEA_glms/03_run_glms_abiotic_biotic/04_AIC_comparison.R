@@ -59,7 +59,7 @@ snp.chunk <- snp.guide.file %>% filter(.groups == w)
 # Subset real data
 glm.real.chunk <- glm.real %>% filter(SNP_id %in% snp.chunk$SNP_id)
 # Subset perm data
-#glm.perm.chunk <- glm.perm %>% filter(SNP_id %in% snp.chunk$SNP_id)
+glm.perm.chunk <- glm.perm %>% filter(SNP_id %in% snp.chunk$SNP_id)
 
 # ================================================================================== #
 
