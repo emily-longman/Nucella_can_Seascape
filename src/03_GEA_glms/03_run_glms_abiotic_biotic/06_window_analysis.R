@@ -119,6 +119,6 @@ folder_name <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_ch
 
 # Save file for chunk w
 file_name <- paste0("glm_window_chunks_", win_group)
-save(wins_sum, file = paste0(folder_name, "/", file_name, ".Rdata") )
+save(win.out, file = paste0(folder_name, "/", file_name, ".Rdata") )
 
 message("done")
