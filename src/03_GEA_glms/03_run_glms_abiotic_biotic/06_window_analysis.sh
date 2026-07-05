@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=Window_analysis
+#SBATCH --job-name=GLM_window_analysis_abiotic_biotic
 
 # Specify partition
 #SBATCH --partition=general
@@ -87,7 +87,7 @@ fi
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/03_GEA/03_run_glms_abiotic_biotic/06_window_analysis.R "${SLURM_ARRAY_TASK_ID}"
+Rscript --vanilla $WORKING_FOLDER/src/03_GEA_glms/03_run_glms_abiotic_biotic/06_window_analysis.R "${SLURM_ARRAY_TASK_ID}"
 
 #--------------------------------------------------------------------------------
 
