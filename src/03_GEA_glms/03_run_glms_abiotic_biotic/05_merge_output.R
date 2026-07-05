@@ -23,13 +23,19 @@ library(tidyverse)
 library(plyr)
 library(foreach)
 
+# Prevent scientific notation
+options(scipen=999)
+
 # ================================================================================== #
 
 # Load data
 
 # Real data
-load("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.model.collated.real.Rdata")
-glm.real <- glm.model.collated.real
+load("data/processed/GEA/glms/glms_chunk_analysis_abiotic_biotic/glm.real.Rdata")
+
+# ================================================================================== #
+
+# Load Baypass input files for formatting
 
 # Read in SNP data
 snp.meta <- read.table("data/processed/baypass/input_files/snpdet", header=F)
@@ -69,20 +75,20 @@ save(o.all, file = paste("data/processed/GEA/glms/glms_chunk_analysis_abiotic_bi
 glm.o.tmp <- left_join(glm.real, o.all, by=c('chr', 'pos', 'SNP_id'))
 
 # Order output
-#glm.o <- glm.o.tmp[order(snp.meta$SNP_id), ]
+glm.o <- glm.o.tmp[order(snp.meta$SNP_id), ]
  
 # ================================================================================== #
 
 # Graph distribution of pval
 pdf("output/figures/GEA/glms/Abiotic_biotic_pval_dist.pdf", width = 8, height = 8)
-ggplot(glm.o.tmp, aes(x = p_val)) +
+ggplot(glm.o, aes(x = p_val)) +
   geom_density() +
   theme_bw(base_size=25)
 dev.off()
 
 # Graph pval across genome
 pdf("output/figures/GEA/glms/Abiotic_biotic_outliers.pdf", width = 14, height = 4)
-ggplot(glm.o.tmp, aes(x = chr, y = -log(p_val))) +
+ggplot(glm.o, aes(x = chr, y = -log(p_val))) +
   geom_point(alpha=0.6) +
   labs(x = "Position", y = "-log(P-val)") +
   theme_bw(base_size=25) + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank())
