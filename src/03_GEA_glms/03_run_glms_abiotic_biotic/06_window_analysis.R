@@ -138,7 +138,7 @@ win.out <- foreach(window.w=1:dim(wins_group_i)[1], .combine = "rbind", .errorha
           nrow = 2)
 
         # Fishers exact test
-        ftest_w <- fisher.test(win_tmp_sum)
+        ftest_w <- fisher.test(win_tmp_sum, alternative = "greater")
 
         # Create data frame with output (i, p.value, odds ratio, and 95% CI)
         data.frame(

@@ -43,9 +43,9 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 # Load and merge data
 
 # Create list of file names
-path <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_abiotic_biotic_pval0.01/")
+path <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_abiotic_biotic_FET/")
 file_names = as.list(dir(path = path, pattern = "glm_window_chunks_*"))
-file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_abiotic_biotic_pval0.01/"), x))))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_abiotic_biotic_FET/"), x))))
 
 # Check number of files
 length(file_names_v)
@@ -92,7 +92,7 @@ win.out.order$chr.unique <- as.numeric(factor(win.out.order$chr, levels = win.ou
 
 # Graph rnp p
 #pr.i = 0.05
-pr.i = 0.01
+pr.i = 0.05
 
 # Graph rnp geompoint
 pdf("output/figures/GEA/glms/glms_window_summary/glm_window_abiotic_biotic_geompoint_pval0.01.pdf", width = 12, height = 6)
