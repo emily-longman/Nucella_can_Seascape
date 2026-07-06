@@ -79,9 +79,9 @@ fi
 cd $WORKING_FOLDER/data/processed/GEA/glms/glms_window_summary
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "glms_window_chunk_analysis_abiotic_biotic" ]
-then echo "Working glms_window_chunk_analysis_abiotic_biotic folder exist"; echo "Let's move on."; date
-else echo "Working glms_window_chunk_analysis_abiotic_biotic folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_abiotic_biotic; date
+if [ -d "glms_window_chunk_analysis_abiotic_biotic_pval0.01" ]
+then echo "Working glms_window_chunk_analysis_abiotic_biotic_pval0.01 folder exist"; echo "Let's move on."; date
+else echo "Working glms_window_chunk_analysis_abiotic_biotic_pval0.01 folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_abiotic_biotic_pval0.01; date
 fi
 
 #--------------------------------------------------------------------------------

@@ -87,7 +87,8 @@ win.out <- foreach(window.w=1:dim(wins_group_i)[1], .combine = "rbind", .errorha
         filter(pos >= wins_group_i$start[window.w] & pos <= wins_group_i$end[window.w])
 
         # Set p
-        pr.i = 0.05
+        #pr.i = 0.05
+        pr.i = 0.01
 
         # Summarize for a given window
         win_tmp %>% 
@@ -115,7 +116,7 @@ win.out <- foreach(window.w=1:dim(wins_group_i)[1], .combine = "rbind", .errorha
 # Generate folders and save output
 
 # Folder name for window group i
-folder_name <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_abiotic_biotic")
+folder_name <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_abiotic_biotic_pval0.01")
 
 # Save file for chunk w
 file_name <- paste0("glm_window_chunks_", win_group)
