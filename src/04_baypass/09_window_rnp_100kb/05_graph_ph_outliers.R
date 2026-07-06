@@ -144,6 +144,7 @@ afs.ph <- afs.ph %>% mutate(Site = factor(Site, levels = lat.order))
 afs.ph <- afs.ph %>% mutate(shape = case_when(Site %in% c("STR", "OCT", "HZD", "PB", "PSN", "SBR", "PL") ~ "S", 
                    Site %in% c("PGP", "BMR", "FR", "VD", "KH", "STC", "PSG", "CBL", "ARA", "SH", "SLR", "FC") ~ "N"))
 
+
 # Color palette
 viridiscolors <- viridis(n=19)
 
@@ -157,6 +158,11 @@ afs.ph.g27343.BF.POD <- afs.ph %>% filter(SNP_id %in% bf.ph.mean.sum.top.win[whi
 # Save
 save(afs.ph.g27343.BF.POD, file = "data/processed/baypass/afs.ph.g27343.BF.POD.RData")
 
+# Load PCA data
+pca.df <- read.csv("data/processed/outlier_analyses/pca.csv")
+colnames(pca.df)[1] <- "Site"
+# Join data
+afs.ph.BF20 <- left_join(afs.ph.BF20, pca.df)
 
 # Graph and color by Site - BF 22
 pdf("output/figures/baypass/outliers/pH_g27343_BF22.pdf", width = 9, height = 3.75)
@@ -188,6 +194,16 @@ ggplot(afs.ph.BF20, aes(x=AF, y=ph_mean, shape=shape, fill=Site)) +
   geom_point(alpha=0.7, size = 7) + scale_shape_manual(values = c(21, 23)) + labs(x="Allele Frequency", y="mean pH") +
   facet_wrap(~SNP_id, ncol = 1) + scale_fill_manual(values = viridiscolors) +
   scale_x_continuous(breaks = seq(0, 1, by = 0.5)) + scale_y_continuous(limits = c(7.92, 8.03), breaks = c(7.95, 8.0)) +
+  theme_linedraw(base_size = 30) + 
+  theme(strip.background = element_rect(fill="grey"), strip.text = element_text(colour = 'black', size = 18, margin = margin(t=6, r=6, b=6, l=6))) +
+  theme(legend.position="none")
+dev.off()
+pdf("output/figures/baypass/outliers/pH_g27343_BF20_taller_PCA.pdf", width = 4.5, height = 8.5)
+ggplot(afs.ph.BF20, aes(x=AF, y=ph_mean, shape=shape, fill=PC1)) +
+  geom_point(alpha=0.7, size = 7) + scale_shape_manual(values = c(21, 23)) + labs(x="Allele Frequency", y="mean pH") +
+  facet_wrap(~SNP_id, ncol = 1) + #scale_fill_manual(values = viridiscolors) +
+  scale_x_continuous(breaks = seq(0, 1, by = 0.5)) + scale_y_continuous(limits = c(7.92, 8.03), breaks = c(7.95, 8.0)) +
+  scale_fill_gradientn(colours=brewer.pal(9, "RdGy")) +
   theme_linedraw(base_size = 30) + 
   theme(strip.background = element_rect(fill="grey"), strip.text = element_text(colour = 'black', size = 18, margin = margin(t=6, r=6, b=6, l=6))) +
   theme(legend.position="none")

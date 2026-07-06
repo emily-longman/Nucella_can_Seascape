@@ -65,10 +65,43 @@ glm.o <- glm.o.tmp[order(snp.meta$SNP_id), ]
 
 # ================================================================================== #
 
-# Rank-normalize bf      (note: high bf should be associated with a low rank)
-glm.o$rank <- rank(glm.o$p_val)
-Lp <- length(glm.o$p_val)
-glm.o$rnp <- glm.o$rank/Lp
+# Rank-normalize
+#glm.o$rank <- rank(glm.o$p_val)
+#Lp <- length(glm.o$p_val)
+#glm.o$rnp <- glm.o$rank/Lp
+# Load and average xtx
+
+# ================================================================================== #
+
+# Did once when testing and then loaded for subsequent array
+
+# NOTE these xtx values are for all 19 sites
+
+# Read in SNP data
+#snp.meta <- read.table("data/processed/baypass/input_files/snpdet", header=F)
+# Re-name snp metadata
+#colnames(snp.meta) <- c("chr", "pos", "allele1", "allele2")
+
+# Load xtx output for 5 replicate Baypass runs
+#baypass.xtx <- foreach(i=1:5, .combine = rbind)%do%{
+#    message(i)
+#    tmp <- fread(paste("data/processed/baypass/xtx/NC_run", i, "_summary_pi_xtx.out", sep=""))
+#    tmp[,rep:=i]
+#    tmp <- cbind(snp.meta, tmp)
+#    return(tmp)
+#}
+
+# Rename p val
+#baypass.xtx <- baypass.xtx %>% rename(log10.1.pval. = "log10(1/pval)")
+
+# Average across replicate runs
+#baypass.xtx <- baypass.xtx %>% group_by(chr, pos, allele1, allele2, MRK) %>% 
+#    reframe(M_P_mean = mean(M_P), SD_P_mean = mean(SD_P), M_XtX_mean = mean(M_XtX), 
+#    SD_XtX_mean = mean(SD_XtX), XtXst_mean = mean(XtXst), log10.1.pval_mean = mean(log10.1.pval.))
+
+# Save
+#save(baypass.xtx, file = "data/processed/baypass/baypass.xtx.sum.RData")
+load("data/processed/baypass/baypass.xtx.sum.RData")
 
 # ================================================================================== #
 
@@ -86,29 +119,43 @@ win.out <- foreach(window.w=1:dim(wins_group_i)[1], .combine = "rbind", .errorha
         filter(chr == wins_group_i$chr[window.w]) %>%
         filter(pos >= wins_group_i$start[window.w] & pos <= wins_group_i$end[window.w])
 
-        # Set p
-        #pr.i = 0.05
-        pr.i = 0.01
+        # Extract xtx data for a given window
+        win_xtx <- baypass.xtx %>%
+        filter(chr == wins_group_i$chr[window.w]) %>%
+        filter(pos >= wins_group_i$start[window.w] & pos <= wins_group_i$end[window.w])
 
-        # Summarize for a given window
-        win_tmp %>% 
-            filter(!is.na(rnp)) %>%
-            summarise(
-              chr = unique(chr),
-              pos_mean = mean(pos),
-              pos_min = min(pos),
-              pos_max = max(pos),
-              p_val_mean = mean(p_val),
-              p_val_min = min(p_val),
-              p_val_max = max(p_val),
-              win = wins_group_i$i[window.w],
-              rnp.pr = c(mean(rnp <= pr.i)),
-              rnp.binom.p = c(binom.test(sum(rnp <= pr.i), length(rnp), pr.i)$p.value),
-              sum.rnp = sum(rnp <= pr.i),
-              max.rnp = max(rnp),
-              min.rnp = min(rnp),
-              nSNPs = n()
-            )
+        # Set p
+        pr.i = 0.05
+        #pr.i = 0.01
+  
+  
+        # Create matrix for significance of focal annotation
+        win_tmp_sum <- matrix(c(
+          length(which(win_tmp$p_val < 0.05 & win_tmp$real_deltaAIC == 0)),
+          length(which(win_tmp$p_val >= 0.05 & win_tmp$real_deltaAIC == 0)),
+          length(which(win_tmp$p_val < 0.05 & win_tmp$real_deltaAIC != 0)),
+          length(which(win_tmp$p_val >= 0.05 & win_tmp$real_deltaAIC != 0))),
+          nrow = 2)
+
+        # Fishers exact test
+        ftest_w <- fisher.test(win_tmp_sum)
+
+        # Create data frame with output (i, p.value, odds ratio, and 95% CI)
+        data.frame(
+          chr = unique(win_tmp$chr),
+          pos_mean = mean(win_tmp$pos),
+          pos_min = min(win_tmp$pos),
+          pos_max = max(win_tmp$pos),
+          win = wins_group_i$i[window.w],
+          n_intAIC_bestsig = length(which(win_tmp$p_val < 0.05 & win_tmp$real_deltaAIC == 0)),
+          p.fet = ftest_w$p.value,
+          OR = ftest_w$estimate,
+          lci = ftest_w$conf.int[1],
+          uci = ftest_w$conf.int[2],
+          meanxtx = mean(win_xtx$XtXst_mean),
+          nSNPs = dim(win_tmp)[1]
+        )
+
 }
 
 # ================================================================================== #
@@ -116,7 +163,7 @@ win.out <- foreach(window.w=1:dim(wins_group_i)[1], .combine = "rbind", .errorha
 # Generate folders and save output
 
 # Folder name for window group i
-folder_name <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_abiotic_biotic_pval0.01")
+folder_name <- paste("data/processed/GEA/glms/glms_window_summary/glms_window_chunk_analysis_abiotic_biotic_FET")
 
 # Save file for chunk w
 file_name <- paste0("glm_window_chunks_", win_group)

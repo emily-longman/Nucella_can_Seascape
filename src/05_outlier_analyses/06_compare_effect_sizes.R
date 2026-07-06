@@ -348,6 +348,16 @@ ggplot(Mcali.outliers.outlier, aes(x = AF, y = mean_integrated_thk, shape = shap
   theme_linedraw(base_size = 30) + theme(legend.position = "none")
 dev.off()
 
+Mcali.outliers.outlier <- left_join(Mcali.outliers.outlier, PC1)
+pdf("output/figures/outlier_analyses/Mcali_AF_McaliThk_PCA.pdf", width = 6.28, height = 6)
+ggplot(Mcali.outliers.outlier, aes(x = AF, y = mean_integrated_thk, shape = shape, fill = PC1)) +
+  geom_point(alpha=0.8, size = 9) + scale_shape_manual(values = c(21, 23)) + #scale_fill_manual(values = viridiscolors) + 
+  scale_x_continuous(breaks = seq(0, 1, by = 0.5)) +
+  scale_fill_gradientn(colours=brewer.pal(9, "RdGy")) +
+  labs(x="Allele Frequency", y="Thickness") + 
+  theme_linedraw(base_size = 30) + theme(legend.position = "none")
+dev.off()
+
 pdf("output/figures/outlier_analyses/Mcali_AF_McaliThk_legend.pdf", width = 9, height = 9)
 ggplot(Mcali.outliers.outlier, aes(x = AF, y = mean_integrated_thk, shape = shape, fill = Site)) +
   geom_point(alpha=0.8, size = 6) + scale_shape_manual(values = c(21, 23)) + scale_fill_manual(values = viridiscolors) + 
@@ -355,3 +365,4 @@ ggplot(Mcali.outliers.outlier, aes(x = AF, y = mean_integrated_thk, shape = shap
   theme_linedraw(base_size = 30) + 
   guides(fill = guide_legend(override.aes = list(shape = c(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 23, 23, 23, 23, 23, 23, 23), size = 8)), shape = "none")
 dev.off()
+
