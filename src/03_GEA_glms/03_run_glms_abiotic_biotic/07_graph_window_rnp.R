@@ -91,35 +91,49 @@ win.out.order.chr.unique <- unique(win.out.order$chr)
 win.out.order$chr.unique <- as.numeric(factor(win.out.order$chr, levels = win.out.order.chr.unique))
 
 # Graph rnp p
-#pr.i = 0.05
+#pr.i = 0.01
 pr.i = 0.05
 
 # Graph rnp geompoint
-pdf("output/figures/GEA/glms/glms_window_summary/glm_window_abiotic_biotic_geompoint_pval0.01.pdf", width = 12, height = 6)
-ggplot(win.out.order, aes(y=-log10(rnp.binom.p), x=chr.unique)) + 
-  geom_point(alpha=0.8, size=1.6) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed") +
-  theme_bw(base_size=26) + theme(legend.position = "none")
+pdf("output/figures/GEA/glms/glms_window_summary/glm_window_abiotic_biotic_geompoint.pdf", width = 14, height = 6)
+ggplot(win.out.order, aes(y=-log10(p.fet), x=chr.unique)) + 
+  geom_point(alpha=0.8, size=1.6, aes(col = meanxtx)) +
+  #scale_color_gradient(low = "grey", high = "blue") +
+  scale_color_gradientn(colours=brewer.pal(9, "Greys")) +
+  geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed") +
+  theme_bw(base_size=26) #+ theme(legend.position = "none")
 dev.off()
 
 # Graph rnp geomline
-pdf("output/figures/GEA/glms/glms_window_summary/glm_window_abiotic_biotic_geomline_pval0.01.pdf", width = 12, height = 3)
-ggplot(win.out.order, aes(y=-log10(rnp.binom.p), x=chr.unique)) + ylab("100kb Window\nEnrichment") + xlab("Scaffold") +
+pdf("output/figures/GEA/glms/glms_window_summary/glm_window_abiotic_biotic_geomline.pdf", width = 12, height = 3)
+ggplot(win.out.order, aes(y=-log10(p.fet), x=chr.unique)) + xlab("Scaffold") +
   geom_line( ) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed") +
   theme_bw(base_size=18) + theme(legend.position = "none") + theme(plot.margin = margin(t = 40, r = 30, b = 20, l = 20, unit = "pt"))
 dev.off()
 
 # Graph Windows
-pdf("output/figures/GEA/glms/glms_window_summary/glm_window_abiotic_biotic_geomline_bywindows_pval0.01.pdf", width = 12, height = 3)
-ggplot(win.out.order, aes(y=-log10(rnp.binom.p), x=win)) + ylab("100kb Window\nEnrichment") + xlab("Window (100kb)") +
+pdf("output/figures/GEA/glms/glms_window_summary/glm_window_abiotic_biotic_geomline_bywindows.pdf", width = 12, height = 3)
+ggplot(win.out.order, aes(y=-log10(p.fet), x=win)) + xlab("Window (100kb)") +
   geom_line( ) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed") +
   theme_bw(base_size=18) + theme(legend.position = "none") #+ theme(plot.margin = margin(t = 40, r = 30, b = 20, l = 20, unit = "pt"))
 dev.off()
-pdf("output/figures/GEA/glms/glms_window_summary/glm_window_abiotic_biotic_geomline_bywindows_alt_pval0.01.pdf", width = 20, height = 4)
-ggplot(win.out.order, aes(y=-log10(rnp.binom.p), x=win)) + ylab("Enrichment") + xlab("Window (100kb)") +
+pdf("output/figures/GEA/glms/glms_window_summary/glm_window_abiotic_biotic_geomline_bywindows_alt.pdf", width = 20, height = 4)
+ggplot(win.out.order, aes(y=-log10(p.fet), x=win)) + xlab("Window (100kb)") +
   scale_x_continuous(expand = c(0, 0), breaks=c(0,2500, 5000, 7500, 10000, 12500)) + 
   #scale_y_continuous(limits=c(0,121), breaks=c(0, 30, 60, 90, 120)) +
   geom_line(linewidth=2) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed", linewidth=1.5) +
   theme_linedraw(base_size=28) + theme(legend.position = "none") #+ theme(plot.margin = margin(t = 40, r = 30, b = 20, l = 20, unit = "pt"))
+dev.off()
+
+pdf("output/figures/GEA/glms/glms_window_summary/glm_window_abiotic_biotic_geompoint_bywindows.pdf", width = 20, height = 4)
+ggplot(win.out.order, aes(y=-log10(p.fet), x=win)) + xlab("Window (100kb)") +
+  geom_point(alpha=0.8, size=2, aes(col = meanxtx)) +
+  #scale_color_gradient(low = "grey", high = "blue") +
+  scale_color_gradientn(colours=brewer.pal(9, "Greys")) +
+  scale_x_continuous(expand = c(0, 0), breaks=c(0,2500, 5000, 7500, 10000, 12500)) + 
+  #scale_y_continuous(limits=c(0,121), breaks=c(0, 30, 60, 90, 120)) +
+  geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed", linewidth=1.5) +
+  theme_linedraw(base_size=28) #+ theme(legend.position = "none") #+ theme(plot.margin = margin(t = 40, r = 30, b = 20, l = 20, unit = "pt"))
 dev.off()
 
 # ================================================================================== #
@@ -127,7 +141,7 @@ dev.off()
 # Extract outliers
 #win.out.order.outliers <- win.out.order %>% filter(-log10(rnp.binom.p) > -log10(pr.i))
 # Extract top outliers - those with enrichment >80
-win.out.order.outliers <- win.out.order %>% filter(-log10(rnp.binom.p) > 60)
+win.out.order.outliers <- win.out.order %>% filter(-log10(p.fet) > 1.5)
 
 # ================================================================================== #
 
@@ -220,4 +234,4 @@ outlier.win.SNPs.annotated <- left_join(outlier.win.SNPs, annotation, by = join_
 outlier.win.SNPs.annotated <- outlier.win.SNPs.annotated %>% distinct()
 
 # Write output
-write.csv(outlier.win.SNPs.annotated, "data/processed/GEA/glms/glms_window_summary/outlier_win_SNPs_abiotic_biotic_annotated_pval0.01.csv", row.names = F, quote = F)
+write.csv(outlier.win.SNPs.annotated, "data/processed/GEA/glms/glms_window_summary/outlier_win_SNPs_abiotic_biotic_annotated_FET.csv", row.names = F, quote = F)
