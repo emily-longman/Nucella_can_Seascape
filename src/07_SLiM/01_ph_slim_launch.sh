@@ -99,10 +99,10 @@ root=$WORKING_FOLDER/data/processed/SLiM/results
 cd $WORKING_FOLDER/data/processed/SLiM/results
 
 # Run slim script
-slim \	
--d "repId=${repid}" \
--d "root='${root}'" \
-$WORKING_FOLDER/src/07_SLiM/01_ph.slim
+slim \
+	-d "repId=${repid}" \
+	-d "root='${root}'" \
+     $WORKING_FOLDER/src/07_SLiM/01_ph.slim
 
 #--------------------------------------------------------------------------------
 
