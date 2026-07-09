@@ -20,7 +20,7 @@
 #SBATCH --mem=60G 
 
 # Submit job array
-#SBATCH --array=1-2
+#SBATCH --array=1-72
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -71,17 +71,19 @@ fi
 GUIDE_FILE=$WORKING_FOLDER/guide_files/slim_ph_guide_file.txt
 
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers.
-# Threshold         # ...
-# 7.92
-# 7.93
-# ...
-# 8.03
+# Threshold      # K_1         # K_2
+# 7.92           0.1             0         
+# 7.93           0.1             0
+# ...           
+# 8.03           0.001           0.001   
 
 #--------------------------------------------------------------------------------
 
 # Determine parameters
 thresh=`awk -F "\t" '{print $1}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
-echo "Threshold:" ${thresh}
+k_1=`awk -F "\t" '{print $2}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
+k_2=`awk -F "\t" '{print $3}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
+echo "Threshold:" ${thresh} "k_1": ${k_1} "k_2": ${k_2}
 
 # Set root
 ROOT=$WORKING_FOLDER/data/processed/SLiM/results
@@ -98,6 +100,8 @@ do
 # Run slim script
 slim \
 	-d "thresh=${thresh}" \
+    -d "k_1=${k_1}" \
+    -d "k_2=${k_2}" \
     -d "repId=${i}" \
 	-d "root='${ROOT}'" \
      $WORKING_FOLDER/src/07_SLiM/01_ph.slim

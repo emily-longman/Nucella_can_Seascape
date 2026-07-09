@@ -8,15 +8,15 @@ initialize() {
 	initializeGenomicElement(g1, 0, 0);
 	initializeRecombinationRate(0);
 	defineGlobal("COUNT", 19);
-	defineGlobal("N", 500);
+	defineGlobal("N", 5000);
 	m1.convertToSubstitution = F;
 	m2.convertToSubstitution = F;
 	
 	//user parameters
 	defineGlobal("m", 0.001);
 	//defineConstant("thresh", 7.975);
-	defineConstant("k_1", 0.001);
-	defineConstant("k_2", 0.001);
+	//defineConstant("k_1", 0.001);
+	//defineConstant("k_2", 0.001);
 	//defineConstant("repId", 1);
     //defineConstant("root",  "/Users/emilylongman/Documents/UVM/Population_Genomics/SLiM/slim_dumping/");
 
@@ -119,15 +119,6 @@ early() {
 
 // general late calls
 
-1:40000 late() {
-mut1 = sim.mutationsOfType(m1);
-freq1=NULL;
-for (p in sim.subpopulations)
-    freq1 = c(freq1, sim.mutationFrequencies(p, mut1));
-    catn(sim.subpopulations);
-    catn(freq1);
-}
-
 1:9999 late() {
 
 	if (size(sim.mutationsOfType(m1)) == 0){
@@ -161,4 +152,13 @@ for (p in sim.subpopulations)
 	 append=F);
 	
    }//close 2ndif
+
+// reporter for debugging
+//mut1 = sim.mutationsOfType(m1);
+//freq1=NULL;
+//for (p in sim.subpopulations)
+//    freq1 = c(freq1, sim.mutationFrequencies(p, mut1));
+//    catn(sim.subpopulations);
+//    catn(freq1);
+
 }
