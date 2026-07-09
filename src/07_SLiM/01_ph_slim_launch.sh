@@ -45,22 +45,6 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 #--------------------------------------------------------------------------------
 
-# Determine partition to process 
-
-# Change directory
-cd $WORKING_FOLDER/data/processed/GEA/glms
-
-# Echo slurm array task ID
-echo ${SLURM_ARRAY_TASK_ID}
-
-# Using the guide file, extract the scaffold names associated based on the Slurm array task ID for a given partition
-awk '$2=='${SLURM_ARRAY_TASK_ID}'' $guide_file | awk '{print $1}' > scaffold.names.${SLURM_ARRAY_TASK_ID}.txt
-
-# List scaffold names
-cat scaffold.names.${SLURM_ARRAY_TASK_ID}.txt
-
-#--------------------------------------------------------------------------------
-
 # Generate Folders and files
 
 # Move to working directory
@@ -83,26 +67,42 @@ fi
 
 #--------------------------------------------------------------------------------
 
-repid=${SLURM_ARRAY_TASK_ID}
-root=$WORKING_FOLDER/data/processed/SLiM/results
-
 # Guide file 
-#guide_file=$WORKING_FOLDER/guide_files/scaffold_names_guide_file_array.txt
+GUIDE_FILE=$WORKING_FOLDER/guide_files/slim_ph_guide_file.txt
 
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers.
-# Scaffold name         # Partition/array
-# ....
+# Threshold         # ...
+# 7.92
+# 7.93
+# ...
+# 8.03
+
+#--------------------------------------------------------------------------------
+
+# Determine parameters
+thresh=`awk -F "\t" '{print $1}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
+echo "Threshold:" ${thresh}
+
+# Set root
+ROOT=$WORKING_FOLDER/data/processed/SLiM/results
 
 #--------------------------------------------------------------------------------
 
 # Change directory
 cd $WORKING_FOLDER/data/processed/SLiM/results
 
+# Loop through 10 iterations
+for i in {1..2}
+do
+
 # Run slim script
 slim \
-	-d "repId=${repid}" \
-	-d "root='${root}'" \
+	-d "thresh=${thresh}" \
+    -d "repId=${i}" \
+	-d "root='${ROOT}'" \
      $WORKING_FOLDER/src/07_SLiM/01_ph.slim
+
+done
 
 #--------------------------------------------------------------------------------
 

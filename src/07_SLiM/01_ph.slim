@@ -14,7 +14,7 @@ initialize() {
 	
 	//user parameters
 	defineGlobal("m", 0.001);
-	defineConstant("tresh", 7.975);
+	defineConstant("thresh", 7.975);
 	defineConstant("k_1", 0.001);
 	defineConstant("k_2", 0.001);
 	//defineConstant("repId", 1);
@@ -26,9 +26,9 @@ initialize() {
 mutationEffect(m1) {
     env = individual.subpopulation.getValue("env");
 	
-	 return 2/(1+exp(-(env - tresh)/k_1))-1;
+	 return 2/(1+exp(-(env - thresh)/k_1))-1;
 
-   // if (env > tresh)
+   // if (env > thresh)
    //     return 1.0 + s_1;
    // else
    //     return 1.0 - s_1;
@@ -40,10 +40,10 @@ mutationEffect(m2) {
     return 1.0;
     } else{
     env = individual.subpopulation.getValue("env");
-    return -1*(2/(1+exp(-(env - tresh)/k_2))-1);
+    return -1*(2/(1+exp(-(env - thresh)/k_2))-1);
     }
     //env = individual.subpopulation.getValue("env");
-    //if (env > tresh)
+    //if (env > thresh)
     //    return 1.0 - s_2;
     //else
     //    return 1.0 + s_2;
@@ -131,11 +131,11 @@ for (p in sim.subpopulations)
 1:9999 late() {
 
 	if (size(sim.mutationsOfType(m1)) == 0){
-   freq0 = rep(0,  COUNT);
+    freq0 = rep(0,  COUNT);
 	cat(freq0);
 	state="lost";
 	writeFile(
-	paste(root, "/", "phclineAFs.",repId,"_", m,"_", tresh,"_", k_1,"_", s_2,"_", N , "_", state, "_" ,sim.cycle,
+	paste(root, "/", "phclineAFs.",repId,"_", m,"_", thresh,"_", k_1,"_", s_2,"_", N , "_", state, "_" ,sim.cycle,
 	"." , "txt", sep=""),
 	paste(freq0),
 	append=F);
@@ -152,10 +152,10 @@ for (p in sim.subpopulations)
     freq1 = c(freq1, sim.mutationFrequencies(p, mut1)); 
     catn(sim.subpopulations);
     catn(freq1);
-	 state="poly";
+	state="poly";
 	
     writeFile(
-	 paste(root, "/", "phclineAFs.",repId,"_", m,"_", tresh,"_", k_1,"_", k_2,"_", N , "_", state, "_" ,sim.cycle,
+	 paste(root, "/", "phclineAFs.",repId,"_", m,"_", thresh,"_", k_1,"_", k_2,"_", N , "_", state, "_" ,sim.cycle,
 	 "." , "txt", sep=""),
 	 paste(freq1),
 	 append=F);
