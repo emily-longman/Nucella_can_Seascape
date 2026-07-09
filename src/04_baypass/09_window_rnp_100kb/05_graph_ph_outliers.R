@@ -155,8 +155,10 @@ afs.ph.BF19 <- afs.ph %>% filter(SNP_id %in% bf.ph.mean.sum.top.win[which(bf.ph.
 afs.ph.BF18 <- afs.ph %>% filter(SNP_id %in% bf.ph.mean.sum.top.win[which(bf.ph.mean.sum.top.win$bf_db.mean > 18),]$SNP_id)
 
 afs.ph.g27343.BF.POD <- afs.ph %>% filter(SNP_id %in% bf.ph.mean.sum.top.win[which(bf.ph.mean.sum.top.win$bf_db.mean > bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)]),]$SNP_id)
+afs.ph.g27343.BF.POD <- afs.ph.g27343.BF.POD[,-6]
 # Save
 save(afs.ph.g27343.BF.POD, file = "data/processed/baypass/afs.ph.g27343.BF.POD.RData")
+write.csv(afs.ph.g27343.BF.POD, file = "data/processed/baypass/afs.ph.g27343.BF.POD.csv", row.names=F)
 
 # Load PCA data
 pca.df <- read.csv("data/processed/outlier_analyses/pca.csv")

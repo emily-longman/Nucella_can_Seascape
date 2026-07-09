@@ -326,7 +326,7 @@ Mcali.top.outlier <- Mcali.cohens.fsq.PC1.lat.bf[which(Mcali.cohens.fsq.PC1.lat.
 
 # Get AF for top outlier SNP
 Mcali.outliers.outlier <- Mcali.outliers[which(Mcali.outliers$SNP_id == Mcali.top.outlier$SNP_id),]
-
+write.csv(Mcali.outliers.outlier, file = "data/processed/baypass/afs.McaliThk.outlier.csv", row.names=F)
 
 # Make Site an ordered factor
 lat.order <- c("FC", "SLR", "SH", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR")
