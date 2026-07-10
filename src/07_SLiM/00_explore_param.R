@@ -42,6 +42,45 @@ Mcali <- afs.Mcali[,c(7,13)] %>% distinct()
 
 # ================================================================================== #
 
+# Function
+
+# Logistic sigmoid scaled to [-1, 1]
+# where:
+# z = switching point
+# k = width of transition
+f <- function(x, z, k) {
+  1 + (2 / (1 + exp(-(x - z)/k)) - 1)
+}
+
+pdf("output/figures/SLiM/pH_dist.pdf", width = 5, height = 5)
+plot(ph$ph_mean, f(ph$ph_mean, 7.975, 0.1))
+dev.off()
+
+# Good options for k: 0.1, 0.01, 0.001
+
+# ================================================================================== #
+
+# Create guide file
+ph_min <- plyr::round_any(min(ph$ph_mean), 0.01, f=ceiling)
+ph_max <- plyr::round_any(max(ph$ph_mean), 0.01, f=floor)
+k <- c(0.001, 0.01, 0.1)
+#ks <- data.table(rep(k,2),c(rep(0, 3), k))
+
+# Cross-join function in data table
+guide_file_tmp <- as.data.frame(CJ(seq(ph_min, ph_max, by=0.01), k))
+guide_file <- rbind(data.table(guide_file_tmp, 0),
+                    data.table(guide_file_tmp, rep(k, 10)))
+
+# Write table
+write.table(guide_file, file = "guide_files/slim_ph_guide_file.txt", row.names=F, col.names=F)
+
+
+
+
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
+
 # TESTING
 
 # Get test distribution of data
@@ -53,20 +92,3 @@ selection_guess = function(s, x, thresh){
   i = (s*x)+thresh
   return(i)
 }
-
-# ================================================================================== #
-
-# Function
-
-# Logistic sigmoid scaled to [-1, 1]
-# where:
-# z = switching point
-# k = width of transition
-f <- function(x, z, k) {
-  2 / (1 + exp(-(x - z)/k)) - 1
-}
-
-
-pdf("output/figures/SLiM/pH_dist.pdf", width = 5, height = 5)
-plot(ph$ph_mean, f(ph$ph_mean, 7.975, 0.1))
-dev.off()
