@@ -94,7 +94,7 @@ ROOT=$WORKING_FOLDER/data/processed/SLiM/results
 cd $WORKING_FOLDER/data/processed/SLiM/results
 
 # Loop through 10 iterations
-for i in {1..2}
+for i in {1..10}
 do
 
 # Run slim script
