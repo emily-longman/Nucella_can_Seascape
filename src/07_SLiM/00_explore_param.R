@@ -72,7 +72,7 @@ guide_file <- rbind(data.table(guide_file_tmp, 0),
                     data.table(guide_file_tmp, rep(k, 10)))
 
 # Write table
-write.table(guide_file, file = "guide_files/slim_ph_guide_file.txt", row.names=F, col.names=F)
+write.table(guide_file, file = "guide_files/slim_ph_guide_file.txt", sep = "\t", row.names=F, col.names=F)
 
 
 

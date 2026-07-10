@@ -60,9 +60,9 @@ fi
 cd $WORKING_FOLDER/data/processed/SLiM
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "results" ]
-then echo "Working results folder exist"; echo "Let's move on."; date
-else echo "Working results folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/results; date
+if [ -d "ph_results" ]
+then echo "Working ph_results folder exist"; echo "Let's move on."; date
+else echo "Working ph_results folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_results; date
 fi
 
 #--------------------------------------------------------------------------------
@@ -86,12 +86,12 @@ k_2=`awk -F "\t" '{print $3}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
 echo "Threshold:" ${thresh} "k_1": ${k_1} "k_2": ${k_2}
 
 # Set root
-ROOT=$WORKING_FOLDER/data/processed/SLiM/results
+ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_results
 
 #--------------------------------------------------------------------------------
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/SLiM/results
+cd $WORKING_FOLDER/data/processed/SLiM/ph_results
 
 # Loop through 10 iterations
 for i in {1..10}
