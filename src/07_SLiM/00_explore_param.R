@@ -52,8 +52,12 @@ f <- function(x, z, k) {
   1 + (2 / (1 + exp(-(x - z)/k)) - 1)
 }
 
+f_alt <- function(x, z, k) {
+  1 + (-1 * (2 / (1 + exp(-(x - z)/k)) - 1))
+}
+
 pdf("output/figures/SLiM/pH_dist.pdf", width = 5, height = 5)
-plot(ph$ph_mean, f(ph$ph_mean, 7.975, 0.1))
+plot(ph$ph_mean, f(ph$ph_mean, 7.975, 0.001))
 dev.off()
 
 # Good options for k: 0.1, 0.01, 0.001
@@ -64,7 +68,6 @@ dev.off()
 ph_min <- plyr::round_any(min(ph$ph_mean), 0.01, f=ceiling)
 ph_max <- plyr::round_any(max(ph$ph_mean), 0.01, f=floor)
 k <- c(0.001, 0.01, 0.1)
-#ks <- data.table(rep(k,2),c(rep(0, 3), k))
 
 # Cross-join function in data table
 guide_file_tmp <- as.data.frame(CJ(seq(ph_min, ph_max, by=0.01), k))
