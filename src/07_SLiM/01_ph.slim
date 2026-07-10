@@ -126,7 +126,7 @@ early() {
 	cat(freq0);
 	state="lost";
 	writeFile(
-	paste(root, "/", "phclineAFs.",repId,"_", m,"_", thresh,"_", k_1,"_", s_2,"_", N , "_", state, "_" ,sim.cycle,
+	paste(root, "/", "phclineAFs.",repId,"_", m,"_", thresh,"_", k_1,"_", k_2,"_", N , "_", state, "_" ,sim.cycle,
 	"." , "txt", sep=""),
 	paste(freq0),
 	append=F);
