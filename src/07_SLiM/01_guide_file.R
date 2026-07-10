@@ -1,4 +1,4 @@
-# Test
+# Create guide file of parameters
 
 # Clear memory
 rm(list=ls())

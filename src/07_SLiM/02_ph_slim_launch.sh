@@ -104,7 +104,7 @@ slim \
     -d "k_2=${k_2}" \
     -d "repId=${i}" \
 	-d "root='${ROOT}'" \
-     $WORKING_FOLDER/src/07_SLiM/01_ph.slim
+     $WORKING_FOLDER/src/07_SLiM/02_ph.slim
 
 done
 
