@@ -52,12 +52,6 @@ phafs <- fread("data/processed/baypass/afs.ph.g27343.BF.POD.csv") %>% mutate(nsn
 
 # Extract top pH hit
 topsnp <- phafs %>%
-  filter(SNP_id == "ntLink_3821_1595")
-
-# Load top SNP
-phafs <- fread("/gpfs2/scratch/jcnunez/Nucella_Sims_EcoLoad/afs.ph.g27343.BF.POD.csv") %>%
-  mutate(nsnails = 20)
-topsnp <- phafs %>% 
   filter(SNP_id == "ntLink_3821_1595") %>%
   left_join(dplyr::select(ecovars, Site, ph_mean))
 

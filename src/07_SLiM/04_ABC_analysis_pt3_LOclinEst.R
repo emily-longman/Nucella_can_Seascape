@@ -1,6 +1,24 @@
-## Nucella ABC analysis
+# Nucella ABC analysis
 ## Part 3 - ABC estimation
 
+# Clear memory
+rm(list=ls())
+
+# ================================================================================== #
+
+# Set path as main Github repo
+# Install and load package
+#install.packages(c('rprojroot'))
+library(rprojroot)
+# Specify root path
+root_path <- find_root_file(criterion = has_file("README.md"))
+# Set working directory as path from root
+setwd(root_path)
+
+# ================================================================================== #
+
+# Load packages
+#install.packages(c('data.table', 'tidyverse', 'magrittr', 'reshape2', 'gmodels', 'poolfstat', 'foreach', 'lme4', 'abc'))
 library(tidyverse)
 library(data.table)
 library(magrittr)
@@ -11,11 +29,24 @@ library(foreach)
 library(lme4)
 library(abc)
 
-###
-#load
-real_All <- get(load("/gpfs2/scratch/jcnunez/Nucella_Sims_EcoLoad/real.data.Rdata"))
-sim_All <- get(load("/gpfs2/scratch/jcnunez/Nucella_Sims_EcoLoad/sim.results.Rdata"))
-### estimate means
+# ================================================================================== #
+
+# Generate output directories
+
+# Figure directory
+out_fig_dir <- paste("data/processed/SLiM/ph_ABC")
+if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
+
+# ================================================================================== #
+
+# Load data
+
+real_All <- get(load("data/processed/SLiM/ph_ABC/real.data.Rdata"))
+sim_All <- get(load("data/processed/SLiM/ph_ABC/sim.results.Rdata"))
+
+# ================================================================================== #
+
+# Estimate means
 
 real_data = dplyr::select(ungroup(real_All), 
                           Fsg, Fgt, Fst, 
@@ -56,13 +87,16 @@ post_long <- pivot_longer(
 )
 post_long
 
+pdf("output/figures/SLiM/pH_posteriors.pdf", width = 5, height = 5)
 ggplot(post_long, aes(x = value)) +
   geom_density(fill = "steelblue", alpha = 0.5) +
   facet_wrap(parameter~. , scales = "free", ncol = 1) +
-  theme_bw() -> posteriors
-ggsave(posteriors, file = "posteriors.pdf")
+  theme_bw()
+dev.off()
 
-### Now report the simulation that better match the data
+# ================================================================================== #
+
+# Report the simulation that better match the data
 post_long %>%
   group_by(parameter) %>%
   summarise(mean.par = mean(value, na.rm = T))
@@ -98,38 +132,41 @@ kb1 = abc_fit$unadj.values[best,"k_1"]
 kb2 = abc_fit$unadj.values[best,"k_2"]
 thre = abc_fit$unadj.values[best,"thresh"]
 
+# Logistic sigmoid scaled to [-1, 1]
 f <- function(x, z, k) {
   2/(1+exp(-(x - z)/k))-1
 }
 
+
+# Plot sigmoid of best fit param
+pdf("output/figures/SLiM/sel_curve.pdf", width = 5, height = 5)
 data.frame(env=env, s=f(env, thre, kb1)) %>%
-  ggplot(aes(
-    x=env, y=s
-  )) + geom_line() ->
-  sel_curve
+  ggplot(aes(x=env, y=s)) + geom_line(size=2) + theme_linedraw()
+dev.off()
+#ggsave(sel_curve, file = "output/figures/SLiM/sel_curve.pdf")
 
-ggsave(sel_curve, file = "sel_curve.pdf")
+# ================================================================================== #
 
-### Compare to real data
-### Compare to real data
-### Compare to real data
-### Compare to real data
+# Compare to real data
 
-###load ecovars
-ecovars <- fread("/gpfs2/scratch/jcnunez/Nucella_Sims_EcoLoad/Nucella_ph_shellt.txt")
+# Load ecovars
+ecovars <- fread("guide_files/Nucella_ph_shellt.txt")
 names(ecovars)[2] = "Site"
 ecovars %<>% mutate(sim_eq = paste("p", 0:18, sep =""))
 
-##load top SNP
-phafs <- fread("/gpfs2/scratch/jcnunez/Nucella_Sims_EcoLoad/afs.ph.g27343.BF.POD.csv") %>%
-  mutate(nsnails = 20)
-phafs %>% 
+# Load top SNP
+phafs <- fread("data/processed/baypass/afs.ph.g27343.BF.POD.csv") %>% mutate(nsnails = 20)
+
+# Extract top pH hit
+topsnp <- phafs %>%
   filter(SNP_id == "ntLink_3821_1595") %>%
-  left_join(dplyr::select(ecovars, Site, ph_mean))->
-  topsnp
+  left_join(dplyr::select(ecovars, Site, ph_mean))
+
 
 ####
-sim_Data <- get(load("/netfiles/nunezlab/Shared_Resources/in_transit/longman/ph_results.Rdata"))
+
+# Load sim data
+sim_Data <- get(load("data/processed/SLiM/ph_results.Rdata"))
 names(sim_Data)[1:19]= paste("p", 0:18, sep ="")
 sim_Data %>%
   reshape2::melt(id = c("repId","m","thresh","k_1","k_2",
@@ -137,7 +174,7 @@ sim_Data %>%
                  variable.name = "sim_eq",
                  value.name = "AF_true") -> 
   sim_Data.melt
-
+  
 
 ###recall...
 kb1 = abc_fit$unadj.values[best,"k_1"]
@@ -145,12 +182,11 @@ kb2 = abc_fit$unadj.values[best,"k_2"]
 thre = abc_fit$unadj.values[best,"thresh"]
 
 w <- abc_fit$weights / sum(abc_fit$weights)
-colSums(
-  abc_fit$unadj.values * w
-)
+colSums(abc_fit$unadj.values * w)
 
 
-
+# Plot
+pdf("output/figures/SLiM/sim_AFs.pdf", width = 5, height = 5)
 sim_Data.melt %>% 
   filter( 
           thresh == thre,
@@ -158,10 +194,8 @@ sim_Data.melt %>%
           k_2 ==kb2 
           ) %>%
   left_join(dplyr::select(ecovars, sim_eq, ph_mean)) %>%
-  ggplot(aes(
-    y=ph_mean, x=1-AF_true
-  )) + geom_point(size = 2.0) ->
-  sim_AFs
+  ggplot(aes(y=ph_mean, x=1-AF_true)) + geom_point(size = 2.0) 
+dev.off()
 
-ggsave(sim_AFs, file = "sim_AFs.pdf")
+#ggsave(sim_AFs, file = "sim_AFs.pdf")
 
