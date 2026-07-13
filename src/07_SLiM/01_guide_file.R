@@ -71,27 +71,22 @@ k <- c(0.001, 0.01, 0.1)
 
 # Cross-join function in data table
 guide_file_tmp <- as.data.frame(CJ(seq(ph_min, ph_max, by=0.01), k))
-guide_file <- rbind(data.table(guide_file_tmp, 0),
-                    data.table(guide_file_tmp, rep(k, 10)))
+# Rename for each k
+guide_file_tmp1 <- guide_file_tmp %>% rename(thresh = V1, k_1 = k)
+guide_file_tmp2 <- guide_file_tmp %>% rename(thresh = V1, k_2 = k)
+
+# Make first 1/3 of table
+guide_file_pt1 <- data.table(seq(ph_min, ph_max, by=0.01), 0, 0) %>% rename(thresh = V1, k_1 = V2, k_2 = V3)
+# Make second 1/3 of table
+guide_file_pt2 <- rbind(data.table(guide_file_tmp1, 0),
+                    data.table(guide_file_tmp1, rep(k, 10))) %>% rename(k_2 = V2)
+# Make third 1/3 of table
+guide_file_pt3 <- guide_file_tmp2 %>% mutate(k_1 = 0, .after = thresh)
+
+# Bind
+guide_file <- rbind(guide_file_pt1, guide_file_pt2, guide_file_pt3)
+
+# ================================================================================== #
 
 # Write table
 write.table(guide_file, file = "guide_files/slim_ph_guide_file.txt", sep = "\t", row.names=F, col.names=F)
-
-
-
-
-# ================================================================================== #
-# ================================================================================== #
-# ================================================================================== #
-
-# TESTING
-
-# Get test distribution of data
-a = runif(18, 1.4, 2.2)
-
-quantile(a)
-
-selection_guess = function(s, x, thresh){
-  i = (s*x)+thresh
-  return(i)
-}
