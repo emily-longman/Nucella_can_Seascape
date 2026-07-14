@@ -4,6 +4,9 @@
 # Clear memory
 rm(list=ls())
 
+# Stop exponential
+options(scipen = 999)
+
 # ================================================================================== #
 
 # Set path as main Github repo
@@ -51,7 +54,6 @@ topsnp <- phafs %>%
   filter(SNP_id == "ntLink_3821_1595")  %>%
   left_join(dplyr::select(ecovars, Site, Latitude, sim_eq)) %>%
   arrange(-Latitude)
-  write.csv(topsnp, "data/processed/SLiM/ph_topsnp.csv", row.names=F)
 
 # Make a pooled object with the raw data
 pool.real <- new("pooldata",
@@ -61,7 +63,6 @@ pool.real <- new("pooldata",
                  readcoverage=as.matrix(t(topsnp$Cov)),
                  poolsizes=topsnp$nsnails * 2,
                  poolnames = topsnp$Site)
-
 
 # ================================================================================== #
 
@@ -75,23 +76,11 @@ fst.phylogeo <- computeFST(pool.real,
 # "FSG": estimate of genome-wide within-group differentiation (Fsg)
 # "FGT": estimate of genome-wide between-group differentiation (Fgt)
 
-# eco GLM
-#topsnp %<>%
-#  mutate(nEff =round((Cov*nsnails)/(Cov+nsnails-1)) ) %>%
-#  mutate(af_nEff:=round(AF*nEff)/nEff)
-#GLM = glmer(cbind(af_nEff*nEff, (1-af_nEff)*nEff) ~ ph_mean + (1 | shape),
-#      data=topsnp,  family = binomial)
-#GLM_s = summary(GLM)
-
 # Raw correlation between mean pH and AF
 rawcor = cor.test(~ ph_mean+AF, data = topsnp)
 
 # Correlation between AF and AF - 1 for real data
 rawcorAF = cor.test(topsnp$AF, topsnp$AF)
-
-## AFs themselves
-#AF_line = t(topsnp[,c("af_nEff")])
-#colnames(AF_line) = topsnp$Site
 
 # ================================================================================== #
 
@@ -100,24 +89,20 @@ AF_pool = data.frame(t(topsnp$AF))
 names(AF_pool) = topsnp$sim_eq
 
 # Format Data
-real.data =
+real_data =
 data.frame(
   Fsg = fst.phylogeo$snp.Fstats[1],
   Fgt = fst.phylogeo$snp.Fstats[2],
   Fst = fst.phylogeo$snp.Fstats[3],
-  #Beta = GLM_s$coefficients[2,1],
   cor = rawcor$estimate,
   corAF = rawcorAF$estimate,
   fix1 = sum(topsnp$AF ==1),
   fix0 = sum(topsnp$AF ==0),
   poly = sum(topsnp$AF  > 0 & topsnp$AF  < 1),
   mean.AF = mean(topsnp$AF),
-  AF_pool
-  #,
-  #AF_line
-)
+  AF_pool)
 
 # ================================================================================== #
 
 # Save output
-save(real.data, file = "data/processed/SLiM/ph_ABC/real.data.Rdata")
+save(real_data, file = "data/processed/SLiM/ph_ABC/real_data.Rdata")

@@ -3,6 +3,9 @@
 # Clear memory
 rm(list=ls())
 
+# Stop exponential
+options(scipen = 999)
+
 # ================================================================================== #
 
 # Set path as main Github repo
@@ -136,21 +139,21 @@ process_sims = function(r, m, t, k1, k2, N){
   AF_pool = data.frame(t(tmp.pool$AF_true))
   names(AF_pool) = tmp.pool$sim_eq
 
+  #### Format output
+
   # Format Data
   sim.data =
     data.frame(
       Fsg = fst.phylogeo$snp.Fstats[1],
       Fgt = fst.phylogeo$snp.Fstats[2],
       Fst = fst.phylogeo$snp.Fstats[3],
-      #Beta = GLM_s$coefficients[2,1],
       cor = rawcor$estimate,
       corAF = rawcorAF$estimate,
       fix1 = sum(tmp.pool$SIM_AF ==1),
       fix0 = sum(tmp.pool$SIM_AF ==0),
       poly = sum(tmp.pool$SIM_AF  > 0 & topsnp$SIM_AF  < 1),
       mean.AF = mean(tmp.pool$SIM_AF),
-      AF_pool
-    ) 
+      AF_pool) 
   
   return(sim.data)
 }
