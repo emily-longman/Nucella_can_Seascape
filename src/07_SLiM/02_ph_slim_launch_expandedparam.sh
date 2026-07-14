@@ -14,13 +14,13 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=30:00:00
+#SBATCH --time=05:00:00 #only 5 reps 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
 #SBATCH --mem=10G 
 
 # Submit job array
-#SBATCH --array=1 #1-960%200
+#SBATCH --array=2-500%200 #501-960%200 #All: 1-960
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -71,11 +71,10 @@ fi
 GUIDE_FILE=$WORKING_FOLDER/guide_files/slim_ph_guide_file_expandedparam.txt
 
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers.
-# Threshold      # K_1         # K_2
-# 7.92           0.1             0         
-# 7.93           0.1             0
+# Threshold      # K_1         # K_2     # m
+# 7.7             0              0       0.01  
 # ...           
-# 8.03           0.001           0.001   
+# 8.4           0.001           0.001    0.0001
 
 #--------------------------------------------------------------------------------
 
@@ -94,7 +93,7 @@ ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_results_expandedparam
 # Change directory
 cd $WORKING_FOLDER/data/processed/SLiM/ph_results_expandedparam
 
-# Loop through 100 iterations
+# Loop through iterations
 for i in {1..5}
 do
 

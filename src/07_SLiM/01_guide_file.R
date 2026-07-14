@@ -3,6 +3,9 @@
 # Clear memory
 rm(list=ls())
 
+# Stop exponential
+options(scipen = 999)
+
 # ================================================================================== #
 
 # Set path as main Github repo
@@ -135,7 +138,7 @@ write.table(guide_file, file = "guide_files/slim_ph_guide_file.txt", sep = "\t",
 thresh <- seq(7.7, 8.4, by=0.05) #19
 k_1 <- c(0, 0.001, 0.01, 0.1) #4
 k_2 <- c(0, 0.001, 0.01, 0.1) #4
-m <- c(0.01, 0.001, 0.0001, 0.0001) #4
+m <- c(0.01, 0.001, 0.0001, 0.00001) #4
 
 # Make every combination of variables - 960 combos
 guide_file_expandedparam <- expand.grid(thresh, k_1, k_2, m)
