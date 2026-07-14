@@ -70,7 +70,7 @@ pool.real <- new("pooldata",
 # Hierach fst between N vs S
 fst.phylogeo <- computeFST(pool.real,
                         method = "Anova",
-                        struct = topsnp$shape)
+                        struct = topsnp$shape, verbose = FALSE)
 # "FST": estimate of genome-wide Fst over all the populations
 # "FSG": estimate of genome-wide within-group differentiation (Fsg)
 # "FGT": estimate of genome-wide between-group differentiation (Fgt)
