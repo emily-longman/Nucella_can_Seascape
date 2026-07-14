@@ -162,22 +162,23 @@ process_sims = function(repId, m, thresh, k_1, k_2, N){
 
 # Load data and run function
 
-# Create list of file names for  data
+# Create list of file names for data
 file_names = as.list(dir(path = 'data/processed/SLiM/ph_results/', pattern = "phclineAFs.*"))
 file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/SLiM/ph_results/', x))))
 
-# test
-file_names_v <- head(file_names_v)
+# Create list of file names for data - expanded param (NOTE: will also need to change directory name in code below)
+file_names = as.list(dir(path = 'data/processed/SLiM/ph_results_expandedparam/', pattern = "phclineAFs.*"))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/SLiM/ph_results_expandedparam/', x))))
 
 # Read all the files and perform ABC
-sim_results <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
+sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
     # State which file loading
-    message(i)
+    #message(i)
 
     # Load file and add file name identifier
     tmp <- read.table(i) %>% 
             mutate(file_name = i) %>% 
-            mutate(file_name = str_remove(file_name, pattern = "data/processed/SLiM/ph_results/phclineAFs.")) %>% 
+            mutate(file_name = str_remove(file_name, pattern = "data/processed/SLiM/ph_results_expandedparam/phclineAFs.")) %>% 
             mutate(file_name = str_remove(file_name, pattern = ".txt"))
     # Rename pops
     names(tmp)[1:19] = paste("p", 0:18, sep ="")
@@ -206,5 +207,5 @@ sim_results <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remov
 # ================================================================================== #
 
 # Save output
-save(sim_results, file = "data/processed/SLiM/ph_ABC/sim_results.Rdata")
-
+#save(sim_data, file = "data/processed/SLiM/ph_ABC/sim_data.Rdata")
+save(sim_data, file = "data/processed/SLiM/ph_ABC/sim_data_expandedparam.Rdata")

@@ -14,13 +14,13 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=05:00:00 #only 5 reps 
+#SBATCH --time=10:00:00
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
 #SBATCH --mem=10G 
 
 # Submit job array
-#SBATCH --array=501-960%200 #2-500%200 #All: 1-960
+#SBATCH --array=1-800 #1-960
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -94,7 +94,7 @@ ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_results_expandedparam
 cd $WORKING_FOLDER/data/processed/SLiM/ph_results_expandedparam
 
 # Loop through iterations
-for i in {1..5}
+for i in {6..20}
 do
 
 # Run slim script

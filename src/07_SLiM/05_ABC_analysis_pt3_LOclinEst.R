@@ -42,31 +42,27 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 
 # Load data
 
-real_All <- get(load("data/processed/SLiM/ph_ABC/real.data.Rdata"))
-sim_All <- get(load("data/processed/SLiM/ph_ABC/sim.results.Rdata"))
+real_All <- get(load("data/processed/SLiM/ph_ABC/real_data.Rdata"))
+sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_expandedparam.Rdata"))
 
 # ================================================================================== #
 
 # Estimate means
 
 real_data = dplyr::select(ungroup(real_All), 
-                          Fsg, Fgt, Fst, 
-                          cor, #fix1, fix0, poly, 
-                          #mean.AF,
+                          Fsg, Fgt, Fst, cor, corAF, fix1, fix0, poly, mean.AF,
                           #p0, p1, p2, p3, p4, p5, p6,    
                           #p7, p8, p9, p10, p11, p12,
                           #p13, p14, p15, p16, p17, p18
                           )
 simulated_data = dplyr::select(ungroup(sim_All), 
-                               Fsg, Fgt, Fst, 
-                               cor, #fix1, fix0, poly, 
-                               #mean.AF,
+                               Fsg, Fgt, Fst, cor, corAF, fix1, fix0, poly, mean.AF,
                                #p0, p1, p2, p3, p4, p5, p6,    
                                #p7, p8, p9, p10, p11, p12,
                                #p13, p14, p15, p16, p17, p18
                                )
-sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh,   k_1,   k_2 ), as.numeric))
-# EXCLUDE m and N as those are invariant
+#sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k_1, k_2 ), as.numeric)) # EXCLUDE m and N as those are invariant
+sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), m, thresh, k_1, k_2 ), as.numeric)) # EXCLUDE N since invariant
 
 # ================================================================================== #
 
@@ -77,13 +73,13 @@ abc_fit <- abc(
   param = sim_parameters,
   sumstat = simulated_data,
   tol = 0.1,
-  method = "loclinear"
-)
+  method = "loclinear")
 
 # ================================================================================== #
 
 # Extract posterior
 post <- as.data.frame(abc_fit$adj.values)
+# Reformat
 post_long <- pivot_longer(
   post,
   cols = everything(),
@@ -112,6 +108,7 @@ best <- which.max(abc_fit$weights)
 abc_fit$unadj.values[best, ]
 
 # Create var with best value for each param
+mig = abc_fit$unadj.values[best,"m"]
 kb1 = abc_fit$unadj.values[best,"k_1"]
 kb2 = abc_fit$unadj.values[best,"k_2"]
 thre = abc_fit$unadj.values[best,"thresh"]
@@ -141,9 +138,6 @@ env = c(
 
 
 # Logistic sigmoid scaled to [-1, 1]
-#f <- function(x, z, k) {
-#  2/(1+exp(-(x - z)/k))-1
-#}
 s <- function(x, z, k) {
   2/(1+exp((x - z)/k))-1
 }
@@ -156,12 +150,13 @@ pdf("output/figures/SLiM/sel_curve_kb1.pdf", width = 5, height = 5)
 data.frame(env=env, s=s(env, thre, kb1)) %>%
   ggplot(aes(x=env, y=s)) + geom_line(linewidth=2) + theme_linedraw()
 dev.off()
-# Plot sigmoid of best fit param - thres and kb2 - but in this case kb2=0 is best, so s=1 thus don't graph
+# Plot sigmoid of best fit param - thres and kb2
 pdf("output/figures/SLiM/sel_curve_kb2.pdf", width = 5, height = 5)
 data.frame(env=env, s=s_alt(env, thre, kb2)) %>%
   ggplot(aes(x=env, y=s)) + geom_line(linewidth=2) + theme_linedraw()
 dev.off()
 
+# ================================================================================== #
 # ================================================================================== #
 
 # Compare to real data
@@ -178,62 +173,50 @@ topsnp <- phafs %>%
   filter(SNP_id == "ntLink_3821_1595") %>%
   left_join(dplyr::select(ecovars, Site, ph_mean))
 
-
-####
-# Load sim data
-sim_Data <- get(load("data/processed/SLiM/ph_results.Rdata"))
-names(sim_Data)[1:19] = paste("p", 0:18, sep ="")
-# Reformat
-sim_Data.melt <- sim_Data %>%
-  reshape2::melt(id = c("repId","m","thresh","k_1","k_2",
-                        "N","state","sim.cycle"),
+# Reformat Sim data
+sim_sub <- sim_All[,c(10:34)]
+sim_Data.melt <- sim_sub %>%
+  reshape2::melt(id = c("repId","m","thresh","k_1","k_2","N"),
                  variable.name = "sim_eq",
                  value.name = "AF_true")
 
+
+sim_All[which(sim_All$thresh == thre & sim_All$k_1 == kb1 & sim_All$k_2 == kb2),]
+sim_All[which(sim_All$m == mig & sim_All$thresh == thre & sim_All$k_1 == kb1 & sim_All$k_2 == kb2),]
+
 # ================================================================================== #
-
-###recall...
-kb1 = abc_fit$unadj.values[best,"k_1"]
-kb2 = abc_fit$unadj.values[best,"k_2"]
-thre = abc_fit$unadj.values[best,"thresh"]
-
-# What is w?
-#w <- abc_fit$weights / sum(abc_fit$weights)
-
-# Plot --- why is this 1-AF_true???
-pdf("output/figures/SLiM/sim_AFs.pdf", width = 5, height = 5)
-sim_Data.melt %>% 
-  filter( 
-          thresh == thre,
-          k_1 == kb1,
-          k_2 ==kb2 
-          ) %>%
-  left_join(dplyr::select(ecovars, sim_eq, ph_mean)) %>%
-  ggplot(aes(y=ph_mean, x=AF_true)) + geom_point(size = 2.0) 
-dev.off()
-
-
-
-#####
 
 # Color palette
 nb.cols <- 19
 mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
 
-# Graph real
+# Make Site factor
 topsnp$Site <- factor(topsnp$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+# Graph real
 pdf("output/figures/SLiM/real_AFs_topsnp.pdf", width = 5, height = 5)
 ggplot(topsnp, aes(x = AF, y = ph_mean, fill = Site)) + geom_point(size = 3, shape = 21) +  scale_fill_manual(values = mycolors) + theme_linedraw()
 dev.off()
 
-# Calculate the AF average of the iterations of the best param
-sim_AFs_best_mean <- sim_Data.melt %>%
-  filter(thresh == thre, k_1 == kb1, k_2 == kb2) %>% 
-  group_by(m, thresh, k_1, k_2, sim_eq) %>% reframe(AF_true_mean = mean(AF_true)) %>% 
+# Extract best
+sim_AFs_best <- sim_Data.melt %>%
+  filter(m == mig, thresh == thre, k_1 == kb1, k_2 == kb2) %>% 
   left_join(dplyr::select(ecovars, Site, sim_eq, ph_mean))
+# Make Site factor
+sim_AFs_best$Site <- factor(sim_AFs_best$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-sim_AFs_best_mean$Site <- factor(sim_AFs_best_mean$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 pdf("output/figures/SLiM/sim_AFs_best.pdf", width = 5, height = 5)
+ggplot(sim_AFs_best, aes(x = AF_true, y = ph_mean, fill = Site)) + geom_point(size = 3, shape = 21) + scale_fill_manual(values = mycolors) + theme_linedraw()
+dev.off()
+
+# Calculate the AF average of the iterations of the best param
+sim_AFs_best_mean <- sim_AFs_best %>%
+  group_by(m, thresh, k_1, k_2, sim_eq) %>% reframe(AF_true_mean = mean(AF_true)) %>% 
+  left_join(dplyr::select(ecovars, Site, sim_eq, ph_mean))
+  # Make Site factor
+sim_AFs_best_mean$Site <- factor(sim_AFs_best_mean$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+
+# Graph sim
+pdf("output/figures/SLiM/sim_AFs_best_repmeans.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best_mean, aes(x = AF_true_mean, y = ph_mean, fill = Site)) + geom_point(size = 3, shape = 21) + scale_fill_manual(values = mycolors) + theme_linedraw()
 dev.off()
