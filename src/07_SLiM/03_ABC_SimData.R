@@ -89,16 +89,16 @@ ecovars.sims <- cbind(ecovars, env) %>%
 # Create function that generates poolseq noise for sims, estimates key statistics, and formats data
 
 # Create function
-process_sims = function(r, m, t, k1, k2, N){
+process_sims = function(repId, m, thresh, k_1, k_2, N){
   #r=1; m=0.001; t=7.96; k1=0; k2=0.001; N=2500
 
   # Extract data for specific parameter combos
   tmp <- sim_Data_melt %>%
-    filter(repId==r,
+    filter(repId==repId,
            m==m,
-           thresh==t,
-           k_1==k1,
-           k_2==k2,
+           thresh==thresh,
+           k_1==k_1,
+           k_2==k_2,
            N==N)
 
   # Join with ecovars and top snp data
