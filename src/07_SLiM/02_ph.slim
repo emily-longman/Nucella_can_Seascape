@@ -29,7 +29,7 @@ mutationEffect(m1) {
     return 1.0; // Neutrality is indicated by a relative fitness of 1.0
     } else{
     env = individual.subpopulation.getValue("env");
-    return 1+(2/(1+exp(-(env - thresh)/k_1))-1);
+    return 1+(2/(1+exp((env - thresh)/k_1))-1);
     }
 }
 
@@ -39,7 +39,7 @@ mutationEffect(m2) {
     return 1.0; // Neutrality is indicated by a relative fitness of 1.0
     } else{
     env = individual.subpopulation.getValue("env");
-    return 1+(-1*(2/(1+exp(-(env - thresh)/k_2))-1));
+    return 1+(-1*(2/(1+exp((env - thresh)/k_2))-1));
     }
 }
 

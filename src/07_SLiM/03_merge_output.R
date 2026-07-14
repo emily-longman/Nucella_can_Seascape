@@ -24,14 +24,6 @@ library(foreach)
 
 # ================================================================================== #
 
-# Generate output directories
-
-# Figure directory
-out_fig_dir <- paste("output/figures/SLiM")
-if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
-
-# ================================================================================== #
-
 # Load data
 # Create list of file names for  data
 file_names = as.list(dir(path = 'data/processed/SLiM/ph_results/', pattern = "phclineAFs.*"))

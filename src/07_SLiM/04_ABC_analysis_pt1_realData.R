@@ -46,14 +46,12 @@ ecovars %<>% mutate(sim_eq = paste("p", 0:18, sep =""))
 
 # Allele frequency data for top ph hits
 phafs <- fread("data/processed/baypass/afs.ph.g27343.BF.POD.csv") %>% mutate(nsnails = 20)
-
-# Extract top pH hit
+# Extract top pH hit and join with eco vars
 topsnp <- phafs %>%
-  filter(SNP_id == "ntLink_3821_1595")
-
-# Join
-topsnp <- left_join(dplyr::select(ecovars, Site, Latitude, sim_eq), topsnp, by = "Site") %>%
+  filter(SNP_id == "ntLink_3821_1595")  %>%
+  left_join(dplyr::select(ecovars, Site, Latitude, sim_eq)) %>%
   arrange(-Latitude)
+  write.csv(topsnp, "data/processed/SLiM/ph_topsnp.csv", row.names=F)
 
 # Make a pooled object with the raw data
 pool.real <- new("pooldata",
@@ -63,6 +61,7 @@ pool.real <- new("pooldata",
                  readcoverage=as.matrix(t(topsnp$Cov)),
                  poolsizes=topsnp$nsnails * 2,
                  poolnames = topsnp$Site)
+
 
 # ================================================================================== #
 
@@ -84,18 +83,21 @@ fst.phylogeo <- computeFST(pool.real,
 #      data=topsnp,  family = binomial)
 #GLM_s = summary(GLM)
 
-# Raw correlation
-rawcor = cor.test(~ ph_mean+AF, data =  topsnp)
+# Raw correlation between mean pH and AF
+rawcor = cor.test(~ ph_mean+AF, data = topsnp)
+
+# Correlation between AF and AF - 1 for real data
+rawcorAF = cor.test(topsnp$AF, topsnp$AF)
 
 ## AFs themselves
 #AF_line = t(topsnp[,c("af_nEff")])
 #colnames(AF_line) = topsnp$Site
 
+# ================================================================================== #
+
 # Extract AFs of top SNP and format similar to sim output
 AF_pool = data.frame(t(topsnp$AF))
 names(AF_pool) = topsnp$sim_eq
-
-# ================================================================================== #
 
 # Format Data
 real.data =
@@ -105,6 +107,7 @@ data.frame(
   Fst = fst.phylogeo$snp.Fstats[3],
   #Beta = GLM_s$coefficients[2,1],
   cor = rawcor$estimate,
+  corAF = rawcorAF$estimate,
   fix1 = sum(topsnp$AF ==1),
   fix0 = sum(topsnp$AF ==0),
   poly = sum(topsnp$AF  > 0 & topsnp$AF  < 1),
