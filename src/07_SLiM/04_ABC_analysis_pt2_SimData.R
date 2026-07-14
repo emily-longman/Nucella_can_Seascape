@@ -18,7 +18,7 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'magrittr', 'reshape2', 'gmodels', 'poolfstat', 'foreach', 'lme4', 'abc'))
+#install.packages(c('data.table', 'tidyverse', 'magrittr', 'reshape2', 'gmodels', 'poolfstat', 'foreach', 'doParallel', 'lme4', 'abc'))
 library(tidyverse)
 library(data.table)
 library(magrittr)
@@ -26,6 +26,7 @@ library(reshape2)
 library(gmodels)
 library(poolfstat)
 library(foreach)
+library(doParallel)
 library(lme4)
 library(abc)
 
@@ -136,7 +137,7 @@ process_sims = function(r, m, t, k1, k2, N){
   # Hierach fst
   fst.phylogeo <- computeFST (pool.sim,
                               method = "Anova",
-                              struct = tmp.pool$`Demographic Cluster`)
+                              struct = tmp.pool$`Demographic Cluster`, verbose = FALSE)
 
   #tmp.pool %<>%
   #  mutate(nEff =round((Cov*nsnails)/(Cov+nsnails-1)) ) %>%
