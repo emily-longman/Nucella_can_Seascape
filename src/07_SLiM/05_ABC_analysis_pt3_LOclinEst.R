@@ -144,21 +144,21 @@ env = c(
 #f <- function(x, z, k) {
 #  2/(1+exp(-(x - z)/k))-1
 #}
-f <- function(x, z, k) {
-  1+(2/(1+exp((x - z)/k))-1)
+s <- function(x, z, k) {
+  2/(1+exp((x - z)/k))-1
 }
-f_alt <- function(x, z, k) {
-  1 + (-1 * (2 / (1 + exp((x - z)/k)) - 1))
+s_alt <- function(x, z, k) {
+  -1 * (2 / (1 + exp((x - z)/k)) - 1)
 }
 
 # Plot sigmoid of best fit param - thres and kb1
 pdf("output/figures/SLiM/sel_curve_kb1.pdf", width = 5, height = 5)
-data.frame(env=env, s=f(env, thre, kb1)) %>%
+data.frame(env=env, s=s(env, thre, kb1)) %>%
   ggplot(aes(x=env, y=s)) + geom_line(linewidth=2) + theme_linedraw()
 dev.off()
 # Plot sigmoid of best fit param - thres and kb2 - but in this case kb2=0 is best, so s=1 thus don't graph
 pdf("output/figures/SLiM/sel_curve_kb2.pdf", width = 5, height = 5)
-data.frame(env=env, s=f_alt(env, thre, kb2)) %>%
+data.frame(env=env, s=s_alt(env, thre, kb2)) %>%
   ggplot(aes(x=env, y=s)) + geom_line(linewidth=2) + theme_linedraw()
 dev.off()
 
@@ -198,9 +198,7 @@ kb2 = abc_fit$unadj.values[best,"k_2"]
 thre = abc_fit$unadj.values[best,"thresh"]
 
 # What is w?
-w <- abc_fit$weights / sum(abc_fit$weights)
-colSums(abc_fit$unadj.values * w)
-
+#w <- abc_fit$weights / sum(abc_fit$weights)
 
 # Plot --- why is this 1-AF_true???
 pdf("output/figures/SLiM/sim_AFs.pdf", width = 5, height = 5)
@@ -211,7 +209,7 @@ sim_Data.melt %>%
           k_2 ==kb2 
           ) %>%
   left_join(dplyr::select(ecovars, sim_eq, ph_mean)) %>%
-  ggplot(aes(y=ph_mean, x=1-AF_true)) + geom_point(size = 2.0) 
+  ggplot(aes(y=ph_mean, x=AF_true)) + geom_point(size = 2.0) 
 dev.off()
 
 

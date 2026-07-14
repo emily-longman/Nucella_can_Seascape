@@ -160,7 +160,6 @@ process_sims = function(r, m, t, k1, k2, N){
   AF_pool = data.frame(t(tmp.pool$AF_true))
   names(AF_pool) = tmp.pool$sim_eq
 
-
   ####
 
   # Format Data
