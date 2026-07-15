@@ -105,7 +105,7 @@ do
 # Run slim script
 slim \
 	-d "thresh=${thresh}" \
-    -d "scal=${kscal1}" \
+    -d "scal=${scal}" \
     -d "asym=${asym}" \
     -d "m=${m}" \
     -d "N=${N}" \
