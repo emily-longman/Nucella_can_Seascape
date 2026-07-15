@@ -64,6 +64,17 @@ Mcali <- afs.Mcali[,c(7,13)] %>% distinct()
 #plot(ph$ph_mean, f(ph$ph_mean, 7.975, 0.001))
 #dev.off()
 
+## PLAYING WITH OTHER OPTIONS:
+s_testing <- function(x, t, m) {
+  (m * x) - (m * t)
+}
+# Graph
+pdf("output/figures/SLiM/pH_dist_sel_testing.pdf", width = 5, height = 5)
+plot(ph$ph_mean, s_testing(ph$ph_mean, 7.975, 4))
+dev.off()
+
+###
+
 # Selection
 s_v2 <- function(x, z, k) {
   2 / (1 + exp((x - z)/k)) - 1
@@ -74,10 +85,10 @@ s_v2_alt <- function(x, z, k) {
 
 # Graph
 pdf("output/figures/SLiM/pH_dist_sel_v2.pdf", width = 5, height = 5)
-plot(ph$ph_mean, s_v2(ph$ph_mean, 7.975, 0.0001))
+plot(ph$ph_mean, s_v2(ph$ph_mean, 7.975, 0.1))
 dev.off()
 pdf("output/figures/SLiM/pH_dist_sel_v2_alt.pdf", width = 5, height = 5)
-plot(ph$ph_mean, s_v2_alt(ph$ph_mean, 7.975, 0.01))
+plot(ph$ph_mean, s_v2_alt(ph$ph_mean, 7.975, 0.1))
 dev.off()
 
 
