@@ -14,7 +14,7 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=10:00:00
+#SBATCH --time=20:00:00
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
 #SBATCH --mem=10G 
@@ -93,8 +93,8 @@ ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_results_expandedparam
 # Change directory
 cd $WORKING_FOLDER/data/processed/SLiM/ph_results_expandedparam
 
-# Loop through iterations
-for i in {6..20}
+# Loop through iterations (6-30 for 801-960 so do 20-30 for 1-800)
+for i in {6..30}
 do
 
 # Run slim script
