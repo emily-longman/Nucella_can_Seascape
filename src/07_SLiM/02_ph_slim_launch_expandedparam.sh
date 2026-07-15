@@ -20,7 +20,7 @@
 #SBATCH --mem=10G 
 
 # Submit job array
-#SBATCH --array=801-960 #1-800 #1-960
+#SBATCH --array=1-800 #801-960 #1-800 #1-960
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -94,7 +94,7 @@ ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_results_expandedparam
 cd $WORKING_FOLDER/data/processed/SLiM/ph_results_expandedparam
 
 # Loop through iterations (6-30 for 801-960 so do 20-30 for 1-800)
-for i in {6..30}
+for i in {21..30}
 do
 
 # Run slim script
