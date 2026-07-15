@@ -208,5 +208,5 @@ sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")
 # ================================================================================== #
 
 # Save output
-#save(sim_data, file = "data/processed/SLiM/ph_ABC/sim_data.Rdata")
+save(sim_data, file = "data/processed/SLiM/ph_ABC/sim_data.Rdata")
 save(sim_data, file = "data/processed/SLiM/ph_ABC/sim_data_expandedparam.Rdata")
