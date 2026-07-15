@@ -64,16 +64,6 @@ Mcali <- afs.Mcali[,c(7,13)] %>% distinct()
 #plot(ph$ph_mean, f(ph$ph_mean, 7.975, 0.001))
 #dev.off()
 
-## PLAYING WITH OTHER OPTIONS:
-s_testing <- function(x, t, m) {
-  (m * x) - (m * t)
-}
-# Graph
-pdf("output/figures/SLiM/pH_dist_sel_testing.pdf", width = 5, height = 5)
-plot(ph$ph_mean, s_testing(ph$ph_mean, 7.975, 4))
-dev.off()
-
-###
 
 # Selection
 s_v2 <- function(x, z, k) {
@@ -157,3 +147,40 @@ guide_file_expandedparam <- expand.grid(thresh, k_1, k_2, m)
 # Write table
 write.table(guide_file_expandedparam, file = "guide_files/slim_ph_guide_file_expandedparam.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)
 
+
+
+
+# ================================================================================== #
+
+
+## PLAYING WITH OTHER OPTIONS:
+s_testing <- function(x, thresh, slope) {
+  (slope * x) - (slope * thresh)
+}
+s_testing_alt <- function(x, thresh, slope) {
+  (-slope * x) + (slope * thresh)
+}
+# Graph
+pdf("output/figures/SLiM/pH_dist_sel_testing.pdf", width = 5, height = 5)
+plot(ph$ph_mean, s_testing(ph$ph_mean, 7.975, 10))
+dev.off()
+pdf("output/figures/SLiM/pH_dist_sel_testing_alt.pdf", width = 5, height = 5)
+plot(ph$ph_mean, s_testing_alt(ph$ph_mean, 7.975, 4))
+dev.off()
+
+# thresholds: 7.9 to 8.05 by 0.01
+# m: 1, 2, 4, 6, 8, 10
+
+# Make guide file with broader range of variables
+
+# Range of values for each parameter
+thresh <- seq(7.92, 8.04, by=0.01) #13
+slope_1 <- c(0, 1, 2, 4, 6) #5
+slope_2 <- c(0, 1, 2, 4, 6) #5
+m <- c(0.01, 0.001, 0.0001) #3
+
+# Make every combination of variables - 975 combos
+guide_file_linear <- expand.grid(thresh, slope_1, slope_2, m)
+
+# Write table
+write.table(guide_file_linear, file = "guide_files/slim_ph_guide_file_linear.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)

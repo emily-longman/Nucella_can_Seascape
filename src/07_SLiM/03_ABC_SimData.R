@@ -178,7 +178,8 @@ sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")
     # Load file and add file name identifier
     tmp <- read.table(i) %>% 
             mutate(file_name = i) %>% 
-            mutate(file_name = str_remove(file_name, pattern = "data/processed/SLiM/ph_results_expandedparam/phclineAFs.")) %>% 
+            mutate(file_name = str_remove(file_name, pattern = "data/processed/SLiM/ph_results/phclineAFs.")) %>% 
+            #mutate(file_name = str_remove(file_name, pattern = "data/processed/SLiM/ph_results_expandedparam/phclineAFs.")) %>% 
             mutate(file_name = str_remove(file_name, pattern = ".txt"))
     # Rename pops
     names(tmp)[1:19] = paste("p", 0:18, sep ="")
