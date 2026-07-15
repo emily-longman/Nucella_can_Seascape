@@ -75,7 +75,7 @@ s_v2_alt <- function(x, z, k) {
 
 # Graph
 pdf("output/figures/SLiM/pH_dist_sel_v2.pdf", width = 5, height = 5)
-plot(ph$ph_mean, s_v2(ph$ph_mean, 7.975, 0.01))
+plot(ph$ph_mean, s_v2(ph$ph_mean, 7.975, 0.1))
 dev.off()
 pdf("output/figures/SLiM/pH_dist_sel_v2_alt.pdf", width = 5, height = 5)
 plot(ph$ph_mean, s_v2_alt(ph$ph_mean, 7.975, 0.1))
@@ -102,6 +102,37 @@ dev.off()
 
 # ================================================================================== #
 
+# Create guide file
+ph_min <- plyr::round_any(min(ph$ph_mean), 0.01, f=ceiling)
+ph_max <- plyr::round_any(max(ph$ph_mean), 0.01, f=floor)
+k <- c(0.001, 0.01, 0.1)
+
+# Cross-join function in data table
+guide_file_tmp <- as.data.frame(CJ(seq(ph_min, ph_max, by=0.01), k))
+# Rename for each k
+guide_file_tmp1 <- guide_file_tmp %>% rename(thresh = V1, k_1 = k)
+guide_file_tmp2 <- guide_file_tmp %>% rename(thresh = V1, k_2 = k)
+
+# Make first 1/3 of table
+guide_file_pt1 <- data.table(seq(ph_min, ph_max, by=0.01), 0, 0) %>% rename(thresh = V1, k_1 = V2, k_2 = V3)
+# Make second 1/3 of table
+guide_file_pt2 <- rbind(data.table(guide_file_tmp1, 0),
+                    data.table(guide_file_tmp1, rep(k, 10))) %>% rename(k_2 = V2)
+# Make third 1/3 of table
+guide_file_pt3 <- guide_file_tmp2 %>% mutate(k_1 = 0, .after = thresh)
+
+# Bind
+guide_file <- rbind(guide_file_pt1, guide_file_pt2, guide_file_pt3)
+
+# ================================================================================== #
+
+# Write table
+write.table(guide_file, file = "guide_files/slim_ph_guide_file.txt", sep = "\t", row.names=F, col.names=F)
+
+
+# ================================================================================== #
+# ================================================================================== #
+
 # Make guide file with broader range of variables
 
 # Range of values for each parameter
@@ -117,32 +148,39 @@ guide_file_expandedparam <- expand.grid(thresh, k_1, k_2, m)
 write.table(guide_file_expandedparam, file = "guide_files/slim_ph_guide_file_expandedparam.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)
 
 
-# ================================================================================== #
+
+
 # ================================================================================== #
 
 
-# Other ideas
-# Selection
-s <- function(x, z, k, mag) {
-  mag / (1 + exp((x - z)/k)) - (mag/2)
+## PLAYING WITH OTHER OPTIONS:
+s_testing <- function(x, thresh, slope) {
+  (slope * x) - (slope * thresh)
 }
-
+s_testing_alt <- function(x, thresh, slope) {
+  (-slope * x) + (slope * thresh)
+}
 # Graph
-pdf("output/figures/SLiM/pH_dist_sel_magnitude.pdf", width = 5, height = 5)
-plot(ph$ph_mean, s(ph$ph_mean, 7.975, 0.01, 4))
+pdf("output/figures/SLiM/pH_dist_sel_testing.pdf", width = 5, height = 5)
+plot(ph$ph_mean, s_testing(ph$ph_mean, 7.975, 10))
 dev.off()
+pdf("output/figures/SLiM/pH_dist_sel_testing_alt.pdf", width = 5, height = 5)
+plot(ph$ph_mean, s_testing_alt(ph$ph_mean, 7.975, 4))
+dev.off()
+
+# thresholds: 7.9 to 8.05 by 0.01
+# m: 1, 2, 4, 6, 8, 10
 
 # Make guide file with broader range of variables
 
 # Range of values for each parameter
-thresh <- seq(7.94, 8.02, by=0.01) #9
-k <- c(0.12, 0.10, 0.08, 0.06) #4
-mag <- c(1, 2, 3) #3
+thresh <- seq(7.92, 8.04, by=0.01) #13
+slope_1 <- c(0, 1, 2, 4, 6) #5
+slope_2 <- c(0, 1, 2, 4, 6) #5
 m <- c(0.01, 0.001, 0.0001) #3
-N <- c(1000, 2500, 5000) #3
 
-# Make every combination of variables - 972 combos
-guide_file_morevars <- expand.grid(thresh, k, mag, m, N)
+# Make every combination of variables - 975 combos
+guide_file_linear <- expand.grid(thresh, slope_1, slope_2, m)
 
 # Write table
-write.table(guide_file_morevars, file = "guide_files/slim_ph_guide_file_morevars.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)
+write.table(guide_file_linear, file = "guide_files/slim_ph_guide_file_linear.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)

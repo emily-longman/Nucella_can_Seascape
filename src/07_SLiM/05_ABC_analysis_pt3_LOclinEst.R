@@ -41,9 +41,10 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 # ================================================================================== #
 
 # Load data
-
 real_All <- get(load("data/processed/SLiM/ph_ABC/real_data.Rdata"))
 sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_expandedparam.Rdata"))
+sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data.Rdata"))
+#sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_linear.Rdata"))
 
 # ================================================================================== #
 
@@ -63,8 +64,9 @@ simulated_data = dplyr::select(ungroup(sim_All),
                                #p7, p8, p9, p10, p11, p12,
                                #p13, p14, p15, p16, p17, p18
                                )
-#sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k_1, k_2 ), as.numeric)) # EXCLUDE m and N as those are invariant
 sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), m, thresh, k_1, k_2 ), as.numeric)) # EXCLUDE N since invariant
+sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k_1, k_2 ), as.numeric)) # EXCLUDE m and N as those are invariant
+sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), m, thresh, slope_1, slope_2 ), as.numeric)) # EXCLUDE m and N as those are invariant
 
 # ================================================================================== #
 
@@ -182,8 +184,7 @@ sim_Data.melt <- sim_sub %>%
                  variable.name = "sim_eq",
                  value.name = "AF_true")
 
-
-#sim_All[which(sim_All$thresh == thre & sim_All$k_1 == kb1 & sim_All$k_2 == kb2),]
+sim_All[which(sim_All$thresh == thre & sim_All$k_1 == kb1 & sim_All$k_2 == kb2),]
 sim_All[which(sim_All$m == mig & sim_All$thresh == thre & sim_All$k_1 == kb1 & sim_All$k_2 == kb2),]
 
 # ================================================================================== #
@@ -201,7 +202,8 @@ dev.off()
 
 # Extract best
 sim_AFs_best <- sim_Data.melt %>%
-  filter(m == mig, thresh == thre, k_1 == kb1, k_2 == kb2) %>% 
+  #filter(m == mig, thresh == thre, k_1 == kb1, k_2 == kb2) %>% 
+  filter(thresh == thre, k_1 == kb1, k_2 == kb2) %>% 
   left_join(dplyr::select(ecovars, Site, sim_eq, ph_mean))
 # Make Site factor
 sim_AFs_best$Site <- factor(sim_AFs_best$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
@@ -213,7 +215,8 @@ dev.off()
 
 # Calculate the AF average of the iterations of the best param
 sim_AFs_best_mean <- sim_AFs_best %>%
-  group_by(m, thresh, k_1, k_2, sim_eq) %>% reframe(AF_true_mean = mean(AF_true)) %>% 
+  #group_by(m, thresh, k_1, k_2, sim_eq) %>% reframe(AF_true_mean = mean(AF_true)) %>% 
+  group_by(thresh, k_1, k_2, sim_eq) %>% reframe(AF_true_mean = mean(AF_true)) %>% 
   left_join(dplyr::select(ecovars, Site, sim_eq, ph_mean))
   # Make Site factor
 sim_AFs_best_mean$Site <- factor(sim_AFs_best_mean$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
