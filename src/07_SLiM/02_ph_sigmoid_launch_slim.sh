@@ -111,7 +111,7 @@ slim \
     -d "N=${N}" \
     -d "repId=${i}" \
 	-d "root='${ROOT}'" \
-     $WORKING_FOLDER/src/07_SLiM/02_ph.slim
+     $WORKING_FOLDER/src/07_SLiM/02_ph_sigmoid.slim
 
 done
 
