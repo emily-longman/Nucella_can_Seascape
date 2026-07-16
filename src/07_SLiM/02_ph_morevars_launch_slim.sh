@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=ph_slim_morevars
+#SBATCH --job-name=ph_slim_morevars3
 
 # Specify partition
 #SBATCH --partition=general
@@ -20,7 +20,7 @@
 #SBATCH --mem=10G 
 
 # Submit job array
-#SBATCH --array=1-810%300
+#SBATCH --array=1-90 #1-810%300
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -60,15 +60,15 @@ fi
 cd $WORKING_FOLDER/data/processed/SLiM
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "ph_results_morevars2" ]
-then echo "Working ph_results_morevars2 folder exist"; echo "Let's move on."; date
-else echo "Working ph_results_morevars2 folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars2; date
+if [ -d "ph_results_morevars3" ]
+then echo "Working ph_results_morevars3 folder exist"; echo "Let's move on."; date
+else echo "Working ph_results_morevars3 folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars3; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Guide file 
-GUIDE_FILE=$WORKING_FOLDER/guide_files/slim_ph_guide_file_morevars2.txt
+GUIDE_FILE=$WORKING_FOLDER/guide_files/slim_ph_guide_file_morevars3.txt
 
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers.
 # Threshold      # K         # mag      # m.         #N

@@ -161,7 +161,7 @@ process_sims = function(repId, m, thresh, k_1, k_2, N){
       #scal = mod_fit[3],
       fix1 = sum(tmp.pool$SIM_AF ==1),
       fix0 = sum(tmp.pool$SIM_AF ==0),
-      poly = sum(tmp.pool$SIM_AF  > 0 & topsnp$SIM_AF  < 1),
+      poly = sum(tmp.pool$SIM_AF  > 0 & tmp.pool$SIM_AF  < 1),
       mean.AF = mean(tmp.pool$SIM_AF),
       AF_pool) 
   
@@ -216,14 +216,18 @@ sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")
 # Save output
 save(sim_data, file = "data/processed/SLiM/ph_ABC/sim_data.Rdata")
 
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
 
-# ================================================================================== #
-# ================================================================================== #
-# ================================================================================== #
+# Function with more variables
 
 # Create function
 process_sims = function(repId, m, thresh, k, mag, N){
-  #repId=5; m=0.0001; thresh=7.99; k=0.12; mag=1; N=1000
+  #repId=1; m=0.001; thresh=7.99; k=0.06; mag=2; N=30000
 
   # Extract data for specific parameter combos
   tmp <- sim_Data_melt %>%
@@ -292,7 +296,7 @@ process_sims = function(repId, m, thresh, k, mag, N){
       #scal = mod_fit[3],
       fix1 = sum(tmp.pool$SIM_AF ==1),
       fix0 = sum(tmp.pool$SIM_AF ==0),
-      poly = sum(tmp.pool$SIM_AF > 0 & topsnp$SIM_AF < 1),
+      poly = sum(tmp.pool$SIM_AF > 0 & tmp.pool$SIM_AF < 1),
       mean.AF = mean(tmp.pool$SIM_AF),
       AF_pool) 
   
@@ -307,12 +311,11 @@ process_sims = function(repId, m, thresh, k, mag, N){
 file_names = as.list(dir(path = 'data/processed/SLiM/ph_results_morevars/', pattern = "phclineAFs.*"))
 file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/SLiM/ph_results_morevars/', x))))
 
-file_names_v_test <-file_names_v[1:2]
-file_names_v_sub1 <- file_names_v[1:5000]
-file_names_v_sub2 <- file_names_v[5001:9581]
+file_names_v_pt1 <- file_names_v[1:5000]
+file_names_v_pt2 <- file_names_v[5001:9581]
 
 # Read all the files and perform ABC
-sim_data <- foreach(i=file_names_v_sub2, .combine="rbind", .errorhandling = "remove")%do%{  
+sim_data <- foreach(i=file_names_v_pt2, .combine="rbind", .errorhandling = "remove")%do%{  
     # State which file loading
     #message(i)
 

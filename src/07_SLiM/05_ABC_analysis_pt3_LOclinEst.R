@@ -55,7 +55,7 @@ sim_All <- rbind(sim_pt1, sim_pt2)
 
 real_data = dplyr::select(ungroup(real_All), 
                           #Fsg, Fgt, Fst, 
-                          cor, corAF, fix1, fix0, mean.AF, #poly
+                          cor, corAF, fix1, fix0, poly, mean.AF,
                           #asym, xmid, scal,
                           #p0, p1, p2, p3, p4, p5, p6,    
                           #p7, p8, p9, p10, p11, p12,
@@ -63,7 +63,7 @@ real_data = dplyr::select(ungroup(real_All),
                           )
 simulated_data = dplyr::select(ungroup(sim_All), 
                                #Fsg, Fgt, Fst, 
-                               cor, corAF, fix1, fix0, mean.AF, #poly
+                               cor, corAF, fix1, fix0, poly, mean.AF, 
                                #p0, p1, p2, p3, p4, p5, p6,    
                                #p7, p8, p9, p10, p11, p12,
                                #p13, p14, p15, p16, p17, p18
@@ -209,8 +209,8 @@ sim_Data.melt <- sim_sub %>%
                  value.name = "AF_true")
 
 sim_All[which(sim_All$thresh == thresh_best & sim_All$k_1 == k_1_best & sim_All$k_2 == k_2_best),]
-sim_All[which(sim_All$m == mig_best & sim_All$thresh == thresh_best & sim_All$k_1 == k_1_best & sim_All$k_2 == k_2_best),]
-sim_All[which(sim_All$m == mig_best & sim_All$thresh == thresh_best & sim_All$k == k_best & sim_All$mag == mag_best &sim_All$N == N_best),]
+sim_All[which(sim_All$m == m_best & sim_All$thresh == thresh_best & sim_All$k_1 == k_1_best & sim_All$k_2 == k_2_best),]
+sim_All[which(sim_All$m == m_best & sim_All$thresh == thresh_best & sim_All$k == k_best & sim_All$mag == mag_best &sim_All$N == N_best),]
 
 # ================================================================================== #
 
