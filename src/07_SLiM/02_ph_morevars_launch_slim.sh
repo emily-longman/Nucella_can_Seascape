@@ -87,12 +87,12 @@ N=`awk -F "\t" '{print $5}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
 echo "Threshold:"${thresh} "k:"${k} "mag:"${mag} "m:"${m} "N:" ${N}
 
 # Set root
-ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_results_morevars2
+ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_results_morevars3
 
 #--------------------------------------------------------------------------------
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars2
+cd $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars3
 
 # Loop through iterations
 for i in {1..10}
