@@ -150,8 +150,8 @@ write.table(guide_file_morevars, file = "guide_files/slim_ph_guide_file_morevars
 # ================================================================================== #
 # ================================================================================== #
 
+# More vars 2
 
-# Other ideas
 # Selection
 s <- function(x, z, k, mag) {
   mag / (1 + exp((x - z)/k)) - (mag/2)
@@ -180,6 +180,8 @@ write.table(guide_file_morevars2, file = "guide_files/slim_ph_guide_file_morevar
 
 ###
 
+# More vars 3
+
 # Range of values for each parameter
 thresh <- seq(7.96, 8.005, by=0.005) #10
 k <- c(0.14, 0.13, 0.12, 0.11, 0.10, 0.09, 0.08, 0.07, 0.6) #5
@@ -193,3 +195,15 @@ guide_file_morevars3 <- expand.grid(thresh, k, mag, m, N)
 # Write table
 write.table(guide_file_morevars3, file = "guide_files/slim_ph_guide_file_morevars3.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)
 
+# Add 4 more thresholds w/ rest the same
+thresh <- c(7.940, 7.945, 7.950, 7.955) #4
+k <- c(0.14, 0.13, 0.12, 0.11, 0.10, 0.09, 0.08, 0.07, 0.6) #5
+mag <- c(1) #1
+m <- c(0.001) #1
+N <- c(2500) #1
+
+# Make every combination of variables - 36 combos
+guide_file_morevars3_pt2 <- expand.grid(thresh, k, mag, m, N)
+
+# Write table
+write.table(guide_file_morevars3_pt2, file = "guide_files/slim_ph_guide_file_morevars3_pt2.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)
