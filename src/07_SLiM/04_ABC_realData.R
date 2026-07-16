@@ -21,7 +21,7 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'magrittr', 'reshape2', 'gmodels', 'poolfstat', 'lme4'))
+#install.packages(c('data.table', 'tidyverse', 'magrittr', 'reshape2', 'gmodels', 'poolfstat', 'lme4', 'stats', 'minpack.lm'))
 library(data.table)
 library(tidyverse)
 library(magrittr)
@@ -29,6 +29,8 @@ library(reshape2)
 library(gmodels)
 library(poolfstat)
 library(lme4)
+library(stats)
+library(minpack.lm)
 
 # ================================================================================== #
 
@@ -82,6 +84,11 @@ rawcor = cor.test(~ ph_mean+AF, data = topsnp)
 # Correlation between AF and AF - 1 for real data
 rawcorAF = cor.test(topsnp$AF, topsnp$AF)
 
+# Fit using self-starting parameters
+topsnp_sub <- topsnp[,c(5,8)]
+mod <- nlsLM(AF ~ SSlogis(ph_mean, Asym, xmid, scal), data = topsnp_sub)
+mod_fit <- coef(mod)
+
 # ================================================================================== #
 
 # Extract AFs of top SNP and format similar to sim output
@@ -96,6 +103,9 @@ data.frame(
   Fst = fst.phylogeo$snp.Fstats[3],
   cor = rawcor$estimate,
   corAF = rawcorAF$estimate,
+  asym = mod_fit[1],
+  xmid = mod_fit[2],
+  scal = mod_fit[3],
   fix1 = sum(topsnp$AF ==1),
   fix0 = sum(topsnp$AF ==0),
   poly = sum(topsnp$AF  > 0 & topsnp$AF  < 1),
@@ -114,7 +124,7 @@ save(real_data, file = "data/processed/SLiM/ph_ABC/real_data.Rdata")
 # ================================================================================== #
 # ================================================================================== #
 
-library(stats)
+
 
 # Make Site factor
 topsnp$Site <- factor(topsnp$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
@@ -147,14 +157,18 @@ dev.off()
 
 # Other ideas
 # Selection
-s <- function(x, asym, thresh, scal) {
-  -1 * (asym/(1 + exp((x-thresh)/scal)) - asym/2)
-}
-# Load data
-afs.ph <- read.csv("data/processed/SLiM/afs.ph.g27343.BF.POD.csv", header=T)
-ph <- afs.ph[, c(2,8)] %>% distinct()
+#s <- function(x, asym, thresh, scal) {
+#  -1 * (asym/(1 + exp((x-thresh)/scal)) - asym/2)
+#}
+## Load data
+#afs.ph <- read.csv("data/processed/SLiM/afs.ph.g27343.BF.POD.csv", header=T)
+#ph <- afs.ph[, c(2,8)] %>% distinct()
 
 # Graph
-pdf("output/figures/SLiM/pH_dist_sel_testing.pdf", width = 5, height = 5)
-plot(ph$ph_mean, s(ph$ph_mean, 0.986, 7.98, -0.0043))
-dev.off()
+#pdf("output/figures/SLiM/pH_dist_sel_testing.pdf", width = 5, height = 5)
+#plot(ph$ph_mean, s(ph$ph_mean, 0.986, 7.98, -0.0043), ylim = c(-0.5, 0.5))
+#dev.off()
+
+#pdf("output/figures/SLiM/pH_dist_sel_testing.pdf", width = 5, height = 5)
+#ggplot()+ geom_point(aes(x = ph$ph_mean, y=s(ph$ph_mean, 0.986, 7.98, -0.0043)), size = 3, shape = 21) + theme_linedraw()
+#dev.off()

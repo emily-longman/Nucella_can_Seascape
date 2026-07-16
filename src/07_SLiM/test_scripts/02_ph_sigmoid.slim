@@ -101,7 +101,7 @@ early() {
 
 // general late calls
 
-1:10000 late() {
+1:20000 late() {
 
 	if (size(sim.mutationsOfType(m1)) == 0){
     freq0 = rep(0,  COUNT);
@@ -117,7 +117,7 @@ early() {
 	sim.simulationFinished();			
 			}//close if
 			
-	if (sim.cycle == 30000){
+	if (sim.cycle == 20000){
 	
 	 mut1 = sim.mutationsOfType(m1);
 	 freq1=NULL;
@@ -136,11 +136,11 @@ early() {
    }//close 2ndif
 
 // reporter for debugging
-mut1 = sim.mutationsOfType(m1);
-freq1=NULL;
-for (p in sim.subpopulations)
-    freq1 = c(freq1, sim.mutationFrequencies(p, mut1));
-    catn(sim.subpopulations);
-    catn(freq1);
+//mut1 = sim.mutationsOfType(m1);
+//freq1=NULL;
+//for (p in sim.subpopulations)
+//    freq1 = c(freq1, sim.mutationFrequencies(p, mut1));
+//    catn(sim.subpopulations);
+//    catn(freq1);
 
 }
