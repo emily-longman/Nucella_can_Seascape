@@ -84,7 +84,7 @@ k=`awk -F "\t" '{print $2}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
 mag=`awk -F "\t" '{print $3}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
 m=`awk -F "\t" '{print $4}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
 N=`awk -F "\t" '{print $5}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
-echo "Threshold:"${thresh} "k:"${k_1} "mag:"${k_2} "m:"${m} "N:" ${N}
+echo "Threshold:"${thresh} "k:"${k} "mag:"${mag} "m:"${m} "N:" ${N}
 
 # Set root
 ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_results_morevars2
