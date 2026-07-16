@@ -18,29 +18,166 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'magrittr', 'reshape2', 'gmodels', 'poolfstat', 'foreach', 'lme4', 'abc', 'RColorBrewer'))
-library(tidyverse)
+#install.packages(c('data.table', 'tidyverse', 'foreach', 'devtools', 'magrittr, 'ggplot2', 'RColorBrewer'))
 library(data.table)
-library(magrittr)
-library(reshape2)
-library(gmodels)
-library(poolfstat)
+library(tidyverse)
 library(foreach)
-library(lme4)
-library(abc)
+library(tidyverse)
+library(devtools) 
+#devtools::install_github("bio-oracle/biooracler")
+library(biooracler)
+library(magrittr)
+library(ggplot2)
 library(RColorBrewer)
 
 # ================================================================================== #
 
 # Generate output directories
 
-# Figure directory
-out_fig_dir <- paste("data/processed/SLiM/ph_ABC")
-if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
+# Bio-Oracle directory
+out_dir_future <- paste("data/raw/Bio-oracle/future")
+if (!dir.exists(out_dir_future)) {dir.create(out_dir_future)}
+
+# Data SliM directory
+out_data_dir <- paste("data/processed/SLiM/ph_future")
+if (!dir.exists(out_data_dir)) {dir.create(out_data_dir)}
 
 # ================================================================================== #
 
-# Load data
-real_All <- get(load("data/processed/SLiM/ph_ABC/real_data.Rdata"))
-sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data.Rdata"))
-#sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_linear.Rdata"))
+# Extract future day data 2020-2100
+
+# Define time, lat, and long (set lat and long to fully encompass all sites)
+time = c('2020-01-01T00:00:00Z', '2090-01-01T00:00:00Z')
+latitude = c(34, 45)
+longitude = c(-120, -125)
+
+# Set constraints
+constraints = list(time, latitude, longitude)
+names(constraints) = c("time", "latitude", "longitude")
+
+# Set dataset IDs
+pH_SSP585 <- "ph_ssp585_2020_2100_depthsurf"
+
+# Specify datasets and summary statistics to download 
+datasets <- list(list(dataset_id = pH_SSP585, variables = c("ph_mean"),
+       constraints = constraints, fmt = "csv", directory = out_dir_future))
+
+# Download dataset
+for (dataset in datasets) {
+  
+  dataset_id <- dataset$dataset_id
+  variables <- dataset$variables
+  constraints <- dataset$constraints
+  
+  # List files before downloading
+  files_before <- list.files(out_dir_future, full.names = TRUE)
+  # Download dataset
+  download_layers(dataset_id, variables = variables, constraints = constraints, fmt = "csv", directory = out_dir_future)
+  # List files after downloading
+  files_after <- list.files(out_dir_future, full.names = TRUE)
+  # Identify the newly downloaded file
+  new_file <- setdiff(files_after, files_before)
+  
+  # Rename the file to match the dataset ID
+  if (length(new_file) == 1) {
+    new_name <- file.path(out_dir_future, paste0(dataset_id, "_decadal.csv"))
+    file.rename(new_file, new_name)
+    message("Rename ", new_file, " to ", new_name)
+  } else {
+    message("No new file found for ", dataset_id, " or multiple new files detected.")
+  }
+}
+
+# ================================================================================== #
+
+# Read in Bio-oracle data
+ph_ssp585 <- read.csv("data/raw/Bio-oracle/future/ph_ssp585_2020_2100_depthsurf_decadal.csv", header=T)
+
+# ================================================================================== #
+
+# Extract data for just sites
+
+# Remove first row (i.e. units)
+ph_ssp585 <- ph_ssp585[-1,]
+
+# Change latitude and longitude to numeric
+ph_ssp585 <- ph_ssp585 %>%
+mutate(latitude = as.numeric(latitude), longitude = as.numeric(longitude))
+
+# Filter bio-oracle data for the 19 sites (will set NA for any lat long combo not specified, then will filter out those rows)
+# Note: latitude and longitude need to be rounded to nearest 0.025 or 0.075
+# Note: during rounding make sure you don't set the location as a spot on land
+ph_ssp585_sites <- ph_ssp585 %>%
+  mutate(location = case_when(
+      latitude == 43.325 & longitude == -124.425 ~ "ARA",
+      latitude == 38.325 & longitude == -123.075 ~ "BMR",
+      latitude == 42.825 & longitude == -124.575 ~ "CBL",
+      latitude == 44.825 & longitude == -124.075 ~ "FC",
+      latitude == 38.525 & longitude == -123.275 ~ "FR",
+      latitude == 35.275 & longitude == -120.925 ~ "HZD",
+      latitude == 39.625 & longitude == -123.825 ~ "KH",
+      latitude == 34.875 & longitude == -120.675 ~ "OCT",
+      latitude == 35.675 & longitude == -121.325 ~ "PB",
+      latitude == 37.175 & longitude == -122.375 ~ "PGP",
+      latitude == 36.525 & longitude == -121.975 ~ "PL",
+      latitude == 41.775 & longitude == -124.275 ~ "PSG",
+      latitude == 35.725 & longitude == -121.325 ~ "PSN",
+      latitude == 36.425 & longitude == -121.925 ~ "SBR",
+      latitude == 44.225 & longitude == -124.125 ~ "SH",
+      latitude == 44.525 & longitude == -124.075 ~ "SLR",
+      latitude == 40.025 & longitude == -124.075 ~ "STC",
+      latitude == 34.725 & longitude == -120.625 ~ "STR",
+      latitude == 39.275 & longitude == -123.825 ~ "VD",
+      TRUE ~ NA_character_
+    )
+  ) %>%
+  filter(!is.na(location))
+
+# ================================================================================== #
+
+# Add decade term
+ph_ssp585_sites %<>% group_by(location) %>% mutate(decade=seq(5,75, by=10))
+ 
+# Calculate slope and intercept for each location
+ph_future_lm <- foreach(i=unique(ph_ssp585_sites$location), .combine="rbind", .errorhandling = "remove")%do%{  
+    # Filter for specific site
+    tmp <- ph_ssp585_sites %>% filter(location == i)
+    # Linear model - reformat time so centered on each decade
+    mod <- lm(ph_mean ~ decade, tmp)
+    # Format data
+    data.frame(
+    Site = i,
+    intercept = mod$coefficients[1],
+    slope = mod$coefficients[2])
+}
+# Set site to factor
+ph_ssp585_sites$location <- factor(ph_ssp585_sites$location, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+ph_future_lm$Site <- factor(ph_future_lm$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+
+# Order df by site 
+ph_future_lm <- ph_future_lm[order(ph_future_lm$Site),]
+
+# Save
+write.csv(ph_future_lm, "data/processed/SLiM/ph_future/ph_future_lm.csv", row.names=F)
+
+
+ph_ssp585_sites_2090 <- ph_ssp585_sites[which(ph_ssp585_sites$decade == 75),]
+ph_ssp585_sites_2090 <- ph_ssp585_sites_2090[nrow(ph_ssp585_sites_2090):1,]
+
+write.csv(ph_ssp585_sites_2090, "data/processed/SLiM/ph_future/ph_future_2090_sites.csv", row.names=F)
+
+# ================================================================================== #
+
+# Graph
+
+# Color palette
+nb.cols <- 19
+mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
+
+# Graph
+pdf("output/figures/SLiM/pH_future.pdf", width = 5, height = 5)
+ggplot(ph_ssp585_sites, aes(x = decade, y = ph_mean, fill = location)) + geom_point(size = 3, shape = 21) +
+    geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
+    scale_fill_manual(values = mycolors) + scale_color_manual(values = mycolors) + 
+    labs(x = "Decade", y = "Mean pH") + guides(color = "none") + theme_linedraw() 
+dev.off()

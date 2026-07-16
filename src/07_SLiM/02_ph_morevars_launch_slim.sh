@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=ph_slim_morevars3_pt2
+#SBATCH --job-name=ph_slim_morevars3
 
 # Specify partition
 #SBATCH --partition=general
@@ -20,7 +20,7 @@
 #SBATCH --mem=10G 
 
 # Submit job array
-#SBATCH --array=1-36 #1-90 #1-810%300
+#SBATCH --array=1-357
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -68,7 +68,7 @@ fi
 #--------------------------------------------------------------------------------
 
 # Guide file 
-GUIDE_FILE=$WORKING_FOLDER/guide_files/slim_ph_guide_file_morevars3_pt2.txt
+GUIDE_FILE=$WORKING_FOLDER/guide_files/slim_ph_guide_file_morevars3.txt
 
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers.
 # Threshold      # K         # mag      # m.         #N
