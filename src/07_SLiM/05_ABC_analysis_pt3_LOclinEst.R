@@ -42,12 +42,8 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 
 # Load data
 real_All <- get(load("data/processed/SLiM/ph_ABC/real_data.Rdata"))
-sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data.Rdata"))
+sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars3.Rdata"))
 #sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_linear.Rdata"))
-
-sim_pt1 <- get(load("data/processed/SLiM/ph_ABC/sim_data_pt1.Rdata"))
-sim_pt2 <- get(load("data/processed/SLiM/ph_ABC/sim_data_pt2.Rdata"))
-sim_All <- rbind(sim_pt1, sim_pt2)
 
 # ================================================================================== #
 
@@ -68,9 +64,9 @@ simulated_data = dplyr::select(ungroup(sim_All),
                                #p7, p8, p9, p10, p11, p12,
                                #p13, p14, p15, p16, p17, p18
                                )
-sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), m, thresh, k, mag, N ), as.numeric)) # EXCLUDE N since invariant
-sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), m, thresh, k_1, k_2 ), as.numeric)) # EXCLUDE N since invariant
-sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k_1, k_2 ), as.numeric)) # EXCLUDE m and N as those are invariant
+sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k,), as.numeric)) 
+sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), m, thresh, k, mag, N ), as.numeric)) 
+#sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k_1, k_2 ), as.numeric)) # EXCLUDE m and N as those are invariant
 
 # ================================================================================== #
 
@@ -95,7 +91,7 @@ post_long <- pivot_longer(
   values_to = "value")
 
 # Graph posteriors
-pdf("output/figures/SLiM/pH_posteriors_morvars.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/pH_posteriors_morvars3.pdf", width = 5, height = 5)
 ggplot(post_long, aes(x = value)) +
   geom_density(fill = "steelblue", alpha = 0.5) +
   facet_wrap(parameter~. , scales = "free", ncol = 1) +
