@@ -42,8 +42,8 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 
 # Load data
 real_All <- get(load("data/processed/SLiM/ph_ABC/real_data.Rdata"))
+sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars2.Rdata"))
 sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars3.Rdata"))
-#sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_linear.Rdata"))
 
 # ================================================================================== #
 
@@ -64,7 +64,7 @@ simulated_data = dplyr::select(ungroup(sim_All),
                                #p7, p8, p9, p10, p11, p12,
                                #p13, p14, p15, p16, p17, p18
                                )
-sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k,), as.numeric)) 
+sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k, mag), as.numeric)) 
 sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), m, thresh, k, mag, N ), as.numeric)) 
 #sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k_1, k_2 ), as.numeric)) # EXCLUDE m and N as those are invariant
 
@@ -194,19 +194,19 @@ topsnp <- phafs %>%
 # Extract p0-p18
 sim_sub <- sim_All[,c(10:34)]
 # Change to long format
-sim_Data.melt <- sim_sub %>%
-  reshape2::melt(id = c("repId","m","thresh","k_1","k_2","N"),
-                 variable.name = "sim_eq",
-                 value.name = "AF_true")
+#sim_Data.melt <- sim_sub %>%
+#  reshape2::melt(id = c("repId","m","thresh","k_1","k_2","N"),
+#                 variable.name = "sim_eq",
+#                 value.name = "AF_true")
 
 sim_Data.melt <- sim_sub %>%
   reshape2::melt(id = c("repId","m","thresh","k","mag","N"),
                  variable.name = "sim_eq",
                  value.name = "AF_true")
 
-sim_All[which(sim_All$thresh == thresh_best & sim_All$k_1 == k_1_best & sim_All$k_2 == k_2_best),]
-sim_All[which(sim_All$m == m_best & sim_All$thresh == thresh_best & sim_All$k_1 == k_1_best & sim_All$k_2 == k_2_best),]
-sim_All[which(sim_All$m == m_best & sim_All$thresh == thresh_best & sim_All$k == k_best & sim_All$mag == mag_best &sim_All$N == N_best),]
+#sim_All[which(sim_All$m == m_best & sim_All$thresh == thresh_best & sim_All$k_1 == k_1_best & sim_All$k_2 == k_2_best),]
+sim_All[which(sim_All$m == m_best & sim_All$thresh == thresh_best & sim_All$k == k_best & sim_All$mag == mag_best & sim_All$N == N_best),]
+sim_All[which(sim_All$thresh == thresh_best & sim_All$k == k_best & sim_All$mag == mag_best),]
 
 # ================================================================================== #
 
@@ -223,7 +223,8 @@ dev.off()
 
 # Extract best
 sim_AFs_best <- sim_Data.melt %>%
-  filter(m == mig_best, thresh == thresh_best, k == k_best, mag == mag_best, N == N_best) %>%
+  filter(thresh == thresh_best, k == k_best, mag == mag_best) %>%
+  #filter(m == m_best, thresh == thresh_best, k == k_best, mag == mag_best, N == N_best) %>%
   #filter(m == mig_best, thresh == thresh_best, k_1 == k_1_best, k_2 == k_2_best) %>% 
   #filter(thresh == thresh_best, k_1 == k_1_best, k_2 == k_2_best) %>% 
   left_join(dplyr::select(ecovars, Site, sim_eq, ph_mean))
@@ -231,7 +232,7 @@ sim_AFs_best <- sim_Data.melt %>%
 sim_AFs_best$Site <- factor(sim_AFs_best$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/sim_AFs_best_morevars.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/sim_AFs_best_morevars3.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best, aes(x = AF_true, y = ph_mean, fill = Site)) + geom_point(size = 3, shape = 21) + scale_fill_manual(values = mycolors) + theme_linedraw()
 dev.off()
 
