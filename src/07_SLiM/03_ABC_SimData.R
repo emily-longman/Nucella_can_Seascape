@@ -177,14 +177,14 @@ file_names = as.list(dir(path = 'data/processed/SLiM/ph_results/', pattern = "ph
 file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/SLiM/ph_results/', x))))
 
 # Read all the files and perform ABC
-sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
+sim_data <- foreach(i=file_names_v_test, .combine="rbind", .errorhandling = "remove")%do%{  
     # State which file loading
     #message(i)
 
     # Load file and add file name identifier
     tmp <- read.table(i) %>% 
             mutate(file_name = i) %>% 
-            mutate(file_name = str_remove(file_name, pattern = "data/processed/SLiM/ph_results/phclineAFs.")) %>% 
+            mutate(file_name = str_remove(file_name, pattern = "data/processed/SLiM/ph_results_morevars2/phclineAFs.")) %>% 
             #mutate(file_name = str_remove(file_name, pattern = "data/processed/SLiM/ph_results_expandedparam/phclineAFs.")) %>% 
             mutate(file_name = str_remove(file_name, pattern = ".txt"))
     # Rename pops
@@ -308,6 +308,9 @@ process_sims = function(repId, m, thresh, k, mag, N){
 # Load data and run function
 
 # Create list of file names for data
+file_names = as.list(dir(path = 'data/processed/SLiM/ph_results_morevars2/', pattern = "phclineAFs.*"))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/SLiM/ph_results_morevars2/', x))))
+
 file_names = as.list(dir(path = 'data/processed/SLiM/ph_results_morevars3/', pattern = "phclineAFs.*"))
 file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/SLiM/ph_results_morevars3/', x))))
 
@@ -347,4 +350,5 @@ sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")
 }
 
 # Save output
+save(sim_data, file = "data/processed/SLiM/ph_ABC/sim_data_morevars2.Rdata")
 save(sim_data, file = "data/processed/SLiM/ph_ABC/sim_data_morevars3.Rdata")

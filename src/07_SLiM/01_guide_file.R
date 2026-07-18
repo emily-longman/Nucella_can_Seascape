@@ -178,14 +178,14 @@ guide_file_morevars2 <- expand.grid(thresh, k, mag, m, N)
 write.table(guide_file_morevars2, file = "guide_files/slim_ph_guide_file_morevars2.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)
 
 
-###
+####
 
 # More vars 3
 
 # Range of values for each parameter
 thresh <- seq(7.94, 8.02, by=0.005) #17
 k <- seq(0.05, 0.25, by = 0.01) #5
-#mag <- c(1) #1
+#mag <- c(1) #1 - pt1 
 mag <- c(2) #1
 m <- c(0.001) #1
 N <- c(2500) #1
@@ -195,3 +195,22 @@ guide_file_morevars3_pt2 <- expand.grid(thresh, k, mag, m, N)
 
 # Write table
 write.table(guide_file_morevars3_pt2, file = "guide_files/slim_ph_guide_file_morevars3_pt2.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)
+
+
+###
+
+# More vars 4
+
+# Range of values for each parameter
+thresh <- seq(7.98, 8.01, by=0.001) #31
+#thresh <- seq(7.98, 8.01, by=0.0025) #13
+k <- seq(0.05, 0.1, by = 0.01) #6
+mag <- c(1) #1
+m <- seq(0.001, 0.005, by = 0.001) #5
+N <- c(5000) #1
+
+# Make every combination of variables - 930 combos
+guide_file_morevars4 <- expand.grid(thresh, k, mag, m, N)
+
+# Write table
+write.table(guide_file_morevars4, file = "guide_files/slim_ph_guide_file_morevars4.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)
