@@ -274,7 +274,7 @@ b = c(
 	for (i in seqAlong(sim.subpopulations)){
         env_i = m[i]*sim.cycle + b[i];
 		writeFile(
-	 	paste(root, "/per_simcycle/", "phclineAFs_future_env.",repId,"_pop_", i"." , "txt", sep=""),
+	 	paste(root, "/per_simcycle/", "phclineAFs_future_env.",repId,"_pop_", i, "." , "txt", sep=""),
         paste("Cycle=" + sim.cycle + ", pop=" + i + ", env=" + env_i),
 		append = T)
         }
