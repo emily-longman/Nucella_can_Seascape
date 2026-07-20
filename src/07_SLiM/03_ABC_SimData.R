@@ -312,7 +312,7 @@ file_names = as.list(dir(path = 'data/processed/SLiM/ph_results_morevars4/', pat
 file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/SLiM/ph_results_morevars4/', x))))
 
 # Read all the files and perform ABC
-sim_data <- foreach(i=file_names_v_test, .combine="rbind", .errorhandling = "remove")%do%{  
+sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
     # State which file loading
     #message(i)
 

@@ -18,7 +18,7 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'magrittr', 'reshape2', 'gmodels', 'poolfstat', 'foreach', 'lme4', 'abc', 'RColorBrewer'))
+#install.packages(c('data.table', 'tidyverse', 'magrittr', 'reshape2', 'gmodels', 'poolfstat', 'foreach', 'lme4', 'abc', 'RColorBrewer', 'minpack.lm'))
 library(tidyverse)
 library(data.table)
 library(magrittr)
@@ -29,6 +29,7 @@ library(foreach)
 library(lme4)
 library(abc)
 library(RColorBrewer)
+library(minpack.lm)
 
 # ================================================================================== #
 
@@ -41,9 +42,14 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 # ================================================================================== #
 
 # Load data
+afs.ph <- read.csv("data/processed/SLiM/afs.ph.g27343.BF.POD.csv", header=T)
+ph <- afs.ph[, c(2,8)] %>% distinct()
+
+# Load data
 real_All <- get(load("data/processed/SLiM/ph_ABC/real_data.Rdata"))
 sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars2.Rdata"))
 sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars3.Rdata"))
+sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars4.Rdata"))
 
 # ================================================================================== #
 
@@ -64,7 +70,7 @@ simulated_data = dplyr::select(ungroup(sim_All),
                                #p7, p8, p9, p10, p11, p12,
                                #p13, p14, p15, p16, p17, p18
                                )
-sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k, mag), as.numeric)) 
+sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k, m), as.numeric)) 
 sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), m, thresh, k, mag, N ), as.numeric)) 
 #sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k_1, k_2 ), as.numeric)) # EXCLUDE m and N as those are invariant
 
@@ -91,7 +97,7 @@ post_long <- pivot_longer(
   values_to = "value")
 
 # Graph posteriors
-pdf("output/figures/SLiM/pH_posteriors_morvars3.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/pH_posteriors_morvars4.pdf", width = 5, height = 5)
 ggplot(post_long, aes(x = value)) +
   geom_density(fill = "steelblue", alpha = 0.5) +
   facet_wrap(parameter~. , scales = "free", ncol = 1) +
@@ -116,8 +122,8 @@ m_best = abc_fit$unadj.values[best,"m"]
 k_best = abc_fit$unadj.values[best,"k"]
 #kb2 = abc_fit$unadj.values[best,"k_2"]
 thresh_best = abc_fit$unadj.values[best,"thresh"]
-mag_best = abc_fit$unadj.values[best,"mag"]
-N_best = abc_fit$unadj.values[best,"N"]
+#mag_best = abc_fit$unadj.values[best,"mag"]
+#N_best = abc_fit$unadj.values[best,"N"]
 
 ### plots
 env = c(
@@ -144,18 +150,18 @@ env = c(
 
 
 # Logistic sigmoid scaled to [-1, 1]
-s <- function(x, z, k) {
-  2/(1+exp((x - z)/k))-1
-}
-s_alt <- function(x, z, k) {
-  -1 * (2 / (1 + exp((x - z)/k)) - 1)
-}
+#s <- function(x, z, k) {
+#  2/(1+exp((x - z)/k))-1
+#}
+#s_alt <- function(x, z, k) {
+#  -1 * (2 / (1 + exp((x - z)/k)) - 1)
+#}
 
 # Plot sigmoid of best fit param - thres and kb1
-pdf("output/figures/SLiM/sel_curve_kb1.pdf", width = 5, height = 5)
-data.frame(env=env, s=s(env, thre, kb1)) %>%
-  ggplot(aes(x=env, y=s)) + geom_line(linewidth=2) + theme_linedraw()
-dev.off()
+#pdf("output/figures/SLiM/sel_curve_kb1.pdf", width = 5, height = 5)
+#data.frame(env=env, s=s(env, thre, kb1)) %>%
+#  ggplot(aes(x=env, y=s)) + geom_line(linewidth=2) + theme_linedraw()
+#dev.off()
 # Plot sigmoid of best fit param - thres and kb2
 #pdf("output/figures/SLiM/sel_curve_kb2.pdf", width = 5, height = 5)
 #data.frame(env=env, s=s_alt(env, thre, kb2)) %>%
@@ -167,10 +173,10 @@ s <- function(x, z, k, mag) {
 }
 # Graph
 pdf("output/figures/SLiM/pH_dist_sel_magnitude.pdf", width = 5, height = 5)
-plot(ph$ph_mean, s(ph$ph_mean, 7.99, 0.06, 1))
+plot(ph$ph_mean, s(ph$ph_mean, 7.996, 0.090, 1))
 dev.off()
 pdf("output/figures/SLiM/pH_dist_sel_magnitude_biggerph.pdf", width = 5, height = 5)
-plot(seq(7.5, 8.5, by = 0.01), s(seq(7.5, 8.5, by = 0.01), 7.99, 0.06, 1))
+plot(seq(7.5, 8.5, by = 0.01), s(seq(7.5, 8.5, by = 0.01), 7.996, 0.090, 1))
 dev.off()
 
 # ================================================================================== #
@@ -205,8 +211,8 @@ sim_Data.melt <- sim_sub %>%
                  value.name = "AF_true")
 
 #sim_All[which(sim_All$m == m_best & sim_All$thresh == thresh_best & sim_All$k_1 == k_1_best & sim_All$k_2 == k_2_best),]
-sim_All[which(sim_All$m == m_best & sim_All$thresh == thresh_best & sim_All$k == k_best & sim_All$mag == mag_best & sim_All$N == N_best),]
-sim_All[which(sim_All$thresh == thresh_best & sim_All$k == k_best & sim_All$mag == mag_best),]
+#sim_All[which(sim_All$m == m_best & sim_All$thresh == thresh_best & sim_All$k == k_best & sim_All$mag == mag_best & sim_All$N == N_best),]
+sim_All[which(sim_All$thresh == thresh_best & sim_All$k == k_best & sim_All$m == m_best),]
 
 # ================================================================================== #
 
@@ -223,7 +229,7 @@ dev.off()
 
 # Extract best
 sim_AFs_best <- sim_Data.melt %>%
-  filter(thresh == thresh_best, k == k_best, mag == mag_best) %>%
+  filter(thresh == thresh_best, k == k_best, m == m_best) %>%
   #filter(m == m_best, thresh == thresh_best, k == k_best, mag == mag_best, N == N_best) %>%
   #filter(m == mig_best, thresh == thresh_best, k_1 == k_1_best, k_2 == k_2_best) %>% 
   #filter(thresh == thresh_best, k_1 == k_1_best, k_2 == k_2_best) %>% 
@@ -232,7 +238,7 @@ sim_AFs_best <- sim_Data.melt %>%
 sim_AFs_best$Site <- factor(sim_AFs_best$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/sim_AFs_best_morevars3.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/sim_AFs_best_morevars4.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best, aes(x = AF_true, y = ph_mean, fill = Site)) + geom_point(size = 3, shape = 21) + scale_fill_manual(values = mycolors) + theme_linedraw()
 dev.off()
 
@@ -245,7 +251,7 @@ sim_AFs_best_mean <- sim_AFs_best %>%
 sim_AFs_best_mean$Site <- factor(sim_AFs_best_mean$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/sim_AFs_best_repmeans_morevars.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/sim_AFs_best_repmeans_morevars4.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best_mean, aes(x = AF_true_mean, y = ph_mean, fill = Site)) + geom_point(size = 3, shape = 21) + scale_fill_manual(values = mycolors) + theme_linedraw()
 dev.off()
 
