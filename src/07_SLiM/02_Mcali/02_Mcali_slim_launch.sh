@@ -71,7 +71,7 @@ fi
 GUIDE_FILE=$WORKING_FOLDER/guide_files/slim_Mcali_guide_file.txt
 
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers.
-# Threshold      # K         # mag      # m         #N
+# Threshold      # k         # mag      # m         #N
 # 1.0           0.05            1        0.005     5000
 # ...           
 # 2.05          0.20            1        0.005     5000
