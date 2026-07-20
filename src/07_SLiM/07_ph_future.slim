@@ -221,7 +221,7 @@ b = c(
 
 // general late calls
 
-1:100 late() {
+1:80 late() {
 
 	//if (size(sim.mutationsOfType(m1)) == 0){
     //freq0 = rep(0,  COUNT);
@@ -237,7 +237,7 @@ b = c(
 	//sim.simulationFinished();			
 	//		}//close if
 			
-	//if (sim.cycle == 100){
+	//if (sim.cycle == 80){
 	
 	 mut1 = sim.mutationsOfType(m1);
 	 freq1=NULL;
@@ -270,11 +270,14 @@ b = c(
 	 paste(freq1),
 	 append=T);
 
-	 //writeFile(
-	 //paste(root, "/per_simcycle/", "phclineAFs_future_env.",repId,"_", m,"_", thresh,"_", k,"_", mag,"_", N , "_", state, "_" , 
-	 //"." , "txt", sep=""),
-	 //paste(env_i),
-	 //append=T);
+	 writeFile(
+	 paste(root, "/per_simcycle/", "phclineAFs_future_env.",repId,"_", m,"_", thresh,"_", k,"_", mag,"_", N , "_", state, "_" , 
+	 "." , "txt", sep=""),
+	 for (i in seqAlong(sim.subpopulations)){
+        env_i = m[i]*sim.cycle + b[i];
+        catn("Cycle=" + sim.cycle + ", pop=" + i + ", env=" + env_i);
+        },
+	 append=T);
 
 }
 
