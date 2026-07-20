@@ -60,9 +60,9 @@ fi
 cd $WORKING_FOLDER/data/processed/SLiM
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "ph_results_morevars4" ]
-then echo "Working ph_results_morevars4 folder exist"; echo "Let's move on."; date
-else echo "Working ph_results_morevars4 folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars4; date
+if [ -d "ph_results_morevars4_moreiter" ]
+then echo "Working ph_results_morevars4_moreiter folder exist"; echo "Let's move on."; date
+else echo "Working ph_results_morevars4_moreiter folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars4_moreiter; date
 fi
 
 #--------------------------------------------------------------------------------
@@ -87,15 +87,16 @@ N=`awk -F "\t" '{print $5}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
 echo "Threshold:"${thresh} "k:"${k} "mag:"${mag} "m:"${m} "N:" ${N}
 
 # Set root
-ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_results_morevars4
+ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_results_morevars4_moreiter
 
 #--------------------------------------------------------------------------------
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars4
+cd $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars4_moreiter
 
 # Loop through iterations
-for i in {1..15}
+#for i in {1..15}
+for i in {16..50}
 do
 
 # Run slim script

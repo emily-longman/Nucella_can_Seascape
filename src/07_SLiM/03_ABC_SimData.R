@@ -137,10 +137,10 @@ process_sims = function(repId, m, thresh, k_1, k_2, N){
   # Correlation between AF of the real data and AF of the sim data
   rawcorAF = cor.test(topsnp$AF, tmp.pool$SIM_AF)
   
-  # Fit using self-starting parameters
-  #tmp.pool_sub <- tmp.pool[,c("SIM_AF", "ph_mean")]
-  #mod <- nlsLM(SIM_AF ~ SSlogis(ph_mean, Asym, xmid, scal), data = tmp.pool_sub)
-  #mod_fit <- coef(mod)
+  # Fit sigmoid
+ # tmp.pool_sub <- tmp.pool[,c("SIM_AF", "ph_mean")]
+ # mod <- nlsLM(SIM_AF ~ SSlogis(ph_mean, Asym, xmid, scal), data = tmp.pool_sub)
+ # mod_fit <- coef(mod)
 
   # Extract AFs of top SNP and format similar to sim output
   AF_pool = data.frame(t(tmp.pool$AF_true))
@@ -156,9 +156,9 @@ process_sims = function(repId, m, thresh, k_1, k_2, N){
       Fst = fst.phylogeo$snp.Fstats[3],
       cor = rawcor$estimate,
       corAF = rawcorAF$estimate,
-      #asym = mod_fit[1],
-      #xmid = mod_fit[2],
-      #scal = mod_fit[3],
+#      asym = mod_fit[1],
+#      xmid = mod_fit[2],
+#      scal = mod_fit[3],
       fix1 = sum(tmp.pool$SIM_AF ==1),
       fix0 = sum(tmp.pool$SIM_AF ==0),
       poly = sum(tmp.pool$SIM_AF  > 0 & tmp.pool$SIM_AF  < 1),
@@ -227,7 +227,7 @@ save(sim_data, file = "data/processed/SLiM/ph_ABC/sim_data.Rdata")
 
 # Create function
 process_sims = function(repId, m, thresh, k, mag, N){
-  #repId=1; m=0.001; thresh=7.99; k=0.06; mag=2; N=30000
+  #repId=1; m=0.001; thresh=7.98; k=0.05; mag=1; N=5000
 
   # Extract data for specific parameter combos
   tmp <- sim_Data_melt %>%
@@ -272,7 +272,7 @@ process_sims = function(repId, m, thresh, k, mag, N){
   # Correlation between AF of the real data and AF of the sim data
   rawcorAF = cor.test(topsnp$AF, tmp.pool$SIM_AF)
   
-  # Fit using self-starting parameters
+  # Fit sigmoid
   #tmp.pool_sub <- tmp.pool[,c("SIM_AF", "ph_mean")]
   #mod <- nlsLM(SIM_AF ~ SSlogis(ph_mean, Asym, xmid, scal), data = tmp.pool_sub)
   #mod_fit <- coef(mod)
@@ -308,22 +308,18 @@ process_sims = function(repId, m, thresh, k, mag, N){
 # Load data and run function
 
 # Create list of file names for data
-file_names = as.list(dir(path = 'data/processed/SLiM/ph_results_morevars2/', pattern = "phclineAFs.*"))
-file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/SLiM/ph_results_morevars2/', x))))
-
-file_names = as.list(dir(path = 'data/processed/SLiM/ph_results_morevars3/', pattern = "phclineAFs.*"))
-file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/SLiM/ph_results_morevars3/', x))))
-
+file_names = as.list(dir(path = 'data/processed/SLiM/ph_results_morevars4/', pattern = "phclineAFs.*"))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/SLiM/ph_results_morevars4/', x))))
 
 # Read all the files and perform ABC
-sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
+sim_data <- foreach(i=file_names_v_test, .combine="rbind", .errorhandling = "remove")%do%{  
     # State which file loading
     #message(i)
 
     # Load file and add file name identifier
     tmp <- read.table(i) %>% 
             mutate(file_name = i) %>% 
-            mutate(file_name = str_remove(file_name, pattern = "data/processed/SLiM/ph_results_morevars3/phclineAFs.")) %>% 
+            mutate(file_name = str_remove(file_name, pattern = "data/processed/SLiM/ph_results_morevars4/phclineAFs.")) %>% 
             mutate(file_name = str_remove(file_name, pattern = ".txt"))
     # Rename pops
     names(tmp)[1:19] = paste("p", 0:18, sep ="")
@@ -350,5 +346,6 @@ sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")
 }
 
 # Save output
-save(sim_data, file = "data/processed/SLiM/ph_ABC/sim_data_morevars2.Rdata")
-save(sim_data, file = "data/processed/SLiM/ph_ABC/sim_data_morevars3.Rdata")
+#save(sim_data, file = "data/processed/SLiM/ph_ABC/sim_data_morevars2.Rdata")
+#save(sim_data, file = "data/processed/SLiM/ph_ABC/sim_data_morevars3.Rdata")
+save(sim_data, file = "data/processed/SLiM/ph_ABC/sim_data_morevars4.Rdata")
