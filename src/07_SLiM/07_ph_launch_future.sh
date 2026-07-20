@@ -45,23 +45,23 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 # Generate Folders and files
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/SLiM
+cd $WORKING_FOLDER/data/processed/SLiM/ph_future
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "ph_future" ]
-then echo "Working ph_future folder exist"; echo "Let's move on."; date
-else echo "Working ph_future folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_future; date
+if [ -d "ph_results" ]
+then echo "Working ph_results folder exist"; echo "Let's move on."; date
+else echo "Working ph_results folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results; date
 fi
 
 # Determine parameters
 
 # Set root
-ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_future
+ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results
 
 #--------------------------------------------------------------------------------
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/SLiM/ph_future
+cd $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results
 
 # Loop through iterations
 for i in {1..1}

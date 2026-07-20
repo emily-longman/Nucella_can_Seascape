@@ -3,22 +3,20 @@
 initialize() {
 	initializeMutationRate(0);
 	initializeMutationType("m1", 0.5, "f", 0.0);    // type 1
-	//initializeMutationType("m2", 0.5, "f", 0.0);    // type 2
 	initializeGenomicElementType("g1", c(m1), c(1));
 	initializeGenomicElement(g1, 0, 0);
 	initializeRecombinationRate(0);
 	defineGlobal("COUNT", 19);
-	defineGlobal("N", 2500);
+	defineGlobal("N", 5000);
 	m1.convertToSubstitution = F;
-	//m2.convertToSubstitution = F;
 	
 	//user parameters
-	defineGlobal("m", 0.001);
-	defineConstant("thresh", 7.97);
-	defineConstant("k", 0.12);
+	defineGlobal("m", 0.005);
+	defineConstant("thresh", 7.996);
+	defineConstant("k", 0.09);
 	defineConstant("mag", 1);
-	defineConstant("repId", 1);
-   defineConstant("root",  "/Users/emilylongman/Documents/UVM/Population_Genomics/SLiM/slim_dumping/");
+	//defineConstant("repId", 1);
+    //defineConstant("root",  "/Users/emilylongman/Documents/UVM/Population_Genomics/SLiM/slim_dumping/");
 
 }
 
@@ -53,6 +51,7 @@ mutationEffect(m1) {
 	
 	allHaps = sim.subpopulations.haplosomes;
 	
+	// Create mutation
 	mut1 = p18.haplosomes[0].addNewDrawnMutation(m1, 0);
 
 	// Set starting AF for the 19 pops
@@ -163,13 +162,7 @@ mutationEffect(m1) {
         
         
    //notSampled = setDifference(sim.subpopulations.haplosomes, g);
-   
-	//mut2 = sim.subpopulations.haplosomes[0].addNewDrawnMutation(m2, 0);
 
-   //for (genome2 in notSampled)
-    //if (!genome2.containsMutations(mut2))
-        //genome2.addMutations(mut2);
-        
 }
 
 // general early calls
