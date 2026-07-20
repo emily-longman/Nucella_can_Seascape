@@ -1,0 +1,139 @@
+// Keywords: environmental change, temporal change
+
+initialize() {
+	initializeMutationRate(0);
+	initializeMutationType("m1", 0.5, "f", 0.0);    // type 1
+	initializeGenomicElementType("g1", c(m1), c(1));
+	initializeGenomicElement(g1, 0, 0);
+	initializeRecombinationRate(0);
+	defineGlobal("COUNT", 19);
+	//defineGlobal("N", 2500);
+	m1.convertToSubstitution = F;
+	
+	//user parameters
+	//defineGlobal("m", 0.001);
+	//defineConstant("thresh", 7.975);
+	//defineConstant("k", 0.001);
+	//defineConstant("repId", 1);
+    //defineConstant("root",  "/Users/emilylongman/Documents/UVM/Population_Genomics/SLiM/slim_dumping/");
+
+}
+
+// fitness calls
+mutationEffect(m1) {
+    
+    if(k == 0) {
+    return 1.0; // Neutrality is indicated by a relative fitness of 1.0
+    } else{
+    env = individual.subpopulation.getValue("env");
+    return 1+(mag/(1+exp((env - thresh)/k))-(mag/2));
+    }
+}
+
+
+//migration and pop-structure
+1 early() {
+
+	// create populations
+	for (i in 0:(COUNT-1))
+		sim.addSubpop(i, N);
+	
+	// create migration
+	subpops = sim.subpopulations;
+	for (i in 1:(COUNT-1)) subpops[i].setMigrationRates(i-1, m);
+	for (i in 0:(COUNT-2)) subpops[i].setMigrationRates(i+1, m);
+
+
+} // this closes1 early() // <--
+	
+1 late() {	
+	
+	allHaps = sim.subpopulations.haplosomes;
+	
+	g = sample(sim.subpopulations.haplosomes,
+           asInteger(size(sim.subpopulations.haplosomes) / 2));
+
+	mut1 = sim.subpopulations.haplosomes[0].addNewDrawnMutation(m1, 0);
+
+	for (genome in g)
+    if (!genome.containsMutations(mut1))
+        genome.addMutations(mut1);
+        
+        
+   notSampled = setDifference(sim.subpopulations.haplosomes, g);
+        
+}
+
+// general early calls
+early() {
+    env = c(
+1.801197107,
+1.758352318,
+1.715225361,
+NA,
+1.677236687,
+1.734608112,
+1.844818925,
+1.735326540,
+1.615483995,
+1.961925234,
+1.738814502,
+1.517563421,
+1.487237983,
+1.567637305,
+1.472519437,
+1.595566753,
+2.206475463,
+1.520675474,
+1.431920910 
+    );
+
+    for (i in seqAlong(sim.subpopulations))
+        sim.subpopulations[i].setValue("env", env[i]);
+}
+
+// general late calls
+
+1:20000 late() {
+
+	if (size(sim.mutationsOfType(m1)) == 0){
+    freq0 = rep(0,  COUNT);
+	cat(freq0);
+	state="lost";
+	writeFile(
+	paste(root, "/", "McaliclineAFs.",repId,"_", m,"_", thresh,"_", k,"_", mag,"_", N , "_", state, "_" , sim.cycle,
+	"." , "txt", sep=""),
+	paste(freq0),
+	append=F);
+	cat("mutation lost in cycle " + sim.cycle + "\n");
+	
+	sim.simulationFinished();			
+			}//close if
+			
+	if (sim.cycle == 20000){
+	
+	 mut1 = sim.mutationsOfType(m1);
+	 freq1=NULL;
+	 for (p in sim.subpopulations)
+    freq1 = c(freq1, sim.mutationFrequencies(p, mut1)); 
+    catn(sim.subpopulations);
+    catn(freq1);
+	state="poly";
+	
+    writeFile(
+	 paste(root, "/", "McaliclineAFs.",repId,"_", m,"_", thresh,"_", k,"_", mag,"_", N , "_", state, "_" , sim.cycle,
+	 "." , "txt", sep=""),
+	 paste(freq1),
+	 append=F);
+	
+   }//close 2ndif
+
+// reporter for debugging
+//mut1 = sim.mutationsOfType(m1);
+//freq1=NULL;
+//for (p in sim.subpopulations)
+//    freq1 = c(freq1, sim.mutationFrequencies(p, mut1));
+//    catn(sim.subpopulations);
+//    catn(freq1);
+
+}
