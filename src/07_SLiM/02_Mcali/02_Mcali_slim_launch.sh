@@ -20,7 +20,7 @@
 #SBATCH --mem=10G 
 
 # Submit job array
-#SBATCH --array=1-256
+#SBATCH --array=1 #1-256
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -84,7 +84,7 @@ k=`awk -F "\t" '{print $2}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
 mag=`awk -F "\t" '{print $3}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
 m=`awk -F "\t" '{print $4}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
 N=`awk -F "\t" '{print $5}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
-echo "Threshold:"${thresh} "k:"${k} "mag:"${mag} "m:"${m} "N:" ${N}
+echo "Threshold:"${thresh} "k:"${k} "mag:"${mag} "m:"${m} "N:"${N}
 
 # Set root
 ROOT=$WORKING_FOLDER/data/processed/SLiM/Mcali_results
@@ -95,7 +95,7 @@ ROOT=$WORKING_FOLDER/data/processed/SLiM/Mcali_results
 cd $WORKING_FOLDER/data/processed/SLiM/Mcali_results
 
 # Loop through iterations
-for i in {1..15}
+for i in {1..1}
 do
 
 # Run slim script
