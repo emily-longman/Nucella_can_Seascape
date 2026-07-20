@@ -72,11 +72,11 @@ regfile <- read.table("data/processed/baypass/abiotic/NC_abiotic_ph_mean_run_all
 # ================================================================================== #
 
 # Compute offset
-Ncan_GO <- compute_genetic_offset(
-        beta.coef = NULL, 
-        regfile = "data/processed/baypass/abiotic/NC_abiotic_ph_mean_run_all_summary_betai_reg.out", 
-        covfile = "guide_files/Baypass_ph_mean.txt",
-        newenv = ph.cov.file.future, scalecov = FALSE, compute.rona = TRUE)
+#Ncan_GO <- compute_genetic_offset(
+#        beta.coef = NULL, 
+#        regfile = "data/processed/baypass/abiotic/NC_abiotic_ph_mean_run_all_summary_betai_reg.out", 
+#        covfile = "guide_files/Baypass_ph_mean.txt",
+#        newenv = ph.cov.file.future, scalecov = FALSE, compute.rona = TRUE)
 
 # Notes:
 # beta.coef - matrix of reg coef; if NULL, then provide BayPass output file with regfile argument
@@ -88,21 +88,21 @@ Ncan_GO <- compute_genetic_offset(
 # ================================================================================== #
 
 # Extract matrix of gGO estimates between all reference (rows) and target environments (columns)
-go.matrix <- Ncan_GO$go
-rownames(go.matrix) <- pooldata@poolnames
-colnames(go.matrix) <- pooldata@poolnames
+#go.matrix <- Ncan_GO$go
+#rownames(go.matrix) <- pooldata@poolnames
+#colnames(go.matrix) <- pooldata@poolnames
 
 # Extract diagonal
-GO <- diag(go.matrix)
+#GO <- diag(go.matrix)
 
 # Make Site a column
-Site <- names(GO)
+#Site <- names(GO)
 
 # Make table
-go.output <- data.table(Site, GO)
+#go.output <- data.table(Site, GO)
 
 # Join with metadata
-go.output <- left_join(meta, go.output, by="Site")
+#go.output <- left_join(meta, go.output, by="Site")
 
 # ================================================================================== #
 
@@ -125,24 +125,24 @@ dev.off()
 # ================================================================================== #
 
 # Extract rona matrix of GO estimates between all reference (rows) and target environments (columns)
-rona.matrix <- Ncan_GO$rona
-rownames(rona.matrix) <- pooldata@poolnames
-colnames(rona.matrix) <- pooldata@poolnames
+#rona.matrix <- Ncan_GO$rona
+#rownames(rona.matrix) <- pooldata@poolnames
+#colnames(rona.matrix) <- pooldata@poolnames
 
 # Extract diagonal
-RONA <- diag(rona.matrix)
+#RONA <- diag(rona.matrix)
 
 # Make Site a column
-Site <- names(RONA)
+#Site <- names(RONA)
 
 # Make table
-RONA.output <- data.table(Site, RONA)
+#RONA.output <- data.table(Site, RONA)
 
 # Join with metadata
-RONA.output <- left_join(meta, RONA.output, by="Site")
+#RONA.output <- left_join(meta, RONA.output, by="Site")
 
 # Order
-RONA.output$Site <- factor(RONA.output$Site, levels=c("STR", "OCT", "HZD", "PB", "PSN", "SBR", "PL", "PGP", "BMR", "FR", "VD", "KH", "STC", "PSG", "CBL", "ARA", "SH", "SLR", "FC"))
+#RONA.output$Site <- factor(RONA.output$Site, levels=c("STR", "OCT", "HZD", "PB", "PSN", "SBR", "PL", "PGP", "BMR", "FR", "VD", "KH", "STC", "PSG", "CBL", "ARA", "SH", "SLR", "FC"))
 
 # Graph RONA
 pdf("output/figures/genomic_offset/Baypass_RONA.pdf", width = 8, height = 14)
@@ -189,6 +189,9 @@ go.scaled.output <- left_join(meta, go.scaled.output, by="Site")
 
 # Order
 go.scaled.output$Site <- factor(go.scaled.output$Site, levels=c("STR", "OCT", "HZD", "PB", "PSN", "SBR", "PL", "PGP", "BMR", "FR", "VD", "KH", "STC", "PSG", "CBL", "ARA", "SH", "SLR", "FC"))
+
+# Save output
+save(go.scaled.output, file = "data/processed/genomic_offset/Nucella_gGO.Rdata")
 
 # Graph GO
 pdf("output/figures/genomic_offset/Baypass_scaled_GO.pdf", width = 8, height = 14)
