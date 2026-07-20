@@ -223,21 +223,21 @@ b = c(
 
 1:100 late() {
 
-	if (size(sim.mutationsOfType(m1)) == 0){
-    freq0 = rep(0,  COUNT);
-	cat(freq0);
-	state="lost";
-	writeFile(
-	paste(root, "/", "phclineAFs_future.",repId,"_", m,"_", thresh,"_", k,"_", mag,"_", N , "_", state, "_" ,sim.cycle,
-	"." , "txt", sep=""),
-	paste(freq0),
-	append=F);
-	cat("mutation lost in cycle " + sim.cycle + "\n");
+	//if (size(sim.mutationsOfType(m1)) == 0){
+    //freq0 = rep(0,  COUNT);
+	//cat(freq0);
+	//state="lost";
+	//writeFile(
+	//paste(root, "/", "phclineAFs_future.",repId,"_", m,"_", thresh,"_", k,"_", mag,"_", N , "_", state, "_" ,sim.cycle,
+	//"." , "txt", sep=""),
+	//paste(freq0),
+	//append=F);
+	//cat("mutation lost in cycle " + sim.cycle + "\n");
 	
-	sim.simulationFinished();			
-			}//close if
+	//sim.simulationFinished();			
+	//		}//close if
 			
-	if (sim.cycle == 100){
+	//if (sim.cycle == 100){
 	
 	 mut1 = sim.mutationsOfType(m1);
 	 freq1=NULL;
@@ -248,20 +248,33 @@ b = c(
 	state="poly";
 	
     writeFile(
-	 paste(root, "/", "phclineAFs_future.",repId,"_", m,"_", thresh,"_", k,"_", mag,"_", N , "_", state, "_" ,sim.cycle,
+	 paste(root, "/", "phclineAFs_future.",repId,"_", m,"_", thresh,"_", k,"_", mag,"_", N , "_", state, "_" , sim.cycle,
 	 "." , "txt", sep=""),
 	 paste(freq1),
 	 append=F);
 	
-   }//close 2ndif
+   //}//close 2ndif
 
 //reporter for debugging
-mut1 = sim.mutationsOfType(m1);
-freq1=NULL;
-for (p in sim.subpopulations)
-    freq1 = c(freq1, sim.mutationFrequencies(p, mut1));
-    catn(sim.subpopulations);
-    catn(freq1);
+//mut1 = sim.mutationsOfType(m1);
+//freq1=NULL;
+//for (p in sim.subpopulations)
+//    freq1 = c(freq1, sim.mutationFrequencies(p, mut1));
+//    catn(sim.subpopulations);
+//    catn(freq1);
+//	catn("Cycle=" + sim.cycle + ", pop=" + i + ", env=" + env_i);
+	
+	writeFile(
+	 paste(root, "/per_simcycle/", "phclineAFs_future_freq_.",repId,"_", m,"_", thresh,"_", k,"_", mag,"_", N , "_", state, "_" , 
+	 "." , "txt", sep=""),
+	 paste(freq1),
+	 append=T);
+
+	 writeFile(
+	 paste(root, "/per_simcycle/", "phclineAFs_future_env_.",repId,"_", m,"_", thresh,"_", k,"_", mag,"_", N , "_", state, "_" , 
+	 "." , "txt", sep=""),
+	 paste(env_i).
+	 append=T);
 
 }
 
