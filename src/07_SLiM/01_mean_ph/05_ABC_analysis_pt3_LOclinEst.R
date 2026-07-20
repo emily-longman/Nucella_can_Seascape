@@ -97,7 +97,7 @@ post_long <- pivot_longer(
   values_to = "value")
 
 # Graph posteriors
-pdf("output/figures/SLiM/pH_posteriors_morvars4.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/mean_ph/pH_posteriors_morvars4.pdf", width = 5, height = 5)
 ggplot(post_long, aes(x = value)) +
   geom_density(fill = "steelblue", alpha = 0.5) +
   facet_wrap(parameter~. , scales = "free", ncol = 1) +
@@ -172,7 +172,7 @@ s <- function(x, z, k, mag) {
   mag / (1 + exp((x - z)/k)) - (mag/2)
 }
 # Graph
-pdf("output/figures/SLiM/pH_dist_sel_magnitude.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/mean_ph/pH_dist_sel_magnitude.pdf", width = 5, height = 5)
 plot(ph$ph_mean, s(ph$ph_mean, 7.996, 0.090, 1))
 dev.off()
 pdf("output/figures/SLiM/pH_dist_sel_magnitude_biggerph.pdf", width = 5, height = 5)
@@ -223,7 +223,7 @@ mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
 # Make Site factor
 topsnp$Site <- factor(topsnp$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 # Graph real
-pdf("output/figures/SLiM/real_AFs_topsnp.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/mean_ph/real_AFs_topsnp.pdf", width = 5, height = 5)
 ggplot(topsnp, aes(x = AF, y = ph_mean, fill = Site)) + geom_point(size = 3, shape = 21) +  scale_fill_manual(values = mycolors) + theme_linedraw()
 dev.off()
 
@@ -238,7 +238,7 @@ sim_AFs_best <- sim_Data.melt %>%
 sim_AFs_best$Site <- factor(sim_AFs_best$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/sim_AFs_best_morevars4.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/mean_ph/sim_AFs_best_morevars4.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best, aes(x = AF_true, y = ph_mean, fill = Site)) + geom_point(size = 3, shape = 21) + scale_fill_manual(values = mycolors) + theme_linedraw()
 dev.off()
 
@@ -251,7 +251,7 @@ sim_AFs_best_mean <- sim_AFs_best %>%
 sim_AFs_best_mean$Site <- factor(sim_AFs_best_mean$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/sim_AFs_best_repmeans_morevars4.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/mean_ph/sim_AFs_best_repmeans_morevars4.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best_mean, aes(x = AF_true_mean, y = ph_mean, fill = Site)) + geom_point(size = 3, shape = 21) + scale_fill_manual(values = mycolors) + theme_linedraw()
 dev.off()
 

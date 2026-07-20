@@ -37,7 +37,7 @@ library(minpack.lm)
 # Generate output directories
 
 # Figure directory
-out_fig_dir <- paste("data/processed/SLiM/ph_ABC")
+out_fig_dir <- paste("data/processed/SLiM/mean_ph")
 if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 
 # ================================================================================== #
@@ -125,14 +125,15 @@ save(real_data, file = "data/processed/SLiM/ph_ABC/real_data.Rdata")
 # ================================================================================== #
 
 
+# Graph and cal sigmoid for real data
 
 # Make Site factor
 topsnp$Site <- factor(topsnp$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 # Graph real
-pdf("output/figures/SLiM/real_AFs_topsnp_sigmoid.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/mean_ph/real_AFs_topsnp_sigmoid.pdf", width = 5, height = 5)
 ggplot(topsnp, aes(x = AF, y = ph_mean, fill = Site)) + geom_point(size = 3, shape = 21) +  scale_fill_manual(values = mycolors) + theme_linedraw()
 dev.off()
-pdf("output/figures/SLiM/real_AFs_topsnp_sigmoid_flipped.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/mean_ph/real_AFs_topsnp_sigmoid_flipped.pdf", width = 5, height = 5)
 ggplot(topsnp, aes(x = ph_mean, y = AF, fill = Site)) + geom_point(size = 3, shape = 21) +  scale_fill_manual(values = mycolors) + theme_linedraw()
 dev.off()
 
@@ -143,32 +144,12 @@ topsnp_sub <- topsnp[,c(5,8)]
 mod <- nls(AF ~ SSlogis(ph_mean, Asym, xmid, scal), data = topsnp_sub)
 mod_fit <- coef(mod)
 
-pdf("output/figures/SLiM/real_AFs_topsnp_sigmoid_flipped.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/mean_ph/real_AFs_topsnp_sigmoid_flipped.pdf", width = 5, height = 5)
 plot(topsnp_sub$ph_mean, topsnp_sub$AF, pch = 20)
 curve(SSlogis(x, mod_fit["Asym"], mod_fit["xmid"], mod_fit["scal"]), lwd = 2, col = 'lightblue', add = TRUE)
 dev.off()
 
-pdf("output/figures/SLiM/real_AFs_topsnp_sigmoid_flipped.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/mean_ph/real_AFs_topsnp_sigmoid_flipped.pdf", width = 5, height = 5)
 ggplot(topsnp, aes(x = ph_mean, y = AF, fill = Site)) + geom_point(size = 3, shape = 21) + scale_fill_manual(values = mycolors) +
 stat_function(fun = SSlogis, args = list(Asym = mod_fit["Asym"], xmid = mod_fit["xmid"], scal = mod_fit["scal"])) + theme_linedraw()
 dev.off()
-
-
-
-# Other ideas
-# Selection
-#s <- function(x, asym, thresh, scal) {
-#  -1 * (asym/(1 + exp((x-thresh)/scal)) - asym/2)
-#}
-## Load data
-#afs.ph <- read.csv("data/processed/SLiM/afs.ph.g27343.BF.POD.csv", header=T)
-#ph <- afs.ph[, c(2,8)] %>% distinct()
-
-# Graph
-#pdf("output/figures/SLiM/pH_dist_sel_testing.pdf", width = 5, height = 5)
-#plot(ph$ph_mean, s(ph$ph_mean, 0.986, 7.98, -0.0043), ylim = c(-0.5, 0.5))
-#dev.off()
-
-#pdf("output/figures/SLiM/pH_dist_sel_testing.pdf", width = 5, height = 5)
-#ggplot()+ geom_point(aes(x = ph$ph_mean, y=s(ph$ph_mean, 0.986, 7.98, -0.0043)), size = 3, shape = 21) + theme_linedraw()
-#dev.off()
