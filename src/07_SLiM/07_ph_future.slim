@@ -265,16 +265,16 @@ b = c(
 //	catn("Cycle=" + sim.cycle + ", pop=" + i + ", env=" + env_i);
 	
 	writeFile(
-	 paste(root, "/per_simcycle/", "phclineAFs_future_freq_.",repId,"_", m,"_", thresh,"_", k,"_", mag,"_", N , "_", state, "_" , 
+	 paste(root, "/per_simcycle/", "phclineAFs_future_freq.",repId,"_", m,"_", thresh,"_", k,"_", mag,"_", N , "_", state, "_" , 
 	 "." , "txt", sep=""),
 	 paste(freq1),
 	 append=T);
 
-	 writeFile(
-	 paste(root, "/per_simcycle/", "phclineAFs_future_env_.",repId,"_", m,"_", thresh,"_", k,"_", mag,"_", N , "_", state, "_" , 
-	 "." , "txt", sep=""),
-	 paste(env_i),
-	 append=T);
+	 //writeFile(
+	 //paste(root, "/per_simcycle/", "phclineAFs_future_env.",repId,"_", m,"_", thresh,"_", k,"_", mag,"_", N , "_", state, "_" , 
+	 //"." , "txt", sep=""),
+	 //paste(env_i),
+	 //append=T);
 
 }
 
