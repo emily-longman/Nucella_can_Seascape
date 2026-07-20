@@ -20,7 +20,7 @@
 #SBATCH --mem=10G
 
 # Name output of this job using %x=job-name and %j=job-id
-#SBATCH --output=./slurmOutput/%x.%A_%a.out
+#SBATCH --output=./slurmOutput/%x.%j.out
 
 # Receive emails when job begins and ends or fails
 #SBATCH --mail-type=ALL
@@ -64,7 +64,7 @@ ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results
 cd $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results
 
 # Loop through iterations
-for i in {1..1}
+for i in {1..2}
 do
 
 # Run slim script
