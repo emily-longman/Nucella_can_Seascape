@@ -20,7 +20,7 @@
 #SBATCH --mem=10G 
 
 # Submit job array
-#SBATCH --array=122 #1-256
+#SBATCH --array=1-150 #1-256
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -95,7 +95,7 @@ ROOT=$WORKING_FOLDER/data/processed/SLiM/Mcali_results
 cd $WORKING_FOLDER/data/processed/SLiM/Mcali_results
 
 # Loop through iterations
-for i in {1..3}
+for i in {1..20}
 do
 
 # Run slim script
