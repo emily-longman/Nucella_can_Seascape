@@ -270,14 +270,14 @@ b = c(
 	 paste(freq1),
 	 append=T);
 
-	 writeFile(
-	 paste(root, "/per_simcycle/", "phclineAFs_future_env.",repId,"_", m,"_", thresh,"_", k,"_", mag,"_", N , "_", state, "_" , 
-	 "." , "txt", sep=""),
-	 for (i in seqAlong(sim.subpopulations)){
+
+	for (i in seqAlong(sim.subpopulations)){
         env_i = m[i]*sim.cycle + b[i];
-        catn("Cycle=" + sim.cycle + ", pop=" + i + ", env=" + env_i);
-        },
-	 append=T);
+		writeFile(
+	 	paste(root, "/per_simcycle/", "phclineAFs_future_env.",repId,"_pop_", i"." , "txt", sep=""),
+        paste("Cycle=" + sim.cycle + ", pop=" + i + ", env=" + env_i),
+		append = T)
+        }
 
 }
 
