@@ -117,3 +117,20 @@ guide_file <- expand.grid(thresh, k, mag, m, N)
 
 # Write table
 write.table(guide_file, file = "guide_files/slim_Mcali_guide_file.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)
+
+# ================================================================================== #
+
+# Make guide file with broader range of variables
+
+# Range of values for each parameter
+thresh <- seq(1.6, 2.2, by = 0.025) #25
+k <- seq(0.1, 0.7, by = 0.05) #13
+mag <- c(1) #1
+m <- c(0.005) #1
+N <- c(5000) #1
+
+# Make every combination of variables - 325 combos
+guide_file <- expand.grid(thresh, k, mag, m, N)
+
+# Write table
+write.table(guide_file, file = "guide_files/slim_Mcali_guide_file_v2.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)

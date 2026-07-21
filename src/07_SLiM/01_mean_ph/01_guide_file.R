@@ -30,7 +30,7 @@ library(foreach)
 # Generate output directories
 
 # Figure directory
-out_fig_dir <- paste("output/figures/SLiM/mean_ph")
+out_fig_dir <- paste("output/figures/SLiM/ph")
 if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 
 # ================================================================================== #
@@ -71,7 +71,7 @@ s_v2 <- function(x, z, k) {
 #}
 
 # Graph
-pdf("output/figures/SLiM/mean_ph/pH_dist_sel_v2.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph/pH_dist_sel_v2.pdf", width = 5, height = 5)
 plot(seq(7, 9, by = 0.01), s_v2(seq(7, 9, by = 0.01), 7.99, 0.1))
 dev.off()
 #pdf("output/figures/SLiM/mean_ph/pH_dist_sel_v2_alt.pdf", width = 5, height = 5)
@@ -88,7 +88,7 @@ f_v2 <- function(x, z, k) {
 #}
 
 # Graph
-pdf("output/figures/SLiM/mean_ph/pH_dist_v2.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph/pH_dist_v2.pdf", width = 5, height = 5)
 plot(ph$ph_mean, f_v2(ph$ph_mean, 7.975, 0.01))
 dev.off()
 #pdf("output/figures/SLiM/mean_ph/pH_dist_v2_alt.pdf", width = 5, height = 5)
@@ -125,7 +125,7 @@ s <- function(x, z, k, mag) {
 }
 
 # Graph
-pdf("output/figures/SLiM/mean_ph/pH_dist_sel_magnitude.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph/pH_dist_sel_magnitude.pdf", width = 5, height = 5)
 plot(ph$ph_mean, s(ph$ph_mean, 7.975, 0.01, 4))
 dev.off()
 
@@ -155,7 +155,7 @@ s <- function(x, z, k, mag) {
 }
 
 # Graph
-pdf("output/figures/SLiM/mean_ph/pH_dist_sel_magnitude.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph/pH_dist_sel_magnitude.pdf", width = 5, height = 5)
 plot(ph$ph_mean, s(ph$ph_mean, 7.99, 0.06, 1.5))
 dev.off()
 

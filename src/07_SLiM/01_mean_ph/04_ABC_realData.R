@@ -35,9 +35,9 @@ library(minpack.lm)
 
 # Generate output directories
 
-# Figure directory
-out_fig_dir <- paste("data/processed/SLiM/mean_ph")
-if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
+# Data directory
+out_data_dir <- paste("data/processed/SLiM/ph_ABC")
+if (!dir.exists(out_data_dir)) {dir.create(out_data_dir)}
 
 # ================================================================================== #
 

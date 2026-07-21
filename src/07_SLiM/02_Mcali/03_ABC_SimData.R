@@ -59,7 +59,7 @@ afs.Mcali %<>% arrange(desc(latitude))
 
 # ================================================================================== #
 
-# Assigned ph values
+# Assigned Mcali values
 env = c(
 1.801197107,
 1.758352318,
