@@ -60,7 +60,7 @@ sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars4.Rdata"))
 
 real_data = dplyr::select(ungroup(real_All), 
                           #Fsg, Fgt, Fst, 
-                          cor, corAF, fix1, fix0, poly, mean.AF,
+                          cor.pearson, cor.spearman, corAF.pearson, corAF.spearman, fix1, fix0, poly, mean.AF,
                           #asym, xmid, scal,
                           #p0, p1, p2, p3, p4, p5, p6,    
                           #p7, p8, p9, p10, p11, p12,
@@ -68,7 +68,7 @@ real_data = dplyr::select(ungroup(real_All),
                           )
 simulated_data = dplyr::select(ungroup(sim_All), 
                                #Fsg, Fgt, Fst, 
-                               cor, corAF, fix1, fix0, poly, mean.AF, 
+                               cor.pearson, cor.spearman, corAF.pearson, corAF.spearman, fix1, fix0, poly, mean.AF,
                                #p0, p1, p2, p3, p4, p5, p6,    
                                #p7, p8, p9, p10, p11, p12,
                                #p13, p14, p15, p16, p17, p18
@@ -201,7 +201,7 @@ topsnp <- phafs %>%
 
 # Reformat Sim data
 # Extract p0-p18
-sim_sub <- sim_All[,c(10:34)]
+sim_sub <- sim_All[,c(12:36)]
 # Change to long format
 #sim_Data.melt <- sim_sub %>%
 #  reshape2::melt(id = c("repId","m","thresh","k_1","k_2","N"),
