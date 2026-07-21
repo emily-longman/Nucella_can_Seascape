@@ -45,7 +45,7 @@ mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
 # ================================================================================== #
 
 # Load data
-afs.Mcali <- read.csv("data/processed/SLiM/Mcali/afs.McaliThk.outlier.csv", header=T)
+afs.Mcali <- read.csv("data/processed/SLiM/afs.McaliThk.outlier.csv", header=T)
 # Extract just sites and env var
 Mcali <- afs.Mcali[,c(7,13)] %>% distinct()
 

@@ -35,9 +35,9 @@ library(minpack.lm)
 
 # Generate output directories
 
-# Figure directory
-out_fig_dir <- paste("data/processed/SLiM/mean_ph")
-if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
+# Data directory
+out_data_dir <- paste("data/processed/SLiM/Mcali_ABC")
+if (!dir.exists(out_data_dir)) {dir.create(out_data_dir)}
 
 # ================================================================================== #
 
@@ -49,16 +49,16 @@ names(ecovars)[2] = "Site"
 ecovars %<>% mutate(sim_eq = paste("p", 0:18, sep =""))
 
 # Allele frequency data for top ph hits
-phafs <- fread("data/processed/baypass/afs.ph.g27343.BF.POD.csv") %>% mutate(nsnails = 20)
-# Extract top pH hit and join with eco vars
-topsnp <- phafs %>%
-  filter(SNP_id == "ntLink_3821_1595")  %>%
-  left_join(dplyr::select(ecovars, Site, Latitude, sim_eq)) %>%
-  arrange(-Latitude)
+afs.Mcali <- read.csv("data/processed/SLiM/afs.McaliThk.outlier.csv", header=T) %>% mutate(nsnails = 20)
+
+# Order by site/latitude
+afs.Mcali %<>% arrange(desc(latitude))
+
+topsnp <- left_join(afs.Mcali, dplyr::select(ecovars, "Site", "sim_eq", "Demographic Cluster"))
 
 # Make a pooled object with the raw data
 pool.real <- new("pooldata",
-                 npools=19, #### Rows = Number of pools
+                 npools=18, #### Rows = Number of pools
                  nsnp=1, ### Columns = Number of SNPs
                  refallele.readcount=as.matrix(t(topsnp$Count)),
                  readcoverage=as.matrix(t(topsnp$Cov)),
@@ -72,20 +72,20 @@ pool.real <- new("pooldata",
 # Hierach fst between N vs S
 fst.phylogeo <- computeFST(pool.real,
                         method = "Anova",
-                        struct = topsnp$shape, verbose = FALSE)
+                        struct = topsnp$`Demographic Cluster`, verbose = FALSE)
 # "FST": estimate of genome-wide Fst over all the populations
 # "FSG": estimate of genome-wide within-group differentiation (Fsg)
 # "FGT": estimate of genome-wide between-group differentiation (Fgt)
 
 # Raw correlation between mean pH and AF
-rawcor = cor.test(~ ph_mean+AF, data = topsnp)
+rawcor = cor.test(~ mean_integrated_thk+AF, data = topsnp)
 
 # Correlation between AF and AF - 1 for real data
 rawcorAF = cor.test(topsnp$AF, topsnp$AF)
 
-# Fit using self-starting parameters
-topsnp_sub <- topsnp[,c(5,8)]
-mod <- nlsLM(AF ~ SSlogis(ph_mean, Asym, xmid, scal), data = topsnp_sub)
+# Fit sigmoid
+topsnp_sub <- topsnp[,c(10,13)]
+mod <- nlsLM(AF ~ SSlogis(mean_integrated_thk, Asym, xmid, scal), data = topsnp_sub)
 mod_fit <- coef(mod)
 
 # ================================================================================== #
