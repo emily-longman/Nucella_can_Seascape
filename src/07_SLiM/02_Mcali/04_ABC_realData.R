@@ -77,11 +77,13 @@ fst.phylogeo <- computeFST(pool.real,
 # "FSG": estimate of genome-wide within-group differentiation (Fsg)
 # "FGT": estimate of genome-wide between-group differentiation (Fgt)
 
-# Raw correlation between mean pH and AF
-rawcor = cor.test(~ mean_integrated_thk+AF, data = topsnp)
+# Raw correlation between shell thk and AF
+rawcor.pearson = cor.test(~ mean_integrated_thk+AF, method = "pearson", data = topsnp)
+rawcor.spearman = cor.test(~ mean_integrated_thk+AF, method = "spearman", data = topsnp, exact = FALSE) #Goal is to cal correlation coef rho, not p-val
 
 # Correlation between AF and AF - 1 for real data
-rawcorAF = cor.test(topsnp$AF, topsnp$AF)
+rawcorAF.pearson = cor.test(topsnp$AF, topsnp$AF, method = "pearson",)
+rawcorAF.spearman  = cor.test(topsnp$AF, topsnp$AF,  method = "spearman", exact = FALSE)
 
 # Fit sigmoid
 topsnp_sub <- topsnp[,c(10,13)]
@@ -100,8 +102,10 @@ data.frame(
   Fsg = fst.phylogeo$snp.Fstats[1],
   Fgt = fst.phylogeo$snp.Fstats[2],
   Fst = fst.phylogeo$snp.Fstats[3],
-  cor = rawcor$estimate,
-  corAF = rawcorAF$estimate,
+  cor.pearson = rawcor.pearson$estimate,
+  cor.spearman = rawcor.spearman$estimate,
+  corAF.pearson = rawcorAF.pearson$estimate,
+  corAF.spearman = rawcorAF.spearman$estimate,
   asym = mod_fit[1],
   xmid = mod_fit[2],
   scal = mod_fit[3],

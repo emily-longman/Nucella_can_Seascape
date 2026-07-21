@@ -94,7 +94,7 @@ afs.Mcali.sims <- left_join(afs.Mcali.sims.tmp, dplyr::select(ecovars, "Site", "
 
 # Create function
 process_sims = function(repId, m, thresh, k, mag, N){
-  #repId=1; m=0.005; thresh=1.9; k=0.11; mag=1; N=5000
+  #repId=1; m=0.005; thresh=1.7; k=0.2; mag=1; N=5000
 
   # Extract data for specific parameter combos
   tmp <- sim_Data_melt %>%
@@ -132,12 +132,14 @@ process_sims = function(repId, m, thresh, k, mag, N){
                               method = "Anova",
                               struct = tmp.pool$`Demographic Cluster`, verbose = FALSE)
 
-  # Raw correlation between mean pH and SIM AF
-  rawcor = cor.test(~ mean_integrated_thk+SIM_AF, data =  tmp.pool)
+  # Raw correlation between shell thk and SIM AF
+  rawcor.pearson = cor.test(~ mean_integrated_thk+SIM_AF, method = "pearson", data =  tmp.pool)
+  rawcor.spearman = cor.test(~ mean_integrated_thk+SIM_AF, method = "spearman", data =  tmp.pool, exact = FALSE) #Goal is to cal correlation coef rho, not p-val
   
   # Correlation between AF of the real data and AF of the sim data
-  rawcorAF = cor.test(afs.Mcali.sims$AF, tmp.pool$SIM_AF)
-  
+  rawcorAF.pearson = cor.test(afs.Mcali.sims$AF, tmp.pool$SIM_AF, method = "pearson")
+  rawcorAF.spearman = cor.test(afs.Mcali.sims$AF, tmp.pool$SIM_AF, method = "spearman", exact = FALSE)
+
   # Fit sigmoid
   #tmp.pool_sub <- tmp.pool[,c("SIM_AF", "ph_mean")]
   #mod <- nlsLM(SIM_AF ~ SSlogis(ph_mean, Asym, xmid, scal), data = tmp.pool_sub)
@@ -155,8 +157,10 @@ process_sims = function(repId, m, thresh, k, mag, N){
       Fsg = fst.phylogeo$snp.Fstats[1],
       Fgt = fst.phylogeo$snp.Fstats[2],
       Fst = fst.phylogeo$snp.Fstats[3],
-      cor = rawcor$estimate,
-      corAF = rawcorAF$estimate,
+      cor.pearson = rawcor.pearson$estimate,
+      cor.spearman = rawcor.spearman$estimate,
+      corAF.pearson = rawcorAF.pearson$estimate,
+      corAF.spearman = rawcorAF.spearman$estimate,
       #asym = mod_fit[1],
       #xmid = mod_fit[2],
       #scal = mod_fit[3],
@@ -164,7 +168,7 @@ process_sims = function(repId, m, thresh, k, mag, N){
       fix0 = sum(tmp.pool$SIM_AF ==0),
       poly = sum(tmp.pool$SIM_AF > 0 & tmp.pool$SIM_AF < 1),
       mean.AF = mean(tmp.pool$SIM_AF),
-      AF_pool) 
+      AF_pool)
   
   return(sim.data)
 }
@@ -210,6 +214,8 @@ sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")
             mutate(repId = repId_i, m = m_i, thresh = thresh_i, k = k_i, mag = mag_i, N = N_i)
 
 }
+
+# ================================================================================== #
 
 # Save output
 save(sim_data, file = "data/processed/SLiM/Mcali_ABC/sim_data.Rdata")
