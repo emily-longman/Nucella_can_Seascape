@@ -51,6 +51,7 @@ Mcali <- afs.Mcali[,c(7,13)] %>% distinct()
 
 # Load data
 real_All <- get(load("data/processed/SLiM/Mcali_ABC/real_data.Rdata"))
+sim_All <- get(load("data/processed/SLiM/Mcali_ABC/sim_data.Rdata"))
 sim_All <- get(load("data/processed/SLiM/Mcali_ABC/sim_data_v2.Rdata"))
 
 # ================================================================================== #
@@ -62,8 +63,9 @@ real_data = dplyr::select(ungroup(real_All),
                           #cor.spearman, 
                           corAF.pearson, 
                           #corAF.spearman, 
-                          #fix1, fix0, 
-                          poly, 
+                          #fix1, 
+                          #fix0, 
+                          #poly, 
                           mean.AF,
                           #asym, xmid, scal,
                           #p0, p1, p2, p3, p4, p5, p6,    
@@ -76,8 +78,9 @@ simulated_data = dplyr::select(ungroup(sim_All),
                                #cor.spearman, 
                                corAF.pearson, 
                                #corAF.spearman, 
-                               #fix1, fix0, 
-                               poly, 
+                               #fix1, 
+                               #fix0, 
+                               #poly, 
                                mean.AF, 
                                #p0, p1, p2, p3, p4, p5, p6,    
                                #p7, p8, p9, p10, p11, p12,
@@ -109,7 +112,7 @@ post_long <- pivot_longer(
   values_to = "value")
 
 # Graph posteriors
-pdf("output/figures/SLiM/Mcali_ABC/Mcali_posteriors_v2_onlyPearson_removefix.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/Mcali_ABC/Mcali_posteriors_v2_fewerstats.pdf", width = 5, height = 5)
 ggplot(post_long, aes(x = value)) +
   geom_density(fill = "steelblue", alpha = 0.5) +
   facet_wrap(parameter~. , scales = "free", ncol = 1) +
@@ -121,9 +124,9 @@ dev.off()
 # Report the simulation that best match the data
 
 # Mean posterior for each parameter
-#post_long %>%
-#  group_by(parameter) %>%
-#  summarise(mean.par = mean(value, na.rm = T))
+post_long %>%
+  group_by(parameter) %>%
+  summarise(mean.par = mean(value, na.rm = T))
 
 # Extract best parameters
 best <- which.max(abc_fit$weights)

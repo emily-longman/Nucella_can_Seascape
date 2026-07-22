@@ -50,9 +50,9 @@ ph <- afs.ph[, c(2,8)] %>% distinct()
 
 # Load data
 real_All <- get(load("data/processed/SLiM/ph_ABC/real_data.Rdata"))
-#sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars2.Rdata"))
+sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars2.Rdata"))
 #sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars3.Rdata"))
-sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars4.Rdata"))
+#sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars4.Rdata"))
 
 # ================================================================================== #
 
@@ -62,7 +62,8 @@ real_data = dplyr::select(ungroup(real_All),
                           #Fsg, Fgt, Fst, 
                           cor.pearson, #cor.spearman, 
                           corAF.pearson, #corAF.spearman, 
-                          fix1, fix0, poly, mean.AF,
+                          #fix1, fix0, poly, 
+                          mean.AF,
                           #asym, xmid, scal,
                           #p0, p1, p2, p3, p4, p5, p6,    
                           #p7, p8, p9, p10, p11, p12,
@@ -70,15 +71,19 @@ real_data = dplyr::select(ungroup(real_All),
                           )
 simulated_data = dplyr::select(ungroup(sim_All), 
                                #Fsg, Fgt, Fst, 
-                               cor.pearson, #cor.spearman, 
-                               corAF.pearson, #corAF.spearman, 
-                               fix1, fix0, poly, mean.AF,
+                               cor, #cor.pearson, #cor.spearman, 
+                               corAF, #corAF.pearson, #corAF.spearman, 
+                               #fix1, fix0, poly, 
+                               mean.AF,
                                #p0, p1, p2, p3, p4, p5, p6,    
                                #p7, p8, p9, p10, p11, p12,
                                #p13, p14, p15, p16, p17, p18
                                )
+names(simulated_data)[1:2] <- c("cor.pearson", "corAF.pearson")
+
+sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k), as.numeric)) 
 sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k, m), as.numeric)) 
-#sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), m, thresh, k, mag, N ), as.numeric)) 
+sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), m, thresh, k, mag, N ), as.numeric)) 
 #sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k_1, k_2 ), as.numeric)) # EXCLUDE m and N as those are invariant
 
 # ================================================================================== #
@@ -104,7 +109,7 @@ post_long <- pivot_longer(
   values_to = "value")
 
 # Graph posteriors
-pdf("output/figures/SLiM/ph_ABC/pH_posteriors_morvars4_noSpearmanCor.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph_ABC/pH_posteriors_morvars2_fewerstats.pdf", width = 5, height = 5)
 ggplot(post_long, aes(x = value)) +
   geom_density(fill = "steelblue", alpha = 0.5) +
   facet_wrap(parameter~. , scales = "free", ncol = 1) +
@@ -129,7 +134,7 @@ m_best = abc_fit$unadj.values[best,"m"]
 k_best = abc_fit$unadj.values[best,"k"]
 #kb2 = abc_fit$unadj.values[best,"k_2"]
 thresh_best = abc_fit$unadj.values[best,"thresh"]
-#mag_best = abc_fit$unadj.values[best,"mag"]
+mag_best = abc_fit$unadj.values[best,"mag"]
 #N_best = abc_fit$unadj.values[best,"N"]
 
 ### plots

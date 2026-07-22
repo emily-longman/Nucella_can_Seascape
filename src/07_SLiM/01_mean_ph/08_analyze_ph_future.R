@@ -180,7 +180,7 @@ s <- function(x, z, k) {
 }
 
 # Loop through pops
-ph_L <- foreach(i=1:19, .combine="rbind", .errorhandling = "remove")%do%{  
+ph_w <- foreach(i=1:19, .combine="rbind", .errorhandling = "remove")%do%{  
   message(ph_future_lm$Site[i])
   # Extract env at 2100
   env_i = ph_future_lm$slope[i]*80 + ph_future_lm$intercept[i]
@@ -197,16 +197,18 @@ ph_L <- foreach(i=1:19, .combine="rbind", .errorhandling = "remove")%do%{
     Site = ph_AF_change$Site[i],
     Latitude = ph_AF_change$Latitude[i],
     Longitude = ph_AF_change$Longitude[i],
-    w = w_i,
-    L = (1-w_i)/1
-  )
+    w = w_i)
 }
+
+# Calc L (genetic load)
+ph_w %<>% mutate(L = (max(ph_w$w)-w)/max(ph_w$w))
+
 
 # Graph level of genetic load
 pdf("output/figures/SLiM/ph_future/Genetic_load_map.pdf", width = 9, height = 9)
 ggplot(data = west_coast) + 
   geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
-  geom_point(data = ph_L, aes(x = Longitude, y = Latitude, fill = L), shape = 21, size = 9) + 
+  geom_point(data = ph_w, aes(x = Longitude, y = Latitude, fill = L), shape = 21, size = 9) + 
   scale_fill_gradientn(colours=brewer.pal(9, "Blues"), name="Genetic Load", breaks = c(0.01, 0.04, 0.07)) +
   coord_fixed(1.3) +
   scale_x_continuous(
