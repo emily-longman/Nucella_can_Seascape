@@ -51,7 +51,7 @@ Mcali <- afs.Mcali[,c(7,13)] %>% distinct()
 
 # Load data
 real_All <- get(load("data/processed/SLiM/Mcali_ABC/real_data.Rdata"))
-sim_All <- get(load("data/processed/SLiM/Mcali_ABC/sim_data.Rdata"))
+sim_All <- get(load("data/processed/SLiM/Mcali_ABC/sim_data_v2.Rdata"))
 
 # ================================================================================== #
 
@@ -97,7 +97,7 @@ post_long <- pivot_longer(
   values_to = "value")
 
 # Graph posteriors
-pdf("output/figures/SLiM/Mcali_ABC/Mcali_posteriors.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/Mcali_ABC/Mcali_posteriors_v2.pdf", width = 5, height = 5)
 ggplot(post_long, aes(x = value)) +
   geom_density(fill = "steelblue", alpha = 0.5) +
   facet_wrap(parameter~. , scales = "free", ncol = 1) +
@@ -213,7 +213,7 @@ sim_AFs_best <- sim_Data.melt %>%
 sim_AFs_best$Site <- factor(sim_AFs_best$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_v2.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best, aes(x = AF_true, y = shell_thk, fill = Site)) + geom_point(size = 3, shape = 21) + scale_fill_manual(values = mycolors) + theme_linedraw()
 dev.off()
 
@@ -225,7 +225,7 @@ sim_AFs_best_mean <- sim_AFs_best %>%
 sim_AFs_best_mean$Site <- factor(sim_AFs_best_mean$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_repmeans.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_repmeans_v2.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best_mean, aes(x = AF_true_mean, y = shell_thk, fill = Site)) + geom_point(size = 3, shape = 21) + scale_fill_manual(values = mycolors) + theme_linedraw()
 dev.off()
 

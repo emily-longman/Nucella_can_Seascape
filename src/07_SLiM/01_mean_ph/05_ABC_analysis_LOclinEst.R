@@ -60,7 +60,9 @@ sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars4.Rdata"))
 
 real_data = dplyr::select(ungroup(real_All), 
                           #Fsg, Fgt, Fst, 
-                          cor.pearson, cor.spearman, corAF.pearson, corAF.spearman, fix1, fix0, poly, mean.AF,
+                          cor.pearson, #cor.spearman, 
+                          corAF.pearson, #corAF.spearman, 
+                          fix1, fix0, poly, mean.AF,
                           #asym, xmid, scal,
                           #p0, p1, p2, p3, p4, p5, p6,    
                           #p7, p8, p9, p10, p11, p12,
@@ -68,7 +70,9 @@ real_data = dplyr::select(ungroup(real_All),
                           )
 simulated_data = dplyr::select(ungroup(sim_All), 
                                #Fsg, Fgt, Fst, 
-                               cor.pearson, cor.spearman, corAF.pearson, corAF.spearman, fix1, fix0, poly, mean.AF,
+                               cor.pearson, #cor.spearman, 
+                               corAF.pearson, #corAF.spearman, 
+                               fix1, fix0, poly, mean.AF,
                                #p0, p1, p2, p3, p4, p5, p6,    
                                #p7, p8, p9, p10, p11, p12,
                                #p13, p14, p15, p16, p17, p18
@@ -100,7 +104,7 @@ post_long <- pivot_longer(
   values_to = "value")
 
 # Graph posteriors
-pdf("output/figures/SLiM/ph_ABC/pH_posteriors_morvars4.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph_ABC/pH_posteriors_morvars4_noSpearmanCor.pdf", width = 5, height = 5)
 ggplot(post_long, aes(x = value)) +
   geom_density(fill = "steelblue", alpha = 0.5) +
   facet_wrap(parameter~. , scales = "free", ncol = 1) +
