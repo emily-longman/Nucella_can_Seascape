@@ -152,34 +152,15 @@ env = c(
 );
 
 
-# Logistic sigmoid scaled to [-1, 1]
-#s <- function(x, z, k) {
-#  2/(1+exp((x - z)/k))-1
-#}
-#s_alt <- function(x, z, k) {
-#  -1 * (2 / (1 + exp((x - z)/k)) - 1)
-#}
-
-# Plot sigmoid of best fit param - thres and kb1
-#pdf("output/figures/SLiM/sel_curve_kb1.pdf", width = 5, height = 5)
-#data.frame(env=env, s=s(env, thre, kb1)) %>%
-#  ggplot(aes(x=env, y=s)) + geom_line(linewidth=2) + theme_linedraw()
-#dev.off()
-# Plot sigmoid of best fit param - thres and kb2
-#pdf("output/figures/SLiM/sel_curve_kb2.pdf", width = 5, height = 5)
-#data.frame(env=env, s=s_alt(env, thre, kb2)) %>%
-#  ggplot(aes(x=env, y=s)) + geom_line(linewidth=2) + theme_linedraw()
-#dev.off()
-
 s <- function(x, z, k, mag) {
   mag / (1 + exp((x - z)/k)) - (mag/2)
 }
 # Graph
-pdf("output/figures/SLiM/ph_ABC/pH_dist_sel_magnitude.pdf", width = 5, height = 5)
-plot(ph$ph_mean, s(ph$ph_mean, 7.996, 0.090, 1))
+pdf("output/figures/SLiM/ph_ABC/pH_selection_curve.pdf", width = 5, height = 5)
+plot(ph$ph_mean, s(ph$ph_mean, 7.983, 0.012, 1))
 dev.off()
-pdf("output/figures/SLiM/ph_ABC/pH_dist_sel_magnitude_biggerph.pdf", width = 5, height = 5)
-plot(seq(7.5, 8.5, by = 0.01), s(seq(7.5, 8.5, by = 0.01), 7.996, 0.090, 1))
+pdf("output/figures/SLiM/ph_ABC/pH_selection_curve_biggerph.pdf", width = 5, height = 5)
+plot(seq(7.8, 8.1, by = 0.01), s(seq(7.8, 8.1, by = 0.01), 7.983, 0.012, 1))
 dev.off()
 
 # ================================================================================== #

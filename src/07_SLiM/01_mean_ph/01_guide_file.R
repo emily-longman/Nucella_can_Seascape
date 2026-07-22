@@ -125,7 +125,7 @@ s <- function(x, z, k, mag) {
 }
 
 # Graph
-pdf("output/figures/SLiM/ph/pH_dist_sel_magnitude.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph/pH_sel_magnitude.pdf", width = 5, height = 5)
 plot(ph$ph_mean, s(ph$ph_mean, 7.975, 0.01, 4))
 dev.off()
 
@@ -214,6 +214,34 @@ guide_file_morevars4 <- expand.grid(thresh, k, mag, m, N)
 # Write table
 write.table(guide_file_morevars4, file = "guide_files/slim_ph_guide_file_morevars4_biggerrange.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)
 
+
+###
+
+# More vars 5
+
+# Range of values for each parameter
+thresh <- seq(7.977, 8.001, by=0.003) #9
+k <- seq(-0.05, 0.40, by = 0.05) #11
+mag <- c(1) #1
+m <- seq(0.005, 0.050, by = 0.005) #10
+N <- c(5000) #1
+
+# Make every combination of variables - 900 combos
+guide_file_morevars5 <- expand.grid(thresh, k, mag, m, N)
+
+# Write table
+write.table(guide_file_morevars5, file = "guide_files/slim_ph_guide_file_morevars5.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)
+
+
+
+s <- function(x, z, k, mag) {
+  mag / (1 + exp((x - z)/k)) - (mag/2)
+}
+
+# Graph
+pdf("output/figures/SLiM/ph_ABC/pH_sel_magnitude.pdf", width = 5, height = 5)
+plot(seq(7.8, 8.1, by = 0.01), s(seq(7.8, 8.1, by = 0.01), 7.983, 0.1, 1))
+dev.off()
 
 # ================================================================================== #
 # ================================================================================== #
