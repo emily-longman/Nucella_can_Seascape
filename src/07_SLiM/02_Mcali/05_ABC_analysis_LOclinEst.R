@@ -58,7 +58,13 @@ sim_All <- get(load("data/processed/SLiM/Mcali_ABC/sim_data_v2.Rdata"))
 # Estimate means
 real_data = dplyr::select(ungroup(real_All), 
                           #Fsg, Fgt, Fst, 
-                          cor.pearson, cor.spearman, corAF.pearson, corAF.spearman, fix1, fix0, poly, mean.AF,
+                          cor.pearson, 
+                          #cor.spearman, 
+                          corAF.pearson, 
+                          #corAF.spearman, 
+                          #fix1, fix0, 
+                          poly, 
+                          mean.AF,
                           #asym, xmid, scal,
                           #p0, p1, p2, p3, p4, p5, p6,    
                           #p7, p8, p9, p10, p11, p12,
@@ -66,7 +72,13 @@ real_data = dplyr::select(ungroup(real_All),
                           )
 simulated_data = dplyr::select(ungroup(sim_All), 
                                #Fsg, Fgt, Fst, 
-                               cor.pearson, cor.spearman, corAF.pearson, corAF.spearman, fix1, fix0, poly, mean.AF, 
+                               cor.pearson, 
+                               #cor.spearman, 
+                               corAF.pearson, 
+                               #corAF.spearman, 
+                               #fix1, fix0, 
+                               poly, 
+                               mean.AF, 
                                #p0, p1, p2, p3, p4, p5, p6,    
                                #p7, p8, p9, p10, p11, p12,
                                #p13, p14, p15, p16, p17, p18
@@ -97,7 +109,7 @@ post_long <- pivot_longer(
   values_to = "value")
 
 # Graph posteriors
-pdf("output/figures/SLiM/Mcali_ABC/Mcali_posteriors_v2.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/Mcali_ABC/Mcali_posteriors_v2_onlyPearson_removefix.pdf", width = 5, height = 5)
 ggplot(post_long, aes(x = value)) +
   geom_density(fill = "steelblue", alpha = 0.5) +
   facet_wrap(parameter~. , scales = "free", ncol = 1) +
@@ -109,9 +121,9 @@ dev.off()
 # Report the simulation that best match the data
 
 # Mean posterior for each parameter
-post_long %>%
-  group_by(parameter) %>%
-  summarise(mean.par = mean(value, na.rm = T))
+#post_long %>%
+#  group_by(parameter) %>%
+#  summarise(mean.par = mean(value, na.rm = T))
 
 # Extract best parameters
 best <- which.max(abc_fit$weights)
@@ -213,7 +225,7 @@ sim_AFs_best <- sim_Data.melt %>%
 sim_AFs_best$Site <- factor(sim_AFs_best$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_v2.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_v2_onlyPearson.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best, aes(x = AF_true, y = shell_thk, fill = Site)) + geom_point(size = 3, shape = 21) + scale_fill_manual(values = mycolors) + theme_linedraw()
 dev.off()
 
@@ -225,7 +237,7 @@ sim_AFs_best_mean <- sim_AFs_best %>%
 sim_AFs_best_mean$Site <- factor(sim_AFs_best_mean$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_repmeans_v2.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_repmeans_v2_onlyPearson.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best_mean, aes(x = AF_true_mean, y = shell_thk, fill = Site)) + geom_point(size = 3, shape = 21) + scale_fill_manual(values = mycolors) + theme_linedraw()
 dev.off()
 

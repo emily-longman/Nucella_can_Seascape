@@ -141,12 +141,12 @@ write.table(guide_file, file = "guide_files/slim_Mcali_guide_file_v2.txt", sep =
 
 # Range of values for each parameter
 thresh <- seq(1.7, 2.0, by = 0.01) #31
-k <- seq(0.01, 0.2, by = 0.01) #
+k <- seq(0.1, 0.6, by = 0.02) #26
 mag <- c(1) #1
 m <- c(0.005) #1
 N <- c(5000) #1
 
-# Make every combination of variables - 325 combos
+# Make every combination of variables - 806 combos
 guide_file <- expand.grid(thresh, k, mag, m, N)
 
 # Write table
