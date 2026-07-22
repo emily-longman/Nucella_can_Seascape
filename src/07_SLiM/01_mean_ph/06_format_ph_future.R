@@ -157,12 +157,15 @@ ph_future_lm$Site <- factor(ph_future_lm$Site, levels=c("FC", "SLR", "SH", "ARA"
 # Order df by site 
 ph_future_lm <- ph_future_lm[order(ph_future_lm$Site),]
 
-# Save
+# Save slope and intercept for each pop
 write.csv(ph_future_lm, "data/processed/SLiM/ph_future/ph_future_lm.csv", row.names=F)
 
+# ================================================================================== #
 
-ph_ssp585_sites_2090 <- ph_ssp585_sites[which(ph_ssp585_sites$decade == 75),]
-ph_ssp585_sites_2090 <- ph_ssp585_sites_2090[nrow(ph_ssp585_sites_2090):1,]
+# Extract last decade 
+ph_ssp585_sites_2090_tmp <- ph_ssp585_sites[which(ph_ssp585_sites$decade == 75),]
+# Reverse order
+ph_ssp585_sites_2090 <- ph_ssp585_sites_2090_tmp[nrow(ph_ssp585_sites_2090_tmp):1,]
 
 write.csv(ph_ssp585_sites_2090, "data/processed/SLiM/ph_future/ph_future_2090_sites.csv", row.names=F)
 
@@ -174,10 +177,11 @@ write.csv(ph_ssp585_sites_2090, "data/processed/SLiM/ph_future/ph_future_2090_si
 nb.cols <- 19
 mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
 
+
 # Graph
-pdf("output/figures/SLiM/pH_future.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle.pdf", width = 6.5, height = 6)
 ggplot(ph_ssp585_sites, aes(x = decade, y = ph_mean, fill = location)) + geom_point(size = 3, shape = 21) +
     geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
     scale_fill_manual(values = mycolors) + scale_color_manual(values = mycolors) + 
-    labs(x = "Decade", y = "Mean pH") + guides(color = "none") + theme_linedraw() 
+    labs(x = "Years", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
 dev.off()

@@ -100,15 +100,23 @@ future_avg <- left_join(ecovars, future_avg, by = "sim_eq")
 future_avg$Site <- factor(future_avg$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # ================================================================================== #
+# ================================================================================== #
 
-# Calc diff
-delta_AF <- future_avg$AF_fut_avg[which(future_avg$year == 80)] - future_avg$AF_fut_avg[which(future_avg$year == 1)]
+# Delta AF and level maladapted
 
+# Final AF
+final_AF <- future_avg$AF_fut_avg[which(future_avg$year == 100)]
 # Add metadata
-future_diff <- data.table(ecovars, delta_AF)
+ph_AF_change <- data.table(ecovars, final_AF)
+
+# Calc delta AF
+ph_AF_change$delta_AF <- future_avg$AF_fut_avg[which(future_avg$year == 100)] - future_avg$AF_fut_avg[which(future_avg$year == 21)]
+
+# Cal level maladapted (assumes AF=1 maximizes fitness at 2100)
+ph_AF_change %<>% mutate(mal = 1-final_AF)
 
 # Make Site factor
-future_diff$Site <- factor(future_diff$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+ph_AF_change$Site <- factor(ph_AF_change$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # ================================================================================== #
 
@@ -120,11 +128,11 @@ states <- map_data("state")
 west_coast <- subset(states, region %in% c("california", "oregon"))
 
 # Graph Delta AF
-pdf("output/figures/SLiM/ph_future/Delta_AF_map.pdf", width = 8, height = 8)
+pdf("output/figures/SLiM/ph_future/Delta_AF_map.pdf", width = 9, height = 9)
 ggplot(data = west_coast) + 
   geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
-  geom_point(data = future_diff, aes(x = Longitude, y = Latitude, fill = delta_AF), shape = 21, size = 9) + 
-  scale_fill_gradientn(colours=brewer.pal(9, "RdPu"), name="delta AF") +
+  geom_point(data = ph_AF_change, aes(x = Longitude, y = Latitude, fill = delta_AF), shape = 21, size = 9) + 
+  scale_fill_gradientn(colours=brewer.pal(9, "Purples"), name="delta AF", breaks = c(0.0, 0.3, 0.6, 0.9)) +
   coord_fixed(1.3) +
   scale_x_continuous(
     limits = c(-125, -114.1),
@@ -135,45 +143,16 @@ ggplot(data = west_coast) +
     panel.grid.major = element_blank(), # Removes major grid lines
     panel.grid.minor = element_blank(), # Removes minor grid lines
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) + # Keeps outer rectangle
-  theme(legend.title = element_text(size = 20), legend.text = element_text(size = 14), legend.position = c(0.818, 0.51))
+  theme(legend.title = element_text(size = 22), legend.text = element_text(size = 20), legend.position = c(0.75, 0.825), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
 
-# ================================================================================== #
 
-# TRYING TO ANIMATE OVER TIME BUT NOT CURRENTLY WORKING
-
-# Must have sf so need to load gdal
-# module load gdal/3.11.4
-# install.packages("sf")
-library(sf)
-#devtools::install_github('thomasp85/gganimate')
-library(gganimate)
-library(gifski)
-
-# Show change in AF over time
-pdf("output/figures/SLiM/ph_future/AF_time.pdf", width = 8, height = 5)
-ggplot(future_avg, aes(x = year, y = AF_fut_avg, group = Site, color = Site)) +
-    geom_line(linewidth=2) + scale_color_manual(values = mycolors) +
-    labs(x = "Year", y = "AF") + 
-    theme_linedraw(base_size = 30) + theme(legend.position="none")
-dev.off()
-
-test <- ggplot(future_avg, aes(x = year, y = AF_fut_avg, group = Site, color = Site)) +
-    geom_line(linewidth=2) + scale_color_manual(values = mycolors) +
-    labs(x = "Year", y = "AF") + 
-    theme_linedraw(base_size = 30) + theme(legend.position="none") +  transition_reveal(year)
-
-animate(test, duration = 5, fps = 20, width = 200, height = 200, renderer = file_renderer("output/figures/SLiM/ph_future/AF_test.gif"))
-
-anim_save(animation = test, filename = "output/figures/SLiM/ph_future/AF_test.gif")
-
-
-
-# Graph AF changing over time
-AF_map <- ggplot(data = west_coast) + 
+# Graph level of maladapted
+pdf("output/figures/SLiM/ph_future/Maladapt_map.pdf", width = 9, height = 9)
+ggplot(data = west_coast) + 
   geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
-  geom_point(data = future_avg, aes(x = Longitude, y = Latitude, fill = AF_fut_avg), shape = 21, size = 9) + 
-  scale_fill_gradientn(colours=brewer.pal(9, "RdPu"), name="delta AF") +
+  geom_point(data = ph_AF_change, aes(x = Longitude, y = Latitude, fill = mal), shape = 21, size = 9) + 
+  scale_fill_gradientn(colours=brewer.pal(9, "Greens"), name="Maladapted", breaks = c(0.0, 0.05, 0.10, 0.15)) +
   coord_fixed(1.3) +
   scale_x_continuous(
     limits = c(-125, -114.1),
@@ -184,15 +163,64 @@ AF_map <- ggplot(data = west_coast) +
     panel.grid.major = element_blank(), # Removes major grid lines
     panel.grid.minor = element_blank(), # Removes minor grid lines
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) + # Keeps outer rectangle
-  theme(legend.title = element_text(size = 20), legend.text = element_text(size = 14), legend.position = c(0.818, 0.51)) +
-  transition_time(year)
-
-# Save as gif
-anim_save(AF_map, "output/figures/processed/genomic_offset/AF_future.gif")
-
+  theme(legend.title = element_text(size = 22), legend.text = element_text(size = 20), legend.position = c(0.7, 0.825), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+dev.off()
 
 
 # ================================================================================== #
+
+# Genetic load
+
+# Load future ph lms
+ph_future_lm <- read.csv("data/processed/SLiM/ph_future/ph_future_lm.csv")
+
+# Selection
+s <- function(x, z, k) {
+  1 / (1 + exp((x - z)/k)) - (1/2)
+}
+
+# Loop through pops
+ph_L <- foreach(i=1:19, .combine="rbind", .errorhandling = "remove")%do%{  
+  message(ph_future_lm$Site[i])
+  # Extract env at 2100
+  env_i = ph_future_lm$slope[i]*80 + ph_future_lm$intercept[i]
+  # Calculate selection
+  s_i = s(env_i, 7.996, 0.09)
+  # Calc p and q
+  p_i = ph_AF_change$final_AF[i]
+  q_i = 1-p_i
+  # Calc fitness of pop
+  w_i = (p_i)^2*1 + 2*p_i*q_i*(1-0.5*s_i) + (q_i)^2*(1-s_i)
+
+  # Format
+  data.frame(
+    Site = ph_AF_change$Site[i],
+    Latitude = ph_AF_change$Latitude[i],
+    Longitude = ph_AF_change$Longitude[i],
+    w = w_i,
+    L = (1-w_i)/1
+  )
+}
+
+# Graph level of genetic load
+pdf("output/figures/SLiM/ph_future/Genetic_load_map.pdf", width = 9, height = 9)
+ggplot(data = west_coast) + 
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
+  geom_point(data = ph_L, aes(x = Longitude, y = Latitude, fill = L), shape = 21, size = 9) + 
+  scale_fill_gradientn(colours=brewer.pal(9, "Blues"), name="Genetic Load", breaks = c(0.01, 0.04, 0.07)) +
+  coord_fixed(1.3) +
+  scale_x_continuous(
+    limits = c(-125, -114.1),
+    breaks = seq(-125, -114.1, by = 3) # Tick marks every 0.5 units
+  ) + ylim(32, 48) +
+  xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 32) + 
+  theme(
+    panel.grid.major = element_blank(), # Removes major grid lines
+    panel.grid.minor = element_blank(), # Removes minor grid lines
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) + # Keeps outer rectangle
+  theme(legend.title = element_text(size = 22), legend.text = element_text(size = 20), legend.position = c(0.68, 0.825), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+dev.off()
+
 # ================================================================================== #
 # ================================================================================== #
 
@@ -202,18 +230,14 @@ anim_save(AF_map, "output/figures/processed/genomic_offset/AF_future.gif")
 load("data/processed/genomic_offset/Nucella_gGO.Rdata")
 
 # Join
-future_diff_go <- left_join(future_diff, go.scaled.output[,c(1,5)], by = "Site")
+ph_AF_change_go <- left_join(ph_AF_change, go.scaled.output[,c(1,5)], by = "Site")
 
 # Make Site factor
-future_diff_go$Site <- factor(future_diff_go$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+ph_AF_change_go$Site <- factor(ph_AF_change_go$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph delta AF and gGO
 pdf("output/figures/SLiM/ph_future/Delta_AF_gGO.pdf", width = 6, height = 5)
-ggplot(future_diff_go, aes(x = delta_AF, y = GO.scaled, fill = Site)) + geom_point(size = 3, shape = 21) + scale_fill_manual(values = mycolors) +
+ggplot(ph_AF_change_go, aes(x = delta_AF, y = GO.scaled, fill = Site)) + geom_point(size = 3, shape = 21) + scale_fill_manual(values = mycolors) +
     theme_linedraw()
 dev.off()
-
-
-
-
 
