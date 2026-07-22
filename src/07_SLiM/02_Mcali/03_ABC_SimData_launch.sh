@@ -66,7 +66,7 @@ fi
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/07_SLiM/02_Mcali/03_ABC_SimData_launch.R
+Rscript --vanilla $WORKING_FOLDER/src/07_SLiM/02_Mcali/03_ABC_SimData.R
 
 #--------------------------------------------------------------------------------
 
