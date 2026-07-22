@@ -50,8 +50,8 @@ ph <- afs.ph[, c(2,8)] %>% distinct()
 
 # Load data
 real_All <- get(load("data/processed/SLiM/ph_ABC/real_data.Rdata"))
-sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars2.Rdata"))
-sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars3.Rdata"))
+#sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars2.Rdata"))
+#sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars3.Rdata"))
 sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars4.Rdata"))
 
 # ================================================================================== #
@@ -74,7 +74,7 @@ simulated_data = dplyr::select(ungroup(sim_All),
                                #p13, p14, p15, p16, p17, p18
                                )
 sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k, m), as.numeric)) 
-sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), m, thresh, k, mag, N ), as.numeric)) 
+#sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), m, thresh, k, mag, N ), as.numeric)) 
 #sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k_1, k_2 ), as.numeric)) # EXCLUDE m and N as those are invariant
 
 # ================================================================================== #
