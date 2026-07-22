@@ -95,7 +95,8 @@ ROOT=$WORKING_FOLDER/data/processed/SLiM/Mcali_results_v2
 cd $WORKING_FOLDER/data/processed/SLiM/Mcali_results_v2
 
 # Loop through iterations
-for i in {1..25}
+#for i in {1..25}
+for i in {26..40}
 do
 
 # Run slim script
