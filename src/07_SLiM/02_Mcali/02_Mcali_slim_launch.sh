@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=Mcali_slim_v2
+#SBATCH --job-name=Mcali_slim_v3
 
 # Specify partition
 #SBATCH --partition=general
