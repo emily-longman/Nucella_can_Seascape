@@ -88,7 +88,7 @@ slim \
     -d "repId=${i}" \
     -d "N=${N}" \
 	-d "root='${ROOT}'" \
-     $WORKING_FOLDER/src/07_SLiM/01_mean_ph/09_ph_future_varyN.slim
+     $WORKING_FOLDER/src/07_SLiM/01_mean_ph/09_ph_future_vary_N.slim
 
 done
 
