@@ -196,7 +196,7 @@ topsnp <- phafs %>%
 
 # Loop through pops
 ph_w_current <- foreach(i=1:19, .combine="rbind", .errorhandling = "remove")%do%{  
-  message(ecovars$Site[i])
+  #message(ecovars$Site[i])
   # Extract current pH
   env_i = ecovars$ph_mean[i]
   # Calculate selection
@@ -305,8 +305,8 @@ ph_AF_change_go <- left_join(ph_AF_change, go.scaled.output[,c(1,5)], by = "Site
 ph_AF_change_go$Site <- factor(ph_AF_change_go$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph delta AF and gGO
-pdf("output/figures/SLiM/ph_future/Delta_AF_gGO.pdf", width = 6, height = 5)
-ggplot(ph_AF_change_go, aes(x = delta_AF, y = GO.scaled, fill = Site)) + geom_point(size = 3, shape = 21) + scale_fill_manual(values = mycolors) +
-    theme_linedraw()
+pdf("output/figures/SLiM/ph_future/Delta_AF_gGO.pdf", width = 5.5, height = 5)
+ggplot(ph_AF_change_go, aes(x = delta_AF, y = GO.scaled, fill = Site)) + geom_point(size = 6, shape = 21, alpha = 0.9) + scale_fill_manual(values = mycolors) +
+    scale_x_continuous(limits = c(-0.05, 1), breaks = c(0, 0.5, 1.0)) + scale_y_continuous(limits = c(0.0801, 0.0991), breaks = c(0.08, 0.09, 0.10)) + 
+    labs(x = "Delta AF", y = "gGO") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
 dev.off()
-

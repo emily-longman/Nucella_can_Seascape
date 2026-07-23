@@ -20,7 +20,7 @@
 #SBATCH --mem=2G
 
 # Submit job array
-#SBATCH --array=1-4
+#SBATCH --array=1-3
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -45,12 +45,12 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 #--------------------------------------------------------------------------------
 
-# Determine parameters
+# Guide file 
+GUIDE_FILE=$WORKING_FOLDER/guide_files/slim_ph_future_vary_N.txt
 
-# Establish the array
-arr=("2500" "3750" "5000" "10000")
-N="${arr[$SLURM_ARRAY_TASK_ID]}"
-echo "N:" ${N}
+# Determine parameters
+N=`awk -F "\t" '{print $1}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
+echo "m:"${N}
 
 #--------------------------------------------------------------------------------
 
