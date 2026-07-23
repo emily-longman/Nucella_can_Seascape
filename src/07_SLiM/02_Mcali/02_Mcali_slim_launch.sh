@@ -20,7 +20,7 @@
 #SBATCH --mem=10G 
 
 # Submit job array
-#SBATCH --array=297-303 #401-806 #1-400 #1-806
+#SBATCH --array=1-620 #297-303 #401-806 #1-400 #1-806
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -68,7 +68,7 @@ fi
 #--------------------------------------------------------------------------------
 
 # Guide file 
-GUIDE_FILE=$WORKING_FOLDER/guide_files/slim_Mcali_guide_file_v3.txt
+GUIDE_FILE=$WORKING_FOLDER/guide_files/slim_Mcali_guide_file_v3_pt2.txt
 
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers.
 # Threshold      # k         # mag      # m         #N

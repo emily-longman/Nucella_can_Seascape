@@ -112,11 +112,11 @@ post_long <- pivot_longer(
   values_to = "value")
 
 # Graph posteriors
-pdf("output/figures/SLiM/Mcali_ABC/Mcali_posteriors_v2_fewerstats.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/Mcali_ABC/Mcali_posteriors_v1_fewerstats.pdf", width = 5, height = 5)
 ggplot(post_long, aes(x = value)) +
   geom_density(fill = "steelblue", alpha = 0.5) +
   facet_wrap(parameter~. , scales = "free", ncol = 1) +
-  theme_bw()
+  theme_bw(base_size=20)
 dev.off()
 
 # ================================================================================== #
@@ -135,7 +135,6 @@ abc_fit$unadj.values[best, ]
 # Create var with best value for each param
 #m_best = abc_fit$unadj.values[best,"m"]
 k_best = abc_fit$unadj.values[best,"k"]
-#kb2 = abc_fit$unadj.values[best,"k_2"]
 thresh_best = abc_fit$unadj.values[best,"thresh"]
 #mag_best = abc_fit$unadj.values[best,"mag"]
 #N_best = abc_fit$unadj.values[best,"N"]
@@ -217,7 +216,9 @@ mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))[-4]
 afs.Mcali.sims$Site <- factor(afs.Mcali.sims$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 # Graph real
 pdf("output/figures/SLiM/Mcali_ABC/real_AFs_topsnp.pdf", width = 5, height = 5)
-ggplot(afs.Mcali.sims, aes(x = AF, y = mean_integrated_thk, fill = Site)) + geom_point(size = 3, shape = 21) +  scale_fill_manual(values = mycolors) + theme_linedraw()
+ggplot(afs.Mcali.sims, aes(x = AF, y = mean_integrated_thk, fill = Site)) + geom_point(size = 5, shape = 21) +  scale_fill_manual(values = mycolors) + 
+  labs(x= "AF", y= "Shell Thk") +
+  theme_linedraw(base_size=26) + theme(legend.position = "none")
 dev.off()
 
 # Extract best
@@ -228,8 +229,10 @@ sim_AFs_best <- sim_Data.melt %>%
 sim_AFs_best$Site <- factor(sim_AFs_best$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_v2_onlyPearson.pdf", width = 5, height = 5)
-ggplot(sim_AFs_best, aes(x = AF_true, y = shell_thk, fill = Site)) + geom_point(size = 3, shape = 21) + scale_fill_manual(values = mycolors) + theme_linedraw()
+pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_v1.pdf", width = 5, height = 5)
+ggplot(sim_AFs_best, aes(x = AF_true, y = shell_thk, fill = Site)) + geom_point(size = 5, shape = 21) + scale_fill_manual(values = mycolors) +
+labs(x= "AF", y= "Shell Thk") +
+theme_linedraw(base_size=26) + theme(legend.position = "none")
 dev.off()
 
 # Calculate the AF average of the iterations of the best param
@@ -240,8 +243,10 @@ sim_AFs_best_mean <- sim_AFs_best %>%
 sim_AFs_best_mean$Site <- factor(sim_AFs_best_mean$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_repmeans_v2_onlyPearson.pdf", width = 5, height = 5)
-ggplot(sim_AFs_best_mean, aes(x = AF_true_mean, y = shell_thk, fill = Site)) + geom_point(size = 3, shape = 21) + scale_fill_manual(values = mycolors) + theme_linedraw()
+pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_repmeans_v1.pdf", width = 5, height = 5)
+ggplot(sim_AFs_best_mean, aes(x = AF_true_mean, y = shell_thk, fill = Site)) + geom_point(size = 5, shape = 21) + scale_fill_manual(values = mycolors) + 
+labs(x= "AF", y= "Shell Thk") +
+theme_linedraw(base_size=26) + theme(legend.position = "none")
 dev.off()
 
 

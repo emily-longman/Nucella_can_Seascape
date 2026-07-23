@@ -85,7 +85,7 @@ sel <- function(x, z, k) {
 
 # Graph
 pdf("output/figures/SLiM/Mcali/Mcali_selection.pdf", width = 5, height = 5)
-plot(afs.Mcali$mean_integrated_thk, sel(afs.Mcali$mean_integrated_thk, 1.98, 0.12))
+plot(afs.Mcali$mean_integrated_thk, sel(afs.Mcali$mean_integrated_thk, 1.92, 0.32))
 dev.off()
 pdf("output/figures/SLiM/Mcali/Mcali_selection_zoomed_out.pdf", width = 5, height = 5)
 plot(seq(0, 5, by = 0.01), sel(seq(0, 5, by = 0.01), 1.98, 0.12))
@@ -141,13 +141,14 @@ write.table(guide_file, file = "guide_files/slim_Mcali_guide_file_v2.txt", sep =
 
 # Range of values for each parameter
 thresh <- seq(1.7, 2.0, by = 0.01) #31
-k <- seq(0.1, 0.6, by = 0.02) #26
+#k <- seq(0.1, 0.6, by = 0.02) #26
+k <- seq(0.62, 1, by = 0.02) #
 mag <- c(1) #1
 m <- c(0.005) #1
 N <- c(5000) #1
 
-# Make every combination of variables - 806 combos
+# Make every combination of variables -  620- pt2, 806 - pt1 combos
 guide_file <- expand.grid(thresh, k, mag, m, N)
 
 # Write table
-write.table(guide_file, file = "guide_files/slim_Mcali_guide_file_v3.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)
+write.table(guide_file, file = "guide_files/slim_Mcali_guide_file_v3_pt2.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)
