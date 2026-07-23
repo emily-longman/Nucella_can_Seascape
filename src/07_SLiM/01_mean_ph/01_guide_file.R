@@ -233,7 +233,6 @@ guide_file_morevars5 <- expand.grid(thresh, k, mag, m, N)
 write.table(guide_file_morevars5, file = "guide_files/slim_ph_guide_file_morevars5.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)
 
 
-
 s <- function(x, z, k, mag) {
   mag / (1 + exp((x - z)/k)) - (mag/2)
 }

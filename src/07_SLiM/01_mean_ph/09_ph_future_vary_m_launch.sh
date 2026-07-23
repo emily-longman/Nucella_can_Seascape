@@ -45,12 +45,12 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 #--------------------------------------------------------------------------------
 
-# Determine parameters
+# Guide file 
+GUIDE_FILE=$WORKING_FOLDER/guide_files/slim_ph_vary_migration.txt
 
-# Establish the array
-arr=("0.001" "0.005" "0.01" "0.015")
-m="${arr[$SLURM_ARRAY_TASK_ID]}"
-echo "N:" ${m}
+# Determine parameters
+m=`awk -F "\t" '{print $1}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
+echo "m:"${m}
 
 #--------------------------------------------------------------------------------
 
@@ -64,6 +64,9 @@ if [ -d "ph_vary_m" ]
 then echo "Working ph_vary_m folder exist"; echo "Let's move on."; date
 else echo "Working ph_vary_m folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_vary_m; date
 fi
+
+# Change directory
+cd $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_vary_m
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
 if [ -d "m_${m}" ]
