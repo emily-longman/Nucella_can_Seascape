@@ -53,15 +53,24 @@ then echo "Working ph_results folder exist"; echo "Let's move on."; date
 else echo "Working ph_results folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results; date
 fi
 
+# Change directory
+cd $WORKING_FOLDER/data/processed/SLiM/ph_future
+
+# This part of the script will check and generate, if necessary, all of the output folders used in the script
+if [ -d "per_simcycle" ]
+then echo "Working per_simcycle folder exist"; echo "Let's move on."; date
+else echo "Working per_simcycle folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results/per_simcycle; date
+fi
+
 # Determine parameters
 
 # Set root
-ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results
+ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results/per_simcycle
 
 #--------------------------------------------------------------------------------
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results
+cd $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results/per_simcycle
 
 # Loop through iterations
 for i in {1..100}
