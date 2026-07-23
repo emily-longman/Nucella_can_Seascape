@@ -49,9 +49,6 @@ arr=("2500" "3750" "5000" "10000")
 N="${arr[$SLURM_ARRAY_TASK_ID]}"
 echo "N:" ${N}
 
-# Set root
-ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results
-
 #--------------------------------------------------------------------------------
 
 # Generate Folders and files
@@ -75,6 +72,9 @@ fi
 
 # Change directory
 cd $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results/ph_vary_N/N_${N}
+
+# Set root
+ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_future/ph_vary_N/N_${N}
 
 # Loop through iterations
 for i in {1..100}
