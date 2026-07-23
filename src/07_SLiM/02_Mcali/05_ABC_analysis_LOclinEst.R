@@ -51,8 +51,9 @@ Mcali <- afs.Mcali[,c(7,13)] %>% distinct()
 
 # Load data
 real_All <- get(load("data/processed/SLiM/Mcali_ABC/real_data.Rdata"))
-sim_All <- get(load("data/processed/SLiM/Mcali_ABC/sim_data.Rdata"))
-sim_All <- get(load("data/processed/SLiM/Mcali_ABC/sim_data_v2.Rdata"))
+#sim_All <- get(load("data/processed/SLiM/Mcali_ABC/sim_data.Rdata"))
+#sim_All <- get(load("data/processed/SLiM/Mcali_ABC/sim_data_v2.Rdata"))
+sim_All <- get(load("data/processed/SLiM/Mcali_ABC/sim_data_v3.Rdata"))
 
 # ================================================================================== #
 
@@ -112,7 +113,7 @@ post_long <- pivot_longer(
   values_to = "value")
 
 # Graph posteriors
-pdf("output/figures/SLiM/Mcali_ABC/Mcali_posteriors_v1_fewerstats.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/Mcali_ABC/Mcali_posteriors_v3_fewerstats.pdf", width = 5, height = 5)
 ggplot(post_long, aes(x = value)) +
   geom_density(fill = "steelblue", alpha = 0.5) +
   facet_wrap(parameter~. , scales = "free", ncol = 1) +
@@ -229,7 +230,7 @@ sim_AFs_best <- sim_Data.melt %>%
 sim_AFs_best$Site <- factor(sim_AFs_best$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_v1.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_v3.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best, aes(x = AF_true, y = shell_thk, fill = Site)) + geom_point(size = 5, shape = 21) + scale_fill_manual(values = mycolors) +
 labs(x= "AF", y= "Shell Thk") +
 theme_linedraw(base_size=26) + theme(legend.position = "none")
@@ -243,7 +244,7 @@ sim_AFs_best_mean <- sim_AFs_best %>%
 sim_AFs_best_mean$Site <- factor(sim_AFs_best_mean$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_repmeans_v1.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_repmeans_v3.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best_mean, aes(x = AF_true_mean, y = shell_thk, fill = Site)) + geom_point(size = 5, shape = 21) + scale_fill_manual(values = mycolors) + 
 labs(x= "AF", y= "Shell Thk") +
 theme_linedraw(base_size=26) + theme(legend.position = "none")
@@ -254,3 +255,33 @@ dev.off()
 #sim_AFs_best_mean_sub <- sim_AFs_best_mean[,c("AF_true_mean","shell_thk")]
 #mod_sim <- nlsLM(AF_true_mean ~ SSlogis(shell_thk, Asym, xmid, scal), data = sim_AFs_best_mean_sub)
 #mod_sim_fit <- coef(mod_sim)
+
+
+# Selection
+sel <- function(x, z, k) {
+  1 / (1 + exp((x - z)/k)) - 0.5
+}
+
+# Graph
+pdf("output/figures/SLiM/Mcali_ABC/Mcali_selection.pdf", width = 5, height = 5)
+plot(afs.Mcali$mean_integrated_thk, sel(afs.Mcali$mean_integrated_thk, 2.0, 1))
+dev.off()
+pdf("output/figures/SLiM/Mcali_ABC/Mcali_selection_zoomed_out.pdf", width = 5, height = 5)
+plot(seq(0, 5, by = 0.01), sel(seq(0, 5, by = 0.01), 1.79, 1))
+dev.off()
+
+
+# Visually look at sims to see best match
+# Extract best
+sim_AFs_best <- sim_Data.melt %>%
+  filter(thresh == 1.775, k == 0.7) %>%
+  left_join(dplyr::select(ecovars, Site, sim_eq, shell_thk))
+# Make Site factor
+sim_AFs_best$Site <- factor(sim_AFs_best$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+
+# Graph sim
+pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_v2_test.pdf", width = 5, height = 5)
+ggplot(sim_AFs_best, aes(x = AF_true, y = shell_thk, fill = Site)) + geom_point(size = 5, shape = 21) + scale_fill_manual(values = mycolors) +
+labs(x= "AF", y= "Shell Thk") +
+theme_linedraw(base_size=26) + theme(legend.position = "none")
+dev.off()
