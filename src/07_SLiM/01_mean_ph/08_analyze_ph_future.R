@@ -212,6 +212,7 @@ ph_w_current <- foreach(i=1:19, .combine="rbind", .errorhandling = "remove")%do%
     Site = ph_AF_change$Site[i],
     Latitude = ph_AF_change$Latitude[i],
     Longitude = ph_AF_change$Longitude[i],
+    s_i = s_i,
     w = w_i)
 }
 
@@ -263,6 +264,7 @@ ph_w_future <- foreach(i=1:19, .combine="rbind", .errorhandling = "remove")%do%{
     Site = ph_AF_change$Site[i],
     Latitude = ph_AF_change$Latitude[i],
     Longitude = ph_AF_change$Longitude[i],
+    s_i = s_i,
     w = w_i)
 }
 
