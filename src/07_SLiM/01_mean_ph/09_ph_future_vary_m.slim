@@ -189,7 +189,7 @@ b = c(
 7.965315490,
 7.969225779);
     
- m = c(
+ slope = c(
 -0.004460083,
 -0.004393947,
 -0.004371073,
@@ -212,7 +212,7 @@ b = c(
 
     // Calculate pH based on slope and intercept for each pop
     for (i in seqAlong(sim.subpopulations)){
-        env_i = m[i]*sim.cycle + b[i];
+        env_i = slope[i]*sim.cycle + b[i];
         catn("Cycle=" + sim.cycle + ", pop=" + i + ", env=" + env_i);
         sim.subpopulations[i].setValue("env", env_i);
         }
