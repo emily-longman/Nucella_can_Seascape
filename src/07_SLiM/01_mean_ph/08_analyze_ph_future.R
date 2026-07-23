@@ -100,6 +100,14 @@ future_avg <- left_join(ecovars, future_avg, by = "sim_eq")
 future_avg$Site <- factor(future_avg$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # ================================================================================== #
+
+# Graph AF vs time
+pdf("output/figures/SLiM/ph_future/AF_time.pdf", width = 8, height = 5)
+ggplot(future_avg, aes(x = (year+2000), y = AF_fut_avg, color = Site)) + geom_line(linewidth = 4) + 
+    scale_color_manual(values = mycolors) + 
+    labs(x = "Years", y = "AF") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
+dev.off()
+
 # ================================================================================== #
 
 # Delta AF and level maladapted
