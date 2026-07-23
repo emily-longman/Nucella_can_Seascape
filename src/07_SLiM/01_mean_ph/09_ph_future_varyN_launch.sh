@@ -14,13 +14,16 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=02:00:00
+#SBATCH --time=00:30:00
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=10G
+#SBATCH --mem=2G
+
+# Submit job array
+#SBATCH --array=1-4
 
 # Name output of this job using %x=job-name and %j=job-id
-#SBATCH --output=./slurmOutput/%x.%j.out
+#SBATCH --output=./slurmOutput/%x.%A_%a.out
 
 # Receive emails when job begins and ends or fails
 #SBATCH --mail-type=ALL
