@@ -242,6 +242,26 @@ pdf("output/figures/SLiM/ph_ABC/pH_sel_magnitude.pdf", width = 5, height = 5)
 plot(seq(7.8, 8.1, by = 0.01), s(seq(7.8, 8.1, by = 0.01), 7.987, 0.15, 1))
 dev.off()
 
+
+###
+
+# More vars 6
+
+# Range of values for each parameter
+thresh <- seq(7.98, 7.99, by = 0.001) #11
+k <- seq(0.01, 0.07, by = 0.005) #13
+mag <- c(1) #1
+m <- seq(0.001, 0.005, by = 0.001) #5
+N <- c(5000) #1
+
+# Make every combination of variables -  combos
+guide_file_morevars6 <- expand.grid(thresh, k, mag, m, N)
+
+# Write table
+write.table(guide_file_morevars6, file = "guide_files/slim_ph_guide_file_morevars6.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)
+
+
+
 # ================================================================================== #
 # ================================================================================== #
 
