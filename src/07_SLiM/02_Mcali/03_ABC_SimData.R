@@ -94,7 +94,7 @@ afs.Mcali.sims <- left_join(afs.Mcali.sims.tmp, dplyr::select(ecovars, "Site", "
 
 # Create function
 process_sims = function(repId, m, thresh, k, mag, N){
-  #repId=1; m=0.005; thresh=1.7; k=0.2; mag=1; N=5000
+  #repId=1; m=0.005; thresh=1.79; k=0.6; mag=1; N=5000
 
   # Extract data for specific parameter combos
   tmp <- sim_Data_melt %>%
@@ -107,6 +107,11 @@ process_sims = function(repId, m, thresh, k, mag, N){
 
   # Join with ecovars and top snp data
   tmp2 <- left_join(tmp, afs.Mcali.sims, by = join_by(sim_eq))
+  
+  # Create variable for AF groups
+  tmp2 %<>% mutate(group = case_when(mean_integrated_thk >= 2.1 ~ "Thick",
+                                     mean_integrated_thk < 2.1 & mean_integrated_thk >= 1.6 ~ "Mod", 
+                                     mean_integrated_thk < 1.6 ~ "Thin"))
 
   #### Create poolobject and generate poolseq noise
   
@@ -131,6 +136,40 @@ process_sims = function(repId, m, thresh, k, mag, N){
   fst.phylogeo <- computeFST (pool.sim,
                               method = "Anova",
                               struct = tmp.pool$`Demographic Cluster`, verbose = FALSE)
+
+
+  # Fst between pops with thin and mod shell thk
+  pool.sim.thin.mod <- new("pooldata",
+                   npools=length(which(tmp.pool$group != "Thick")), #### Rows = Number of pools
+                   nsnp=1, ### Columns = Number of SNPs
+                   refallele.readcount=as.matrix(t(tmp.pool$SIM_AD[which(tmp.pool$group != "Thick")])),
+                   readcoverage=as.matrix(t(tmp.pool$Cov[which(tmp.pool$group != "Thick")])),
+                   poolsizes=tmp.pool$nsnails[which(tmp.pool$group != "Thick")] * 2,
+                   poolnames = tmp.pool$Site[which(tmp.pool$group != "Thick")])
+  fst.thin.mod.group <- computeFST(pool.sim.thin.mod, method = "Anova", struct = tmp.pool$group[which(tmp.pool$group != "Thick")], verbose = FALSE)
+  # Fst between pops with mod and thick shell thk
+  pool.sim.mod.thick <- new("pooldata",
+                   npools=length(which(tmp.pool$group != "Thin")), #### Rows = Number of pools
+                   nsnp=1, ### Columns = Number of SNPs
+                   refallele.readcount=as.matrix(t(tmp.pool$SIM_AD[c(which(tmp.pool$group != "Thin"))])),
+                   readcoverage=as.matrix(t(tmp.pool$Cov[which(tmp.pool$group != "Thin")])),
+                   poolsizes=tmp.pool$nsnails[which(tmp.pool$group != "Thin")] * 2,
+                   poolnames = tmp.pool$Site[which(tmp.pool$group != "Thin")])
+  fst.mod.thick.group <- computeFST(pool.sim.mod.thick, method = "Anova", struct = tmp.pool$group[which(tmp.pool$group != "Thin")], verbose = FALSE)
+  # Fst between pops with think and thick shell thick
+  pool.sim.thin.thick <- new("pooldata",
+                   npools=length(which(tmp.pool$group != "Mod")), #### Rows = Number of pools
+                   nsnp=1, ### Columns = Number of SNPs
+                   refallele.readcount=as.matrix(t(tmp.pool$SIM_AD[c(which(tmp.pool$group != "Mod"))])),
+                   readcoverage=as.matrix(t(tmp.pool$Cov[which(tmp.pool$group != "Mod")])),
+                   poolsizes=tmp.pool$nsnails[which(tmp.pool$group != "Mod")] * 2,
+                   poolnames = tmp.pool$Site[which(tmp.pool$group != "Mod")])
+  fst.thin.thick.group <- computeFST(pool.sim.thin.thick, method = "Anova", struct = tmp.pool$group[which(tmp.pool$group != "Mod")], verbose = FALSE)
+
+
+  # Calculate the mean delta AF between groups
+  mean.deltaAF.thick.mod <- abs(mean(tmp.pool$SIM_AF[which(tmp.pool$group == "Thick")] - tmp.pool$SIM_AF[which(tmp.pool$group == "Mod")]))
+  mean.deltaAF.thick.thin <- abs(mean(tmp.pool$SIM_AF[which(tmp.pool$group == "Thick")] - tmp.pool$SIM_AF[which(tmp.pool$group == "Thin")]))
 
   # Raw correlation between shell thk and SIM AF
   rawcor.pearson = cor.test(~ mean_integrated_thk+SIM_AF, method = "pearson", data =  tmp.pool)
@@ -157,6 +196,11 @@ process_sims = function(repId, m, thresh, k, mag, N){
       Fsg = fst.phylogeo$snp.Fstats[1],
       Fgt = fst.phylogeo$snp.Fstats[2],
       Fst = fst.phylogeo$snp.Fstats[3],
+      Fst.thin.mod = fst.thin.mod.group$Fst[1],
+      Fst.mod.thick = fst.mod.thick.group$Fst[1],
+      Fst.thin.thick = fst.thin.thick.group$Fst[1],
+      deltaAF.thick.mod = mean.deltaAF.thick.mod,
+      deltaAF.thick.thin = mean.deltaAF.thick.thin,
       cor.pearson = rawcor.pearson$estimate,
       cor.spearman = rawcor.spearman$estimate,
       corAF.pearson = rawcorAF.pearson$estimate,

@@ -56,6 +56,11 @@ afs.Mcali %<>% arrange(desc(latitude))
 # Join with ecovars
 topsnp <- left_join(afs.Mcali, dplyr::select(ecovars, "Site", "sim_eq", "Demographic Cluster"))
 
+# Create variable for AF groups
+topsnp %<>% mutate(group = case_when(mean_integrated_thk >= 2.1 ~ "Thick",
+                                     mean_integrated_thk < 2.1 & mean_integrated_thk >= 1.6 ~ "Mod", 
+                                     mean_integrated_thk < 1.6 ~ "Thin"))
+
 # Make a pooled object with the raw data
 pool.real <- new("pooldata",
                  npools=18, #### Rows = Number of pools
@@ -76,6 +81,39 @@ fst.phylogeo <- computeFST(pool.real,
 # "FST": estimate of genome-wide Fst over all the populations
 # "FSG": estimate of genome-wide within-group differentiation (Fsg)
 # "FGT": estimate of genome-wide between-group differentiation (Fgt)
+
+# Fst between pops with thin and mod shell thk
+pool.real.thin.mod <- new("pooldata",
+                   npools=length(which(topsnp$group != "Thick")), #### Rows = Number of pools
+                   nsnp=1, ### Columns = Number of SNPs
+                   refallele.readcount=as.matrix(t(topsnp$Count[which(topsnp$group != "Thick")])),
+                   readcoverage=as.matrix(t(topsnp$Cov[which(topsnp$group != "Thick")])),
+                   poolsizes=topsnp$nsnails[which(topsnp$group != "Thick")] * 2,
+                   poolnames = topsnp$Site[which(topsnp$group != "Thick")])
+fst.thin.mod.group <- computeFST(pool.real.thin.mod, method = "Anova", struct = topsnp$group[which(topsnp$group != "Thick")], verbose = FALSE)
+# Fst between pops with mod and thick shell thk
+pool.real.mod.thick <- new("pooldata",
+                   npools=length(which(topsnp$group != "Thin")), #### Rows = Number of pools
+                   nsnp=1, ### Columns = Number of SNPs
+                   refallele.readcount=as.matrix(t(topsnp$Count[c(which(topsnp$group != "Thin"))])),
+                   readcoverage=as.matrix(t(topsnp$Cov[which(topsnp$group != "Thin")])),
+                   poolsizes=topsnp$nsnails[which(topsnp$group != "Thin")] * 2,
+                   poolnames = topsnp$Site[which(topsnp$group != "Thin")])
+fst.mod.thick.group <- computeFST(pool.real.mod.thick, method = "Anova", struct = topsnp$group[which(topsnp$group != "Thin")], verbose = FALSE)
+# Fst between pops with think and thick shell thick
+pool.real.thin.thick <- new("pooldata",
+                   npools=length(which(topsnp$group != "Mod")), #### Rows = Number of pools
+                   nsnp=1, ### Columns = Number of SNPs
+                   refallele.readcount=as.matrix(t(topsnp$Count[c(which(topsnp$group != "Mod"))])),
+                   readcoverage=as.matrix(t(topsnp$Cov[which(topsnp$group != "Mod")])),
+                   poolsizes=topsnp$nsnails[which(topsnp$group != "Mod")] * 2,
+                   poolnames = topsnp$Site[which(topsnp$group != "Mod")])
+fst.thin.thick.group <- computeFST(pool.real.thin.thick, method = "Anova", struct = topsnp$group[which(topsnp$group != "Mod")], verbose = FALSE)
+
+
+# Calculate the mean delta AF between groups
+mean.deltaAF.thick.mod <- abs(mean(topsnp$AF[which(topsnp$group == "Thick")] - topsnp$AF[which(topsnp$group == "Mod")]))
+mean.deltaAF.thick.thin <- abs(mean(topsnp$AF[which(topsnp$group == "Thick")] - topsnp$AF[which(topsnp$group == "Thin")]))
 
 # Raw correlation between shell thk and AF
 rawcor.pearson = cor.test(~ mean_integrated_thk+AF, method = "pearson", data = topsnp)
@@ -102,6 +140,11 @@ data.frame(
   Fsg = fst.phylogeo$snp.Fstats[1],
   Fgt = fst.phylogeo$snp.Fstats[2],
   Fst = fst.phylogeo$snp.Fstats[3],
+  Fst.thin.mod = fst.thin.mod.group$Fst[1],
+  Fst.mod.thick = fst.mod.thick.group$Fst[1],
+  Fst.thin.thick = fst.thin.thick.group$Fst[1],
+  deltaAF.thick.mod = mean.deltaAF.thick.mod,
+  deltaAF.thick.thin = mean.deltaAF.thick.thin,
   cor.pearson = rawcor.pearson$estimate,
   cor.spearman = rawcor.spearman$estimate,
   corAF.pearson = rawcorAF.pearson$estimate,

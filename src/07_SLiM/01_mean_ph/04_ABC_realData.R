@@ -56,6 +56,9 @@ topsnp <- phafs %>%
   left_join(dplyr::select(ecovars, Site, Latitude, sim_eq)) %>%
   arrange(-Latitude)
 
+# Create variable for AF groups
+topsnp$group <- c("L", "L", "L", "L", "M", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H")
+
 # Make a pooled object with the raw data
 pool.real <- new("pooldata",
                  npools=19, #### Rows = Number of pools
@@ -76,9 +79,37 @@ fst.phylogeo <- computeFST(pool.real,
 # "FSG": estimate of genome-wide within-group differentiation (Fsg)
 # "FGT": estimate of genome-wide between-group differentiation (Fgt)
 
+# Fst between pops with low and med AF
+pool.real.L.M <- new("pooldata",
+                   npools=5, #### Rows = Number of pools
+                   nsnp=1, ### Columns = Number of SNPs
+                   refallele.readcount=as.matrix(t(topsnp$Count[1:5])),
+                   readcoverage=as.matrix(t(topsnp$Cov[1:5])),
+                   poolsizes=topsnp$nsnails[1:5] * 2,
+                   poolnames = topsnp$Site[1:5])
+fst.L.M.group <- computeFST(pool.real.L.M, method = "Anova", struct = topsnp$group[1:5], verbose = FALSE)
+# Fst between pops with med and high AF
+pool.real.M.H <- new("pooldata",
+                   npools=15, #### Rows = Number of pools
+                   nsnp=1, ### Columns = Number of SNPs
+                   refallele.readcount=as.matrix(t(topsnp$Count[5:19])),
+                   readcoverage=as.matrix(t(topsnp$Cov[5:19])),
+                   poolsizes=topsnp$nsnails[5:19] * 2,
+                   poolnames = topsnp$Site[5:19])
+fst.M.H.group <- computeFST(pool.real.M.H, method = "Anova", struct = topsnp$group[5:19], verbose = FALSE)
+# Fst between pops with low and high AF
+pool.real.L.H <- new("pooldata",
+                   npools=18, #### Rows = Number of pools
+                   nsnp=1, ### Columns = Number of SNPs
+                   refallele.readcount=as.matrix(t(topsnp$Count[-5])),
+                   readcoverage=as.matrix(t(topsnp$Cov[-5])),
+                   poolsizes=topsnp$nsnails[-5] * 2,
+                   poolnames = topsnp$Site[-5])
+fst.L.H.group <- computeFST(pool.real.L.H, method = "Anova", struct = topsnp$group[-5], verbose = FALSE)
 
-fst.L.M.group <- computeFST (pool.sim.H.M,
-                        method = "Anova", struct = tmp.pool$group[1:5], verbose = FALSE)
+# Calculate the mean delta AF between groups
+mean.deltaAF.L.M <- abs(mean(topsnp$AF[which(topsnp$group == "L")] - topsnp$AF[which(topsnp$group == "M")]))
+mean.deltaAF.H.M <- abs(mean(topsnp$AF[which(topsnp$group == "H")] - topsnp$AF[which(topsnp$group == "M")]))
 
 # Raw correlation between mean pH and AF
 rawcor.pearson = cor.test(~ ph_mean+AF, method = "pearson", data = topsnp)
@@ -108,7 +139,7 @@ data.frame(
   Fst.L.M = fst.L.M.group$Fst[1],
   Fst.M.H = fst.M.H.group$Fst[1],
   Fst.L.H = fst.L.H.group$Fst[1],
-  deltaAF.L.M = mean.deltaAF.L.M, 
+  deltaAF.L.M = mean.deltaAF.L.M,
   deltaAF.H.M = mean.deltaAF.H.M,
   cor.pearson = rawcor.pearson$estimate,
   cor.spearman = rawcor.spearman$estimate,

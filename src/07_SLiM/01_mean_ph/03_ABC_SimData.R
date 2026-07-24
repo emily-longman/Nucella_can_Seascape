@@ -167,8 +167,8 @@ process_sims = function(repId, m, thresh, k, mag, N){
                               method = "Anova", struct = tmp.pool$group[-5], verbose = FALSE)
 
   # Calculate the mean delta AF between groups
-  mean.deltaAF.L.M <- mean(tmp.pool$SIM_AF[which(tmp.pool$group == "L")] - tmp.pool$SIM_AF[which(tmp.pool$group == "M")])
-  mean.deltaAF.H.M <- mean(tmp.pool$SIM_AF[which(tmp.pool$group == "H")] - tmp.pool$SIM_AF[which(tmp.pool$group == "M")])
+  mean.deltaAF.L.M <- abs(mean(tmp.pool$SIM_AF[which(tmp.pool$group == "L")] - tmp.pool$SIM_AF[which(tmp.pool$group == "M")]))
+  mean.deltaAF.H.M <- abs(mean(tmp.pool$SIM_AF[which(tmp.pool$group == "H")] - tmp.pool$SIM_AF[which(tmp.pool$group == "M")]))
 
   # Raw correlation between mean pH and SIM AF
   rawcor.pearson = cor.test(~ ph_mean+SIM_AF, method = "pearson", data =  tmp.pool)
