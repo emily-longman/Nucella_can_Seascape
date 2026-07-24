@@ -71,11 +71,14 @@ pool.real <- new("pooldata",
 
 # Hierach fst between N vs S
 fst.phylogeo <- computeFST(pool.real,
-                        method = "Anova",
-                        struct = topsnp$shape, verbose = FALSE)
+                        method = "Anova", struct = topsnp$shape, verbose = FALSE)
 # "FST": estimate of genome-wide Fst over all the populations
 # "FSG": estimate of genome-wide within-group differentiation (Fsg)
 # "FGT": estimate of genome-wide between-group differentiation (Fgt)
+
+
+fst.L.M.group <- computeFST (pool.sim.H.M,
+                        method = "Anova", struct = tmp.pool$group[1:5], verbose = FALSE)
 
 # Raw correlation between mean pH and AF
 rawcor.pearson = cor.test(~ ph_mean+AF, method = "pearson", data = topsnp)
@@ -102,6 +105,11 @@ data.frame(
   Fsg = fst.phylogeo$snp.Fstats[1],
   Fgt = fst.phylogeo$snp.Fstats[2],
   Fst = fst.phylogeo$snp.Fstats[3],
+  Fst.L.M = fst.L.M.group$Fst[1],
+  Fst.M.H = fst.M.H.group$Fst[1],
+  Fst.L.H = fst.L.H.group$Fst[1],
+  deltaAF.L.M = mean.deltaAF.L.M, 
+  deltaAF.H.M = mean.deltaAF.H.M,
   cor.pearson = rawcor.pearson$estimate,
   cor.spearman = rawcor.spearman$estimate,
   corAF.pearson = rawcorAF.pearson$estimate,

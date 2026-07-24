@@ -125,12 +125,12 @@ process_sims = function(repId, m, thresh, k, mag, N){
                    refallele.readcount=as.matrix(t(tmp.pool$SIM_AD)),
                    readcoverage=as.matrix(t(tmp.pool$Cov)),
                    poolsizes=tmp.pool$nsnails * 2,
-                   poolnames = tmp.pool$Site )
+                   poolnames = tmp.pool$Site)
 
   #### Estimate the key statistics
 
   # Hierach fst
-  fst.phylogeo <- computeFST (pool.sim,
+  fst.phylogeo <- computeFST(pool.sim,
                               method = "Anova",
                               struct = tmp.pool$`Demographic Cluster`, verbose = FALSE)
   
@@ -142,10 +142,9 @@ process_sims = function(repId, m, thresh, k, mag, N){
                    refallele.readcount=as.matrix(t(tmp.pool$SIM_AD[1:5])),
                    readcoverage=as.matrix(t(tmp.pool$Cov[1:5])),
                    poolsizes=tmp.pool$nsnails[1:5] * 2,
-                   poolnames = tmp.pool$Site[1:5] )
-  fst.L.M.group <- computeFST (pool.sim.H.M,
-                              method = "Anova",
-                              struct = tmp.pool$group[1:5], verbose = FALSE)
+                   poolnames = tmp.pool$Site[1:5])
+  fst.L.M.group <- computeFST(pool.sim.L.M,
+                              method = "Anova", struct = tmp.pool$group[1:5], verbose = FALSE)
   # Fst between pops with med and high AF
   pool.sim.M.H <- new("pooldata",
                    npools=15, #### Rows = Number of pools
@@ -154,9 +153,8 @@ process_sims = function(repId, m, thresh, k, mag, N){
                    readcoverage=as.matrix(t(tmp.pool$Cov[5:19])),
                    poolsizes=tmp.pool$nsnails[5:19] * 2,
                    poolnames = tmp.pool$Site[5:19])
-  fst.M.H.group <- computeFST (pool.sim.M.H,
-                              method = "Anova",
-                              struct = tmp.pool$group[5:19], verbose = FALSE)
+  fst.M.H.group <- computeFST(pool.sim.M.H,
+                              method = "Anova", struct = tmp.pool$group[5:19], verbose = FALSE)
   # Fst between pops with low and high AF
   pool.sim.L.H <- new("pooldata",
                    npools=18, #### Rows = Number of pools
@@ -165,9 +163,8 @@ process_sims = function(repId, m, thresh, k, mag, N){
                    readcoverage=as.matrix(t(tmp.pool$Cov[-5])),
                    poolsizes=tmp.pool$nsnails[-5] * 2,
                    poolnames = tmp.pool$Site[-5])
-  fst.L.H.group <- computeFST (pool.sim.L.H,
-                              method = "Anova",
-                              struct = tmp.pool$group[-5], verbose = FALSE)
+  fst.L.H.group <- computeFST(pool.sim.L.H,
+                              method = "Anova", struct = tmp.pool$group[-5], verbose = FALSE)
 
   # Calculate the mean delta AF between groups
   mean.deltaAF.L.M <- mean(tmp.pool$SIM_AF[which(tmp.pool$group == "L")] - tmp.pool$SIM_AF[which(tmp.pool$group == "M")])
