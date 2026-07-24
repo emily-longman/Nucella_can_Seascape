@@ -32,6 +32,12 @@ library(minpack.lm)
 
 # ================================================================================== #
 
+# Color palette
+nb.cols <- 19
+mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))[-4]
+
+# ================================================================================== #
+
 # Generate output directories
 
 # Data directory

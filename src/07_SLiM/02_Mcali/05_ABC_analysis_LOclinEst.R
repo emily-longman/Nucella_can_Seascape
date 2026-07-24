@@ -32,6 +32,12 @@ library(minpack.lm)
 
 # ================================================================================== #
 
+# Color palette
+nb.cols <- 19
+mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))[-4]
+
+# ================================================================================== #
+
 # Generate output directories
 
 # Data directory
@@ -209,9 +215,7 @@ sim_All[which(sim_All$thresh == thresh_best & sim_All$k == k_best),]
 
 # ================================================================================== #
 
-# Color palette
-nb.cols <- 19
-mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))[-4]
+# Graph real data 
 
 # Make Site factor
 afs.Mcali.sims$Site <- factor(afs.Mcali.sims$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
@@ -222,12 +226,17 @@ ggplot(afs.Mcali.sims, aes(x = AF, y = mean_integrated_thk, fill = Site)) + geom
   theme_linedraw(base_size=26) + theme(legend.position = "none")
 dev.off()
 
+####
+
+# Graph best sim 
+
 # Extract best
 sim_AFs_best <- sim_Data.melt %>%
   filter(thresh == thresh_best, k == k_best) %>%
   left_join(dplyr::select(ecovars, Site, sim_eq, shell_thk))
 # Make Site factor
 sim_AFs_best$Site <- factor(sim_AFs_best$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+
 
 # Graph sim
 pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_v3.pdf", width = 5, height = 5)
