@@ -49,7 +49,7 @@ mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
 # Load data and merge files for each N
 
 # N values
-Ns <- c(2500, 3750, 5000, 10000)
+Ns <- c(2500, 5000, 10000)
 
 # Loop through each N and extract files and merge
 future_sim_data_varyN <- foreach(N=Ns, .combine="rbind", .errorhandling = "remove")%do%{  
@@ -113,7 +113,7 @@ future_avg$Site <- factor(future_avg$Site, levels=c("FC", "SLR", "SH", "ARA", "C
 # ================================================================================== #
 
 # Order N
-future_avg$N <- factor(future_avg$N, levels = c(2500, 3750, 5000, 10000))
+future_avg$N <- factor(future_avg$N, levels = c(2500, 5000, 10000))
 
 # Graph AF vs time
 pdf("output/figures/SLiM/ph_future/AF_time_varyN.pdf", width = 10, height = 16)
@@ -122,6 +122,10 @@ ggplot(future_avg, aes(x = year, y = AF_fut_avg, color = Site)) + geom_line(line
     labs(x = "Years", y = "AF") + theme_linedraw(base_size = 30) + theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
 dev.off()
 
+# Order N
+future_sim_data_varyN$N <- factor(future_sim_data_varyN$N, levels = c(2500, 5000, 10000))
+
+# Graph AF vs time - per sim
 pdf("output/figures/SLiM/ph_future/AF_time_varyN_all.pdf", width = 10, height = 16)
 ggplot(future_sim_data_varyN, aes(x = year, y = AF_fut, color = Site, group=interaction(repId, Site))) + geom_line(linewidth = 1, alpha = 0.4) + 
     facet_wrap(~N, ncol = 1) + scale_color_manual(values = mycolors) + 
@@ -149,7 +153,7 @@ ph_AF_change %<>% mutate(mal = 1-AF_2100)
 # Make Site factor
 ph_AF_change$Site <- factor(ph_AF_change$Site, levels=rev(c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR")))
 # Make N factor 
-s$N <- factor(ph_AF_change$N, levels = c(2500, 3750, 5000, 10000))
+ph_AF_change$N <- factor(ph_AF_change$N, levels = c(2500, 5000, 10000))
 
 # Graph delta AF
 pdf("output/figures/SLiM/ph_future/Delta_AF_varyN.pdf", width = 16, height = 10)
