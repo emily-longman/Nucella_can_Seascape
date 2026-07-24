@@ -92,7 +92,7 @@ ecovars.sims <- cbind(ecovars, env) %>%
 
 # Create function
 process_sims = function(repId, m, thresh, k, mag, N){
-  #repId=1; m=0.005; thresh=7.985; k=0.04; mag=1; N=5000
+  #repId=1; m=0.005; thresh=7.98; k=0.16; mag=1; N=5000
 
   # Extract data for specific parameter combos
   tmp <- sim_Data_melt %>%
@@ -116,7 +116,10 @@ process_sims = function(repId, m, thresh, k, mag, N){
     mutate(SIM_AF = SIM_AD/Cov)
   
   # Create variable for AF groups
-  tmp.pool$group <- c("L", "L", "L", "L", "M", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H")
+  # Create variable for groups
+  tmp.pool %<>% mutate(group = case_when(ph_mean >= 8.0 ~ "H",
+                                     ph_mean < 8.0 & ph_mean >= 7.975 ~ "M", 
+                                     ph_mean < 7.975 ~ "L"))
 
   # Create pooled object
   pool.sim <- new("pooldata",
@@ -135,36 +138,33 @@ process_sims = function(repId, m, thresh, k, mag, N){
                               struct = tmp.pool$`Demographic Cluster`, verbose = FALSE)
   
 
-  # Fst between pops with low and med AF
+  # Fst between pops with low and med ph
   pool.sim.L.M <- new("pooldata",
-                   npools=5, #### Rows = Number of pools
+                   npools=length(which(tmp.pool$group != "H")), #### Rows = Number of pools
                    nsnp=1, ### Columns = Number of SNPs
-                   refallele.readcount=as.matrix(t(tmp.pool$SIM_AD[1:5])),
-                   readcoverage=as.matrix(t(tmp.pool$Cov[1:5])),
-                   poolsizes=tmp.pool$nsnails[1:5] * 2,
-                   poolnames = tmp.pool$Site[1:5])
-  fst.L.M.group <- computeFST(pool.sim.L.M,
-                              method = "Anova", struct = tmp.pool$group[1:5], verbose = FALSE)
-  # Fst between pops with med and high AF
+                   refallele.readcount=as.matrix(t(tmp.pool$SIM_AD[which(tmp.pool$group != "H")])),
+                   readcoverage=as.matrix(t(tmp.pool$Cov[which(tmp.pool$group != "H")])),
+                   poolsizes=tmp.pool$nsnails[which(tmp.pool$group != "H")] * 2,
+                   poolnames = tmp.pool$Site[which(tmp.pool$group != "H")])
+  fst.L.M.group <- computeFST(pool.sim.L.M, method = "Anova", struct = tmp.pool$group[which(tmp.pool$group != "H")], verbose = FALSE)
+  # Fst between pops with med and high ph
   pool.sim.M.H <- new("pooldata",
-                   npools=15, #### Rows = Number of pools
+                   npools=length(which(tmp.pool$group != "L")), #### Rows = Number of pools
                    nsnp=1, ### Columns = Number of SNPs
-                   refallele.readcount=as.matrix(t(tmp.pool$SIM_AD[5:19])),
-                   readcoverage=as.matrix(t(tmp.pool$Cov[5:19])),
-                   poolsizes=tmp.pool$nsnails[5:19] * 2,
-                   poolnames = tmp.pool$Site[5:19])
-  fst.M.H.group <- computeFST(pool.sim.M.H,
-                              method = "Anova", struct = tmp.pool$group[5:19], verbose = FALSE)
-  # Fst between pops with low and high AF
+                   refallele.readcount=as.matrix(t(tmp.pool$SIM_AD[which(tmp.pool$group != "L")])),
+                   readcoverage=as.matrix(t(tmp.pool$Cov[which(tmp.pool$group != "L")])),
+                   poolsizes=tmp.pool$nsnails[which(tmp.pool$group != "L")] * 2,
+                   poolnames = tmp.pool$Site[which(tmp.pool$group != "L")])
+  fst.M.H.group <- computeFST(pool.sim.M.H, method = "Anova", struct = tmp.pool$group[which(tmp.pool$group != "L")], verbose = FALSE)
+  # Fst between pops with low and high ph
   pool.sim.L.H <- new("pooldata",
-                   npools=18, #### Rows = Number of pools
+                   npools=length(which(tmp.pool$group != "M")), #### Rows = Number of pools
                    nsnp=1, ### Columns = Number of SNPs
-                   refallele.readcount=as.matrix(t(tmp.pool$SIM_AD[-5])),
-                   readcoverage=as.matrix(t(tmp.pool$Cov[-5])),
-                   poolsizes=tmp.pool$nsnails[-5] * 2,
-                   poolnames = tmp.pool$Site[-5])
-  fst.L.H.group <- computeFST(pool.sim.L.H,
-                              method = "Anova", struct = tmp.pool$group[-5], verbose = FALSE)
+                   refallele.readcount=as.matrix(t(tmp.pool$SIM_AD[which(tmp.pool$group != "M")])),
+                   readcoverage=as.matrix(t(tmp.pool$Cov[which(tmp.pool$group != "M")])),
+                   poolsizes=tmp.pool$nsnails[which(tmp.pool$group != "M")] * 2,
+                   poolnames = tmp.pool$Site[which(tmp.pool$group != "M")])
+  fst.L.H.group <- computeFST(pool.sim.L.H, method = "Anova", struct = tmp.pool$group[which(tmp.pool$group != "M")], verbose = FALSE)
 
   # Calculate the mean delta AF between groups
   mean.deltaAF.L.M <- abs(mean(tmp.pool$SIM_AF[which(tmp.pool$group == "L")] - tmp.pool$SIM_AF[which(tmp.pool$group == "M")]))
@@ -198,7 +198,7 @@ process_sims = function(repId, m, thresh, k, mag, N){
       Fst.L.M = fst.L.M.group$Fst[1],
       Fst.M.H = fst.M.H.group$Fst[1],
       Fst.L.H = fst.L.H.group$Fst[1],
-      deltaAF.L.M = mean.deltaAF.L.M, 
+      deltaAF.L.M = mean.deltaAF.L.M,
       deltaAF.H.M = mean.deltaAF.H.M,
       cor.pearson = rawcor.pearson$estimate,
       cor.spearman = rawcor.spearman$estimate,

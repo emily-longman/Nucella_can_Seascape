@@ -56,7 +56,7 @@ afs.Mcali %<>% arrange(desc(latitude))
 # Join with ecovars
 topsnp <- left_join(afs.Mcali, dplyr::select(ecovars, "Site", "sim_eq", "Demographic Cluster"))
 
-# Create variable for AF groups
+# Create variable for groups
 topsnp %<>% mutate(group = case_when(mean_integrated_thk >= 2.1 ~ "Thick",
                                      mean_integrated_thk < 2.1 & mean_integrated_thk >= 1.6 ~ "Mod", 
                                      mean_integrated_thk < 1.6 ~ "Thin"))

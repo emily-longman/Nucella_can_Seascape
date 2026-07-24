@@ -56,8 +56,10 @@ topsnp <- phafs %>%
   left_join(dplyr::select(ecovars, Site, Latitude, sim_eq)) %>%
   arrange(-Latitude)
 
-# Create variable for AF groups
-topsnp$group <- c("L", "L", "L", "L", "M", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H")
+# Create variable for groups
+topsnp %<>% mutate(group = case_when(ph_mean >= 8.0 ~ "H",
+                                     ph_mean < 8.0 & ph_mean >= 7.975 ~ "M", 
+                                     ph_mean < 7.975 ~ "L"))
 
 # Make a pooled object with the raw data
 pool.real <- new("pooldata",
@@ -79,33 +81,33 @@ fst.phylogeo <- computeFST(pool.real,
 # "FSG": estimate of genome-wide within-group differentiation (Fsg)
 # "FGT": estimate of genome-wide between-group differentiation (Fgt)
 
-# Fst between pops with low and med AF
+# Fst between pops with low and med ph
 pool.real.L.M <- new("pooldata",
-                   npools=5, #### Rows = Number of pools
+                   npools=length(which(topsnp$group != "H")), #### Rows = Number of pools
                    nsnp=1, ### Columns = Number of SNPs
-                   refallele.readcount=as.matrix(t(topsnp$Count[1:5])),
-                   readcoverage=as.matrix(t(topsnp$Cov[1:5])),
-                   poolsizes=topsnp$nsnails[1:5] * 2,
-                   poolnames = topsnp$Site[1:5])
-fst.L.M.group <- computeFST(pool.real.L.M, method = "Anova", struct = topsnp$group[1:5], verbose = FALSE)
-# Fst between pops with med and high AF
+                   refallele.readcount=as.matrix(t(topsnp$Count[which(topsnp$group != "H")])),
+                   readcoverage=as.matrix(t(topsnp$Cov[which(topsnp$group != "H")])),
+                   poolsizes=topsnp$nsnails[which(topsnp$group != "H")] * 2,
+                   poolnames = topsnp$Site[which(topsnp$group != "H")])
+fst.L.M.group <- computeFST(pool.real.L.M, method = "Anova", struct = topsnp$group[which(topsnp$group != "H")], verbose = FALSE)
+# Fst between pops with med and high ph
 pool.real.M.H <- new("pooldata",
-                   npools=15, #### Rows = Number of pools
+                   npools=length(which(topsnp$group != "L")), #### Rows = Number of pools
                    nsnp=1, ### Columns = Number of SNPs
-                   refallele.readcount=as.matrix(t(topsnp$Count[5:19])),
-                   readcoverage=as.matrix(t(topsnp$Cov[5:19])),
-                   poolsizes=topsnp$nsnails[5:19] * 2,
-                   poolnames = topsnp$Site[5:19])
-fst.M.H.group <- computeFST(pool.real.M.H, method = "Anova", struct = topsnp$group[5:19], verbose = FALSE)
-# Fst between pops with low and high AF
+                   refallele.readcount=as.matrix(t(topsnp$Count[which(topsnp$group != "L")])),
+                   readcoverage=as.matrix(t(topsnp$Cov[which(topsnp$group != "L")])),
+                   poolsizes=topsnp$nsnails[which(topsnp$group != "L")] * 2,
+                   poolnames = topsnp$Site[which(topsnp$group != "L")])
+fst.M.H.group <- computeFST(pool.real.M.H, method = "Anova", struct = topsnp$group[which(topsnp$group != "L")], verbose = FALSE)
+# Fst between pops with low and high ph
 pool.real.L.H <- new("pooldata",
-                   npools=18, #### Rows = Number of pools
+                   npools=length(which(topsnp$group != "M")), #### Rows = Number of pools
                    nsnp=1, ### Columns = Number of SNPs
-                   refallele.readcount=as.matrix(t(topsnp$Count[-5])),
-                   readcoverage=as.matrix(t(topsnp$Cov[-5])),
-                   poolsizes=topsnp$nsnails[-5] * 2,
-                   poolnames = topsnp$Site[-5])
-fst.L.H.group <- computeFST(pool.real.L.H, method = "Anova", struct = topsnp$group[-5], verbose = FALSE)
+                   refallele.readcount=as.matrix(t(topsnp$Count[which(topsnp$group != "M")])),
+                   readcoverage=as.matrix(t(topsnp$Cov[which(topsnp$group != "M")])),
+                   poolsizes=topsnp$nsnails[which(topsnp$group != "M")] * 2,
+                   poolnames = topsnp$Site[which(topsnp$group != "M")])
+fst.L.H.group <- computeFST(pool.real.L.H, method = "Anova", struct = topsnp$group[which(topsnp$group != "M")], verbose = FALSE)
 
 # Calculate the mean delta AF between groups
 mean.deltaAF.L.M <- abs(mean(topsnp$AF[which(topsnp$group == "L")] - topsnp$AF[which(topsnp$group == "M")]))
