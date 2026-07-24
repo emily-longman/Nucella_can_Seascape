@@ -1,4 +1,4 @@
-# Analyze pH future vary N
+# Analyze pH future vary m
 
 # Clear memory
 rm(list=ls())
@@ -32,6 +32,12 @@ library(RColorBrewer)
 
 # ================================================================================== #
 
+# Color palette
+nb.cols <- 19
+mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
+
+# ================================================================================== #
+
 # Generate output directories
 
 # Figure directory
@@ -40,23 +46,17 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 
 # ================================================================================== #
 
-# Color palette
-nb.cols <- 19
-mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
+# Load data and merge files for each m
 
-# ================================================================================== #
-
-# Load data and merge files for each N
-
-# N values
-Ns <- c(2500, 5000, 10000)
+# m values
+ms <- c(0.1, 0.01, 0.001)
 
 # Loop through each N and extract files and merge
-future_sim_data_varyN <- foreach(N=Ns, .combine="rbind", .errorhandling = "remove")%do%{  
+future_sim_data_vary_m <- foreach(m=ms, .combine="rbind", .errorhandling = "remove")%do%{  
 
   # Create list of file names for data
-  file_names = as.list(dir(path = paste0('data/processed/SLiM/ph_future/ph_vary_N/N_', N ,'/'), pattern = "phclineAFs_future_freq.*"))
-  file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste0('data/processed/SLiM/ph_future/ph_vary_N/N_', N ,'/'), x))))
+  file_names = as.list(dir(path = paste0('data/processed/SLiM/ph_future/ph_vary_m/m_', m ,'/'), pattern = "phclineAFs_future_freq.*"))
+  file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste0('data/processed/SLiM/ph_future/ph_vary_m/m_', m ,'/'), x))))
 
   # Read all the files and perform ABC
   future_sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
@@ -67,7 +67,7 @@ future_sim_data_varyN <- foreach(N=Ns, .combine="rbind", .errorhandling = "remov
       # Load file and add file name identifier
       tmp <- read.table(i) %>%
             mutate(file_name = i) %>%
-            mutate(file_name = str_remove(file_name, pattern = paste0('data/processed/SLiM/ph_future/ph_vary_N/N_', N ,'/phclineAFs_future_freq.'))) %>% 
+            mutate(file_name = str_remove(file_name, pattern = paste0('data/processed/SLiM/ph_future/ph_vary_m/m_', m ,'/phclineAFs_future_freq.'))) %>% 
             mutate(file_name = str_remove(file_name, pattern = ".txt"))
       # Rename pops
       names(tmp)[1:19] = paste("p", 0:18, sep ="")
@@ -87,8 +87,8 @@ future_sim_data_varyN <- foreach(N=Ns, .combine="rbind", .errorhandling = "remov
 }
 
 # Save output
-save(future_sim_data_varyN, file = "data/processed/SLiM/ph_future/ph_vary_N/sim_future_data_varyN.Rdata")
-#load("data/processed/SLiM/ph_future/ph_vary_N/sim_future_data_varyN.Rdata")
+save(future_sim_data_vary_m, file = "data/processed/SLiM/ph_future/ph_vary_m/sim_future_data_vary_m.Rdata")
+#load("data/processed/SLiM/ph_future/ph_vary_m/sim_future_data_vary_m.Rdata")
 
 # ================================================================================== #
 
@@ -98,12 +98,12 @@ names(ecovars)[2] = "Site"
 ecovars %<>% mutate(sim_eq = paste("p", 0:18, sep =""))
 
 # Join
-future_sim_data_varyN %<>% left_join(ecovars, by = "sim_eq")
+future_sim_data_vary_m %<>% left_join(ecovars, by = "sim_eq")
 # Make Site factor
-future_sim_data_varyN$Site <- factor(future_sim_data_varyN$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+future_sim_data_vary_m$Site <- factor(future_sim_data_vary_m$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Average across the iterations
-future_avg <- future_sim_data_varyN %>% group_by(N, year, sim_eq) %>% reframe(AF_fut_avg = mean(AF_fut))
+future_avg <- future_sim_data_vary_m %>% group_by(m, year, sim_eq) %>% reframe(AF_fut_avg = mean(AF_fut))
 
 # Join
 future_avg <- left_join(ecovars, future_avg, by = "sim_eq")
@@ -112,23 +112,23 @@ future_avg$Site <- factor(future_avg$Site, levels=c("FC", "SLR", "SH", "ARA", "C
 
 # ================================================================================== #
 
-# Order N
-future_avg$N <- factor(future_avg$N, levels = c(2500, 5000, 10000))
+# Order m
+future_avg$m <- factor(future_avg$m, levels = c(0.1, 0.01, 0.001))
 
 # Graph AF vs time
-pdf("output/figures/SLiM/ph_future/AF_time_varyN.pdf", width = 10, height = 16)
+pdf("output/figures/SLiM/ph_future/AF_time_vary_m.pdf", width = 10, height = 16)
 ggplot(future_avg, aes(x = year, y = AF_fut_avg, color = Site)) + geom_line(linewidth = 3) + 
-    facet_wrap(~N, ncol = 1) + scale_color_manual(values = mycolors) + 
+    facet_wrap(~m, ncol = 1) + scale_color_manual(values = mycolors) + 
     labs(x = "Years", y = "AF") + theme_linedraw(base_size = 30) + theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
 dev.off()
 
-# Order N
-future_sim_data_varyN$N <- factor(future_sim_data_varyN$N, levels = c(2500, 5000, 10000))
+# Order m
+future_sim_data_vary_m$m <- factor(future_sim_data_vary_m$m, levels = c(0.1, 0.01, 0.001))
 
 # Graph AF vs time - per sim
-pdf("output/figures/SLiM/ph_future/AF_time_varyN_all.pdf", width = 10, height = 16)
-ggplot(future_sim_data_varyN, aes(x = year, y = AF_fut, color = Site, group=interaction(repId, Site))) + geom_line(linewidth = 1, alpha = 0.4) + 
-    facet_wrap(~N, ncol = 1) + scale_color_manual(values = mycolors) + 
+pdf("output/figures/SLiM/ph_future/AF_time_vary_m_all.pdf", width = 10, height = 16)
+ggplot(future_sim_data_vary_m, aes(x = year, y = AF_fut, color = Site, group=interaction(repId, Site))) + geom_line(linewidth = 1, alpha = 0.4) + 
+    facet_wrap(~m, ncol = 1) + scale_color_manual(values = mycolors) + 
     labs(x = "Years", y = "AF") + theme_linedraw(base_size = 30) + theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
 dev.off()
 
@@ -137,9 +137,9 @@ dev.off()
 # Delta AF and level maladapted
 
 # Current AF
-current_AF <- future_sim_data_varyN %>% filter(year == 21) %>% rename(AF_2021 = AF_fut)
+current_AF <- future_sim_data_vary_m %>% filter(year == 21) %>% rename(AF_2021 = AF_fut)
 # Final AF
-final_AF <- future_sim_data_varyN %>% filter(year == 100) %>% rename(AF_2100 = AF_fut)
+final_AF <- future_sim_data_vary_m %>% filter(year == 100) %>% rename(AF_2100 = AF_fut)
 
 # Join
 ph_AF_change <- left_join(current_AF[,-8], final_AF[,-8])
@@ -152,13 +152,13 @@ ph_AF_change %<>% mutate(mal = 1-AF_2100)
 
 # Make Site factor
 ph_AF_change$Site <- factor(ph_AF_change$Site, levels=rev(c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR")))
-# Make N factor 
-ph_AF_change$N <- factor(ph_AF_change$N, levels = c(2500, 5000, 10000))
+# Make m factor 
+ph_AF_change$m <- factor(ph_AF_change$m, levels = c(0.1, 0.01, 0.001))
 
 # Graph delta AF
-pdf("output/figures/SLiM/ph_future/Delta_AF_varyN.pdf", width = 16, height = 10)
+pdf("output/figures/SLiM/ph_future/Delta_AF_vary_m.pdf", width = 16, height = 10)
 ggplot(ph_AF_change, aes(y = Site, x = delta_AF, color = Site)) + geom_boxplot() +
-    facet_wrap(~N, ncol = 4) +
+    facet_wrap(~m, ncol = 4) +
     scale_color_manual(values = rev(mycolors)) + 
     labs(x = "Delta AF", y = "Site") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
 dev.off()

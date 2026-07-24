@@ -92,7 +92,7 @@ ecovars.sims <- cbind(ecovars, env) %>%
 
 # Create function
 process_sims = function(repId, m, thresh, k, mag, N){
-  #repId=1; m=0.001; thresh=7.98; k=0.1; mag=1; N=5000
+  #repId=1; m=0.005; thresh=7.985; k=0.04; mag=1; N=5000
 
   # Extract data for specific parameter combos
   tmp <- sim_Data_melt %>%
@@ -114,6 +114,9 @@ process_sims = function(repId, m, thresh, k, mag, N){
     group_by(sim_eq) %>%
     mutate(SIM_AD = rbinom(1, Cov, AF_true)) %>%
     mutate(SIM_AF = SIM_AD/Cov)
+  
+  # Create variable for AF groups
+  tmp.pool$group <- c("L", "L", "L", "L", "M", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H", "H")
 
   # Create pooled object
   pool.sim <- new("pooldata",
@@ -130,6 +133,45 @@ process_sims = function(repId, m, thresh, k, mag, N){
   fst.phylogeo <- computeFST (pool.sim,
                               method = "Anova",
                               struct = tmp.pool$`Demographic Cluster`, verbose = FALSE)
+  
+
+  # Fst between pops with low and med AF
+  pool.sim.L.M <- new("pooldata",
+                   npools=5, #### Rows = Number of pools
+                   nsnp=1, ### Columns = Number of SNPs
+                   refallele.readcount=as.matrix(t(tmp.pool$SIM_AD[1:5])),
+                   readcoverage=as.matrix(t(tmp.pool$Cov[1:5])),
+                   poolsizes=tmp.pool$nsnails[1:5] * 2,
+                   poolnames = tmp.pool$Site[1:5] )
+  fst.L.M.group <- computeFST (pool.sim.H.M,
+                              method = "Anova",
+                              struct = tmp.pool$group[1:5], verbose = FALSE)
+  # Fst between pops with med and high AF
+  pool.sim.M.H <- new("pooldata",
+                   npools=15, #### Rows = Number of pools
+                   nsnp=1, ### Columns = Number of SNPs
+                   refallele.readcount=as.matrix(t(tmp.pool$SIM_AD[5:19])),
+                   readcoverage=as.matrix(t(tmp.pool$Cov[5:19])),
+                   poolsizes=tmp.pool$nsnails[5:19] * 2,
+                   poolnames = tmp.pool$Site[5:19])
+  fst.M.H.group <- computeFST (pool.sim.M.H,
+                              method = "Anova",
+                              struct = tmp.pool$group[5:19], verbose = FALSE)
+  # Fst between pops with low and high AF
+  pool.sim.L.H <- new("pooldata",
+                   npools=18, #### Rows = Number of pools
+                   nsnp=1, ### Columns = Number of SNPs
+                   refallele.readcount=as.matrix(t(tmp.pool$SIM_AD[-5])),
+                   readcoverage=as.matrix(t(tmp.pool$Cov[-5])),
+                   poolsizes=tmp.pool$nsnails[-5] * 2,
+                   poolnames = tmp.pool$Site[-5])
+  fst.L.H.group <- computeFST (pool.sim.L.H,
+                              method = "Anova",
+                              struct = tmp.pool$group[-5], verbose = FALSE)
+
+  # Calculate the mean delta AF between groups
+  mean.deltaAF.L.M <- mean(tmp.pool$SIM_AF[which(tmp.pool$group == "L")] - tmp.pool$SIM_AF[which(tmp.pool$group == "M")])
+  mean.deltaAF.H.M <- mean(tmp.pool$SIM_AF[which(tmp.pool$group == "H")] - tmp.pool$SIM_AF[which(tmp.pool$group == "M")])
 
   # Raw correlation between mean pH and SIM AF
   rawcor.pearson = cor.test(~ ph_mean+SIM_AF, method = "pearson", data =  tmp.pool)
@@ -156,6 +198,11 @@ process_sims = function(repId, m, thresh, k, mag, N){
       Fsg = fst.phylogeo$snp.Fstats[1],
       Fgt = fst.phylogeo$snp.Fstats[2],
       Fst = fst.phylogeo$snp.Fstats[3],
+      Fst.L.M = fst.L.M.group$Fst[1],
+      Fst.M.H = fst.M.H.group$Fst[1],
+      Fst.L.H = fst.L.H.group$Fst[1],
+      deltaAF.L.M = mean.deltaAF.L.M, 
+      deltaAF.H.M = mean.deltaAF.H.M,
       cor.pearson = rawcor.pearson$estimate,
       cor.spearman = rawcor.spearman$estimate,
       corAF.pearson = rawcorAF.pearson$estimate,

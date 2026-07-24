@@ -32,17 +32,17 @@ library(RColorBrewer)
 
 # ================================================================================== #
 
+# Color palette
+nb.cols <- 19
+mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
+
+# ================================================================================== #
+
 # Generate output directories
 
 # Figure directory
 out_fig_dir <- paste("output/figures/SLiM/ph_future")
 if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
-
-# ================================================================================== #
-
-# Color palette
-nb.cols <- 19
-mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
 
 # ================================================================================== #
 
