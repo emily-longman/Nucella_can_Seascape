@@ -271,13 +271,15 @@ plot(seq(0, 5, by = 0.01), sel(seq(0, 5, by = 0.01), 1.79, 1))
 dev.off()
 
 
+##############
+
 # Visually look at sims to see best match
 # Extract best
-sim_AFs_best <- sim_Data.melt %>%
+sim_AFs_test <- sim_Data.melt %>%
   filter(thresh == 1.775, k == 0.7) %>%
   left_join(dplyr::select(ecovars, Site, sim_eq, shell_thk))
 # Make Site factor
-sim_AFs_best$Site <- factor(sim_AFs_best$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+sim_AFs_test$Site <- factor(sim_AFs_test$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
 pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_v2_test.pdf", width = 5, height = 5)
