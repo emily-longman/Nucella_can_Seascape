@@ -31,6 +31,12 @@ library(RColorBrewer)
 
 # ================================================================================== #
 
+# Color palette
+nb.cols <- 19
+mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
+
+# ================================================================================== #
+
 # Generate output directories
 
 # Bio-Oracle directory
@@ -169,13 +175,6 @@ ph_ssp585_sites_2090 <- ph_ssp585_sites_2090_tmp[nrow(ph_ssp585_sites_2090_tmp):
 write.csv(ph_ssp585_sites_2090, "data/processed/SLiM/ph_future/ph_future_2090_sites.csv", row.names=F)
 
 # ================================================================================== #
-
-# Graph
-
-# Color palette
-nb.cols <- 19
-mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
-
 
 # Graph
 pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle.pdf", width = 6.5, height = 6)
