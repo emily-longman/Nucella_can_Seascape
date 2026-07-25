@@ -20,7 +20,7 @@
 #SBATCH --mem=5G 
 
 # Submit job array
-#SBATCH --array=451-715 #1-450
+#SBATCH --array=1-143 #1-450 #451-715
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -60,9 +60,9 @@ fi
 cd $WORKING_FOLDER/data/processed/SLiM
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "ph_results_morevars6" ]
-then echo "Working ph_results_morevars6 folder exist"; echo "Let's move on."; date
-else echo "Working ph_results_morevars6 folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars6; date
+if [ -d "ph_results_morevars6_mSet" ]
+then echo "Working ph_results_morevars6_mSet folder exist"; echo "Let's move on."; date
+else echo "Working ph_results_morevars6_mSet folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars6_mSet; date
 fi
 
 #--------------------------------------------------------------------------------
@@ -87,15 +87,16 @@ N=`awk -F "\t" '{print $5}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
 echo "Threshold:"${thresh} "k:"${k} "mag:"${mag} "m:"${m} "N:" ${N}
 
 # Set root
-ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_results_morevars6
+ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_results_morevars6_mSet
 
 #--------------------------------------------------------------------------------
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars6
+cd $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars6_mSet
 
 # Loop through iterations
-for i in {1..50}
+#for i in {1..50}
+for i in {51..100}
 do
 
 # Run slim script
