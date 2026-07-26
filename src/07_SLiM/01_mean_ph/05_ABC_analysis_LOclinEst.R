@@ -3,6 +3,9 @@
 # Clear memory
 rm(list=ls())
 
+# Stop exponential
+options(scipen = 999)
+
 # ================================================================================== #
 
 # Set path as main Github repo
@@ -34,7 +37,7 @@ library(minpack.lm)
 
 # Color palette
 nb.cols <- 19
-mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))[-4]
+mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
 
 # ================================================================================== #
 
@@ -61,35 +64,39 @@ real_All <- get(load("data/processed/SLiM/ph_ABC/real_data.Rdata"))
 #sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars4.Rdata"))
 sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars5.Rdata"))
 
+sim_All <- sim_All[which(sim_All$m == "0.005"),]
 # ================================================================================== #
 
 # Estimate means
 
 real_data = dplyr::select(ungroup(real_All), 
                           #Fsg, Fgt, Fst, 
-                          cor.pearson, #cor.spearman, 
+                          Fst.L.M, Fst.M.H, Fst.L.H,
+                          deltaAF.L.M, deltaAF.H.M, 
+                          cor.pearson, cor.spearman, 
                           corAF.pearson, #corAF.spearman, 
-                          #fix1, fix0, poly, 
+                          #fix1, fix0, poly,
                           mean.AF,
                           #asym, xmid, scal,
-                          #p0, p1, p2, p3, p4, p5, p6,    
+                          #p0, p1, p2, p3, p4, p5, p6,
                           #p7, p8, p9, p10, p11, p12,
                           #p13, p14, p15, p16, p17, p18
                           )
 simulated_data = dplyr::select(ungroup(sim_All), 
-                               #Fsg, Fgt, Fst, 
-                               cor.pearson, #cor.spearman, 
-                               corAF.pearson, #corAF.spearman, 
-                               #fix1, fix0, poly, 
-                               mean.AF,
-                               #p0, p1, p2, p3, p4, p5, p6,    
-                               #p7, p8, p9, p10, p11, p12,
-                               #p13, p14, p15, p16, p17, p18
-                               )
-names(simulated_data)[1:2] <- c("cor.pearson", "corAF.pearson")
+                          #Fsg, Fgt, Fst, 
+                          Fst.L.M, Fst.M.H, Fst.L.H,
+                          deltaAF.L.M, deltaAF.H.M, 
+                          cor.pearson, cor.spearman, 
+                          corAF.pearson, #corAF.spearman, 
+                          #fix1, fix0, poly, 
+                          mean.AF,
+                          #p0, p1, p2, p3, p4, p5, p6,
+                          #p7, p8, p9, p10, p11, p12,
+                          #p13, p14, p15, p16, p17, p18
+                          )
 
-#sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k), as.numeric)) 
-sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k, m), as.numeric)) 
+sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k), as.numeric)) 
+#sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k, m), as.numeric)) 
 #sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), m, thresh, k, mag, N ), as.numeric)) 
 #sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k_1, k_2 ), as.numeric)) # EXCLUDE m and N as those are invariant
 
@@ -116,7 +123,7 @@ post_long <- pivot_longer(
   values_to = "value")
 
 # Graph posteriors
-pdf("output/figures/SLiM/ph_ABC/pH_posteriors_morvars5_fewerstats.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph_ABC/pH_posteriors_morvars5_fewerstats_test.pdf", width = 5, height = 5)
 ggplot(post_long, aes(x = value)) +
   geom_density(fill = "steelblue", alpha = 0.5) +
   facet_wrap(parameter~. , scales = "free", ncol = 1) +
@@ -168,15 +175,16 @@ env = c(
 );
 
 
-s <- function(x, z, k, mag) {
-  mag / (1 + exp((x - z)/k)) - (mag/2)
+
+sel <- function(x, z, k) {
+  1 / (1 + exp((x - z)/k)) - 0.5
 }
 # Graph
 pdf("output/figures/SLiM/ph_ABC/pH_selection_curve.pdf", width = 5, height = 5)
-plot(ph$ph_mean, s(ph$ph_mean, 7.988, 0.12, 1))
+plot(ph$ph_mean, sel(ph$ph_mean, 7.985, 0.04))
 dev.off()
 pdf("output/figures/SLiM/ph_ABC/pH_selection_curve_biggerph.pdf", width = 5, height = 5)
-plot(seq(7.8, 8.1, by = 0.01), s(seq(7.8, 8.1, by = 0.01), 7.988, 0.12, 1))
+plot(seq(7.8, 8.1, by = 0.01), sel(seq(7.8, 8.1, by = 0.01), 7.988, 0.12))
 dev.off()
 
 # ================================================================================== #
@@ -198,6 +206,7 @@ topsnp <- phafs %>%
 
 # Reformat Sim data
 # Extract p0-p18
+sim_sub <- sim_All[,c(17:41)]
 sim_sub <- sim_All[,c(12:36)]
 # Change to long format
 #sim_Data.melt <- sim_sub %>%
@@ -239,7 +248,7 @@ sim_AFs_best <- sim_Data.melt %>%
 sim_AFs_best$Site <- factor(sim_AFs_best$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/ph_ABC/sim_AFs_best_morevars5.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph_ABC/sim_AFs_best_morevars5_test.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best, aes(x = AF_true, y = ph_mean, fill = Site)) + geom_point(size = 5, shape = 21, alpha=0.8) + 
   scale_fill_manual(values = mycolors) + labs(x="AF", y="Mean pH") + theme_linedraw(base_size=24) + theme(legend.position = "none")
 dev.off()
@@ -253,7 +262,7 @@ sim_AFs_best_mean <- sim_AFs_best %>%
 sim_AFs_best_mean$Site <- factor(sim_AFs_best_mean$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/ph_ABC/sim_AFs_best_repmeans_morevars5.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph_ABC/sim_AFs_best_repmeans_morevars5_test.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best_mean, aes(x = AF_true_mean, y = ph_mean, fill = Site)) + geom_point(size = 5, shape = 21) + 
   scale_fill_manual(values = mycolors) + labs(x="AF", y="Mean pH") + theme_linedraw(base_size=24) + theme(legend.position = "none")
 dev.off()
