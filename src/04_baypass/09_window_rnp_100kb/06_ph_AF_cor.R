@@ -478,3 +478,15 @@ ggplot(baypass.cor.g27343.PC1.lat.join, aes(x = abs.estimate, fill = group)) +
   labs(x = "|Correlation|", y = "Density") +
   theme_linedraw(base_size = 30)
 dev.off()
+
+# Graph alt
+
+cols_alt <- c(brewer.pal(7, "Oranges")[5], "#757474")
+pdf("output/figures/baypass/outliers/Correlation_abs_ph_baypass_PC1_lat_density_fill_alt.pdf", width = 6, height = 6)
+ggplot(baypass.cor.g27343.PC1.lat.join, aes(x = abs.estimate, fill = group)) +
+  geom_density(alpha = 0.7, lwd = 0.5) + xlim(0,0.478) +
+  scale_fill_manual(values = cols_alt) + 
+  labs(x = "|Correlation|", y = "Density") +
+  theme_linedraw(base_size = 30) + theme(legend.position = "none")
+dev.off()
+
