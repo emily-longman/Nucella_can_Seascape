@@ -167,7 +167,7 @@ sites <- data.frame(
 
 sites <- sites %>% mutate(shape = case_when(site.abrev %in% c("STR", "OCT", "HZD", "PB", "PSN", "SBR", "PL") ~ "S", 
                    site.abrev %in% c("PGP", "BMR", "FR", "VD", "KH", "STC", "PSG", "CBL", "ARA", "SH", "SLR", "FC") ~ "N"))
-sites <- sites %>% mutate(site.abrev = factor(site.abrev, levels = lat)) %>% arrange(site.abrev)
+sites <- sites %>% mutate(site.abrev = factor(site.abrev, levels = latitude)) %>% arrange(site.abrev)
 
 
 # Coordinates of site labels

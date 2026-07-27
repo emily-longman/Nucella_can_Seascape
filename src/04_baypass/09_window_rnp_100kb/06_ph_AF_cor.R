@@ -281,7 +281,8 @@ tmp.cor.sample.PC1.lat$abs.estimate <- abs(tmp.cor.sample.PC1.lat$estimate)
 tmp.cor.PC1.join <- rbind(tmp.cor.g27343.PC1, tmp.cor.sample.PC1)
 
 # Set colors
-cols <- c("#ff7b00", "#757474")
+#cols <- c("#ff7b00", "#757474")
+cols <- c("orange2", "#757474")
 
 # Graph 
 pdf("output/figures/baypass/outliers/Correlation_abs_ph_PC1_density_fill.pdf", width = 11, height = 4)

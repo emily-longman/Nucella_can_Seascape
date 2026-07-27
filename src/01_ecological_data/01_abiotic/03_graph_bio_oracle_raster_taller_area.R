@@ -103,3 +103,25 @@ ggplot(raster_df_ph, aes(x = x, y = y, fill = layer)) +
   theme(legend.title = element_text(size = 26), legend.text = element_text(size = 20), legend.position = c(0.75, 0.85), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
   #theme(plot.title = element_text(hjust=0.5))
 dev.off()
+
+pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_ph_mean_ggplot_taller2.pdf",  width = 6, height = 11) 
+ggplot(raster_df_ph, aes(x = x, y = y, fill = layer)) +
+  geom_raster(aes(fill=layer)) +
+  scale_x_continuous(expand = c(0, 0), breaks = c(-125, -122, -119)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  scale_fill_gradientn(colours=rev(brewer.pal(6, "YlOrRd")), name="mean pH", breaks = c(7.92, 7.98, 8.04)) +
+  coord_fixed(ratio = 1) +  # Fix aspect ratio so the plot is not distorted
+  labs(x = "Longitude", y = "Latitude") + 
+  theme_linedraw(base_size = 32) + 
+  theme(
+    panel.grid.major = element_blank(), # Removes major grid lines
+    panel.grid.minor = element_blank(), # Removes minor grid lines
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
+  theme(legend.title = element_text(size = 26), legend.text = element_text(size = 20), legend.position = c(0.75, 0.85), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+  #theme(plot.title = element_text(hjust=0.5))
+dev.off()
+
+
+# ================================================================================== #
+# ================================================================================== #
+

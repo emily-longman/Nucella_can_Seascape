@@ -183,3 +183,12 @@ ggplot(ph_ssp585_sites, aes(x = decade, y = ph_mean, fill = location)) + geom_po
     scale_fill_manual(values = mycolors) + scale_color_manual(values = mycolors) + 
     labs(x = "Years", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
 dev.off()
+
+pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_alt.pdf", width = 6.5, height = 6)
+ggplot(ph_ssp585_sites, aes(x = decade, y = ph_mean, color = location)) + geom_point(size = 3, shape = 16, alpha = 0.9) +
+    geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
+    geom_hline(yintercept=7.987, col = "black", linetype = "dashed") +
+    ylim(7.6, 8.078) +
+    scale_fill_manual(values = mycolors) + scale_color_manual(values = mycolors) + 
+    labs(x = "Year", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
+dev.off()

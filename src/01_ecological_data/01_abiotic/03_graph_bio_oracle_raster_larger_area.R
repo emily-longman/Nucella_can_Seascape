@@ -53,7 +53,7 @@ bio_oracle_future <- bio_oracle_future %>%
 
 # Set geographic constraints
 latitude_range <- c(32, 46.5)
-longitude_range <- c(-128, -116)
+longitude_range <- c(-125, -118)
 
 # Set study extent
 study_extent <- extent(longitude_range[1], longitude_range[2], latitude_range[1], latitude_range[2])
@@ -63,9 +63,6 @@ raster_resolution <- 0.05
 
 # Create raster layer object - specify study extent, resolution and coordinate reference system
 study_raster <- raster(study_extent, res=raster_resolution, crs="+proj=longlat +datum=WGS84")
-
-# Set color palette
-mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(1000))
 
 # ================================================================================== #
 
@@ -105,8 +102,6 @@ ph_raster <- rasterize(coordinates, study_raster, bio_oracle_2010_ph_mean$ph_mea
 # Rasterize ph data
 ph_future_raster <- rasterize(coordinates, study_raster, bio_oracle_future_ph_mean$ph_mean, fun = mean, na.rm = TRUE)
 
-# Look at structure
-str(temp_raster)
 
 # Graph temperature raster
 pdf("output/figures/enviro/Bio-oracle/Test_Raster_bio-oracle_temp_mean.pdf", width = 3.25, height = 5)
@@ -155,7 +150,7 @@ ggplot(raster_df_temp, aes(x = x, y = y, fill = layer)) +
   theme(legend.title = element_blank(), plot.title = element_text(hjust=0.5))
 dev.off()
 # Graph pH (note: reversed colors since low pH is the stressor)
-pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_ph_mean_ggplot_alt.pdf",  width = 7, height = 8) 
+pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_ph_mean_ggplot_alt.pdf",  width = 7, height = 10.5) 
 ggplot(raster_df_ph, aes(x = x, y = y, fill = layer)) +
   geom_raster(aes(fill=layer)) +
   scale_x_continuous(expand = c(0, 0), breaks = c(-125, -122, -119)) +
@@ -168,10 +163,9 @@ ggplot(raster_df_ph, aes(x = x, y = y, fill = layer)) +
     panel.grid.major = element_blank(), # Removes major grid lines
     panel.grid.minor = element_blank(), # Removes minor grid lines
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
-  theme(legend.title = element_text(size = 26), legend.text = element_text(size = 20), legend.position = c(0.75, 0.80), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+  theme(legend.title = element_text(size = 26), legend.text = element_text(size = 20), legend.position = c(0.73, 0.86), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
   #theme(plot.title = element_text(hjust=0.5))
 dev.off()
-
 # Graph pH future (note: reversed colors since low pH is the stressor)
 pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_ph_mean_FUTURE_ggplot_alt.pdf",  width = 6, height = 8) 
 ggplot(raster_df_ph_future, aes(x = x, y = y, fill = layer)) +
@@ -187,16 +181,60 @@ ggplot(raster_df_ph_future, aes(x = x, y = y, fill = layer)) +
 dev.off()
 
 
-# Graph pH future (note: reversed colors since low pH is the stressor)
-pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_ph_mean_TEMPORAL_DIFF_ggplot_alt.pdf",  width = 6, height = 8) 
+# Graph Delta pH future (note: reversed colors since low pH is the stressor)
+pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_DELTA_ph_mean_ggplot.pdf",  width = 6, height = 8.4) 
 ggplot(raster_df_ph_diff, aes(x = x, y = y, fill = diff)) +
   geom_raster(aes(fill=diff)) +
   scale_x_continuous(expand = c(0, 0)) +
   scale_y_continuous(expand = c(0, 0)) +
-  scale_fill_gradientn(colours=rev(brewer.pal(6, "YlOrRd")), name="ph diff") +
+  scale_fill_gradientn(colours=rev(brewer.pal(6, "YlOrRd")), name="Delta pH") +
   coord_fixed(ratio = 1) +  # Fix aspect ratio so the plot is not distorted
-  theme_bw(base_size = 27) + #xlim(c(-126, -117)) + ylim(c(32, 47)) +
+  theme_linedraw(base_size = 30) + 
+  theme(
+    panel.grid.major = element_blank(), # Removes major grid lines
+    panel.grid.minor = element_blank(), # Removes minor grid lines
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
   labs(x = "Longitude", y = "Latitude") +
-  theme(legend.title = element_text(size = 20), legend.text = element_text(size = 16), legend.position = c(0.75, 0.53), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.7, 0.82), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
   #theme(plot.title = element_text(hjust=0.5))
 dev.off()
+
+
+
+sites <- data.frame(
+  longitude = c(-124.0593, -124.0848, -124.1148, -124.4015, -124.5647, -124.2529, -124.0809, -123.7895, -123.8036, 
+                -123.2551, -123.0740, -122.3976, -121.9537, -121.9290, -121.3187, -121.2868, -120.8838, -120.6399, -120.6157),
+  latitude = c(44.83777, 44.50540, 44.24999, 43.30402, 42.84097, 41.77121, 40.03011, 39.60461, 39.28090, 38.51198, 38.31900, 
+               37.18506, 36.51939, 36.44750, 35.72893, 35.66549, 35.28994, 34.88117, 34.73024),
+  Site = c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+
+# Make Site factor
+sites$Site <- factor(sites$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+
+
+mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(19))
+#colors.reorder <- mycolors[c(19,2,3,4,11,5,1,10,17,14,6,8,7,13,9,18,16,12,15)]
+
+#colors <- colorRampPalette(c("#000f80", "#3c898d", "#3c9638"))
+
+pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_DELTA_ph_mean_ggplot.pdf",  width = 6, height = 8.4) 
+ggplot(raster_df_ph_diff, aes(x = x, y = y, fill = diff)) +
+  geom_raster(aes(fill=diff)) +
+  scale_fill_gradientn(colours=rev(brewer.pal(6, "YlOrRd")), name="Delta pH") +
+  geom_point(data = sites, aes(x = longitude, y = latitude, color = Site), inherit.aes = FALSE, size = 7) +
+  scale_color_manual(values = mycolors) +
+  #scale_color_manual(values = colors(19)) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  coord_fixed(ratio = 1) +  # Fix aspect ratio so the plot is not distorted
+  theme_linedraw(base_size = 30) + 
+  theme(
+    panel.grid.major = element_blank(), # Removes major grid lines
+    panel.grid.minor = element_blank(), # Removes minor grid lines
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
+  labs(x = "Longitude", y = "Latitude") +
+  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.7, 0.82), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid")) + guides(color = "none")
+  #theme(plot.title = element_text(hjust=0.5))
+dev.off()
+
+

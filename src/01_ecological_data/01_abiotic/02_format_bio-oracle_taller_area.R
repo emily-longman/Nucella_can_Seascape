@@ -25,27 +25,36 @@ library(tidyverse)
 # ================================================================================== #
 # ================================================================================== #
 
-# Present day data
+# Load data
 
-# Read in Bio-oracle data
+# Read in Bio-oracle present data
 ph <- read.csv("data/raw/Bio-oracle/present/ph_baseline_2000_2018_depthsurf_taller_area.csv", header=T)
+ph_future <- read.csv("data/raw/Bio-oracle/future/ph_ssp585_2020_2100_depthsurf_taller_area.csv", header=T)
 
 # ================================================================================== #
 
-# Combine datasets into one large dataset
-bio_oracle <- ph
-
 # Remove first row (i.e. units)
-bio_oracle <- bio_oracle[-1,]
+ph <- ph[-1,]
 
 # Change latitude and longitude to numeric
-bio_oracle <- bio_oracle %>%
+ph <- ph %>%
 mutate(latitude = as.numeric(latitude), longitude = as.numeric(longitude))
 
 # ================================================================================== #
 
 # Write table
-write.csv(bio_oracle, "data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_taller_area.csv", row.names=FALSE)
+write.csv(ph, "data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_taller_area.csv", row.names=FALSE)
 
 # ================================================================================== #
+
+# Remove first row (i.e. units)
+ph_future <- ph_future[-1,]
+
+# Change latitude and longitude to numeric
+ph_future <- ph_future %>%
+mutate(latitude = as.numeric(latitude), longitude = as.numeric(longitude))
+
 # ================================================================================== #
+
+# Write table
+write.csv(ph_future, "data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_ph_future_taller_area.csv", row.names=FALSE)

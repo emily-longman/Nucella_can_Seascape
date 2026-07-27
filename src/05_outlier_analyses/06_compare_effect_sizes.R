@@ -366,3 +366,12 @@ ggplot(Mcali.outliers.outlier, aes(x = AF, y = mean_integrated_thk, shape = shap
   guides(fill = guide_legend(override.aes = list(shape = c(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 23, 23, 23, 23, 23, 23, 23), size = 8)), shape = "none")
 dev.off()
 
+
+pdf("output/figures/outlier_analyses/Mcali_AF_McaliThk_legend.pdf", width = 9, height = 9)
+ggplot(Mcali.outliers.outlier, aes(x = AF, y = mean_integrated_thk, shape = shape, fill = Site)) +
+  geom_point(alpha=0.8, size = 6) + scale_shape_manual(values = c(21, 23)) + scale_fill_manual(values = viridiscolors) + 
+  labs(x="Allele Frequency", y=expression(paste(italic("M. californianus"), " thickness"))) + 
+  theme_linedraw(base_size = 30) + 
+  guides(fill = guide_legend(override.aes = list(shape = c(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 23, 23, 23, 23, 23, 23, 23), size = 8)), shape = "none")
+dev.off()
+

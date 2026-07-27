@@ -46,10 +46,17 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 
 # ================================================================================== #
 
+# Load ecovars
+ecovars <- fread("guide_files/Nucella_ph_shellt.txt")
+names(ecovars)[2] = "Site"
+ecovars %<>% mutate(sim_eq = paste("p", 0:18, sep =""))
+
+# ================================================================================== #
+
 # Load data and merge files for each m
 
 # m values
-ms <- c(0.1, 0.01, 0.001)
+ms <- c(0.01, 0.001, 0.0001)
 
 # Loop through each N and extract files and merge
 future_sim_data_vary_m <- foreach(m=ms, .combine="rbind", .errorhandling = "remove")%do%{  
@@ -92,11 +99,6 @@ save(future_sim_data_vary_m, file = "data/processed/SLiM/ph_future/ph_vary_m/sim
 
 # ================================================================================== #
 
-# Load ecovars
-ecovars <- fread("guide_files/Nucella_ph_shellt.txt")
-names(ecovars)[2] = "Site"
-ecovars %<>% mutate(sim_eq = paste("p", 0:18, sep =""))
-
 # Join
 future_sim_data_vary_m %<>% left_join(ecovars, by = "sim_eq")
 # Make Site factor
@@ -112,8 +114,10 @@ future_avg$Site <- factor(future_avg$Site, levels=c("FC", "SLR", "SH", "ARA", "C
 
 # ================================================================================== #
 
+# Graph AFs through time
+
 # Order m
-future_avg$m <- factor(future_avg$m, levels = c(0.1, 0.01, 0.001))
+future_avg$m <- factor(future_avg$m, levels = c(0.01, 0.001, 0.0001))
 
 # Graph AF vs time
 pdf("output/figures/SLiM/ph_future/AF_time_vary_m.pdf", width = 10, height = 16)
@@ -123,7 +127,7 @@ ggplot(future_avg, aes(x = year, y = AF_fut_avg, color = Site)) + geom_line(line
 dev.off()
 
 # Order m
-future_sim_data_vary_m$m <- factor(future_sim_data_vary_m$m, levels = c(0.1, 0.01, 0.001))
+future_sim_data_vary_m$m <- factor(future_sim_data_vary_m$m, levels = c(0.01, 0.001, 0.0001))
 
 # Graph AF vs time - per sim
 pdf("output/figures/SLiM/ph_future/AF_time_vary_m_all.pdf", width = 10, height = 16)
@@ -153,7 +157,7 @@ ph_AF_change %<>% mutate(mal = 1-AF_2100)
 # Make Site factor
 ph_AF_change$Site <- factor(ph_AF_change$Site, levels=rev(c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR")))
 # Make m factor 
-ph_AF_change$m <- factor(ph_AF_change$m, levels = c(0.1, 0.01, 0.001))
+ph_AF_change$m <- factor(ph_AF_change$m, levels = c(0.01, 0.001, 0.0001))
 
 # Graph delta AF
 pdf("output/figures/SLiM/ph_future/Delta_AF_vary_m.pdf", width = 16, height = 10)
@@ -161,4 +165,60 @@ ggplot(ph_AF_change, aes(y = Site, x = delta_AF, color = Site)) + geom_boxplot()
     facet_wrap(~m, ncol = 4) +
     scale_color_manual(values = rev(mycolors)) + 
     labs(x = "Delta AF", y = "Site") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
+dev.off()
+
+# ================================================================================== #
+
+# When does the allele even get to the northern most populations
+
+min_func <- function(x) {
+if (all(is.na(x))) (100) else min(x, na.rm = TRUE)
+}
+
+# Loop through the iterations and calc when allele gets to SLR and FC
+future_sim_north <-
+    foreach(mig=levels(future_sim_data_vary_m$m), .combine="rbind", .errorhandling = "remove")%do%{  
+        # Filter for m
+        tmp <- future_sim_data_vary_m %>% filter(m == mig)
+        
+        # Loop through each rep
+        foreach(i=unique(tmp$repId), .combine="rbind", .errorhandling = "remove")%do%{  
+        # Filter per rep
+        tmp2 <- tmp %>% filter(repId == i)
+
+        # Make table that calculates when SLR and FC first get the allele
+        o =
+        data.frame(
+        repId = i,
+        m = mig,
+        SH = min_func(tmp2$year[which(tmp2$Site == "SH" & tmp2$AF_fut > 0)])+2000,
+        SLR = min_func(tmp2$year[which(tmp2$Site == "SLR" & tmp2$AF_fut > 0)])+2000,
+        FC = min_func(tmp2$year[which(tmp2$Site == "FC" & tmp2$AF_fut > 0)])+2000)
+    }
+}
+
+# Reformat
+future_sim_north_melt <- future_sim_north %>%
+  reshape2::melt(id = c("repId","m"),
+                 variable.name = "Site",
+                 value.name = "year")
+
+# Make m factor
+future_sim_north_melt$m <- factor(future_sim_north_melt$m, levels = c(0.01, 0.001, 0.0001))
+
+
+# Graph
+pdf("output/figures/SLiM/ph_future/AF_OR_pops_vary_m.pdf", width = 10, height = 6)
+ggplot(future_sim_north_melt, aes(y = year, x = Site, fill = m)) + geom_boxplot() +
+    scale_fill_manual(values = colorRampPalette(brewer.pal(9, "Greys"))(3)) + 
+    labs(x = "", y = "Year") + theme_linedraw(base_size = 30)
+dev.off()
+
+pdf("output/figures/SLiM/ph_future/AF_OR_pops_vary_m_alt.pdf", width = 8, height = 8.5)
+ggplot(future_sim_north_melt, aes(y = year, x = m, fill = Site, color = Site)) + geom_violin() +
+    scale_fill_manual(values = rev(mycolors)[17:19]) + scale_color_manual(values = rev(mycolors)[17:19]) + 
+    ylim(2020, 2100) +
+    labs(x = "Migration", y = "Year") + theme_linedraw(base_size = 32) + 
+    guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
+    theme(legend.position = c(0.2, 0.82), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()

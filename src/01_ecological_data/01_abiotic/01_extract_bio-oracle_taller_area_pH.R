@@ -11,7 +11,7 @@ rm(list=ls())
 
 # Set path as main Github repo
 # Install and load package
-install.packages(c('rprojroot'))
+#install.packages(c('rprojroot'))
 library(rprojroot)
 # Specify root path
 root_path <- find_root_file(criterion = has_file("README.md"))
@@ -103,4 +103,57 @@ for (dataset in datasets) {
 }
 
 
-# Note: upload these files to the appropriate folder on the VACC
+# ================================================================================== #
+# ================================================================================== #
+
+
+# Extract future day data for range of sites
+
+# Define time, lat, and long (set lat and long to fully encompass all sites)
+time = c('2080-01-01T00:00:00Z', '2090-01-01T00:00:00Z')
+latitude = c(32, 48.5)
+longitude = c(-118.5, -125)
+
+# Set constraints
+constraints = list(time, latitude, longitude)
+names(constraints) = c("time", "latitude", "longitude")
+
+# ================================================================================== #
+
+# Future data
+
+# Set dataset IDs
+pH_SSP585 <- "ph_ssp585_2020_2100_depthsurf"
+
+# Specify datasets and summary statistics to download 
+datasets <- list(
+  list(dataset_id = pH_SSP585, variables = c("ph_min", "ph_mean"),
+       constraints = constraints, fmt = "csv", directory = out_dir_future))
+
+
+# Download datasets using for loop
+for (dataset in datasets) {
+  
+  dataset_id <- dataset$dataset_id
+  variables <- dataset$variables
+  constraints <- dataset$constraints
+  
+  # List files before downloading
+  files_before <- list.files(out_dir_future, full.names = TRUE)
+  # Download dataset
+  download_layers(dataset_id, variables = variables, constraints = constraints, fmt = "csv", directory = out_dir_future)
+  # List files after downloading
+  files_after <- list.files(out_dir_future, full.names = TRUE)
+  # Identify the newly downloaded file
+  new_file <- setdiff(files_after, files_before)
+  
+  # Rename the file to match the dataset ID
+  if (length(new_file) == 1) {
+    new_name <- file.path(out_dir_future, paste0(dataset_id, "_taller_area.csv"))
+    file.rename(new_file, new_name)
+    message("Rename ", new_file, " to ", new_name)
+  } else {
+    message("No new file found for ", dataset_id, " or multiple new files detected.")
+  }
+}
+

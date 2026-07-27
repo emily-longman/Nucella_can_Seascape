@@ -149,6 +149,7 @@ afs.ph <- afs.ph %>% mutate(shape = case_when(Site %in% c("STR", "OCT", "HZD", "
 viridiscolors <- viridis(n=19)
 
 # Subset so only SNPs with BF > 20 or > 18, etc
+afs.ph.topsnp <- afs.ph %>% filter(SNP_id %in% bf.ph.mean.sum.top.win[which(bf.ph.mean.sum.top.win$bf_db.mean > 24),]$SNP_id)
 afs.ph.BF22 <- afs.ph %>% filter(SNP_id %in% bf.ph.mean.sum.top.win[which(bf.ph.mean.sum.top.win$bf_db.mean > 22),]$SNP_id)
 afs.ph.BF20 <- afs.ph %>% filter(SNP_id %in% bf.ph.mean.sum.top.win[which(bf.ph.mean.sum.top.win$bf_db.mean > 20),]$SNP_id)
 afs.ph.BF19 <- afs.ph %>% filter(SNP_id %in% bf.ph.mean.sum.top.win[which(bf.ph.mean.sum.top.win$bf_db.mean > 19),]$SNP_id)
@@ -164,8 +165,19 @@ write.csv(afs.ph.g27343.BF.POD, file = "data/processed/baypass/afs.ph.g27343.BF.
 pca.df <- read.csv("data/processed/outlier_analyses/pca.csv")
 colnames(pca.df)[1] <- "Site"
 # Join data
+afs.ph.topsnp <- left_join(afs.ph.topsnp, pca.df)
 afs.ph.BF20 <- left_join(afs.ph.BF20, pca.df)
 
+# Graph and color by Site - topsnp
+pdf("output/figures/baypass/outliers/pH_g27343_topsnp_PC1.pdf", width = 6, height = 6)
+ggplot(afs.ph.topsnp, aes(x=AF, y=ph_mean, shape=shape, fill=PC1)) +
+  geom_point(alpha=0.9, size = 10) + scale_shape_manual(values = c(21, 23)) + labs(x="Allele Frequency", y="mean pH") +
+  scale_x_continuous(breaks = seq(0, 1, by = 0.5)) + scale_y_continuous(limits = c(7.92, 8.03), breaks = c(7.95, 8.0)) +
+  scale_fill_gradientn(colours=brewer.pal(9, "RdGy")) +
+  theme_linedraw(base_size = 30) + 
+  theme(strip.background = element_rect(fill="grey"), strip.text = element_text(colour = 'black', size = 18, margin = margin(t=6, r=6, b=6, l=6))) +
+  theme(legend.position="none")
+dev.off()
 # Graph and color by Site - BF 22
 pdf("output/figures/baypass/outliers/pH_g27343_BF22.pdf", width = 9, height = 3.75)
 ggplot(afs.ph.BF22, aes(x=AF, y=ph_mean, shape=shape, fill=Site)) +
@@ -318,6 +330,10 @@ baypass.ph.xtx.POD.sum <- baypass.ph.xtx.POD %>% group_by(run) %>% reframe(XtXst
 # Average quantiles across POD runs
 baypass.ph.xtx.POD.thr <- baypass.ph.xtx.POD.sum %>% group_by(thr) %>% summarize(XtXst_mean=mean(XtXst), M_XtX_mean = mean(M_XtX))
 
+# Save thresholds
+save(baypass.ph.xtx.POD.thr, file = "data/processed/baypass/abiotic/ph_mean_POD_thr_xtx.Rdata")
+load("data/processed/baypass/abiotic/ph_mean_POD_thr_xtx.Rdata")
+
 # ================================================================================== #
 
 # Graph xtx for top window
@@ -407,4 +423,44 @@ ggplot(baypass.ph.top.win, aes(y=bf_db.mean, x=pos/1000, col = M_XtX_mean)) + la
   geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red", linetype="dashed") +
   geom_hline(yintercept=0, col="black", linetype="solid") +
   theme_linedraw(base_size=30) + theme(legend.position = "none")
+dev.off()
+
+colors_new <- colorRampPalette(c("lightskyblue1", "pink1", "violetred1"))
+colors_new <- colorRampPalette(c("#663300", "tan", "orange2" ))
+colors_new <- colorRampPalette(c("#8B0000", "darksalmon", "#FFDAB9"))
+
+# Make just top snp a different shape
+pdf("output/figures/baypass/window_summary/baypass_ph_mean_BF_xtx_topwin_alt3.pdf", width = 8, height = 6)
+ggplot(baypass.ph.top.win, aes(y=bf_db.mean, x=pos/1000, col = M_XtX_mean)) + labs(x="Position (kb)", y="BF")+
+  geom_rect(aes(xmin=1/1000, xmax=58041/1000, ymin=-Inf, ymax=Inf), color="grey" , fill="grey", alpha=0.5) +
+  #geom_point(alpha=0.75, size=6) + 
+  geom_point(alpha=0.85, size=8, aes(shape = cut(bf_db.mean, c(-Inf, 20, Inf)))) + 
+  geom_point(data = baypass.ph.top.win[which(baypass.ph.top.win$bf_db.mean>24),], size=7, aes(shape = cut(bf_db.mean, c(-Inf, 20, Inf)))) +
+  geom_point(data = baypass.ph.top.win[which(baypass.ph.top.win$bf_db.mean>24),], shape = 24, size = 7, color = "black", fill = "transparent") +
+  #geom_point(data = baypass.ph.top.win[which(baypass.ph.top.win$bf_db.mean>20),], aes(y=bf_db.mean, x=pos/1000, fill = M_XtX_mean), shape = 24, color = "black") +
+  ylim(-13,26.5) +
+  #scale_shape_manual(values = c(21, 24)) +
+  #scale_color_gradient(low = "#d7dbf6", high = "blue", name=expression(italic("X"^T*"X"))) + 
+  scale_color_gradientn(colours=colors_new(100), name=expression(italic("X"^T*"X"))) +
+  scale_fill_gradientn(colours=colors_new(100), name=expression(italic("X"^T*"X"))) +
+  geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red", linetype="dashed") +
+  geom_hline(yintercept=0, col="black", linetype="solid") +
+  theme_linedraw(base_size=30) + theme(legend.position = "none")
+dev.off()
+pdf("output/figures/baypass/window_summary/baypass_ph_mean_BF_xtx_topwin_alt3_scale.pdf", width = 8, height = 6)
+ggplot(baypass.ph.top.win, aes(y=bf_db.mean, x=pos/1000, col = M_XtX_mean)) + labs(x="Position (kb)", y="BF")+
+  geom_rect(aes(xmin=1/1000, xmax=58041/1000, ymin=-Inf, ymax=Inf), color="grey" , fill="grey", alpha=0.5) +
+  #geom_point(alpha=0.75, size=6) + 
+  geom_point(alpha=0.85, size=8, aes(shape = cut(bf_db.mean, c(-Inf, 20, Inf)))) + 
+  geom_point(data = baypass.ph.top.win[which(baypass.ph.top.win$bf_db.mean>24),], size=7, aes(shape = cut(bf_db.mean, c(-Inf, 20, Inf)))) +
+  geom_point(data = baypass.ph.top.win[which(baypass.ph.top.win$bf_db.mean>24),], shape = 24, size = 7, color = "black", fill = "transparent") +
+  #geom_point(data = baypass.ph.top.win[which(baypass.ph.top.win$bf_db.mean>20),], aes(y=bf_db.mean, x=pos/1000, fill = M_XtX_mean), shape = 24, color = "black") +
+  ylim(-13,26.5) +
+  #scale_shape_manual(values = c(21, 24)) +
+  #scale_color_gradient(low = "#d7dbf6", high = "blue", name=expression(italic("X"^T*"X"))) + 
+  scale_color_gradientn(colours=colors_new(100), name=expression(italic("X"^T*"X"))) +
+  scale_fill_gradientn(colours=colors_new(100), name=expression(italic("X"^T*"X"))) +
+  geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red", linetype="dashed") +
+  geom_hline(yintercept=0, col="black", linetype="solid") +
+  theme_linedraw(base_size=30)
 dev.off()

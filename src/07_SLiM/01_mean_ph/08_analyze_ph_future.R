@@ -46,6 +46,13 @@ mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
 
 # ================================================================================== #
 
+# Load ecovars
+ecovars <- fread("guide_files/Nucella_ph_shellt.txt")
+names(ecovars)[2] = "Site"
+ecovars %<>% mutate(sim_eq = paste("p", 0:18, sep =""))
+
+# ================================================================================== #
+
 # Load data and merge files
 
 # Create list of file names for data
@@ -80,18 +87,29 @@ future_sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "r
 
 # Save output
 save(future_sim_data, file = "data/processed/SLiM/ph_future/ph_results/sim_future_data.Rdata")
-write.csv(future_sim_data, file = "data/processed/SLiM/ph_future/ph_results/sim_future_data.csv", row.names=F)
 #load("data/processed/SLiM/ph_future/ph_results/sim_future_data.Rdata")
+
+# Join with ecovars
+future_sim_data <- left_join(future_sim_data, ecovars, by = "sim_eq")
+
+# ================================================================================== #
+
+# Graph AFs through time
+
+# Make Site factor
+future_sim_data$Site <- factor(future_sim_data$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+
+# Graph all sim AFs through time
+pdf("output/figures/SLiM/ph_future/AF_time_all.pdf", width = 12, height = 7)
+ggplot(future_sim_data, aes(x = year, y = AF_fut, color = Site, group=interaction(repId, Site))) + geom_line(linewidth = 1, alpha = 0.4) + 
+    scale_color_manual(values = mycolors) + 
+    labs(x = "Years", y = "AF") + theme_linedraw(base_size = 32) + theme(legend.position = "none")
+dev.off()
 
 # ================================================================================== #
 
 # Average across the iterations
 future_avg <- future_sim_data %>% group_by(year, sim_eq) %>% reframe(AF_fut_avg = mean(AF_fut))
-
-# Load ecovars
-ecovars <- fread("guide_files/Nucella_ph_shellt.txt")
-names(ecovars)[2] = "Site"
-ecovars %<>% mutate(sim_eq = paste("p", 0:18, sep =""))
 
 # Join
 future_avg <- left_join(ecovars, future_avg, by = "sim_eq")
@@ -101,11 +119,20 @@ future_avg$Site <- factor(future_avg$Site, levels=c("FC", "SLR", "SH", "ARA", "C
 
 # ================================================================================== #
 
+# Graph mean (of reps) AFs through time
+
 # Graph AF vs time
-pdf("output/figures/SLiM/ph_future/AF_time.pdf", width = 8, height = 5)
+pdf("output/figures/SLiM/ph_future/AF_time.pdf", width = 8, height = 8.5)
 ggplot(future_avg, aes(x = (year+2000), y = AF_fut_avg, color = Site)) + geom_line(linewidth = 4) + 
     scale_color_manual(values = mycolors) + 
-    labs(x = "Years", y = "AF") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
+    labs(x = "Year", y = "AF") + theme_linedraw(base_size = 32) + theme(legend.position = "none")
+dev.off()
+
+# Graph AF vs time
+pdf("output/figures/SLiM/ph_future/AF_time_wider.pdf", width = 12, height = 7)
+ggplot(future_avg, aes(x = (year+2000), y = AF_fut_avg, color = Site)) + geom_line(linewidth = 4) + 
+    scale_color_manual(values = mycolors) + 
+    labs(x = "Year", y = "AF") + theme_linedraw(base_size = 32) + theme(legend.position = "none")
 dev.off()
 
 # ================================================================================== #
@@ -194,7 +221,7 @@ topsnp <- phafs %>%
   left_join(dplyr::select(ecovars, Site, Latitude, sim_eq)) %>%
   arrange(-Latitude)
 
-# Loop through pops
+# Loop through pops - QUESTION: unsure if wii should be 1!!!
 ph_w_current <- foreach(i=1:19, .combine="rbind", .errorhandling = "remove")%do%{  
   #message(ecovars$Site[i])
   # Extract current pH
@@ -244,7 +271,7 @@ dev.off()
 # Genetic Load in 2100
 
 # Load future ph lms
-ph_future_lm <- read.csv("data/processed/SLiM/ph_future/ph_future_lm.csv")
+s <- read.csv("data/processed/SLiM/ph_future/ph_future_lm.csv")
 
 # Loop through pops
 ph_w_future <- foreach(i=1:19, .combine="rbind", .errorhandling = "remove")%do%{  
@@ -252,7 +279,7 @@ ph_w_future <- foreach(i=1:19, .combine="rbind", .errorhandling = "remove")%do%{
   # Extract env at 2100
   env_i = ph_future_lm$slope[i]*80 + ph_future_lm$intercept[i]
   # Calculate selection
-  s_i = s(env_i, 7.996, 0.09)
+  s_i = s(env_i, 7.987, 0.03)
   # Calc p and q
   p_i = ph_AF_change$final_AF[i]
   q_i = 1-p_i
