@@ -83,7 +83,7 @@ cd $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_vary_m/m_${m}
 ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_future/ph_vary_m/m_${m}
 
 # Loop through iterations
-for i in {1..100}
+for i in {1..500}
 do
 
 # Run slim script
