@@ -73,7 +73,7 @@ ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results/per_simcycle
 cd $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results/per_simcycle
 
 # Loop through iterations
-for i in {1..100}
+for i in {1..500}
 do
 
 # Run slim script
