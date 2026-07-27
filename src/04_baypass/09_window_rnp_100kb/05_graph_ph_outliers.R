@@ -427,7 +427,9 @@ dev.off()
 
 colors_new <- colorRampPalette(c("lightskyblue1", "pink1", "violetred1"))
 colors_new <- colorRampPalette(c("#663300", "tan", "orange2" ))
-colors_new <- colorRampPalette(c("#8B0000", "darksalmon", "#FFDAB9"))
+colors_new <- colorRampPalette(c("#a95808","darksalmon", "#FFDAB9"))
+colors_new <- colorRampPalette(c("tan", "#f5a661", "#f59612", "#e47404"))
+
 
 # Make just top snp a different shape
 pdf("output/figures/baypass/window_summary/baypass_ph_mean_BF_xtx_topwin_alt3.pdf", width = 8, height = 6)
@@ -440,9 +442,8 @@ ggplot(baypass.ph.top.win, aes(y=bf_db.mean, x=pos/1000, col = M_XtX_mean)) + la
   #geom_point(data = baypass.ph.top.win[which(baypass.ph.top.win$bf_db.mean>20),], aes(y=bf_db.mean, x=pos/1000, fill = M_XtX_mean), shape = 24, color = "black") +
   ylim(-13,26.5) +
   #scale_shape_manual(values = c(21, 24)) +
-  #scale_color_gradient(low = "#d7dbf6", high = "blue", name=expression(italic("X"^T*"X"))) + 
-  scale_color_gradientn(colours=colors_new(100), name=expression(italic("X"^T*"X"))) +
-  scale_fill_gradientn(colours=colors_new(100), name=expression(italic("X"^T*"X"))) +
+  scale_color_gradientn(colours=brewer.pal(7, "Oranges")[1:5], name=expression(italic("X"^T*"X"))) +
+  scale_fill_gradientn(colours=brewer.pal(7, "Oranges")[1:5], name=expression(italic("X"^T*"X"))) +
   geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red", linetype="dashed") +
   geom_hline(yintercept=0, col="black", linetype="solid") +
   theme_linedraw(base_size=30) + theme(legend.position = "none")
@@ -458,8 +459,8 @@ ggplot(baypass.ph.top.win, aes(y=bf_db.mean, x=pos/1000, col = M_XtX_mean)) + la
   ylim(-13,26.5) +
   #scale_shape_manual(values = c(21, 24)) +
   #scale_color_gradient(low = "#d7dbf6", high = "blue", name=expression(italic("X"^T*"X"))) + 
-  scale_color_gradientn(colours=colors_new(100), name=expression(italic("X"^T*"X"))) +
-  scale_fill_gradientn(colours=colors_new(100), name=expression(italic("X"^T*"X"))) +
+  scale_color_gradientn(colours=brewer.pal(7, "Oranges")[1:5], name=expression(italic("X"^T*"X"))) +
+  scale_fill_gradientn(colours=brewer.pal(7, "Oranges")[1:5], name=expression(italic("X"^T*"X"))) +
   geom_hline(yintercept=bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)], col="red", linetype="dashed") +
   geom_hline(yintercept=0, col="black", linetype="solid") +
   theme_linedraw(base_size=30)
