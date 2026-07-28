@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=Mcali_slim_v5
+#SBATCH --job-name=Mcali_slim_v6
 
 # Specify partition
 #SBATCH --partition=general
@@ -20,7 +20,7 @@
 #SBATCH --mem=10G 
 
 # Submit job array
-#SBATCH --array=451-990 #1-450 #1-990
+#SBATCH --array=1-900
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -60,15 +60,15 @@ fi
 cd $WORKING_FOLDER/data/processed/SLiM
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "Mcali_results_v5" ]
-then echo "Working Mcali_results_v5 folder exist"; echo "Let's move on."; date
-else echo "Working Mcali_results_v5 folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/Mcali_results_v5; date
+if [ -d "Mcali_results_v6" ]
+then echo "Working Mcali_results_v6 folder exist"; echo "Let's move on."; date
+else echo "Working Mcali_results_v6 folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/Mcali_results_v6; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Guide file 
-GUIDE_FILE=$WORKING_FOLDER/guide_files/slim_Mcali_guide_file_v5.txt
+GUIDE_FILE=$WORKING_FOLDER/guide_files/slim_Mcali_guide_file_v6.txt
 
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers.
 # Threshold      # k         # mag      # m         #N
@@ -87,12 +87,12 @@ N=`awk -F "\t" '{print $5}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
 echo "Threshold:"${thresh} "k:"${k} "mag:"${mag} "m:"${m} "N:"${N}
 
 # Set root
-ROOT=$WORKING_FOLDER/data/processed/SLiM/Mcali_results_v5
+ROOT=$WORKING_FOLDER/data/processed/SLiM/Mcali_results_v6
 
 #--------------------------------------------------------------------------------
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/SLiM/Mcali_results_v5
+cd $WORKING_FOLDER/data/processed/SLiM/Mcali_results_v6
 
 # Loop through iterations
 for i in {1..30}

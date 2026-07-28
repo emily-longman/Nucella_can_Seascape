@@ -206,9 +206,6 @@ sites$Site <- factor(sites$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG"
 
 # Colors
 mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(19))
-mycolors <- rev(colorRampPalette(brewer.pal(11, "BrBG"))(19))
-
-colors <- colorRampPalette(c("#070a209f", "#0417a5", "#1858eb", "#3c898d", "#47c077", "#4aea4f"))(19)
 
 pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_DELTA_ph_mean_ggplot_sites.pdf",  width = 6, height = 8.4) 
 ggplot(raster_df_ph_diff, aes(x = x, y = y, fill = diff)) +
@@ -226,7 +223,7 @@ ggplot(raster_df_ph_diff, aes(x = x, y = y, fill = diff)) +
     panel.grid.minor = element_blank(), # Removes minor grid lines
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
   labs(x = "Longitude", y = "Latitude") +
-  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.7, 0.82), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid")) + guides(color = "none")
+  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.7, 0.83), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid")) + guides(color = "none")
   #theme(plot.title = element_text(hjust=0.5))
 dev.off()
 

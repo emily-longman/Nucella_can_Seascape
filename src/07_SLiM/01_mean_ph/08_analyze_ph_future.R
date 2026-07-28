@@ -122,7 +122,7 @@ future_avg$Site <- factor(future_avg$Site, levels=c("FC", "SLR", "SH", "ARA", "C
 # Graph mean (of reps) AFs through time
 
 # Graph AF vs time
-pdf("output/figures/SLiM/ph_future/AF_time.pdf", width = 9, height = 8.5)
+pdf("output/figures/SLiM/ph_future/AF_time.pdf", width = 9.75, height = 8.5)
 ggplot(future_avg, aes(x = (year+2000), y = AF_fut_avg, color = Site)) + geom_line(linewidth = 4) + 
     scale_color_manual(values = mycolors) + scale_y_continuous(limits=c(0,1.0), breaks = c(0, 0.5, 1)) +
     labs(x = "Year", y = "Allele Frequency") + theme_linedraw(base_size = 32) + theme(legend.position = "none")

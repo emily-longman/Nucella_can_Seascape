@@ -175,6 +175,10 @@ min_func <- function(x) {
 if (all(is.na(x))) (100) else min(x, na.rm = TRUE)
 }
 
+min_func <- function(x) {
+if (all(is.na(x))) (NA) else min(x, na.rm = TRUE)
+}
+
 # Loop through the iterations and calc when allele gets to SLR and FC
 future_sim_north <-
     foreach(mig=levels(future_sim_data_vary_m$m), .combine="rbind", .errorhandling = "remove")%do%{  
@@ -191,7 +195,7 @@ future_sim_north <-
         data.frame(
         repId = i,
         m = mig,
-        SH = min_func(tmp2$year[which(tmp2$Site == "SH" & tmp2$AF_fut > 0)])+2000,
+        #SH = min_func(tmp2$year[which(tmp2$Site == "SH" & tmp2$AF_fut > 0)])+2000,
         SLR = min_func(tmp2$year[which(tmp2$Site == "SLR" & tmp2$AF_fut > 0)])+2000,
         FC = min_func(tmp2$year[which(tmp2$Site == "FC" & tmp2$AF_fut > 0)])+2000)
     }
@@ -214,11 +218,11 @@ ggplot(future_sim_north_melt, aes(y = year, x = Site, fill = m)) + geom_boxplot(
     labs(x = "", y = "Year") + theme_linedraw(base_size = 30)
 dev.off()
 
-pdf("output/figures/SLiM/ph_future/AF_OR_pops_vary_m_alt.pdf", width = 8, height = 8.5)
+pdf("output/figures/SLiM/ph_future/AF_OR_pops_vary_m_alt.pdf", width = 6.5, height = 8.5)
 ggplot(future_sim_north_melt, aes(y = year, x = m, fill = Site, color = Site)) + geom_violin() +
     scale_fill_manual(values = rev(mycolors)[17:19]) + scale_color_manual(values = rev(mycolors)[17:19]) + 
-    ylim(2020, 2100) +
+    ylim(2022, 2100) +
     labs(x = "Migration", y = "Year") + theme_linedraw(base_size = 32) + 
     guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
-    theme(legend.position = c(0.2, 0.82), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+    theme(legend.title = element_blank(), legend.position = c(0.2, 0.905), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()

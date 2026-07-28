@@ -26,6 +26,7 @@ library(groupdata2)
 library(poolfstat)
 library(RColorBrewer)
 library(viridis)
+library(colorspace)
 
 # Baypass functions
 source("/gpfs1/home/e/l/elongman/software/baypass_public/utils/baypass_utils.R")
@@ -148,7 +149,8 @@ ggplot(data = west_coast) +
   geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
   geom_point(data = go.scaled.output, aes(x = Long, y = Lat, fill = GO.scaled), shape = 21, size = 9) + 
   #scale_fill_viridis(option="rocket", breaks = c(0.085, 0.090, 0.095)) +
-  scale_fill_gradientn(colours=brewer.pal(6, "YlGn"), name="gGO", breaks = c(0.085, 0.090, 0.095)) +
+  #scale_fill_gradientn(colours=brewer.pal(6, "YlGn"), name="gGO", breaks = c(0.085, 0.090, 0.095)) +
+  scale_fill_continuous_sequential(palette = "Purples 2", name="gGO", breaks = c(0.085, 0.090, 0.095)) +
   coord_fixed(1.3) +
   scale_x_continuous(limits = c(-125, -114.1), breaks = seq(-125, -114.1, by = 3)) + ylim(32, 46.5) +
   #xlim(c(-125, -112.5)) +
