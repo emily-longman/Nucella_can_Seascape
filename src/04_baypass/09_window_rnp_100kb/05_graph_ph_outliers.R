@@ -28,6 +28,11 @@ library(viridis)
 
 # ================================================================================== #
 
+# Color palette
+viridiscolors <- viridis(n=19)
+
+# ================================================================================== #
+
 # Generate output directories
 
 # Figure directory
@@ -99,7 +104,7 @@ snp.info.ph %>% mutate(SNP_id = paste(chr, pos, sep = "_")) -> snp.info.ph
 
 # ================================================================================== #
 
-# Extract and manipulate coutn and coverage for significant SNPs
+# Extract and manipulate count and coverage for significant SNPs
 
 # Extract read count data for SNPs
 ref_count <- pooldata_ph@refallele.readcount
@@ -136,6 +141,18 @@ ph.all[which(ph.all$SNP_id=="ntLink_3821_41192"),]
 # Join with pH data
 afs.ph <- left_join(ph.all, ph, by="Site")
 
+# ================================================================================== #
+
+# Subset so only SNPs that beat POD threshold
+afs.ph.g27343.BF.POD <- afs.ph %>% filter(SNP_id %in% bf.ph.mean.sum.top.win[which(bf.ph.mean.sum.top.win$bf_db.mean > bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)]),]$SNP_id)
+afs.ph.g27343.BF.POD <- afs.ph.g27343.BF.POD[,-6]
+# Save
+save(afs.ph.g27343.BF.POD, file = "data/processed/baypass/afs.ph.g27343.BF.POD.RData")
+write.csv(afs.ph.g27343.BF.POD, file = "data/processed/baypass/afs.ph.g27343.BF.POD.csv", row.names=F)
+
+# ================================================================================== #
+
+# Graph
 
 # Make Site an ordered factor
 lat.order <- c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR")
@@ -145,21 +162,11 @@ afs.ph <- afs.ph %>% mutate(shape = case_when(Site %in% c("STR", "OCT", "HZD", "
                    Site %in% c("PGP", "BMR", "FR", "VD", "KH", "STC", "PSG", "CBL", "ARA", "SH", "SLR", "FC") ~ "N"))
 
 
-# Color palette
-viridiscolors <- viridis(n=19)
-
 # Subset so only SNPs with BF > 20 or > 18, etc
 afs.ph.topsnp <- afs.ph %>% filter(SNP_id %in% bf.ph.mean.sum.top.win[which(bf.ph.mean.sum.top.win$bf_db.mean > 24),]$SNP_id)
 afs.ph.BF22 <- afs.ph %>% filter(SNP_id %in% bf.ph.mean.sum.top.win[which(bf.ph.mean.sum.top.win$bf_db.mean > 22),]$SNP_id)
 afs.ph.BF20 <- afs.ph %>% filter(SNP_id %in% bf.ph.mean.sum.top.win[which(bf.ph.mean.sum.top.win$bf_db.mean > 20),]$SNP_id)
-afs.ph.BF19 <- afs.ph %>% filter(SNP_id %in% bf.ph.mean.sum.top.win[which(bf.ph.mean.sum.top.win$bf_db.mean > 19),]$SNP_id)
 afs.ph.BF18 <- afs.ph %>% filter(SNP_id %in% bf.ph.mean.sum.top.win[which(bf.ph.mean.sum.top.win$bf_db.mean > 18),]$SNP_id)
-
-afs.ph.g27343.BF.POD <- afs.ph %>% filter(SNP_id %in% bf.ph.mean.sum.top.win[which(bf.ph.mean.sum.top.win$bf_db.mean > bf.POD.thr$bf_db.mean[which(bf.POD.thr$thr==0.999)]),]$SNP_id)
-afs.ph.g27343.BF.POD <- afs.ph.g27343.BF.POD[,-6]
-# Save
-save(afs.ph.g27343.BF.POD, file = "data/processed/baypass/afs.ph.g27343.BF.POD.RData")
-write.csv(afs.ph.g27343.BF.POD, file = "data/processed/baypass/afs.ph.g27343.BF.POD.csv", row.names=F)
 
 # Load PCA data
 pca.df <- read.csv("data/processed/outlier_analyses/pca.csv")
@@ -167,6 +174,8 @@ colnames(pca.df)[1] <- "Site"
 # Join data
 afs.ph.topsnp <- left_join(afs.ph.topsnp, pca.df)
 afs.ph.BF20 <- left_join(afs.ph.BF20, pca.df)
+afs.ph.BF18 <- left_join(afs.ph.BF18, pca.df)
+afs.ph.g27343.BF.POD <- left_join(afs.ph.g27343.BF.POD, pca.df)
 
 # Graph and color by Site - topsnp
 pdf("output/figures/baypass/outliers/pH_g27343_topsnp_PC1.pdf", width = 6, height = 6)
@@ -177,15 +186,6 @@ ggplot(afs.ph.topsnp, aes(x=AF, y=ph_mean, shape=shape, fill=PC1)) +
   theme_linedraw(base_size = 30) + 
   theme(strip.background = element_rect(fill="grey"), strip.text = element_text(colour = 'black', size = 18, margin = margin(t=6, r=6, b=6, l=6))) +
   theme(legend.position="none")
-dev.off()
-# Graph and color by Site - BF 22
-pdf("output/figures/baypass/outliers/pH_g27343_BF22.pdf", width = 9, height = 3.75)
-ggplot(afs.ph.BF22, aes(x=AF, y=ph_mean, shape=shape, fill=Site)) +
-  geom_point(alpha=0.8, size = 6) + scale_shape_manual(values = c(21, 23)) + labs(x="Allele Frequency", y="mean pH") +
-  facet_wrap(~SNP_id, ncol = 4) + scale_fill_manual(values = viridiscolors) +
-  scale_x_continuous(breaks = seq(0, 1, by = 0.5)) + scale_y_continuous(breaks = c(7.95, 8.00)) +
-  theme_linedraw(base_size = 30) + theme(legend.position="none") + 
-  theme(strip.background = element_rect(fill = "White"), strip.text = element_text(color = "black"))
 dev.off()
 # Graph and color by Site - BF20
 pdf("output/figures/baypass/outliers/pH_g27343_BF20.pdf", width = 18, height = 4)
@@ -222,21 +222,23 @@ ggplot(afs.ph.BF20, aes(x=AF, y=ph_mean, shape=shape, fill=PC1)) +
   theme(strip.background = element_rect(fill="grey"), strip.text = element_text(colour = 'black', size = 18, margin = margin(t=6, r=6, b=6, l=6))) +
   theme(legend.position="none")
 dev.off()
-# Graph and color by Site - BF19
-pdf("output/figures/baypass/outliers/pH_g27343_BF19.pdf", width = 16, height = 9)
-ggplot(afs.ph.BF19, aes(x=AF, y=ph_mean, shape=shape, fill=Site)) +
-  geom_point(alpha=0.7, size = 6) + scale_shape_manual(values = c(21, 23)) + labs(x="Allele Freq", y="mean pH") +
-  scale_x_continuous(breaks = seq(0, 1, by = 0.5)) + scale_y_continuous(breaks = c(7.95, 8.00)) +
-  facet_wrap(~SNP_id) + scale_fill_manual(values = viridiscolors) +
-  theme_bw(base_size = 26)
-dev.off()
+
 # Graph and color by Site - BF18
-pdf("output/figures/baypass/outliers/pH_g27343_BF18.pdf", width = 18, height = 12)
-ggplot(afs.ph.BF18, aes(x=AF, y=ph_mean, shape=shape, fill=Site)) +
-  geom_point(alpha=0.7, size = 6) + scale_shape_manual(values = c(21, 23)) + labs(x="Allele Freq", y="mean pH") +
+pdf("output/figures/baypass/outliers/pH_g27343_BF18_PC1.pdf", width = 18, height = 12)
+ggplot(afs.ph.BF18, aes(x=AF, y=ph_mean, shape=shape, fill=PC1)) +
+  geom_point(alpha=0.7, size = 10) + scale_shape_manual(values = c(21, 23)) + labs(x="Allele Frequency", y="mean pH") +
   scale_x_continuous(breaks = seq(0, 1, by = 0.5)) + scale_y_continuous(breaks = c(7.95, 8.00)) +
-  facet_wrap(~SNP_id) + scale_fill_manual(values = viridiscolors) +
-  theme_bw(base_size = 26) + guides(fill = guide_legend(override.aes = list(shape = c(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 23, 23, 23, 23, 23, 23, 23), size = 8)), shape = "none")
+  facet_wrap(~SNP_id) + scale_fill_gradientn(colours=brewer.pal(9, "RdGy")) + #scale_fill_manual(values = viridiscolors) +
+  theme_bw(base_size = 26) #+ guides(fill = guide_legend(override.aes = list(shape = c(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 23, 23, 23, 23, 23, 23, 23), size = 8)), shape = "none")
+dev.off()
+
+# Graph and color by Site - BF POD
+pdf("output/figures/baypass/outliers/pH_g27343_BFPOD_PC1.pdf", width = 18, height = 20)
+ggplot(afs.ph.g27343.BF.POD, aes(x=AF, y=ph_mean, shape=shape, fill=PC1)) +
+  geom_point(alpha=0.7, size = 10) + scale_shape_manual(values = c(21, 23)) + labs(x="Allele Frequency", y="mean pH") +
+  scale_x_continuous(breaks = seq(0, 1, by = 0.5)) + scale_y_continuous(breaks = c(7.95, 8.00)) +
+  facet_wrap(~SNP_id) + scale_fill_gradientn(colours=brewer.pal(9, "RdGy")) + #scale_fill_manual(values = viridiscolors) +
+  theme_bw(base_size = 26) #+ guides(fill = guide_legend(override.aes = list(shape = c(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 23, 23, 23, 23, 23, 23, 23), size = 8)), shape = "none")
 dev.off()
 
 # ================================================================================== #
