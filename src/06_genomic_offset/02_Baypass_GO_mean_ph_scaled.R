@@ -132,10 +132,7 @@ ggplot(data = west_coast) +
   geom_point(data = go.scaled.output, aes(x = Long, y = Lat, fill = GO.scaled), shape = 21, size = 9) + 
   scale_fill_gradientn(colours=brewer.pal(9, "RdPu"), name="gGO", breaks = c(0.085, 0.090, 0.095)) +
   coord_fixed(1.3) +
-  scale_x_continuous(
-    limits = c(-125, -112.67),
-    breaks = seq(-125, -112.5, by = 3) # Tick marks every 0.5 units
-  ) +
+  scale_x_continuous(limits = c(-125, -114.1), breaks = seq(-125, -114.1, by = 3)) + ylim(32, 48) +
   #xlim(c(-125, -112.5)) +
   xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 32) + 
   theme(
@@ -146,41 +143,19 @@ ggplot(data = west_coast) +
 dev.off()
 
 # Graph gGO - alt coloring
-pdf("output/figures/genomic_offset/Baypass_scaled_GO_map_alt.pdf", width = 8, height = 8)
-ggplot(data = west_coast) + 
-  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
-  geom_point(data = go.scaled.output, aes(x = Long, y = Lat, fill = GO.scaled), shape = 21, size = 9) + 
-  scale_fill_gradientn(colours=brewer.pal(6, "BrBG"), name="gGO", breaks = c(0.085, 0.090, 0.095)) +
-  coord_fixed(1.3) +
-  scale_x_continuous(
-    limits = c(-125, -112.67),
-    breaks = seq(-125, -112.5, by = 3) # Tick marks every 0.5 units
-  ) +
-  #xlim(c(-125, -112.5)) +
-  xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 32) + 
-  theme(
-    panel.grid.major = element_blank(), # Removes major grid lines
-    panel.grid.minor = element_blank(), # Removes minor grid lines
-    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) + # Keeps outer rectangle
-  theme(legend.title = element_text(size = 28), legend.text = element_text(size = 20), legend.position = c(0.818, 0.51))
-dev.off()
-
 pdf("output/figures/genomic_offset/Baypass_scaled_GO_map_alt2.pdf", width = 8, height = 8.39)
 ggplot(data = west_coast) + 
   geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
-  geom_point(data = go.scaled.output, aes(x = Long, y = Lat, fill = GO.scaled), shape = 21, size = 12) + 
+  geom_point(data = go.scaled.output, aes(x = Long, y = Lat, fill = GO.scaled), shape = 21, size = 9) + 
   #scale_fill_viridis(option="rocket", breaks = c(0.085, 0.090, 0.095)) +
   scale_fill_gradientn(colours=brewer.pal(6, "YlGn"), name="gGO", breaks = c(0.085, 0.090, 0.095)) +
   coord_fixed(1.3) +
-  scale_x_continuous(
-    limits = c(-125, -114.1),
-    breaks = seq(-125, -114.1, by = 3) # Tick marks every 0.5 units
-  ) + ylim(32, 48) +
+  scale_x_continuous(limits = c(-125, -114.1), breaks = seq(-125, -114.1, by = 3)) + ylim(32, 46.5) +
   #xlim(c(-125, -112.5)) +
   xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 30) + 
   theme(
     panel.grid.major = element_blank(), # Removes major grid lines
     panel.grid.minor = element_blank(), # Removes minor grid lines
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) + # Keeps outer rectangle
-  theme(legend.title = element_text(size = 28), legend.text = element_text(size = 20), legend.position = c(0.75, 0.83), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.785, 0.84), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()

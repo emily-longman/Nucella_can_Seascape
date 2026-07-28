@@ -178,17 +178,41 @@ write.csv(ph_ssp585_sites_2090, "data/processed/SLiM/ph_future/ph_future_2090_si
 
 # Graph
 pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle.pdf", width = 6.5, height = 6)
-ggplot(ph_ssp585_sites, aes(x = decade, y = ph_mean, fill = location)) + geom_point(size = 3, shape = 21) +
-    geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
-    scale_fill_manual(values = mycolors) + scale_color_manual(values = mycolors) + 
-    labs(x = "Years", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
-dev.off()
-
-pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_alt.pdf", width = 6.5, height = 6)
 ggplot(ph_ssp585_sites, aes(x = decade, y = ph_mean, color = location)) + geom_point(size = 3, shape = 16, alpha = 0.9) +
     geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
     geom_hline(yintercept=7.987, col = "black", linetype = "dashed") +
     ylim(7.6, 8.078) +
     scale_fill_manual(values = mycolors) + scale_color_manual(values = mycolors) + 
+    labs(x = "Years", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
+dev.off()
+
+
+# For visualization purposes make x-axis go from 2020-2100
+
+# Calc pred pH adjusted for 2020-2100
+pred <- ph_future_lm %>%rowwise() %>%
+do(data.frame(Site = .$Site, year = 2020:2100, ph = .$intercept + .$slope * (2020:2100 - 2020)))
+
+# Threshold from simulations
+thresh = 7.987
+
+# Graph
+pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_alt.pdf", width = 6.5, height = 6)
+ggplot(ph_ssp585_sites, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 3, shape = 16, alpha = 0.9) +
+    geom_line(data = pred, aes(x = year, y = ph, color = Site), linewidth = 1)+
+    #geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
+    geom_hline(yintercept=thresh, col = "black", linetype = "dashed") +
+    ylim(7.6, 8.078) +
+    scale_fill_manual(values = mycolors) + scale_color_manual(values = mycolors) + 
     labs(x = "Year", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
 dev.off()
+
+# ================================================================================== #
+
+# When will FC be below the threshold
+
+# Subset
+FC <- pred[which(pred$Site=="FC"),]
+
+# Calc year when FC will be below thresh
+min(FC$year[which(FC$ph<thresh)])
