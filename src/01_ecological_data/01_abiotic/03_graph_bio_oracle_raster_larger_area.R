@@ -10,7 +10,7 @@ rm(list=ls())
 
 # Set path as main Github repo
 # Install and load package
-install.packages(c('rprojroot'))
+#install.packages(c('rprojroot'))
 library(rprojroot)
 # Specify root path
 root_path <- find_root_file(criterion = has_file("README.md"))
@@ -20,7 +20,7 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-install.packages(c('data.table', 'tidyverse', 'ggplot2', 'RColorBrewer', 'terra', 'raster'))
+#install.packages(c('data.table', 'tidyverse', 'ggplot2', 'RColorBrewer', 'terra', 'raster'))
 library(data.table)
 library(tidyverse)
 library(ggplot2)
@@ -138,17 +138,6 @@ raster_df_ph_future.tmp <- raster_df_ph_future %>% rename(future = layer)
 raster_df_ph_diff <- left_join(raster_df_ph.tmp, raster_df_ph_future.tmp)
 raster_df_ph_diff <- raster_df_ph_diff %>% mutate(diff = future-current)
 
-# Graph temp
-pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_temp_mean_ggplot.pdf", width = 3.5, height = 5)
-ggplot(raster_df_temp, aes(x = x, y = y, fill = layer)) +
-  geom_raster(aes(fill=layer)) +
-  scale_fill_gradientn(colours=brewer.pal(5, "RdBu")) +
-  #scale_fill_viridis_c() +  # Color scale for the raster values
-  coord_fixed(ratio = 1) +  # Fix aspect ratio so the plot is not distorted
-  ggtitle("Rasterized ph_mean")  +
-  theme_void() +
-  theme(legend.title = element_blank(), plot.title = element_text(hjust=0.5))
-dev.off()
 # Graph pH (note: reversed colors since low pH is the stressor)
 pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_ph_mean_ggplot_alt.pdf",  width = 7, height = 10.5) 
 ggplot(raster_df_ph, aes(x = x, y = y, fill = layer)) +
@@ -200,28 +189,32 @@ ggplot(raster_df_ph_diff, aes(x = x, y = y, fill = diff)) +
 dev.off()
 
 
+####
 
+# Graph delta ph with sites
+
+# Site locations
 sites <- data.frame(
   longitude = c(-124.0593, -124.0848, -124.1148, -124.4015, -124.5647, -124.2529, -124.0809, -123.7895, -123.8036, 
                 -123.2551, -123.0740, -122.3976, -121.9537, -121.9290, -121.3187, -121.2868, -120.8838, -120.6399, -120.6157),
   latitude = c(44.83777, 44.50540, 44.24999, 43.30402, 42.84097, 41.77121, 40.03011, 39.60461, 39.28090, 38.51198, 38.31900, 
                37.18506, 36.51939, 36.44750, 35.72893, 35.66549, 35.28994, 34.88117, 34.73024),
   Site = c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
-
 # Make Site factor
 sites$Site <- factor(sites$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 
+# Colors
 mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(19))
-#colors.reorder <- mycolors[c(19,2,3,4,11,5,1,10,17,14,6,8,7,13,9,18,16,12,15)]
+mycolors <- rev(colorRampPalette(brewer.pal(11, "BrBG"))(19))
 
-#colors <- colorRampPalette(c("#000f80", "#3c898d", "#3c9638"))
+colors <- colorRampPalette(c("#070a209f", "#0417a5", "#1858eb", "#3c898d", "#47c077", "#4aea4f"))(19)
 
-pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_DELTA_ph_mean_ggplot.pdf",  width = 6, height = 8.4) 
+pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_DELTA_ph_mean_ggplot_sites.pdf",  width = 6, height = 8.4) 
 ggplot(raster_df_ph_diff, aes(x = x, y = y, fill = diff)) +
   geom_raster(aes(fill=diff)) +
   scale_fill_gradientn(colours=rev(brewer.pal(6, "YlOrRd")), name="Delta pH") +
-  geom_point(data = sites, aes(x = longitude, y = latitude, color = Site), inherit.aes = FALSE, size = 7) +
+  geom_point(data = sites, aes(x = longitude, y = latitude, color = Site), inherit.aes = FALSE, size = 8) +
   scale_color_manual(values = mycolors) +
   #scale_color_manual(values = colors(19)) +
   scale_x_continuous(expand = c(0, 0)) +
