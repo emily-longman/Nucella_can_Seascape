@@ -17,7 +17,7 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'poolfstat', 'RColorBrewer', 'viridis'))
+#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'poolfstat', 'RColorBrewer', 'viridis', 'colorspace'))
 library(data.table)
 library(tidyverse)
 library(foreach)
@@ -25,6 +25,7 @@ library(dplyr)
 library(poolfstat)
 library(RColorBrewer)
 library(viridis)
+library(colorspace)
 
 # ================================================================================== #
 
@@ -401,7 +402,7 @@ ph.sample <- left_join(ph.sample, ph, by="Site")
 #baypass.cor.g27343.join <- rbind(baypass.cor.g27343, baypass.cor.sample)
 
 # Set colors
-cols <- c("#ff7b00", "#757474")
+#cols <- c("#ff7b00", "#757474")
 
 # Graph
 #pdf("output/figures/baypass/outliers/Correlation_abs_ph_baypass_density_fill.pdf", width = 11, height = 4)
@@ -470,6 +471,10 @@ baypass.cor.sample.PC1.lat$abs.estimate <- abs(baypass.cor.sample.PC1.lat$estima
 # Join - PC1 and lat incorporated
 baypass.cor.g27343.PC1.lat.join <- rbind(baypass.cor.g27343.PC1.lat, baypass.cor.sample.PC1.lat)
 
+# Colors
+cols <- c(head(hcl.colors(12, palette = "BrwnYl"), 1), "#757474")
+cols_alt <- c("#9c52596d", "#757474")
+
 # Graph
 pdf("output/figures/baypass/outliers/Correlation_abs_ph_baypass_PC1_lat_density_fill.pdf", width = 11, height = 4)
 ggplot(baypass.cor.g27343.PC1.lat.join, aes(x = abs.estimate, fill = group)) +
@@ -481,7 +486,6 @@ dev.off()
 
 # Graph alt
 
-cols_alt <- c(brewer.pal(7, "Oranges")[5], "#757474")
 pdf("output/figures/baypass/outliers/Correlation_abs_ph_baypass_PC1_lat_density_fill_alt.pdf", width = 6, height = 6)
 ggplot(baypass.cor.g27343.PC1.lat.join, aes(x = abs.estimate, fill = group)) +
   geom_density(alpha = 0.7, lwd = 0.5) + xlim(0,0.478) +

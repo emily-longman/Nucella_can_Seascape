@@ -20,13 +20,14 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'ggplot2', 'RColorBrewer', 'terra', 'raster'))
+#install.packages(c('data.table', 'tidyverse', 'ggplot2', 'RColorBrewer', 'terra', 'raster', 'ggnewscale'))
 library(data.table)
 library(tidyverse)
 library(ggplot2)
 library(RColorBrewer)
 library(terra)
 library(raster)
+library(ggnewscale)
 
 # ================================================================================== #
 
@@ -207,12 +208,14 @@ sites$Site <- factor(sites$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG"
 # Colors
 mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(19))
 
+# Graph with sites
 pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_DELTA_ph_mean_ggplot_sites.pdf",  width = 6, height = 8.4) 
 ggplot(raster_df_ph_diff, aes(x = x, y = y, fill = diff)) +
   geom_raster(aes(fill=diff)) +
   scale_fill_gradientn(colours=rev(brewer.pal(6, "YlOrRd")), name="Delta pH") +
-  geom_point(data = sites, aes(x = longitude, y = latitude, color = Site), inherit.aes = FALSE, size = 8) +
-  scale_color_manual(values = mycolors) +
+  new_scale_fill() + 
+  geom_point(data = sites, aes(x = longitude, y = latitude, fill = Site), shape=21, inherit.aes = FALSE, size = 8) +
+  scale_fill_manual(values = mycolors) +
   #scale_color_manual(values = colors(19)) +
   scale_x_continuous(expand = c(0, 0)) +
   scale_y_continuous(expand = c(0, 0)) +
@@ -223,8 +226,7 @@ ggplot(raster_df_ph_diff, aes(x = x, y = y, fill = diff)) +
     panel.grid.minor = element_blank(), # Removes minor grid lines
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
   labs(x = "Longitude", y = "Latitude") +
-  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.7, 0.83), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid")) + guides(color = "none")
+  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.7, 0.83), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid")) + guides(fill = "none")
   #theme(plot.title = element_text(hjust=0.5))
 dev.off()
-
 
