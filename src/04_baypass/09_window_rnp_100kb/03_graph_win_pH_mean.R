@@ -125,12 +125,7 @@ ggplot(win.out.order, aes(y=-log10(rnp.binom.POD), x=chr.unique)) + ylab("100kb 
 dev.off()
 
 # Graph Windows
-pdf("output/figures/baypass/window_summary/baypass_window_ph_mean_rnpPOD_geomline_bywindows.pdf", width = 12, height = 3)
-ggplot(win.out.order, aes(y=-log10(rnp.binom.POD), x=win)) + ylab("100kb Window\nEnrichment") + xlab("               Window") +
-  geom_line( ) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed") +
-  theme_bw(base_size=18) + theme(legend.position = "none") #+ theme(plot.margin = margin(t = 40, r = 30, b = 20, l = 20, unit = "pt"))
-dev.off()
-pdf("output/figures/baypass/window_summary/baypass_window_ph_mean_rnpPOD_geomline_bywindows_alt.pdf", width = 20, height = 4)
+pdf("output/figures/baypass/window_summary/baypass_window_ph_mean_rnpPOD_geomline_bywindows_alt.pdf", width = 21.1, height = 4)
 ggplot(win.out.order, aes(y=-log10(rnp.binom.POD), x=win)) + ylab("Enrichment") + xlab("                              Window (100kb)") +
   scale_x_continuous(expand = c(0, 0), breaks=c(0,2500, 5000, 7500, 10000, 12500)) + 
   scale_y_continuous(limits=c(0,121), breaks=c(0, 30, 60, 90, 120)) +
