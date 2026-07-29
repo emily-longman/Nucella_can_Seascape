@@ -123,18 +123,14 @@ ggplot(win.out.order, aes(y=-log10(rnp.binom.POD), x=chr.unique)) +
   geom_line( ) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed") +
   theme_bw(base_size=24) + theme(legend.position = "none")
 dev.off()
-pdf("output/figures/baypass/window_summary/baypass_window_Mcali_IntThk_rnpPOD_geomline_wider.pdf", width = 12, height = 3)
-ggplot(win.out.order, aes(y=-log10(rnp.binom.POD), x=chr.unique)) + 
-  geom_line( ) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed") +
-  theme_bw(base_size=24) + theme(legend.position = "none")
-dev.off()
 
+# Graph by windows
 pdf("output/figures/baypass/window_summary/baypass_window_Mcali_IntThk_rnpPOD_geomline_bywindows.pdf", width = 12, height = 3)
 ggplot(win.out.order, aes(y=-log10(rnp.binom.POD), x=win)) + 
   geom_line( ) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed") +
   theme_bw(base_size=24) + theme(legend.position = "none")
 dev.off()
-pdf("output/figures/baypass/window_summary/baypass_window_Mcali_IntThk_rnpPOD_geomline_bywindows_alt.pdf", width = 18.45, height = 4)
+pdf("output/figures/baypass/window_summary/baypass_window_Mcali_IntThk_rnpPOD_geomline_bywindows_alt.pdf", width = 19.1, height = 4)
 ggplot(win.out.order, aes(y=-log10(rnp.binom.POD), x=win)) + ylab("Enrichment") + xlab("Window (100kb)") +
   geom_line(linewidth=1.5) + geom_hline(yintercept=-log10(pr.i), col="red", linetype="dashed", linewidth=1.5) +
   theme_bw(base_size=30) + theme(legend.position = "none")

@@ -214,15 +214,9 @@ future_sim_north_melt$m <- factor(future_sim_north_melt$m, levels = c(0.01, 0.00
 future_sim_north_melt_sum <- future_sim_north_melt %>% group_by(Site, m) %>% summarize(mean = mean(year, na.rm = TRUE), sd = sd(year, na.rm = TRUE))
 
 # Graph
-pdf("output/figures/SLiM/ph_future/AF_OR_pops_vary_m.pdf", width = 10, height = 6)
-ggplot(future_sim_north_melt, aes(y = year, x = Site, fill = m)) + geom_boxplot() +
-    scale_fill_manual(values = colorRampPalette(brewer.pal(9, "Greys"))(3)) + 
-    labs(x = "", y = "Year") + theme_linedraw(base_size = 30)
-dev.off()
-
-pdf("output/figures/SLiM/ph_future/AF_OR_pops_vary_m_alt.pdf", width = 6.5, height = 8.5)
+pdf("output/figures/SLiM/ph_future/AF_OR_pops_vary_m.pdf", width = 6.5, height = 8.5)
 ggplot(future_sim_north_melt, aes(y = year, x = m, fill = Site, color = Site)) + geom_violin() +
-    scale_fill_manual(values = rev(mycolors)[17:19]) + scale_color_manual(values = rev(mycolors)[17:19]) + 
+    scale_fill_manual(values = rev(mycolors)[18:19]) + scale_color_manual(values = rev(mycolors)[18:19]) + 
     ylim(2022, 2100) +
     labs(x = "Migration", y = "Year") + theme_linedraw(base_size = 32) + 
     guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
