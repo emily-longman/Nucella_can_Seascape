@@ -210,6 +210,8 @@ future_sim_north_melt <- future_sim_north %>%
 # Make m factor
 future_sim_north_melt$m <- factor(future_sim_north_melt$m, levels = c(0.01, 0.001, 0.0001))
 
+# Summarize
+future_sim_north_melt_sum <- future_sim_north_melt %>% group_by(Site, m) %>% summarize(mean = mean(year, na.rm = TRUE), sd = sd(year, na.rm = TRUE))
 
 # Graph
 pdf("output/figures/SLiM/ph_future/AF_OR_pops_vary_m.pdf", width = 10, height = 6)
