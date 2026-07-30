@@ -58,8 +58,8 @@ topsnp <- left_join(afs.Mcali, dplyr::select(ecovars, "Site", "sim_eq", "Demogra
 
 # Create variable for groups
 topsnp %<>% mutate(group = case_when(mean_integrated_thk >= 2.1 ~ "Thick",
-                                     mean_integrated_thk < 2.1 & mean_integrated_thk >= 1.6 ~ "Mod", 
-                                     mean_integrated_thk < 1.6 ~ "Thin"))
+                                     mean_integrated_thk < 2.1 & mean_integrated_thk >= 1.7 ~ "Mod", 
+                                     mean_integrated_thk < 1.7 ~ "Thin"))
 
 # Make a pooled object with the raw data
 pool.real <- new("pooldata",
