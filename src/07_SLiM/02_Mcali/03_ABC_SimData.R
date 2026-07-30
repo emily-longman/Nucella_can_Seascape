@@ -110,8 +110,8 @@ process_sims = function(repId, m, thresh, k, mag, N){
   
   # Create variable for AF groups
   tmp2 %<>% mutate(group = case_when(mean_integrated_thk >= 2.1 ~ "Thick",
-                                     mean_integrated_thk < 2.1 & mean_integrated_thk >= 1.6 ~ "Mod", 
-                                     mean_integrated_thk < 1.6 ~ "Thin"))
+                                     mean_integrated_thk < 2.1 & mean_integrated_thk >= 1.7 ~ "Mod", 
+                                     mean_integrated_thk < 1.7 ~ "Thin"))
 
   #### Create poolobject and generate poolseq noise
   
