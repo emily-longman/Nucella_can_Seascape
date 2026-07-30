@@ -203,4 +203,4 @@ N <- c(5000) #1
 guide_file <- expand.grid(thresh, k, mag, m, N)
 
 # Write table
-write.table(guide_file, file = "guide_files/slim_Mcali_guide_file_v6.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)
+write.table(guide_file, file = "guide_files/slim_Mcali_guide_file_v6_expand.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)
