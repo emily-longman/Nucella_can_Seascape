@@ -59,16 +59,9 @@ ph <- afs.ph[, c(2,8)] %>% distinct()
 
 # Load data
 real_All <- get(load("data/processed/SLiM/ph_ABC/real_data.Rdata"))
-#sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars2.Rdata"))
-#sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars3.Rdata"))
-#sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars4.Rdata"))
-#sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars5.Rdata"))
+#sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars6.Rdata"))
+sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars7.Rdata"))
 
-sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars6.Rdata"))
-#sim_6 <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars6.Rdata"))
-#sim_6_mSet <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars6_mSet.Rdata"))
-
-#sim_All <- rbind(sim_6[which(sim_6$m=="0.001"),], sim_6_mSet)
 # ================================================================================== #
 
 # Estimate means
@@ -76,33 +69,33 @@ sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars6.Rdata"))
 real_data = dplyr::select(ungroup(real_All), 
                           #Fsg, Fgt, Fst, 
                           Fst.L.M, Fst.M.H, Fst.L.H,
-                          deltaAF.L.M, deltaAF.H.M,
+                          #deltaAF.L.M, deltaAF.H.M,
                           cor.pearson, cor.spearman, 
                           corAF.pearson, corAF.spearman, 
                           #fix1, fix0, poly,
                           mean.AF,
                           #asym, xmid, scal,
                           #p0, p1, p2, p3, p4, 
-                          #p5, #p6,
+                          p5, #p6,
                           #p7, p8, p9, p10, p11, p12,
                           #p13, p14, p15, p16, p17, p18
                           )
 simulated_data = dplyr::select(ungroup(sim_All), 
                           #Fsg, Fgt, Fst, 
                           Fst.L.M, Fst.M.H, Fst.L.H,
-                          deltaAF.L.M, deltaAF.H.M, 
+                          #deltaAF.L.M, deltaAF.H.M, 
                           cor.pearson, cor.spearman, 
                           corAF.pearson, corAF.spearman, 
                           #fix1, fix0, poly, 
                           mean.AF,
                           #p0, p1, p2, p3, p4, 
-                          #p5, #p6,
+                          p5, #p6,
                           #p7, p8, p9, p10, p11, p12,
                           #p13, p14, p15, p16, p17, p18
                           )
 
-#sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k), as.numeric)) 
-sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k, m), as.numeric)) 
+sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k), as.numeric)) 
+#sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k, m), as.numeric)) 
 #sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), m, thresh, k, mag, N ), as.numeric)) 
 #sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k_1, k_2 ), as.numeric)) # EXCLUDE m and N as those are invariant
 
@@ -129,7 +122,7 @@ post_long <- pivot_longer(
   values_to = "value")
 
 # Graph posteriors
-pdf("output/figures/SLiM/ph_ABC/pH_posteriors_morvars6.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph_ABC/pH_posteriors_morvars7.pdf", width = 5, height = 5)
 ggplot(post_long, aes(x = value)) +
   geom_density(fill = "steelblue", alpha = 0.5) +
   facet_wrap(parameter~. , scales = "free", ncol = 1) +
@@ -150,7 +143,7 @@ best <- which.max(abc_fit$weights)
 abc_fit$unadj.values[best, ]
 
 # Create var with best value for each param
-m_best = abc_fit$unadj.values[best,"m"]
+#m_best = abc_fit$unadj.values[best,"m"]
 k_best = abc_fit$unadj.values[best,"k"]
 #kb2 = abc_fit$unadj.values[best,"k_2"]
 thresh_best = abc_fit$unadj.values[best,"thresh"]
@@ -187,7 +180,7 @@ sel <- function(x, z, k) {
 }
 # Graph
 pdf("output/figures/SLiM/ph_ABC/pH_selection_curve.pdf", width = 5, height = 5)
-plot(ph$ph_mean, sel(ph$ph_mean, 7.985, 0.04))
+plot(ph$ph_mean, sel(ph$ph_mean, 7.986, 0.15))
 dev.off()
 pdf("output/figures/SLiM/ph_ABC/pH_selection_curve_biggerph.pdf", width = 5, height = 5)
 plot(seq(7.8, 8.1, by = 0.01), sel(seq(7.8, 8.1, by = 0.01), 7.988, 0.12))
@@ -248,8 +241,8 @@ dev.off()
 
 # Extract best
 sim_AFs_best <- sim_Data.melt %>%
-  #filter(thresh == thresh_best, k == k_best) %>%
-  filter(thresh == thresh_best, k == k_best, m == m_best) %>%
+  filter(thresh == thresh_best, k == k_best) %>%
+  #filter(thresh == thresh_best, k == k_best, m == m_best) %>%
   #filter(m == m_best, thresh == thresh_best, k == k_best, mag == mag_best, N == N_best) %>%
   #filter(m == mig_best, thresh == thresh_best, k_1 == k_1_best, k_2 == k_2_best) %>% 
   #filter(thresh == thresh_best, k_1 == k_1_best, k_2 == k_2_best) %>% 
@@ -258,7 +251,7 @@ sim_AFs_best <- sim_Data.melt %>%
 sim_AFs_best$Site <- factor(sim_AFs_best$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/ph_ABC/sim_AFs_best_morevars6.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph_ABC/sim_AFs_best_morevars7.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best, aes(x = AF_true, y = ph_mean, fill = Site)) + geom_point(size = 5, shape = 21, alpha=0.8) + 
   scale_fill_manual(values = mycolors) + labs(x="AF", y="Mean pH") + theme_linedraw(base_size=24) + theme(legend.position = "none")
 dev.off()
@@ -272,7 +265,7 @@ sim_AFs_best_mean <- sim_AFs_best %>%
 sim_AFs_best_mean$Site <- factor(sim_AFs_best_mean$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/ph_ABC/sim_AFs_best_repmeans_morevars6.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph_ABC/sim_AFs_best_repmeans_morevars7.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best_mean, aes(x = AF_true_mean, y = ph_mean, fill = Site)) + geom_point(size = 5, shape = 21) + 
   scale_fill_manual(values = mycolors) + labs(x="AF", y="Mean pH") + theme_linedraw(base_size=24) + theme(legend.position = "none")
 dev.off()
@@ -288,13 +281,13 @@ mod_sim_fit <- coef(mod_sim)
 # Visually look at sims to see best match
 # Extract best
 sim_AFs_test <- sim_Data.melt %>%
-  filter(thresh == 7.99, k == 0.07, m == 0.001) %>%
+  filter(thresh == 7.9865, k == 0.1, m == 0.001) %>%
   left_join(dplyr::select(ecovars, Site, sim_eq, ph_mean))
 # Make Site factor
 sim_AFs_test$Site <- factor(sim_AFs_test$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/ph_ABC/sim_AFs_best_v6_test.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph_ABC/sim_AFs_best_v7_test.pdf", width = 5, height = 5)
 ggplot(sim_AFs_test, aes(x = AF_true, y = ph_mean, fill = Site)) + geom_point(size = 5, shape = 21) + 
   scale_fill_manual(values = mycolors) + labs(x= "AF", y= "Mean pH") + theme_linedraw(base_size=26) + theme(legend.position = "none")
 dev.off()
