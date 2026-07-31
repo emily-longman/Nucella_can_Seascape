@@ -222,3 +222,8 @@ ggplot(future_sim_north_melt, aes(y = year, x = m, fill = Site, color = Site)) +
     guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
     theme(legend.title = element_blank(), legend.position = c(0.2, 0.905), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
+
+# How many sims didn't get the allele by 2100 in SLR and FC?
+OR_sum_NA <- future_sim_north_melt %>%
+  group_by(Site, m) %>%
+  summarise(na_count = sum(is.na(year)), na_perc = na_count/length(year)*100)

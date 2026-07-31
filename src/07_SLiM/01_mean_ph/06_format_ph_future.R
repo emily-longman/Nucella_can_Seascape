@@ -194,7 +194,7 @@ pred <- ph_future_lm %>%rowwise() %>%
 do(data.frame(Site = .$Site, year = 2020:2100, ph = .$intercept + .$slope * (2020:2100 - 2020)))
 
 # Threshold from simulations
-thresh = 7.987
+thresh = 7.986
 
 # Graph
 pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_alt.pdf", width = 6.5, height = 6)
