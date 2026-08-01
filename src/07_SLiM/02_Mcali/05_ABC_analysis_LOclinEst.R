@@ -60,8 +60,10 @@ Mcali <- afs.Mcali[,c(7,13)] %>% distinct()
 
 # Load data
 real_All <- get(load("data/processed/SLiM/Mcali_ABC/real_data.Rdata"))
-sim_All <- get(load("data/processed/SLiM/Mcali_ABC/sim_data_v6.Rdata"))
+sim_All_original <- get(load("data/processed/SLiM/Mcali_ABC/sim_data_v6.Rdata"))
+sim_All_exp <- get(load("data/processed/SLiM/Mcali_ABC/sim_data_v6_expand.Rdata"))
 
+sim_All <- rbind(sim_All_original, sim_All_exp)
 # ================================================================================== #
 
 # Estimate means
@@ -246,7 +248,7 @@ sim_AFs_best$Site <- factor(sim_AFs_best$Site, levels=c("FC", "SLR", "SH", "ARA"
 
 
 # Graph sim
-pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_v6.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_v6_exp.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best, aes(x = AF_true, y = shell_thk, fill = Site)) + geom_point(size = 5, shape = 21) + scale_fill_manual(values = mycolors) +
 labs(x= "AF", y= "Shell Thk") +
 theme_linedraw(base_size=26) + theme(legend.position = "none")
@@ -260,7 +262,7 @@ sim_AFs_best_mean <- sim_AFs_best %>%
 sim_AFs_best_mean$Site <- factor(sim_AFs_best_mean$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_repmeans_v6.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_repmeans_v6_exp.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best_mean, aes(x = AF_true_mean, y = shell_thk, fill = Site)) + geom_point(size = 5, shape = 21) + scale_fill_manual(values = mycolors) + 
 labs(x= "AF", y= "Shell Thk") +
 theme_linedraw(base_size=26) + theme(legend.position = "none")
@@ -292,7 +294,7 @@ dev.off()
 # Visually look at sims to see best match
 # Extract best
 sim_AFs_test <- sim_Data.melt %>%
-  filter(thresh == "1.85", k == "40", m == "0.001") %>%
+  filter(thresh == "1.85", k == "40", m == "0.0001") %>%
   #filter(thresh == "2", k == "0.2") %>%
   left_join(dplyr::select(ecovars, Site, sim_eq, shell_thk))
 # Make Site factor

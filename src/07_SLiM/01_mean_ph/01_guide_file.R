@@ -272,7 +272,7 @@ mag <- c(1) #1
 m <- c(0.001) #1
 N <- c(5000) #1
 
-# Make every combination of variables - 475 combos (250 combos pt2) 
+# Make every combination of variables - 475 combos (250 combos pt2)
 guide_file_morevars7 <- expand.grid(thresh, k, mag, m, N)
 
 # Write table
