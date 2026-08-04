@@ -48,18 +48,19 @@ mycolors_sub <- hcl.colors(n = 7, palette = "SunsetDark")[c(1,3,4,6)]
 # Load ecovars
 ecovars <- fread("guide_files/Nucella_ph_shellt.txt")
 names(ecovars)[2] = "Site"
-ecovars %<>% mutate(sim_eq = paste("p", 0:18, sep =""))
+ecovars_sub <- ecovars %>% filter(Site == "FC" | Site == "CBL" | Site == "BMR" | Site == "STR")
+ecovars_sub %<>% mutate(sim_eq = paste("p", 0:3, sep =""))
 
 # ================================================================================== #
 
 # Load data and merge files
 
 # Create list of file names for data
-file_names = as.list(dir(path = 'data/processed/SLiM/ph_future/ph_results/per_simcycle/', pattern = "phclineAFs_future_freq.*"))
-file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/SLiM/ph_future/ph_results/per_simcycle/', x))))
+file_names = as.list(dir(path = 'data/processed/SLiM/ph_future/ph_results_sub/per_simcycle/', pattern = "phclineAFs_future_freq.*"))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/SLiM/ph_future/ph_results_sub/per_simcycle/', x))))
 
 # Read all the files and perform ABC
-future_sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
+future_sim_data_sub <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
     
     # State which file loading
     message(i)
@@ -67,10 +68,10 @@ future_sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "r
     # Load file and add file name identifier
     tmp <- read.table(i) %>%
             mutate(file_name = i) %>%
-            mutate(file_name = str_remove(file_name, pattern = "data/processed/SLiM/ph_future/ph_results/per_simcycle/phclineAFs_future_freq.")) %>% 
+            mutate(file_name = str_remove(file_name, pattern = "data/processed/SLiM/ph_future/ph_results_sub/per_simcycle/phclineAFs_future_freq.")) %>% 
             mutate(file_name = str_remove(file_name, pattern = ".txt"))
     # Rename pops
-    names(tmp)[1:19] = paste("p", 0:18, sep ="")
+    names(tmp)[1:4] = paste("p", 0:3, sep ="")
     
     # Separate columns based on parameters
     tmp2 <- separate_wider_delim(tmp, cols = file_name, delim = "_", names = c("repId", "m", "thresh", "k", "mag", "N", "state"))
@@ -85,52 +86,52 @@ future_sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "r
 }
 
 # Save output
-save(future_sim_data, file = "data/processed/SLiM/ph_future/ph_results/sim_future_data.Rdata")
-#load("data/processed/SLiM/ph_future/ph_results/sim_future_data.Rdata")
+save(future_sim_data_sub, file = "data/processed/SLiM/ph_future/ph_results/sim_future_data_sub.Rdata")
+#load("data/processed/SLiM/ph_future/ph_results/sim_future_data_sub.Rdata")
 
 # Join with ecovars
-future_sim_data <- left_join(future_sim_data, ecovars, by = "sim_eq")
+future_sim_data_sub <- left_join(future_sim_data_sub, ecovars, by = "sim_eq")
 
 # ================================================================================== #
 
 # Graph AFs through time
 
 # Make Site factor
-future_sim_data$Site <- factor(future_sim_data$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+future_sim_data_sub$Site <- factor(future_sim_data_sub$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph all sim AFs through time
-pdf("output/figures/SLiM/ph_future/AF_time_all.pdf", width = 12, height = 7)
-ggplot(future_sim_data, aes(x = year, y = AF_fut, color = Site, group=interaction(repId, Site))) + geom_line(linewidth = 1, alpha = 0.4) + 
-    scale_color_manual(values = mycolors) + 
+pdf("output/figures/SLiM/ph_future/AF_time_all_sub.pdf", width = 12, height = 7)
+ggplot(future_sim_data_sub, aes(x = year, y = AF_fut, color = Site, group=interaction(repId, Site))) + geom_line(linewidth = 1, alpha = 0.4) + 
+    scale_color_manual(values = mycolors_sub) + 
     labs(x = "Years", y = "AF") + theme_linedraw(base_size = 32) + theme(legend.position = "none")
 dev.off()
 
 # ================================================================================== #
 
 # Average across the iterations
-future_avg <- future_sim_data %>% group_by(year, sim_eq) %>% reframe(AF_fut_avg = mean(AF_fut))
+future_sub_avg <- future_sim_data_sub %>% group_by(year, sim_eq) %>% reframe(AF_fut_avg = mean(AF_fut))
 
 # Join
-future_avg <- left_join(ecovars, future_avg, by = "sim_eq")
+future_sub_avg <- left_join(ecovars_sub, future_sub_avg, by = "sim_eq")
 
 # Make Site factor
-future_avg$Site <- factor(future_avg$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+future_sub_avg$Site <- factor(future_sub_avg$Site, levels=c("FC", "CBL", "BMR", "STR"))
 
 # ================================================================================== #
 
 # Graph mean (of reps) AFs through time
 
 # Graph AF vs time
-pdf("output/figures/SLiM/ph_future/AF_time.pdf", width = 9.75, height = 8.5)
-ggplot(future_avg, aes(x = (year+2000), y = AF_fut_avg, color = Site)) + geom_line(linewidth = 4) + 
-    scale_color_manual(values = mycolors) + scale_y_continuous(limits=c(0,1.0), breaks = c(0, 0.5, 1)) +
+pdf("output/figures/SLiM/ph_future/AF_time_sub.pdf", width = 9.75, height = 8.5)
+ggplot(future_sub_avg, aes(x = (year+2000), y = AF_fut_avg, color = Site)) + geom_line(linewidth = 4) + 
+    scale_color_manual(values = mycolors_sub) + scale_y_continuous(limits=c(0,1.0), breaks = c(0, 0.5, 1)) +
     labs(x = "Year", y = "Allele Frequency") + theme_linedraw(base_size = 32) + theme(legend.position = "none")
 dev.off()
 
 # Graph AF vs time
-pdf("output/figures/SLiM/ph_future/AF_time_wider.pdf", width = 12, height = 7)
-ggplot(future_avg, aes(x = (year+2000), y = AF_fut_avg, color = Site)) + geom_line(linewidth = 4) + 
-    scale_color_manual(values = mycolors) + scale_y_continuous(limits=c(0,1.0), breaks = c(0, 0.5, 1)) + 
+pdf("output/figures/SLiM/ph_future/AF_time_sub_wider.pdf", width = 12, height = 7)
+ggplot(future_sub_avg, aes(x = (year+2000), y = AF_fut_avg, color = Site)) + geom_line(linewidth = 4) + 
+    scale_color_manual(values = mycolors_sub) + scale_y_continuous(limits=c(0,1.0), breaks = c(0, 0.5, 1)) + 
     labs(x = "Year", y = "Allele Frequency") + theme_linedraw(base_size = 32) + theme(legend.position = "none")
 dev.off()
 
