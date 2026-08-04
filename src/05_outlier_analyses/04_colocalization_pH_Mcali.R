@@ -74,7 +74,7 @@ ggplot(bf.ph.Mcali.sum[which(bf.ph.Mcali.sum$bf_db.mean.ph>0 & bf.ph.Mcali.sum$b
   geom_point(data = bf.ph.Mcali.sum[which(bf.ph.Mcali.sum$bf_db.mean.ph>14 & bf.ph.Mcali.sum$bf_db.mean>12),], aes(x=bf_db.mean.ph, y=bf_db.mean), col="black",) +
   theme_linedraw(base_size = 30)
 dev.off()
-pdf("output/figures/outlier_analyses/BF_ph_vs_Mcali_posBF2.pdf", width = 7.8, height = 7.8)
+pdf("output/figures/outlier_analyses/BF_ph_vs_Mcali_posBF2.pdf", width = 7, height = 7.8)
 ggplot(bf.ph.Mcali.sum[which(bf.ph.Mcali.sum$bf_db.mean.ph>0 & bf.ph.Mcali.sum$bf_db.mean>0),], aes(x=bf_db.mean.ph, y=bf_db.mean)) +
   labs(x = "BF mean pH", y = "BF mussel shell thickness") +
   geom_point(alpha=0.6, col="#4a4949") +

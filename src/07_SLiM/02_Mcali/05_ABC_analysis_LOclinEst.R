@@ -295,7 +295,7 @@ dev.off()
 
 
 ##############
- 
+
 # Visually look at sims to see best match
 # Extract best
 sim_AFs_test <- sim_Data.melt %>%

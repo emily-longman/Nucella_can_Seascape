@@ -60,10 +60,10 @@ ph <- afs.ph[, c(2,8)] %>% distinct()
 # Load data
 real_All <- get(load("data/processed/SLiM/ph_ABC/real_data.Rdata"))
 #sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars6.Rdata"))
-sim_All_1 <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars7.Rdata"))
-sim_All_2 <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars7_expand.Rdata"))
+sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars7.Rdata"))
+#sim_All_2 <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars7_expand.Rdata"))
 
-sim_All <- rbind(sim_All_1, sim_All_2)
+#sim_All <- rbind(sim_All_1, sim_All_2)
 # ================================================================================== #
 
 # Estimate means
@@ -302,3 +302,4 @@ sim_AFs_test_mean <- sim_AFs_test %>%
 sim_AFs_test_mean_sub <- sim_AFs_test_mean[,c("AF_true_mean","ph_mean")]
 mod_sim_test <- nlsLM(AF_true_mean ~ SSlogis(ph_mean, Asym, xmid, scal), data = sim_AFs_test_mean_sub)
 mod_sim_test_fit <- coef(mod_sim_test)
+
