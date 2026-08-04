@@ -34,6 +34,7 @@ library(RColorBrewer)
 # Color palette
 nb.cols <- 19
 mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
+mycolors_sub <- hcl.colors(n = 7, palette = "SunsetDark")[c(1,3,4,6)]
 
 # ================================================================================== #
 
@@ -206,6 +207,26 @@ ggplot(ph_ssp585_sites, aes(x = decade+2020, y = ph_mean, color = location)) + g
     scale_fill_manual(values = mycolors) + scale_color_manual(values = mycolors) + 
     labs(x = "Year", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
 dev.off()
+
+# ================================================================================== #
+
+# 4 population subset
+
+# Graph subset of poplations
+ph_ssp585_sites_sub <- ph_ssp585_sites %>% filter(location == "FC" | location == "CBL" | location == "BMR" | location == "STR")
+pred_sub <- pred %>% filter(Site == "FC" | Site == "CBL" | Site == "BMR" | Site == "STR")
+
+# Graph subset
+pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_alt.pdf", width = 6.5, height = 6)
+ggplot(ph_ssp585_sites, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 3, shape = 16, alpha = 0.9) +
+    geom_line(data = pred, aes(x = year, y = ph, color = Site), linewidth = 1)+
+    #geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
+    geom_hline(yintercept=thresh, col = "black", linetype = "dashed") +
+    ylim(7.6, 8.078) +
+    scale_fill_manual(values = mycolors) + scale_color_manual(values = mycolors) + 
+    labs(x = "Year", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
+dev.off()
+
 
 # ================================================================================== #
 

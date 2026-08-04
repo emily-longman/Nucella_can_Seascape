@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=ph_future_sub
+#SBATCH --job-name=ph_future_sub_vary_m
 
 # Specify partition
 #SBATCH --partition=general
@@ -80,7 +80,7 @@ do
 slim \
     -d "repId=${i}" \
 	-d "root='${ROOT}'" \
-     $WORKING_FOLDER/src/07_SLiM/01_mean_ph/07_ph_future_sub.slim
+     $WORKING_FOLDER/src/07_SLiM/01_mean_ph/09_ph_future_sub_vary_m.slim
 
 done
 
