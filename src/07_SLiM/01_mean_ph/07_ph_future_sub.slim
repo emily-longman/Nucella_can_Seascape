@@ -52,9 +52,8 @@ mutationEffect(m1) {
 	allHaps = sim.subpopulations.haplosomes;
 	
 	// Create mutation
-	mut1 = p18.haplosomes[0].addNewDrawnMutation(m1, 0);
 
-	// Set starting AF for the 19 pops
+	// Set starting AF for the 4 pops
 	// Set AF for pop 0
 	gp0 = sample(p0.haplosomes, asInteger(size(p0.haplosomes)*0)); 
 	for (genome in gp0)
