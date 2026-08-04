@@ -287,7 +287,7 @@ sel <- function(x, z, k) {
 
 # Graph
 pdf("output/figures/SLiM/Mcali_ABC/Mcali_selection.pdf", width = 5, height = 5)
-plot(afs.Mcali$mean_integrated_thk, sel(afs.Mcali$mean_integrated_thk, 1.9, 20))
+plot(afs.Mcali$mean_integrated_thk, sel(afs.Mcali$mean_integrated_thk, 1.85, 40))
 dev.off()
 pdf("output/figures/SLiM/Mcali_ABC/Mcali_selection_zoomed_out.pdf", width = 5, height = 5)
 plot(seq(0, 5, by = 0.01), sel(seq(0, 5, by = 0.01), 1.79, 4))
