@@ -62,8 +62,13 @@ Mcali <- afs.Mcali[,c(7,13)] %>% distinct()
 real_All <- get(load("data/processed/SLiM/Mcali_ABC/real_data.Rdata"))
 sim_All_original <- get(load("data/processed/SLiM/Mcali_ABC/sim_data_v6.Rdata"))
 sim_All_exp <- get(load("data/processed/SLiM/Mcali_ABC/sim_data_v6_expand.Rdata"))
+sim_All_exp2 <- get(load("data/processed/SLiM/Mcali_ABC/sim_data_v6_expand2.Rdata"))
+# Prevent scientific notation
+sim_All_exp2$m <- c(0.00001)
 
-sim_All <- rbind(sim_All_original, sim_All_exp)
+sims <- rbind(sim_All_original, sim_All_exp)
+sim_All <- rbind(sims, sim_All_exp2)
+
 # ================================================================================== #
 
 # Estimate means
@@ -126,7 +131,7 @@ post_long <- pivot_longer(
   values_to = "value")
 
 # Graph posteriors
-pdf("output/figures/SLiM/Mcali_ABC/Mcali_posteriors_v6.pdf", width = 5, height = 8)
+pdf("output/figures/SLiM/Mcali_ABC/Mcali_posteriors_v6_expand.pdf", width = 5, height = 8)
 ggplot(post_long, aes(x = value)) +
   geom_density(fill = "steelblue", alpha = 0.5) +
   facet_wrap(parameter~. , scales = "free", ncol = 1) +
@@ -294,7 +299,7 @@ dev.off()
 # Visually look at sims to see best match
 # Extract best
 sim_AFs_test <- sim_Data.melt %>%
-  filter(thresh == "1.85", k == "40", m == "0.0001") %>%
+  filter(thresh == "1.85", k == "40", m == "0.00001") %>%
   #filter(thresh == "2", k == "0.2") %>%
   left_join(dplyr::select(ecovars, Site, sim_eq, shell_thk))
 # Make Site factor

@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=ph_slim_morevars7_expand_pt4
+#SBATCH --job-name=ph_slim_morevars7_lowerm
 
 # Specify partition
 #SBATCH --partition=general
@@ -20,7 +20,7 @@
 #SBATCH --mem=5G 
 
 # Submit job array
-#SBATCH --array=1-250
+#SBATCH --array=1-450 #451-950
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -60,15 +60,15 @@ fi
 cd $WORKING_FOLDER/data/processed/SLiM
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "ph_results_morevars7_expand" ]
-then echo "Working ph_results_morevars7_expand folder exist"; echo "Let's move on."; date
-else echo "Working ph_results_morevars7_expand folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars7_expand; date
+if [ -d "ph_results_morevars7_lowerm" ]
+then echo "Working ph_results_morevars7_lowerm folder exist"; echo "Let's move on."; date
+else echo "Working ph_results_morevars7_lowerm folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars7_lowerm; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Guide file 
-GUIDE_FILE=$WORKING_FOLDER/guide_files/slim_ph_guide_file_morevars7_expand.txt
+GUIDE_FILE=$WORKING_FOLDER/guide_files/guide_file_morevars7_lowerm.txt
 
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers.
 # Threshold      # K         # mag      # m.         #N
@@ -87,18 +87,18 @@ N=`awk -F "\t" '{print $5}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
 echo "Threshold:"${thresh} "k:"${k} "mag:"${mag} "m:"${m} "N:" ${N}
 
 # Set root
-ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_results_morevars7_expand
+ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_results_morevars7_lowerm
 
 #--------------------------------------------------------------------------------
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars7_expand
+cd $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars7_lowerm
 
 # Loop through iterations
-#for i in {1..25}
+for i in {1..25}
 #for i in {26..50}
 #for i in {51..75}
-for i in {76..100}
+#for i in {76..100}
 do
 
 # Run slim script
