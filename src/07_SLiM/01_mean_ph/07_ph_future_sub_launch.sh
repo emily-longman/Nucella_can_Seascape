@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=ph_future
+#SBATCH --job-name=ph_future_sub
 
 # Specify partition
 #SBATCH --partition=general
