@@ -219,7 +219,7 @@ pred_sub <- pred %>% filter(Site == "FC" | Site == "CBL" | Site == "BMR" | Site 
 pred_sub$Site <- factor(pred_sub$Site, levels = c("FC", "CBL", "BMR", "STR"))
 
 # Graph subset
-pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_subset.pdf", width = 7, height = 5.5)
+pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_subset.pdf", width = 7.5, height = 5)
 ggplot(ph_ssp585_sites_sub, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 3, shape = 16, alpha = 0.9) +
     geom_line(data = pred_sub, aes(x = year, y = ph, color = Site), linewidth = 2.5)+
     #geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
