@@ -214,16 +214,18 @@ dev.off()
 
 # Graph subset of poplations
 ph_ssp585_sites_sub <- ph_ssp585_sites %>% filter(location == "FC" | location == "CBL" | location == "BMR" | location == "STR")
+ph_ssp585_sites_sub$location <- factor(ph_ssp585_sites_sub$location, levels = c("FC", "CBL", "BMR", "STR"))
 pred_sub <- pred %>% filter(Site == "FC" | Site == "CBL" | Site == "BMR" | Site == "STR")
+pred_sub$Site <- factor(pred_sub$Site, levels = c("FC", "CBL", "BMR", "STR"))
 
 # Graph subset
-pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_alt.pdf", width = 6.5, height = 6)
-ggplot(ph_ssp585_sites, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 3, shape = 16, alpha = 0.9) +
-    geom_line(data = pred, aes(x = year, y = ph, color = Site), linewidth = 1)+
+pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_subset.pdf", width = 7, height = 5.5)
+ggplot(ph_ssp585_sites_sub, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 3, shape = 16, alpha = 0.9) +
+    geom_line(data = pred_sub, aes(x = year, y = ph, color = Site), linewidth = 2.5)+
     #geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
     geom_hline(yintercept=thresh, col = "black", linetype = "dashed") +
     ylim(7.6, 8.078) +
-    scale_fill_manual(values = mycolors) + scale_color_manual(values = mycolors) + 
+    scale_fill_manual(values = mycolors_sub) + scale_color_manual(values = mycolors_sub) + 
     labs(x = "Year", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
 dev.off()
 

@@ -19,8 +19,11 @@
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
 #SBATCH --mem=10G
 
+# Submit job array
+#SBATCH --array=1-5
+
 # Name output of this job using %x=job-name and %j=job-id
-#SBATCH --output=./slurmOutput/%x.%j.out
+#SBATCH --output=./slurmOutput/%x.%A_%a.out
 
 # Receive emails when job begins and ends or fails
 #SBATCH --mail-type=ALL
@@ -42,35 +45,42 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 #--------------------------------------------------------------------------------
 
+# Guide file 
+GUIDE_FILE=$WORKING_FOLDER/guide_files/slim_ph_vary_migration.txt
+
+# Determine parameters
+m=`awk -F "\t" '{print $1}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
+echo "m:"${m}
+
+#--------------------------------------------------------------------------------
+
 # Generate Folders and files
 
 # Change directory
 cd $WORKING_FOLDER/data/processed/SLiM/ph_future
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "ph_results_sub" ]
-then echo "Working ph_results_sub folder exist"; echo "Let's move on."; date
-else echo "Working ph_results_sub folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results_sub; date
+if [ -d "ph_results_sub_vary_m" ]
+then echo "Working ph_results_sub_vary_m folder exist"; echo "Let's move on."; date
+else echo "Working ph_results_sub_vary_m folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results_sub_vary_m; date
 fi
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results_sub
+cd $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results_sub_vary_m
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "per_simcycle" ]
-then echo "Working per_simcycle folder exist"; echo "Let's move on."; date
-else echo "Working per_simcycle folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results_sub/per_simcycle; date
+if [ -d "m_${m}" ]
+then echo "Working m_${m} folder exist"; echo "Let's move on."; date
+else echo "Working m_${m} folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results_sub_vary_m/m_${m}; date
 fi
-
-# Determine parameters
-
-# Set root
-ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results_sub/per_simcycle
 
 #--------------------------------------------------------------------------------
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results_sub/per_simcycle
+cd $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results_sub_vary_m/m_${m}
+
+# Set root
+ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_future/ph_results_sub_vary_m/m_${m}
 
 # Loop through iterations
 for i in {1..500}
