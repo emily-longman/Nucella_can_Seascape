@@ -65,22 +65,13 @@ then echo "Working ph_vary_m folder exist"; echo "Let's move on."; date
 else echo "Working ph_vary_m folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_vary_m; date
 fi
 
-# Change directory
-cd $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_vary_m
-
-# This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "m_${m}" ]
-then echo "Working m_${m} folder exist"; echo "Let's move on."; date
-else echo "Working m_${m} folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_vary_m/m_${m}; date
-fi
-
 #--------------------------------------------------------------------------------
 
 # Change directory
 cd $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_vary_m/m_${m}
 
 # Set root
-ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_future/ph_vary_m/m_${m}
+ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_future/ph_vary_m
 
 # Loop through iterations
 for i in {1..500}

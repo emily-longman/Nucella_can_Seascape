@@ -229,6 +229,18 @@ ggplot(ph_ssp585_sites_sub, aes(x = decade+2020, y = ph_mean, color = location))
     labs(x = "Year", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
 dev.off()
 
+pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_subset_smaller.pdf", width = 5, height = 3.5)
+ggplot(ph_ssp585_sites_sub, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 3, shape = 16, alpha = 0.9) +
+    geom_line(data = pred_sub, aes(x = year, y = ph, color = Site), linewidth = 2)+
+    scale_x_continuous(limits = c(2020, 2100), breaks = c(2020, 2060, 2100)) +
+    scale_y_continuous(limits = c(7.6, 8.078), breaks = c(7.6, 7.8, 8.0)) +
+    #geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
+    geom_hline(yintercept=thresh, col = "black", linetype = "dashed") +
+   #ylim(7.6, 8.078) +
+    scale_fill_manual(values = mycolors_sub) + scale_color_manual(values = mycolors_sub) + 
+    labs(x = "", y = "Mean pH") + theme_linedraw(base_size = 24) + theme(legend.position = "none")
+dev.off()
+
 
 # ================================================================================== #
 
