@@ -20,7 +20,7 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'magrittr', 'reshape2', 'poolfstat', 'foreach', 'ggplot2', 'RColorBrewer'))
+#install.packages(c('data.table', 'tidyverse', 'magrittr', 'reshape2', 'poolfstat', 'foreach', 'ggplot2', 'RColorBrewer', 'scales'))
 library(tidyverse)
 library(data.table)
 library(magrittr)
@@ -29,6 +29,7 @@ library(poolfstat)
 library(foreach)
 library(ggplot2)
 library(RColorBrewer)
+library(scales)
 
 # ================================================================================== #
 
@@ -96,9 +97,14 @@ future_sim_data_vary_m <- foreach(i=file_names_v, .combine="rbind", .errorhandli
   }
 
 
-# Fix scientific notation 
+# Fix scientific notation
 future_sim_data_vary_m$m[which(future_sim_data_vary_m$m == '1.0e-05')] <- "0.00001"
 future_sim_data_vary_m$m[which(future_sim_data_vary_m$m == '1.0e-06')] <- "0.000001"
+# Make column numeric
+future_sim_data_vary_m$m <- as.numeric(future_sim_data_vary_m$m)
+
+# Make column with scientific notation
+future_sim_data_vary_m <- future_sim_data_vary_m %>% mutate(m_scientific = format(m, scientific = TRUE, digits = 1))
 
 # Save output
 save(future_sim_data_vary_m, file = "data/processed/SLiM/ph_future/ph_vary_m/sim_future_data_vary_m.Rdata")
@@ -158,12 +164,26 @@ ggplot(future_avg_sub, aes(x = year, y = AF_fut_avg, color = Site)) + geom_line(
     labs(x = "Years", y = "AF") + theme_linedraw(base_size = 30) + theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
 dev.off()
 
+# Subset to only 3 migrations
+future_avg_sub_test <- future_avg_sub[which(future_avg_sub$m == 0.01 | future_avg_sub$m == 0.001 | future_avg_sub$m == 0.0001)]
+future_avg_sub_test$m <- factor(future_avg_sub_test$m)
+# Graph with different linetypes
+pdf("output/figures/SLiM/ph_future/AF_time_vary_m_sub_linetype.pdf", width = 18, height = 8.5)
+ggplot(future_avg_sub_test, aes(x = year, y = AF_fut_avg, color = Site, linetype = m)) + 
+    geom_line(linewidth = 5) + 
+    scale_color_manual(values = mycolors_sub) + 
+    scale_linetype_manual(values = c("dashed", "solid", "dotted")) +
+    labs(x = "Years", y = "Allele Frequency") + theme_linedraw(base_size = 32) + 
+    theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))
+dev.off()
+
 # Graph AF vs time - per sim
 pdf("output/figures/SLiM/ph_future/AF_time_vary_m_all_sub.pdf", width = 10, height = 16)
 ggplot(future_sim_data_vary_m_sub, aes(x = year, y = AF_fut, color = Site, group=interaction(repId, Site))) + geom_line(linewidth = 1, alpha = 0.4) + 
     facet_wrap(~m, ncol = 1) + scale_color_manual(values = mycolors_sub) + 
     labs(x = "Years", y = "AF") + theme_linedraw(base_size = 30) + theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
 dev.off()
+
 
 # ================================================================================== #
 
@@ -189,7 +209,6 @@ future_sim_north <-
         data.frame(
         repId = i,
         m = mig,
-        CBL = min_func(tmp2$year[which(tmp2$Site == "CBL" & tmp2$AF_fut > 0)])+2000,
         FC = min_func(tmp2$year[which(tmp2$Site == "FC" & tmp2$AF_fut > 0)])+2000)
     }
 }
@@ -200,36 +219,88 @@ future_sim_north_melt <- future_sim_north %>%
                  variable.name = "Site",
                  value.name = "year")
 
-# Make m factor
-future_sim_north_melt$m <- factor(future_sim_north_melt$m, levels = ms)
-
+# Make numeric
+future_sim_north_melt$m <- as.numeric(future_sim_north_melt$m)
 
 # How many sims didn't get the allele by 2100 in SLR and FC?
 future_sim_north_melt_NA <- future_sim_north_melt %>%
   group_by(Site, m) %>%
   summarise(na_count = sum(is.na(year)), na_perc = na_count/length(year)*100)
 
+# Make column with scientific notation
+future_sim_north_melt_NA <- future_sim_north_melt_NA %>% mutate(m_scientific = format(m, scientific = TRUE, digits = 1))
+
+# Make scientific function more presentable
+fancy_scientific <- function(l) {
+  l <- as.character(l)
+  l <- gsub("e", " * 0^", l)
+  parse(text = l)
+}
+
 # Graph - for those that got the allele when did it occur
-pdf("output/figures/SLiM/ph_future/AF_FC_pops_vary_m_NAs.pdf", width = 6, height = 5)
-ggplot(future_sim_north_melt_NA[which(future_sim_north_melt_NA$Site == "FC"),], aes(y = na_perc, x = m, fill = Site, color = Site)) + 
-    geom_point() +
-    scale_fill_manual(values = rev(mycolors_sub)[4]) + scale_color_manual(values = rev(mycolors_sub)[4]) + 
+pdf("output/figures/SLiM/ph_future/AF_FC_pops_vary_m_NAs.pdf", width = 6.5, height = 5)
+ggplot(future_sim_north_melt_NA, aes(y = na_perc, x = m_scientific, fill = Site, color = Site)) + 
+    geom_point(size = 8) +
+    scale_fill_manual(values =  mycolors_sub[1]) + scale_color_manual(values =  mycolors_sub[1]) + 
+    scale_x_discrete(labels = fancy_scientific) + ylim(-5, 105)+
+    labs(x = "Migration", y = "Percent") + theme_linedraw(base_size = 30) + 
+    guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
+    theme(legend.position = "none")
+dev.off()
+pdf("output/figures/SLiM/ph_future/AF_FC_pops_vary_m_NAs_taller.pdf", width = 7, height = 8.5)
+ggplot(future_sim_north_melt_NA, aes(y = na_perc, x = m_scientific, fill = Site, color = Site)) + 
+    geom_point(size = 12) +
+    scale_fill_manual(values =  mycolors_sub[1]) + scale_color_manual(values =  mycolors_sub[1]) + 
+    scale_x_discrete(labels = fancy_scientific) + ylim(-5, 105)+
     labs(x = "Migration", y = "Percent") + theme_linedraw(base_size = 30) + 
     guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
     theme(legend.position = "none")
 dev.off()
 
-# Summarize
-future_sim_north_melt_sum <- future_sim_north_melt %>% group_by(Site, m) %>% summarize(mean = mean(year, na.rm = TRUE), sd = sd(year, na.rm = TRUE))
+
+# Make m a factor
+#future_sim_north_melt$m <- factor(future_sim_north_melt$m, levels = rev(ms))
+# Make column with scientific notation
+future_sim_north_melt <- future_sim_north_melt %>% mutate(m_scientific = format(m, scientific = TRUE, digits = 1))
 
 # Graph - for those that got the allele when did it occur
-pdf("output/figures/SLiM/ph_future/AF_OR_pops_vary_m.pdf", width = 6.5, height = 8.5)
-ggplot(future_sim_north_melt, aes(y = year, x = m, fill = Site, color = Site)) + geom_violin() +
-    scale_fill_manual(values = mycolors[3:4]) + scale_color_manual(values = mycolors_sub[3:4]) + 
-    ylim(2022, 2100) +
+pdf("output/figures/SLiM/ph_future/AF_OR_pops_vary_m_shorter.pdf", width = 6.5, height = 5)
+ggplot(future_sim_north_melt, aes(y = year, x = m_scientific,  color = Site, fill = Site)) + 
+    #geom_jitter(col = "black", alpha = 0.6) + 
+    geom_violin() +
+    scale_fill_manual(values = mycolors_sub[1]) + 
+    scale_color_manual(values = mycolors_sub[1]) + 
+    scale_x_discrete(labels = fancy_scientific) + ylim(2022, 2100) + 
     labs(x = "Migration", y = "Year") + theme_linedraw(base_size = 30) + 
     guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
-    theme(legend.title = element_blank(), legend.position = c(0.2, 0.905), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+    theme(legend.position = "none")
+dev.off()
+
+pdf("output/figures/SLiM/ph_future/AF_OR_pops_vary_m_taller.pdf", width = 6.5, height = 8.5)
+ggplot(future_sim_north_melt, aes(y = year, x = m_scientific,  color = Site, fill = Site)) + 
+    #geom_jitter(col = "black", alpha = 0.6) + 
+    geom_violin() +
+    scale_fill_manual(values = mycolors_sub[1]) + 
+    scale_color_manual(values = mycolors_sub[1]) + 
+    scale_x_discrete(labels = fancy_scientific) + ylim(2022, 2100) + 
+    labs(x = "Migration", y = "Year") + theme_linedraw(base_size = 30) + 
+    guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
+    theme(legend.position = "none")
+dev.off()
+
+# Graph only those that do make it
+future_sim_north_melt_subset <- future_sim_north_melt %>% filter(m %in% ms[1:3])
+
+pdf("output/figures/SLiM/ph_future/AF_OR_pops_vary_m_smaller.pdf", width = 3.2, height = 4)
+ggplot(future_sim_north_melt_subset, aes(y = year, x = m_scientific,  color = Site, fill = Site)) + 
+    #geom_jitter(col = "black", alpha = 0.6) + 
+    geom_violin() +
+    scale_fill_manual(values = mycolors_sub[1]) + 
+    scale_color_manual(values = mycolors_sub[1]) + 
+    scale_x_discrete(labels = fancy_scientific) + ylim(2022, 2100) + 
+    labs(x = "Migration", y = "") + theme_linedraw(base_size = 24) + 
+    guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
+    theme(legend.position = "none")
 dev.off()
 
 
