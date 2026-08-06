@@ -175,18 +175,33 @@ env = c(
   7.950069857    
 );
 
+# ================================================================================== #
 
-
+# Selection function
 sel <- function(x, z, k) {
   1 / (1 + exp((x - z)/k)) - 0.5
 }
-# Graph
-pdf("output/figures/SLiM/ph_ABC/pH_selection_curve.pdf", width = 5, height = 5)
-plot(ph$ph_mean, sel(ph$ph_mean, 7.986, 0.15))
+
+# Calc selection for the pH values
+ph$sel <- sel(ph$ph_mean, 7.986, 0.15)
+
+# Graph selection function
+pdf("output/figures/SLiM/ph_ABC/pH_selection_curve.pdf", width = 7.5, height = 5.5)
+ggplot(ph, aes(x = ph_mean, y = sel)) +
+  geom_point(size = 4) + 
+  geom_hline(yintercept = 0, linetype = "dashed") + 
+  labs(x = "Mean pH", y = "Selection coefficient") + 
+  theme_linedraw(base_size = 30)
 dev.off()
-pdf("output/figures/SLiM/ph_ABC/pH_selection_curve_biggerph.pdf", width = 5, height = 5)
+
+# For visualization purposes see bigger range
+pdf("output/figures/SLiM/ph_ABC/pH_selection_curve_biggerph_range.pdf", width = 5, height = 5)
 plot(seq(7.8, 8.1, by = 0.01), sel(seq(7.8, 8.1, by = 0.01), 7.988, 0.12))
 dev.off()
+
+# Calculate absolute selection coefficients
+ph_sel_mean <- mean(abs(ph$sel))
+ph_sel_sd <- sd(abs(ph$sel))
 
 # ================================================================================== #
 # ================================================================================== #
