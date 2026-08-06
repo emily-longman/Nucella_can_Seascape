@@ -37,6 +37,7 @@ library(scales)
 nb.cols <- 19
 mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
 mycolors_sub <- hcl.colors(n = 7, palette = "SunsetDark")[c(1,3,4,6)]
+mycolors_sub5 <- hcl.colors(n = 7, palette = "SunsetDark")[c(1,3,4,6,7)]
 
 # ================================================================================== #
 
@@ -159,7 +160,7 @@ future_sim_data_vary_m_sub <- future_sim_data_vary_m %>% filter(Site == "FC" | S
 
 # Graph
 pdf("output/figures/SLiM/ph_future/AF_time_vary_m_sub.pdf", width = 10, height = 16)
-ggplot(future_avg_sub, aes(x = year, y = AF_fut_avg, color = Site)) + geom_line(linewidth = 3) + 
+ggplot(future_avg_sub, aes(x = (year+2000), y = AF_fut_avg, color = Site)) + geom_line(linewidth = 3) + 
     facet_wrap(~m, ncol = 1) + scale_color_manual(values = mycolors_sub) + 
     labs(x = "Years", y = "AF") + theme_linedraw(base_size = 30) + theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
 dev.off()
@@ -169,7 +170,7 @@ future_avg_sub_test <- future_avg_sub[which(future_avg_sub$m == 0.01 | future_av
 future_avg_sub_test$m <- factor(future_avg_sub_test$m)
 # Graph with different linetypes
 pdf("output/figures/SLiM/ph_future/AF_time_vary_m_sub_linetype.pdf", width = 17.5, height = 8.5)
-ggplot(future_avg_sub_test, aes(x = year, y = AF_fut_avg, color = Site, linetype = m)) + 
+ggplot(future_avg_sub_test, aes(x = (year+2000), y = AF_fut_avg, color = Site, linetype = m)) + 
     geom_line(linewidth = 5) + 
     scale_color_manual(values = mycolors_sub) + 
     scale_linetype_manual(values = c("dotted", "dashed", "solid")) +
@@ -179,8 +180,47 @@ dev.off()
 
 # Graph AF vs time - per sim
 pdf("output/figures/SLiM/ph_future/AF_time_vary_m_all_sub.pdf", width = 10, height = 16)
-ggplot(future_sim_data_vary_m_sub, aes(x = year, y = AF_fut, color = Site, group=interaction(repId, Site))) + geom_line(linewidth = 1, alpha = 0.4) + 
+ggplot(future_sim_data_vary_m_sub, aes(x = (year+2000), y = AF_fut, color = Site, group=interaction(repId, Site))) + geom_line(linewidth = 1, alpha = 0.4) + 
     facet_wrap(~m, ncol = 1) + scale_color_manual(values = mycolors_sub) + 
+    labs(x = "Years", y = "AF") + theme_linedraw(base_size = 30) + theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
+dev.off()
+
+
+# ================================================================================== #
+
+# Graph 5 pop subset
+
+# Subset
+future_avg_sub5 <- future_avg %>% filter(Site == "FC" | Site == "SH" | Site == "CBL" | Site == "BMR" | Site == "STR")
+future_sim_data_vary_m_sub5 <- future_sim_data_vary_m %>% filter(Site == "FC" | Site == "SH" | Site == "CBL" | Site == "BMR" | Site == "STR")
+
+# Subset to only 3 migrations
+future_avg_sub_test5 <- future_avg_sub5[which(future_avg_sub5$m == 0.001 | future_avg_sub5$m == 0.0001 | future_avg_sub5$m == 0.00001)]
+future_avg_sub_test5$m <- factor(future_avg_sub_test5$m)
+
+# Graph
+pdf("output/figures/SLiM/ph_future/AF_time_vary_m_sub_5pop.pdf", width = 8, height = 11)
+ggplot(future_avg_sub_test5, aes(x = (year+2000), y = AF_fut_avg, color = Site)) + geom_line(linewidth = 4) + 
+    facet_wrap(~m, ncol = 1) + scale_color_manual(values = mycolors_sub5) + 
+    labs(x = "Years", y = "Allele Frequency") + theme_linedraw(base_size = 30) + 
+    theme(panel.spacing.y = unit(0, "lines")) + 
+    theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
+dev.off()
+
+# Graph with different linetypes
+pdf("output/figures/SLiM/ph_future/AF_time_vary_m_sub_linetype_5pop.pdf", width = 17.5, height = 8.5)
+ggplot(future_avg_sub_test5, aes(x = (year+2000), y = AF_fut_avg, color = Site, linetype = m)) + 
+    geom_line(linewidth = 5) + 
+    scale_color_manual(values = mycolors_sub5) + 
+    scale_linetype_manual(values = c("dotted", "dashed", "solid")) +
+    labs(x = "Years", y = "Allele Frequency") + theme_linedraw(base_size = 32) + 
+    theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))
+dev.off()
+
+# Graph AF vs time - per sim
+pdf("output/figures/SLiM/ph_future/AF_time_vary_m_all_sub_5pop.pdf", width = 10, height = 16)
+ggplot(future_sim_data_vary_m_sub5, aes(x = (year+2000), y = AF_fut, color = Site, group=interaction(repId, Site))) + geom_line(linewidth = 1, alpha = 0.4) + 
+    facet_wrap(~m, ncol = 1) + scale_color_manual(values = mycolors_sub5) + 
     labs(x = "Years", y = "AF") + theme_linedraw(base_size = 30) + theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
 dev.off()
 
@@ -222,7 +262,7 @@ future_sim_north_melt <- future_sim_north %>%
 # Make numeric
 future_sim_north_melt$m <- as.numeric(future_sim_north_melt$m)
 
-# How many sims didn't get the allele by 2100 in SLR and FC?
+# How many sims didn't get the allele by 2100 in FC?
 future_sim_north_melt_NA <- future_sim_north_melt %>%
   group_by(Site, m) %>%
   summarise(na_count = sum(is.na(year)), na_perc = na_count/length(year)*100)
@@ -236,6 +276,10 @@ fancy_scientific <- function(l) {
   l <- gsub("e", " * 0^", l)
   parse(text = l)
 }
+
+# For m = 10^-3 in which most of the sim did get the allele when did it arrive?
+mean(future_sim_north_melt$year[which(future_sim_north_melt$m == 0.001)])
+sd(future_sim_north_melt$year[which(future_sim_north_melt$m == 0.001)])
 
 # Graph - for those that got the allele when did it occur
 pdf("output/figures/SLiM/ph_future/AF_FC_pops_vary_m_NAs.pdf", width = 6.5, height = 5)

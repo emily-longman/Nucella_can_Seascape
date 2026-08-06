@@ -179,8 +179,36 @@ env = c(
 1.520675474,
 1.431920910);
 
-
 # ================================================================================== #
+
+# Selection function
+sel <- function(x, z, k) {
+  1 / (1 + exp((x - z)/k)) - 0.5
+}
+
+# Calc selection for the pH values
+afs.Mcali$sel <- sel(afs.Mcali$mean_integrated_thk, 1.85, 40)
+
+# Graph selection function
+pdf("output/figures/SLiM/Mcali_ABC/Mcali_selection_curve.pdf", width = 7.5, height = 5.5)
+ggplot(afs.Mcali, aes(x = mean_integrated_thk, y = sel)) +
+  geom_point(size = 4) + 
+  geom_hline(yintercept = 0, linetype = "dashed") + 
+  labs(x = "Shell Thickness", y = "Selection coefficient") + 
+  theme_linedraw(base_size = 30)
+dev.off()
+
+# For visualization purposes see bigger range
+pdf("output/figures/SLiM/Mcali_ABC/Mcali_selection_curve_biggerph_range.pdf", width = 5, height = 5)
+plot(seq(0, 5, by = 0.01), sel(seq(0, 5, by = 0.01), 1.85, 40))
+dev.off()
+
+# Calculate absolute selection coefficients
+Mcali_sel_mean <- mean(abs(afs.Mcali$sel))
+Mcali_sel_sd <- sd(abs(afs.Mcali$sel))
+
+
+
 # ================================================================================== #
 
 # Compare to real data
@@ -279,19 +307,6 @@ dev.off()
 #mod_sim <- nlsLM(AF_true_mean ~ SSlogis(shell_thk, Asym, xmid, scal), data = sim_AFs_best_mean_sub)
 #mod_sim_fit <- coef(mod_sim)
 
-
-# Selection
-sel <- function(x, z, k) {
-  1 / (1 + exp((x - z)/k)) - 0.5
-}
-
-# Graph
-pdf("output/figures/SLiM/Mcali_ABC/Mcali_selection.pdf", width = 5, height = 5)
-plot(afs.Mcali$mean_integrated_thk, sel(afs.Mcali$mean_integrated_thk, 1.85, 40))
-dev.off()
-pdf("output/figures/SLiM/Mcali_ABC/Mcali_selection_zoomed_out.pdf", width = 5, height = 5)
-plot(seq(0, 5, by = 0.01), sel(seq(0, 5, by = 0.01), 1.79, 4))
-dev.off()
 
 
 ##############

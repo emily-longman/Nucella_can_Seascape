@@ -210,6 +210,23 @@ dev.off()
 
 # ================================================================================== #
 
+# Calculate selection in 2100
+
+# Selection function
+sel <- function(x, z, k) {
+  1 / (1 + exp((x - z)/k)) - (1/2)
+}
+
+# Extract predictions for 2100
+pred_2100 <- pred[which(pred$year == 2100),]
+
+# Calc selection for the pH values
+pred_2100$sel <- sel(pred_2100$ph, 7.986, 0.15)
+
+
+
+# ================================================================================== #
+
 # 4 population subset
 
 # Graph subset of poplations

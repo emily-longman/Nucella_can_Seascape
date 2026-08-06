@@ -163,7 +163,7 @@ ggplot(data = west_coast) +
 dev.off()
 
 # Graph gGO - alt coloring Grey
-pdf("output/figures/genomic_offset/Baypass_scaled_GO_map_alt3_shorter.pdf", width = 8, height = 8.4)
+pdf("output/figures/genomic_offset/Baypass_scaled_GO_map_alt3_shorter.pdf", width = 8, height = 8)
 ggplot(data = west_coast) + 
   geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
   geom_point(data = go.scaled.output, aes(x = Long, y = Lat, fill = GO.scaled), shape = 21, size = 8) + 
@@ -177,7 +177,7 @@ ggplot(data = west_coast) +
     panel.grid.major = element_blank(), # Removes major grid lines
     panel.grid.minor = element_blank(), # Removes minor grid lines
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) + # Keeps outer rectangle
-  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.775, 0.83), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.77, 0.82), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
 
 pdf("output/figures/genomic_offset/Baypass_scaled_GO_map_alt3_taller.pdf", width = 8, height = 11)

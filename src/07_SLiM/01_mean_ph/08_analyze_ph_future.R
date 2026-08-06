@@ -233,12 +233,12 @@ ggplot(data = west_coast) +
   theme(legend.title = element_text(size = 22), legend.text = element_text(size = 20), legend.position = c(0.7, 0.825), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
 
-
 # ================================================================================== #
+
 
 # Genetic load
 
-# Selection
+# Selection function
 s <- function(x, z, k) {
   1 / (1 + exp((x - z)/k)) - (1/2)
 }
