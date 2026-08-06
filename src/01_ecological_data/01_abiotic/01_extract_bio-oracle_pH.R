@@ -27,6 +27,9 @@ setwd(root_path)
 out_dir_present <- paste("data/raw/Bio-oracle/present/pH")
 if (!dir.exists(out_dir_present)) {dir.create(out_dir_present)}
 
+out_dir_future <- paste("data/raw/Bio-oracle/future")
+if (!dir.exists(out_dir_future)) {dir.create(out_dir_future)}
+
 # ================================================================================== #
 
 # Load packages
@@ -37,21 +40,14 @@ library(devtools)
 library(biooracler)
 
 # ================================================================================== #
-
-# Example online (https://github.com/bio-oracle/biooracler)
-
-# See available layers
-list_layers()
-
-# ================================================================================== #
 # ================================================================================== #
 
 # Extract present day data for range of sites
 
 # Define time, lat, and long (set lat and long to fully encompass all sites)
 time = c('2000-01-01T00:00:00Z', '2010-01-01T00:00:00Z')
-latitude = c(34, 45)
-longitude = c(-120, -125)
+latitude = c(32, 46.5)
+longitude = c(-120, -126)
 
 # Set constraints
 constraints = list(time, latitude, longitude)
@@ -66,7 +62,7 @@ pH_Present<-"ph_baseline_2000_2018_depthsurf"
 
 # Specify datasets and summary statistics to download 
 datasets <- list(
-  list(dataset_id = pH_Present, variables = c("ph_min", "ph_mean", "ph_range", "ph_max"),
+  list(dataset_id = pH_Present, variables = c("ph_min", "ph_mean"),
        constraints = constraints, fmt = "csv", directory = out_dir_present))
 
 
@@ -88,7 +84,7 @@ for (dataset in datasets) {
   
   # Rename the file to match the dataset ID
   if (length(new_file) == 1) {
-    new_name <- file.path(out_dir_present, paste0(dataset_id, ".csv"))
+    new_name <- file.path(out_dir_present, paste0(dataset_id, "_larger_area.csv"))
     file.rename(new_file, new_name)
     message("Rename ", new_file, " to ", new_name)
   } else {
@@ -96,7 +92,55 @@ for (dataset in datasets) {
   }
 }
 
+# ================================================================================== #
+# ================================================================================== #
 
-# Check list of files in output directory
-list.files(out_dir_present)
+# Extract future day data for range of sites
+
+# Define time, lat, and long (set lat and long to fully encompass all sites)
+time = c('2080-01-01T00:00:00Z', '2090-01-01T00:00:00Z')
+latitude = c(32, 46.5)
+longitude = c(-120, -126)
+
+# Set constraints
+constraints = list(time, latitude, longitude)
+names(constraints) = c("time", "latitude", "longitude")
+
+# ================================================================================== #
+
+# Future data
+
+# Set dataset IDs
+pH_SSP585 <- "ph_ssp585_2020_2100_depthsurf"
+
+# Specify datasets and summary statistics to download 
+datasets <- list(
+  list(dataset_id = pH_SSP585, variables = c("ph_min", "ph_mean"),
+       constraints = constraints, fmt = "csv", directory = out_dir_future))
+
+# Download datasets using for loop
+for (dataset in datasets) {
+  
+  dataset_id <- dataset$dataset_id
+  variables <- dataset$variables
+  constraints <- dataset$constraints
+  
+  # List files before downloading
+  files_before <- list.files(out_dir_future, full.names = TRUE)
+  # Download dataset
+  download_layers(dataset_id, variables = variables, constraints = constraints, fmt = "csv", directory = out_dir_future)
+  # List files after downloading
+  files_after <- list.files(out_dir_future, full.names = TRUE)
+  # Identify the newly downloaded file
+  new_file <- setdiff(files_after, files_before)
+  
+  # Rename the file to match the dataset ID
+  if (length(new_file) == 1) {
+    new_name <- file.path(out_dir_future, paste0(dataset_id, "_larger_area.csv"))
+    file.rename(new_file, new_name)
+    message("Rename ", new_file, " to ", new_name)
+  } else {
+    message("No new file found for ", dataset_id, " or multiple new files detected.")
+  }
+}
 

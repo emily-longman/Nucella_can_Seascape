@@ -168,11 +168,11 @@ dev.off()
 future_avg_sub_test <- future_avg_sub[which(future_avg_sub$m == 0.01 | future_avg_sub$m == 0.001 | future_avg_sub$m == 0.0001)]
 future_avg_sub_test$m <- factor(future_avg_sub_test$m)
 # Graph with different linetypes
-pdf("output/figures/SLiM/ph_future/AF_time_vary_m_sub_linetype.pdf", width = 18, height = 8.5)
+pdf("output/figures/SLiM/ph_future/AF_time_vary_m_sub_linetype.pdf", width = 17.5, height = 8.5)
 ggplot(future_avg_sub_test, aes(x = year, y = AF_fut_avg, color = Site, linetype = m)) + 
     geom_line(linewidth = 5) + 
     scale_color_manual(values = mycolors_sub) + 
-    scale_linetype_manual(values = c("dashed", "solid", "dotted")) +
+    scale_linetype_manual(values = c("dotted", "dashed", "solid")) +
     labs(x = "Years", y = "Allele Frequency") + theme_linedraw(base_size = 32) + 
     theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))
 dev.off()

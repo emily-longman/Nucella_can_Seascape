@@ -66,7 +66,7 @@ names(meta)[2] = "Site"
 
 # Set geographic constraints
 latitude_range <- c(32, 46.5)
-longitude_range <- c(-125, -118)
+longitude_range <- c(-126, -118)
 
 # Set study extent
 study_extent <- extent(longitude_range[1], longitude_range[2], latitude_range[1], latitude_range[2])
@@ -110,9 +110,6 @@ ph_raster <- rasterize(coordinates, study_raster, bio_oracle_2010_ph_mean$ph_mea
 # Rasterize ph data
 ph_future_raster <- rasterize(coordinates, study_raster, bio_oracle_future_ph_mean$ph_mean, fun = mean, na.rm = TRUE)
 
-# Write raster tif file
-writeRaster(temp_raster, filename = "output/figures/enviro/Bio-oracle/Test_biooracle_thetao_mean_test_raster.tif", format = "GTiff")
-
 # Graph with ggplot
 # Change to data frame
 raster_df_ph <- as.data.frame(ph_raster, xy = TRUE, na.rm = TRUE)
@@ -123,7 +120,6 @@ raster_df_ph.tmp <- raster_df_ph %>% rename(current = layer)
 raster_df_ph_future.tmp <- raster_df_ph_future %>% rename(future = layer)
 raster_df_ph_diff <- left_join(raster_df_ph.tmp, raster_df_ph_future.tmp)
 raster_df_ph_diff <- raster_df_ph_diff %>% mutate(diff = future-current)
-
 
 # ================================================================================== #
 
@@ -192,3 +188,21 @@ ggplot(raster_df_ph_diff, aes(x = x, y = y, fill = diff)) +
   theme(legend.title = element_text(size = 26), legend.text = element_text(size = 20), legend.position = c(0.68, 0.83), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid")) + guides(fill = "none")
 dev.off()
 
+pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_DELTA_ph_mean_ggplot_sites_sub_alt_larger.pdf",  width = 6.5, height = 8.4) 
+ggplot(raster_df_ph_diff, aes(x = x, y = y, fill = diff)) +
+  geom_raster(aes(fill=diff)) +
+  scale_fill_gradientn(colours=rev(brewer.pal(6, "YlOrRd")), name="Delta pH") +
+  new_scale_fill() + 
+  geom_point(data = sites, aes(x = Longitude, y = Latitude, fill = Site), shape=21, inherit.aes = FALSE, size = 14) +
+  scale_fill_manual(values = mycolors_sub) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  coord_fixed(ratio = 1) +  # Fix aspect ratio so the plot is not distorted
+  theme_linedraw(base_size = 30) + 
+  theme(
+    panel.grid.major = element_blank(), # Removes major grid lines
+    panel.grid.minor = element_blank(), # Removes minor grid lines
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
+  labs(x = "Longitude", y = "Latitude") +
+  theme(legend.title = element_text(size = 26), legend.text = element_text(size = 20), legend.position = c(0.725, 0.83), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid")) + guides(fill = "none")
+dev.off()

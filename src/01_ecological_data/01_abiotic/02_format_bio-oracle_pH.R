@@ -35,7 +35,7 @@ viridiscolors <- viridis(n=19)
 # Present day data
 
 # Read in Bio-oracle data
-ph <- read.csv("data/raw/Bio-oracle/present/pH/ph_baseline_2000_2018_depthsurf.csv", header=T)
+ph <- read.csv("data/raw/Bio-oracle/present/pH/ph_baseline_2000_2018_depthsurf_larger_area.csv", header=T)
 
 # ================================================================================== #
 

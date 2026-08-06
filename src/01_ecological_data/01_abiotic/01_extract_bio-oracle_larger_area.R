@@ -11,7 +11,7 @@ rm(list=ls())
 
 # Set path as main Github repo
 # Install and load package
-install.packages(c('rprojroot'))
+#install.packages(c('rprojroot'))
 library(rprojroot)
 # Specify root path
 root_path <- find_root_file(criterion = has_file("README.md"))
@@ -55,8 +55,8 @@ print(list_layers("temp"), n=100)
 
 # Define time, lat, and long (set lat and long to fully encompass all sites)
 time = c('2000-01-01T00:00:00Z', '2010-01-01T00:00:00Z')
-latitude_range <- c(32, 46.5)
-longitude_range <- c(-125, -118)
+latitude <- c(32, 46.5)
+longitude <- c(-126, -118)
 
 # Set constraints
 constraints = list(time, latitude, longitude)
@@ -121,8 +121,8 @@ for (dataset in datasets) {
 
 # Define time, lat, and long (set lat and long to fully encompass all sites)
 time = c('2080-01-01T00:00:00Z', '2090-01-01T00:00:00Z')
-latitude_range <- c(32, 46.5)
-longitude_range <- c(-125, -118)
+latitude <- c(32, 46.5)
+longitude <- c(-126, -118)
 
 # Set constraints
 constraints = list(time, latitude, longitude)
