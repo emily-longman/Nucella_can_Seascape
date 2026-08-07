@@ -40,11 +40,17 @@ snp.meta <- read.table("data/processed/baypass/input_files/snpdet", header=F)
 colnames(snp.meta) <- c("chr", "pos", "allele1", "allele2")
 
 # Load data - outliers for pH and Mcali based on beating POD BF threshold
-bf.ph.mean.sum.outliers.annotated <- read.csv("data/processed/baypass/bf.ph.mean.sum.outliers.annotated.csv", header = T)
-bf.McaliIntThk.mean.sum.outliers.annotated <- read.csv("data/processed/baypass/bf.McaliIntThk.mean.sum.outliers.annotated.csv", header = T)
+bf.ph.mean.sum.outliers.annotated_multiann <- read.csv("data/processed/baypass/bf.ph.mean.sum.outliers.annotated.csv", header = T)
+bf.McaliIntThk.mean.sum.outliers.annotated_multiann <- read.csv("data/processed/baypass/bf.McaliIntThk.mean.sum.outliers.annotated.csv", header = T)
 
 # Load annotation
 load("data/processed/outlier_analyses/Ncan.pooldata.annotations.RData")
+
+# ================================================================================== #
+
+# Keep only top annotation
+bf.ph.mean.sum.outliers.annotated <- bf.ph.mean.sum.outliers.annotated_multiann %>% filter(annotation.id == 1)
+bf.McaliIntThk.mean.sum.outliers.annotated <- bf.McaliIntThk.mean.sum.outliers.annotated_multiann  %>% filter(annotation.id == 1)
 
 # ================================================================================== #
 
@@ -95,6 +101,9 @@ ftests_ph <- foreach(i=ann.focal, .combine = "rbind", .errorhandling = "remove")
     )
 }
 
+# Save table
+write.csv(ftests_ph, "output/tables/ftests_ph.csv", row.names=F)
+
 # Prep for graphing
 ftests_ph$class_graphing <- ftests_ph$class
 ftests_ph$class_graphing <- str_remove_all(ftests_ph$class_graphing, "_variant")
@@ -104,30 +113,12 @@ ftests_ph$class_graphing <- gsub("_", " ", ftests_ph$class_graphing)
 ftests_ph <- ftests_ph %>% mutate(class_graphing = fct_reorder(class_graphing, OR))
 
 # Graph OR of Fishers exact tests
-pdf("output/figures/outlier_analyses/Fishers_exact_test_pH.pdf", width = 9.5, height = 6.5)
+pdf("output/figures/outlier_analyses/Fishers_exact_test_pH.pdf", width = 8, height = 8)
 ggplot(ftests_ph, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet))) + 
   geom_vline(xintercept = 0, col="black", linetype="dashed") + ylab("") + 
   geom_linerange(aes(xmin = log2(lci), xmax = log2(uci)), linewidth = 1) +
   geom_point(shape = 21, size = 8) +
-  scale_fill_gradient(low = "#e6e4e4", high = "#b55c04", name="-log10(p)", breaks=c(0,2,4)) +
-  theme_linedraw(base_size=30) + theme(plot.title = element_text(hjust = 0.5)) +
-  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 22), legend.position = c(0.81, 0.25), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
-dev.off()
-pdf("output/figures/outlier_analyses/Fishers_exact_test_pH_taller.pdf", width = 9.5, height = 8.14)
-ggplot(ftests_ph, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet))) + 
-  geom_vline(xintercept = 0, col="black", linetype="dashed") + ylab("") + 
-  geom_linerange(aes(xmin = log2(lci), xmax = log2(uci)), linewidth = 1) +
-  geom_point(shape = 21, size = 8) +
-  scale_fill_gradient(low = "#e6e4e4", high = "#b55c04", name="-log10(p)", breaks=c(0,2,4)) +
-  theme_linedraw(base_size=30) + theme(plot.title = element_text(hjust = 0.5)) +
-  theme(legend.title = element_text(size = 26), legend.text = element_text(size = 25), legend.position = c(0.81, 0.2), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
-dev.off()
-pdf("output/figures/outlier_analyses/Fishers_exact_test_pH_taller2.pdf", width = 8, height = 7.8)
-ggplot(ftests_ph, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet))) + 
-  geom_vline(xintercept = 0, col="black", linetype="dashed") + ylab("") + 
-  geom_linerange(aes(xmin = log2(lci), xmax = log2(uci)), linewidth = 1) +
-  geom_point(shape = 21, size = 8) +
-  scale_fill_gradient(low = "#e6e4e4", high = "#b55c04", name="-log10(p)", breaks=c(0,2,4)) +
+  scale_fill_gradient(low = "#e6e4e4", high = "#b55c04", name="-log10(p)") +
   theme_linedraw(base_size=30) + theme(plot.title = element_text(hjust = 0.5)) +
   theme(legend.title = element_text(size = 19), legend.text = element_text(size = 20), legend.position = c(0.8, 0.178), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
@@ -158,6 +149,9 @@ ftests_Mcali <- foreach(i=ann.focal, .combine = "rbind", .errorhandling = "remov
     )
 }
 
+# Save table
+write.csv(ftests_Mcali, "output/tables/ftests_Mcali.csv", row.names=F)
+
 # Prep for graphing
 ftests_Mcali$class_graphing <- ftests_Mcali$class
 ftests_Mcali$class_graphing <- str_remove_all(ftests_Mcali$class_graphing, "_variant")
@@ -167,57 +161,14 @@ ftests_Mcali$class_graphing <- gsub("_", " ", ftests_Mcali$class_graphing)
 ftests_Mcali <- ftests_Mcali %>% mutate(class_graphing = fct_reorder(class_graphing, OR))
 
 # Graph OR of Fishers exact tests
-pdf("output/figures/outlier_analyses/Fishers_exact_test_Mcali.pdf", width = 12, height = 8)
+pdf("output/figures/outlier_analyses/Fishers_exact_test_Mcali.pdf", width = 8, height = 8)
 ggplot(ftests_Mcali, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet))) + 
   geom_vline(xintercept = 0, col="black", linetype="dashed") + ylab("") + 
   geom_linerange(aes(xmin = log2(lci), xmax = log2(uci)), linewidth = 1) +
   geom_point(shape = 21, size = 8) +
   scale_fill_gradient(low = "#e6e4e4", high = "#b55c04", name="-log10(p)") + 
   #labs(title = expression(paste(italic("M. californianus"), " cross-sectional thickness"))) +
-  theme_bw(base_size=36) + theme(plot.title = element_text(hjust = 0.5)) + theme(plot.margin = margin(t = 10, r = 50, b = 10, l = 10,, unit = "pt")) +
-  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 22), legend.position = c(0.15, 0.81), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
-dev.off()
-pdf("output/figures/outlier_analyses/Fishers_exact_test_Mcali_taller.pdf", width = 9.9175, height = 8.14)
-ggplot(ftests_Mcali, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet))) + 
-  geom_vline(xintercept = 0, col="black", linetype="dashed") + ylab("") + 
-  geom_linerange(aes(xmin = log2(lci), xmax = log2(uci)), linewidth = 1) +
-  geom_point(shape = 21, size = 8) +
-  scale_fill_gradient(low = "#e6e4e4", high = "#b55c04", name="-log10(p)", breaks=c(0,20,40)) + 
-  #labs(title = expression(paste(italic("M. californianus"), " cross-sectional thickness"))) +
-  theme_linedraw(base_size=30) + theme(plot.title = element_text(hjust = 0.5)) + theme(plot.margin = margin(t = 10, r = 50, b = 10, l = 10,, unit = "pt")) +
-  theme(legend.title = element_text(size = 26), legend.text = element_text(size = 25), legend.position = c(0.22, 0.82), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
-dev.off()
-pdf("output/figures/outlier_analyses/Fishers_exact_test_Mcali_taller2.pdf", width = 8, height = 7.8)
-ggplot(ftests_Mcali, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet))) + 
-  geom_vline(xintercept = 0, col="black", linetype="dashed") + ylab("") + 
-  geom_linerange(aes(xmin = log2(lci), xmax = log2(uci)), linewidth = 1) +
-  geom_point(shape = 21, size = 8) +
-  scale_fill_gradient(low = "#e6e4e4", high = "#b55c04", name="-log10(p)", breaks=c(0,20,40)) + 
-  #labs(title = expression(paste(italic("M. californianus"), " cross-sectional thickness"))) +
   theme_linedraw(base_size=30) + theme(plot.title = element_text(hjust = 0.5)) + theme(plot.margin = margin(t = 10, r = 50, b = 10, l = 10,, unit = "pt")) +
   theme(legend.title = element_text(size = 19), legend.text = element_text(size = 20), legend.position = c(0.218, 0.83), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
-dev.off()
-
-#--------------------------------------------------------------------------------
-
-# Graph both pH and Mcali in same figure
-
-# Merge for graphing
-ftests_ph$model <- "ph"
-ftests_Mcali$model <- "Mcali"
-
-# Join
-ftests_all <- rbind(ftests_ph, ftests_Mcali)
-
-# Graph OR of Fishers exact tests
-pdf("output/figures/outlier_analyses/Fishers_exact_test_all.pdf", width = 10, height = 6)
-ggplot(ftests_all, aes(x = log2(OR), y = class_graphing, fill = -log(p.fet), shape=model)) + 
-  geom_linerange(aes(xmin = log2(lci), xmax = log2(uci)), linewidth = 1, position = position_dodge(width = 0.5)) +
-  geom_point(size = 5, position = position_dodge(width = 0.5)) +
-  scale_shape_manual(values = c(21, 22)) +
-  scale_fill_gradient(low = "#e6e4e4", high = "#b55c04", name="-log10(p)") +
-  #scale_fill_gradientn(colours=brewer.pal(9, "Greens"), name="-log10(p)") + 
-  geom_vline(xintercept = 0, col="black", linetype="dashed") + ylab("") +
-  theme_bw(base_size=22) 
 dev.off()
 
