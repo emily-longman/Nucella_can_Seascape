@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=Mcali_slim_v7_pt1
+#SBATCH --job-name=Mcali_slim_v7_pt2
 
 # Specify partition
 #SBATCH --partition=general
@@ -95,8 +95,8 @@ ROOT=$WORKING_FOLDER/data/processed/SLiM/Mcali_results_v7
 cd $WORKING_FOLDER/data/processed/SLiM/Mcali_results_v7
 
 # Loop through iterations
-for i in {1..25}
-#for i in {26..50}
+#for i in {1..25}
+for i in {26..50}
 do
 
 # Run slim script
