@@ -219,7 +219,8 @@ dev.off()
 
 # Graph AF vs time - per sim
 pdf("output/figures/SLiM/ph_future/AF_time_vary_m_all_sub_5pop.pdf", width = 10, height = 16)
-ggplot(future_sim_data_vary_m_sub5, aes(x = (year+2000), y = AF_fut, color = Site, group=interaction(repId, Site))) + geom_line(linewidth = 1, alpha = 0.4) + 
+ggplot(future_sim_data_vary_m_sub5, aes(x = (year+2000), y = AF_fut, color = Site, group=interaction(repId, Site))) + 
+    geom_line(linewidth = 1, alpha = 0.2) + 
     facet_wrap(~m, ncol = 1) + scale_color_manual(values = mycolors_sub5) + 
     labs(x = "Years", y = "AF") + theme_linedraw(base_size = 30) + theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
 dev.off()
@@ -287,16 +288,16 @@ ggplot(future_sim_north_melt_NA, aes(y = na_perc, x = m_scientific, fill = Site,
     geom_point(size = 8) +
     scale_fill_manual(values =  mycolors_sub[1]) + scale_color_manual(values =  mycolors_sub[1]) + 
     scale_x_discrete(labels = fancy_scientific) + ylim(-5, 105)+
-    labs(x = "Migration", y = "Percent") + theme_linedraw(base_size = 30) + 
+    labs(x = "Migration", y = "Percent of Simulations") + theme_linedraw(base_size = 30) + 
     guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
     theme(legend.position = "none")
 dev.off()
-pdf("output/figures/SLiM/ph_future/AF_FC_pops_vary_m_NAs_taller.pdf", width = 7, height = 8.5)
+pdf("output/figures/SLiM/ph_future/AF_FC_pops_vary_m_NAs_taller.pdf", width = 7, height = 8)
 ggplot(future_sim_north_melt_NA, aes(y = na_perc, x = m_scientific, fill = Site, color = Site)) + 
     geom_point(size = 12) +
     scale_fill_manual(values =  mycolors_sub[1]) + scale_color_manual(values =  mycolors_sub[1]) + 
     scale_x_discrete(labels = fancy_scientific) + ylim(-5, 105)+
-    labs(x = "Migration", y = "Percent") + theme_linedraw(base_size = 30) + 
+    labs(x = "Migration", y = "% Simulations Allele Failed to Arrive") + theme_linedraw(base_size = 30) + 
     guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
     theme(legend.position = "none")
 dev.off()
