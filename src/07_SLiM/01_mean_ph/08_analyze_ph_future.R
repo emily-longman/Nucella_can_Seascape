@@ -44,6 +44,7 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 nb.cols <- 19
 mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
 mycolors_sub <- hcl.colors(n = 7, palette = "SunsetDark")[c(1,3,4,6)]
+mycolors_sub5 <- hcl.colors(n = 7, palette = "SunsetDark")[c(1,3,4,6,7)]
 
 # ================================================================================== #
 
@@ -108,12 +109,12 @@ ggplot(future_sim_data, aes(x = year, y = AF_fut, color = Site, group=interactio
 dev.off()
 
 # Subset
-future_sim_data_sub <- future_sim_data %>% filter(Site == "FC" | Site == "CBL" | Site == "BMR" | Site == "STR")
+future_sim_data_sub <- future_sim_data %>% filter(Site == "FC" | Site == "ARA" | Site == "CBL" | Site == "BMR" | Site == "STR")
 
 # Graph subset
-pdf("output/figures/SLiM/ph_future/AF_time_all_sub.pdf", width = 11.5, height = 7)
+pdf("output/figures/SLiM/ph_future/AF_time_all_sub_5pop.pdf", width = 11.5, height = 7)
 ggplot(future_sim_data_sub, aes(x = year, y = AF_fut, color = Site, group=interaction(repId, Site))) + geom_line(linewidth = 1, alpha = 0.4) + 
-    scale_color_manual(values = mycolors_sub) + 
+    scale_color_manual(values = mycolors_sub5) + 
     labs(x = "Years", y = "AF") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
 dev.off()
 
@@ -147,22 +148,22 @@ ggplot(future_avg, aes(x = (year+2000), y = AF_fut_avg, color = Site)) + geom_li
 dev.off()
 
 # Subset
-future_avg_sub <- future_avg %>% filter(Site == "FC" | Site == "CBL" | Site == "BMR" | Site == "STR")
+future_avg_sub <- future_avg %>% filter(Site == "FC" | Site == "ARA" | Site == "CBL" | Site == "BMR" | Site == "STR")
 
 # Graph AF vs time
 pdf("output/figures/SLiM/ph_future/AF_time_sub_wider.pdf", width = 11, height = 5)
 ggplot(future_avg_sub, aes(x = (year+2000), y = AF_fut_avg, color = Site)) + geom_line(linewidth = 4) + 
-    scale_color_manual(values = mycolors_sub) + scale_y_continuous(limits=c(0,1.0), breaks = c(0, 0.5, 1)) +
+    scale_color_manual(values = mycolors_sub5) + scale_y_continuous(limits=c(0,1.0), breaks = c(0, 0.5, 1)) +
     labs(x = "Year", y = "Allele Frequency") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
 dev.off()
 pdf("output/figures/SLiM/ph_future/AF_time_sub_wider_alt.pdf", width = 13.5, height = 6)
 ggplot(future_avg_sub, aes(x = (year+2000), y = AF_fut_avg, color = Site)) + geom_line(linewidth = 4) + 
-    scale_color_manual(values = mycolors_sub) + scale_y_continuous(limits=c(0,1.0), breaks = c(0, 0.5, 1)) +
+    scale_color_manual(values = mycolors_sub5) + scale_y_continuous(limits=c(0,1.0), breaks = c(0, 0.5, 1)) +
     labs(x = "Year", y = "Allele Frequency") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
 dev.off()
-pdf("output/figures/SLiM/ph_future/AF_time_sub_wider_taller.pdf", width = 9, height = 8.5)
+pdf("output/figures/SLiM/ph_future/AF_time_sub_wider_taller.pdf", width = 9, height = 8)
 ggplot(future_avg_sub, aes(x = (year+2000), y = AF_fut_avg, color = Site)) + geom_line(linewidth = 5) + 
-    scale_color_manual(values = mycolors_sub) + scale_y_continuous(limits=c(0,1.0), breaks = c(0, 0.5, 1)) +
+    scale_color_manual(values = mycolors_sub5) + scale_y_continuous(limits=c(0,1.0), breaks = c(0, 0.5, 1)) +
     labs(x = "Year", y = "Allele Frequency") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
 dev.off()
 
