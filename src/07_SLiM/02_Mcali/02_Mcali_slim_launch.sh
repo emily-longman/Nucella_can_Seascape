@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=Mcali_slim_v7_pt4
+#SBATCH --job-name=Mcali_slim_v7_pt3
 
 # Specify partition
 #SBATCH --partition=general
@@ -20,7 +20,7 @@
 #SBATCH --mem=10G 
 
 # Submit job array
-#SBATCH --array=1-483
+#SBATCH --array=263-483 #1-483
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -97,8 +97,8 @@ cd $WORKING_FOLDER/data/processed/SLiM/Mcali_results_v7
 # Loop through iterations
 #for i in {1..25}
 #for i in {26..50}
-#for i in {51..75}
-for i in {76..100}
+for i in {51..75}
+#for i in {76..100}
 do
 
 # Run slim script
