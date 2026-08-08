@@ -292,12 +292,12 @@ ggplot(future_sim_north_melt_NA, aes(y = na_perc, x = m_scientific, fill = Site,
     guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
     theme(legend.position = "none")
 dev.off()
-pdf("output/figures/SLiM/ph_future/AF_FC_pops_vary_m_NAs_taller.pdf", width = 7, height = 8)
+pdf("output/figures/SLiM/ph_future/AF_FC_pops_vary_m_NAs_taller.pdf", width = 7.5, height = 8)
 ggplot(future_sim_north_melt_NA, aes(y = na_perc, x = m_scientific, fill = Site, color = Site)) + 
     geom_point(size = 12) +
     scale_fill_manual(values =  mycolors_sub[1]) + scale_color_manual(values =  mycolors_sub[1]) + 
     scale_x_discrete(labels = fancy_scientific) + ylim(-5, 105)+
-    labs(x = "Migration", y = "% Simulations Allele Failed to Arrive") + theme_linedraw(base_size = 30) + 
+    labs(x = "Migration", y = "% Simulations Allele\nFailed to Arrive") + theme_linedraw(base_size = 30) + 
     guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
     theme(legend.position = "none")
 dev.off()

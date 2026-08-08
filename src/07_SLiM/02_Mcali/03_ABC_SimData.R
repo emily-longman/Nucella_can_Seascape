@@ -222,8 +222,8 @@ process_sims = function(repId, m, thresh, k, mag, N){
 # Load data and run function
 
 # Create list of file names for data
-file_names = as.list(dir(path = 'data/processed/SLiM/Mcali_results_v6_expand2/', pattern = "McaliclineAFs.*"))
-file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/SLiM/Mcali_results_v6_expand2/', x))))
+file_names = as.list(dir(path = 'data/processed/SLiM/Mcali_results_v7/', pattern = "McaliclineAFs.*"))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/SLiM/Mcali_results_v7/', x))))
 
 # Read all the files and perform ABC
 sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
@@ -233,7 +233,7 @@ sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")
     # Load file and add file name identifier
     tmp <- read.table(i) %>% 
             mutate(file_name = i) %>% 
-            mutate(file_name = str_remove(file_name, pattern = "data/processed/SLiM/Mcali_results_v6_expand2/McaliclineAFs.")) %>% 
+            mutate(file_name = str_remove(file_name, pattern = "data/processed/SLiM/Mcali_results_v7/McaliclineAFs.")) %>% 
             mutate(file_name = str_remove(file_name, pattern = ".txt"))
     # Rename pops
     names(tmp)[1:18] = paste("p", c(0,1,2,4:18), sep ="")
@@ -262,4 +262,4 @@ sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")
 # ================================================================================== #
 
 # Save output
-save(sim_data, file = "data/processed/SLiM/Mcali_ABC/sim_data_v6_expand2.Rdata")
+save(sim_data, file = "data/processed/SLiM/Mcali_ABC/sim_data_v7.Rdata")
