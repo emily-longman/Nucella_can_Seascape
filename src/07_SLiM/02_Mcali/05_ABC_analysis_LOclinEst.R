@@ -60,14 +60,9 @@ Mcali <- afs.Mcali[,c(7,13)] %>% distinct()
 
 # Load data
 real_All <- get(load("data/processed/SLiM/Mcali_ABC/real_data.Rdata"))
-sim_All_original <- get(load("data/processed/SLiM/Mcali_ABC/sim_data_v6.Rdata"))
-sim_All_exp <- get(load("data/processed/SLiM/Mcali_ABC/sim_data_v6_expand.Rdata"))
-sim_All_exp2 <- get(load("data/processed/SLiM/Mcali_ABC/sim_data_v6_expand2.Rdata"))
+sim_All <- get(load("data/processed/SLiM/Mcali_ABC/sim_data_v7.Rdata"))
 # Prevent scientific notation
-sim_All_exp2$m <- c(0.00001)
-
-sims <- rbind(sim_All_original, sim_All_exp)
-sim_All <- rbind(sims, sim_All_exp2)
+sim_All$m <- c(0.00001)
 
 # ================================================================================== #
 
@@ -105,7 +100,8 @@ simulated_data = dplyr::select(ungroup(sim_All),
                           #p7, p8, p9, p10, p11, p12,
                           #p13, p14, p15, p16, p17, p18
                           )
-sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k, m), as.numeric)) 
+sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k), as.numeric)) 
+#sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), thresh, k, m), as.numeric)) 
 #sim_parameters = as.data.frame(lapply(dplyr::select(ungroup(sim_All), m, thresh, k, mag, N ), as.numeric)) 
 
 # ================================================================================== #
@@ -131,7 +127,7 @@ post_long <- pivot_longer(
   values_to = "value")
 
 # Graph posteriors
-pdf("output/figures/SLiM/Mcali_ABC/Mcali_posteriors_v6_expand.pdf", width = 5, height = 8)
+pdf("output/figures/SLiM/Mcali_ABC/Mcali_posteriors_v7.pdf", width = 5, height = 8)
 ggplot(post_long, aes(x = value)) +
   geom_density(fill = "steelblue", alpha = 0.5) +
   facet_wrap(parameter~. , scales = "free", ncol = 1) +
@@ -152,7 +148,7 @@ best <- which.max(abc_fit$weights)
 abc_fit$unadj.values[best, ]
 
 # Create var with best value for each param
-m_best = abc_fit$unadj.values[best,"m"]
+#m_best = abc_fit$unadj.values[best,"m"]
 k_best = abc_fit$unadj.values[best,"k"]
 thresh_best = abc_fit$unadj.values[best,"thresh"]
 #mag_best = abc_fit$unadj.values[best,"mag"]
@@ -252,8 +248,8 @@ sim_Data.melt <- sim_sub %>%
 
 #sim_All[which(sim_All$m == m_best & sim_All$thresh == thresh_best & sim_All$k_1 == k_1_best & sim_All$k_2 == k_2_best),]
 #sim_All[which(sim_All$m == m_best & sim_All$thresh == thresh_best & sim_All$k == k_best & sim_All$mag == mag_best & sim_All$N == N_best),]
-sim_All[which(sim_All$thresh == thresh_best & sim_All$k == k_best & sim_All$m == m_best),]
-#sim_All[which(sim_All$thresh == thresh_best & sim_All$k == k_best),]
+#sim_All[which(sim_All$thresh == thresh_best & sim_All$k == k_best & sim_All$m == m_best),]
+sim_All[which(sim_All$thresh == thresh_best & sim_All$k == k_best),]
 
 # ================================================================================== #
 
@@ -274,14 +270,14 @@ dev.off()
 
 # Extract best
 sim_AFs_best <- sim_Data.melt %>%
-  filter(thresh == thresh_best, k == k_best, m == m_best) %>%
+  filter(thresh == thresh_best, k == k_best) %>%
   left_join(dplyr::select(ecovars, Site, sim_eq, shell_thk))
 # Make Site factor
 sim_AFs_best$Site <- factor(sim_AFs_best$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 
 # Graph sim
-pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_v6_exp.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_v7.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best, aes(x = AF_true, y = shell_thk, fill = Site)) + geom_point(size = 5, shape = 21) + scale_fill_manual(values = mycolors) +
 labs(x= "AF", y= "Shell Thk") +
 theme_linedraw(base_size=26) + theme(legend.position = "none")
@@ -295,7 +291,7 @@ sim_AFs_best_mean <- sim_AFs_best %>%
 sim_AFs_best_mean$Site <- factor(sim_AFs_best_mean$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_repmeans_v6_exp.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_repmeans_v7.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best_mean, aes(x = AF_true_mean, y = shell_thk, fill = Site)) + geom_point(size = 5, shape = 21) + scale_fill_manual(values = mycolors) + 
 labs(x= "AF", y= "Shell Thk") +
 theme_linedraw(base_size=26) + theme(legend.position = "none")
