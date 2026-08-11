@@ -100,7 +100,7 @@ baypass.Mcali.xtx.POD.thr <- baypass.Mcali.xtx.POD.sum %>% group_by(thr) %>% sum
 
 
 # Graph corrected xtx for each SNP within window
-pdf("output/figures/baypass/baypass_Mcali_xtx_corrected.pdf", width = 12, height = 3)
+pdf("output/figures/baypass/baypass_Mcali_xtx.pdf", width = 12, height = 3)
 ggplot(baypass.Mcali.xtx.sum, aes(y=M_XtX_mean, x=MRK/1000)) + labs(x="Position (kb)", y=expression(paste(italic("XtX"), "corrected")))+
   geom_point(alpha=0.8, size=3.5) + ylim(0,40) +
   geom_hline(yintercept=baypass.Mcali.xtx.POD.thr$M_XtX_mean[which(baypass.Mcali.xtx.POD.thr$thr==0.999)], col="#d900ff", linetype="dashed") +

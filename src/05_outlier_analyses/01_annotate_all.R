@@ -1,4 +1,4 @@
-# Annotate all SNPs - parts of code was originally from Alan Bergland
+# Annotate all SNPs
 
 # Clear memory
 rm(list=ls())
