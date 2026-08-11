@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=ph_slim_morevars9_pt1
+#SBATCH --job-name=ph_slim_morevars9_expand_pt1
 
 # Specify partition
 #SBATCH --partition=general
