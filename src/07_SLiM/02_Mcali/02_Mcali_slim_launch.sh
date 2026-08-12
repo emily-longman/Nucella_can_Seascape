@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=Mcali_slim_v7_pt3
+#SBATCH --job-name=Mcali_slim_v8_pt1
 
 # Specify partition
 #SBATCH --partition=general
@@ -60,15 +60,15 @@ fi
 cd $WORKING_FOLDER/data/processed/SLiM
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "Mcali_results_v7" ]
-then echo "Working Mcali_results_v7 folder exist"; echo "Let's move on."; date
-else echo "Working Mcali_results_v7 folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/Mcali_results_v7; date
+if [ -d "Mcali_results_v8" ]
+then echo "Working Mcali_results_v8 folder exist"; echo "Let's move on."; date
+else echo "Working Mcali_results_v8 folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/Mcali_results_v8; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Guide file 
-GUIDE_FILE=$WORKING_FOLDER/guide_files/slim_Mcali_guide_file_v7.txt
+GUIDE_FILE=$WORKING_FOLDER/guide_files/slim_Mcali_guide_file_v8.txt
 
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers.
 # Threshold      # k         # mag      # m         #N
@@ -87,17 +87,17 @@ N=`awk -F "\t" '{print $5}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
 echo "Threshold:"${thresh} "k:"${k} "mag:"${mag} "m:"${m} "N:"${N}
 
 # Set root
-ROOT=$WORKING_FOLDER/data/processed/SLiM/Mcali_results_v7
+ROOT=$WORKING_FOLDER/data/processed/SLiM/Mcali_results_v8
 
 #--------------------------------------------------------------------------------
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/SLiM/Mcali_results_v7
+cd $WORKING_FOLDER/data/processed/SLiM/Mcali_results_v8
 
 # Loop through iterations
-#for i in {1..25}
+for i in {1..25}
 #for i in {26..50}
-for i in {51..75}
+#for i in {51..75}
 #for i in {76..100}
 do
 
