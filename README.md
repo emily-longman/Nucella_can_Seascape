@@ -67,6 +67,9 @@ Filter the Pool-Seq dataset from [Longman et al. (2026)](https://royalsocietypub
 
 ## Part 5 - Genomic offset analyses
 
+01_scale_mean_ph.R - Scale mean pH for current and future data.
+
+02_Baypass_GO_mean_ph_scaled.R
 
 ## Part 6 - Population genetic simulation using SLiM
 
