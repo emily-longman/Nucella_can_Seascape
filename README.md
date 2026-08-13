@@ -61,9 +61,23 @@ Filter the Pool-Seq dataset from [Longman et al. (2026)](https://royalsocietypub
 
 ## Part 3 - Genotype environment association analyses using GLM framework
 
+GLMs...
+
 01_run_glms_abiotic:
 
+- 01_chunks_pt1.txt - Interactive session to make list of scaffold names of genome
+- 01_chunks_pt2.R - Create guide file of scaffold chunks for GLMs.
+- 02_glms_bio-oracle_pt1.sh
+- 02_glms_bio-oracle_pt2.sh
+- 02_glms_bio-oracle_pt3.sh
+- 02_glms_bio-oracle.R
+- 03_extract_glms.R and 03_extract_glms_launch.R
+- 04_merge_glms.R and 04_merge_glms_launch.R
+
 01_run_glms_biotic:
+
+- 01_MARINe
+- 02_Mcali
 
 02_model_enrichment:
 
