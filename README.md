@@ -53,5 +53,23 @@ There were two sets of biotic data. The first was abundance/density data of inte
 
 02_summarize_Mcalifornianus_shell.R - Filter shell morphology data and summarize.
 
+## Part 2 - Demography and population structure
+
+
+## Part 3 - Genotype environment association analyses using GLM framework
+
+## Part 4 - Identify outlier loci for top abiotic and biotic variable using Baypass
+
+## Part 5 - Genomic offset analyses
+
+## Part 6 - Population genetic simulation using SLiM
+
+- 01_mean_ph:
+
+- 02_Mcali:
+
+
+
+
 
 
