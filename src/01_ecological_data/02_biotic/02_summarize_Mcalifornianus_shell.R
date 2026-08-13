@@ -5,6 +5,11 @@ rm(list=ls())
 
 # ================================================================================== #
 
+# Set seed for reproducibility
+set.seed(123)
+
+# ================================================================================== #
+
 # Set path as main Github repo
 install.packages(c('rprojroot'))
 library(rprojroot)
@@ -24,6 +29,12 @@ library(tidyverse)
 library(ggplot2)
 library(RColorBrewer)
 library(viridis)
+
+# ================================================================================== #
+
+# Color palette
+viridiscolors <- viridis(n=19)
+viridiscolors18 <- viridiscolors[-4]
 
 # ================================================================================== #
 
@@ -99,11 +110,8 @@ write.csv(Mcali.data.sum, "data/raw/Mcali_thk/Mcali.data.sum.csv", row.names=FAL
 
 # ================================================================================== #
 
-# Set seed
-set.seed(123)
-#set.seed(179)
-
-# Subsample dataset so even number of mussels of each size for each pop
+# Subsample dataset so even number of mussels of each size for each pop 
+# Note: make sure set seed above for reproducibility
 Mcali_data_40 <- Mcali_data %>% group_by(Site.Code) %>% filter(value_bin == "40") %>% slice_sample(n=3)
 Mcali_data_50 <- Mcali_data %>% group_by(Site.Code) %>% filter(value_bin == "50") %>% slice_sample(n=4)
 Mcali_data_60 <- Mcali_data %>% group_by(Site.Code) %>% filter(value_bin == "60") %>% slice_sample(n=5)
@@ -112,6 +120,7 @@ Mcali_data_80 <- Mcali_data %>% group_by(Site.Code) %>% filter(value_bin == "80"
 Mcali_data_90 <- Mcali_data %>% group_by(Site.Code) %>% filter(value_bin == "90") %>% slice_sample(n=4)
 Mcali_data_100 <- Mcali_data %>% group_by(Site.Code) %>% filter(value_bin == "100") %>% slice_sample(n=3)
 
+# Join
 Mcali_data_sub <- rbind(Mcali_data_40, Mcali_data_50, Mcali_data_60, Mcali_data_70, Mcali_data_80, Mcali_data_90, Mcali_data_100)
 
 # Add one KH mussel that is 80.8mm becuase 70-80mm is one short
@@ -150,14 +159,9 @@ Mcali_sub_sum <- Mcali_data_sub %>%
     mean_max_thk = mean(Max.thk), sd_max_thk = sd(Max.thk), se_max_thk = sd_max_thk/sqrt(num_shells),
     mean_min_thk = mean(Min.thk), sd_min_thk = sd(Min.thk), se_min_thk = sd_min_thk/sqrt(num_shells)) %>% as.data.frame() 
 
-
 # ================================================================================== #
 
-# Color palette
-viridiscolors <- viridis(n=19)
-viridiscolors18 <- viridiscolors[-4]
-
-# Remove ARA
+# Remove ARA since mussels collected at this site were in a more wave protected area
 Mcali_data_sub_noARA <- Mcali_data_sub %>% filter(Site.Code != "ARA")
 Mcali_sub_sum_noARA <- Mcali_sub_sum %>% filter(Site.Code != "ARA")
 

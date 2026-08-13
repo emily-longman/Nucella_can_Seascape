@@ -278,3 +278,73 @@ marine_sum <- rbind(point_contact_filt_sum[,-15], quadrat_filt_sum, swath_filt_s
 
 # Write summary table
 write.csv(marine_sum, "data/processed/GEA/enviro_data/MARINe/marine_long_sum.csv", row.names=F)
+
+# ================================================================================== #
+# ================================================================================== #
+
+# Use multivariate approach to look at patterns
+
+# Note - will need to reformat the data if plan to use these
+
+# Load summary data
+#biodiversity_means <- read.csv("data/processed/GEA/enviro_data/MARINe/Biodiversity_means.csv", header=T)
+
+#biodiversity_means$marine_site_name <- factor(biodiversity_means$marine_site_name, levels=c("Fogarty Creek", "Seal Rock", "Bob Creek", "Cape Arago", "Coquille Point", "Point Saint George", 
+#"Shelter Cove", "Kibesillah Hill", "Windermere Point", "Bodega", "Pigeon Point", "Point Lobos", "Garrapata", 
+#"Point Sierra Nevada", "Piedras Blancas", "Hazards", "Stairs"))
+
+# ================================================================================== #
+
+# Run NMDS
+set.seed(2)
+biodiversity_mds <- metaMDS(marine_sum_means[,6:14], distance = "bray", trymax = 50)
+biodiversity_mds
+
+# Extract the axes of nmds and add columns with site info
+data_scores <- as.data.frame(scores(biodiversity_mds, "sites"))
+data_scores$marine_site_name <- marine_sum_means$marine_site_name
+data_scores$latitude <- marine_sum_means$latitude
+data_scores$longitude <- marine_sum_means$longitude
+
+#Extract the species scores
+species_scores <- as.data.frame(scores(biodiversity_mds, "species"))
+species_scores$species <- c("Balanus", "Chthamalus", "Mytilus_californianus", "Mytilus_spp", "Pollicipes", "N_canaliculata", "N_emar_ostrina", "N_lamellosa", "Pisaster")
+
+# Graph NMDS
+pdf("output/figures/GEA/enviro/MARINe/MARINe_NMDS.pdf", width = 10, height = 10)
+ggplot() + 
+geom_point(data=data_scores, aes(x=NMDS1, y=NMDS2, colour=marine_site_name), size=3) + 
+geom_text(data=species_scores, aes(x=NMDS1, y=NMDS2, label=species), size=3) + 
+coord_equal() +
+theme_bw() + scale_color_manual(values=mycolors)
+dev.off()
+
+# ================================================================================== #
+
+# Biplot of biotic data
+
+# Perform the PCA
+pca_biodiversity <- prcomp(marine_sum_means[,6:14], scale.=TRUE)
+
+# Graph biplot
+pdf("output/figures/GEA/enviro/MARINe/MARINe_biplot.pdf", width = 10, height = 10)
+biplot(pca_biodiversity)
+dev.off()
+
+# Graph biplot with ggplot and ggfortify
+pdf("output/figures/GEA/enviro/MARINe/MARINe_biplot_ggplot.pdf", width = 10.5, height = 8)
+autoplot(pca_biodiversity, data=marine_sum_means, color="black", fill="marine_site_name", size=6, shape=21,
+loadings=TRUE, loadings.label=TRUE, loadings.label.size=6) + scale_fill_manual(values=mycolors) + ylim(-0.6,0.6) + xlim(-0.6,0.6)+
+theme_bw(base_size=20)
+dev.off()
+
+# ================================================================================== #
+
+# Assess correlations among the biotic data
+
+# Bivariate scatter plots below the diagonal, histograms on the diagonal, and the Pearson correlation above the diagonal
+pdf("output/figures/GEA/enviro/MARINe/Correlations.pdf", width = 10, height = 10)
+pairs.panels(marine_sum_means[,6:14], scale=T)
+dev.off()
+
+# Lots of them are highly correlated - need to subset, but which to chose?

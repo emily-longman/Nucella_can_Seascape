@@ -55,12 +55,18 @@ There were two sets of biotic data. The first was abundance/density data of inte
 
 ## Part 2 - Demography and population structure
 
+Filter the Pool-Seq dataset from [Longman et al. (2026)](https://royalsocietypublishing.org/rspb/article/293/2070/20253148/481573/Geographic-divergence-in-population-genomics-and) and perform population structure analyses. 
+
+01_pca_poolfstat.R - Use poolfstat to fiter VCF and perform a PCA on the Pool-seq dataset.
 
 ## Part 3 - Genotype environment association analyses using GLM framework
 
+
 ## Part 4 - Identify outlier loci for top abiotic and biotic variable using Baypass
 
+
 ## Part 5 - Genomic offset analyses
+
 
 ## Part 6 - Population genetic simulation using SLiM
 
