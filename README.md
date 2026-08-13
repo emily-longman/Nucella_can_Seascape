@@ -23,11 +23,35 @@ The files in this project are organized in the following structure. All files fo
     - 01_ecological_data/
     - 02_demography/
     - 03_GEA_glms/
-    - 04_baypass/
+    - 04_GEA_baypass/
+    - 05_outlier_analyses/
+    - 06_genomic_offest/
+    - 07_SLiM/
  - output/
      - figures/
      - tables/
 
-## Part 1 - Assemble the Draft Genome
+## Part 1 - Compile ecological data
 
-### 01 - Prepare the Raw Data 
+To identify which ecological selective forces are driving patterns of adaptive variation in *N. canaliculata*, we used several ecologically abiotic and biotic variables.  
+
+### 01 - Abiotic
+
+We extracted decadal environmental data for the 19 *N. canaliculata* field sites from [Bio-Oracle](https://www.bio-oracle.org/). Our variables of interest were: sea surface temperature (mean, max, min, range, 2010-2019), pH (mean, min, 2010-2018), O2 (mean, 2010-2018), salinity (mean, 2010-2019), and chlorophyll (mean, 2010-2018). For each variable we also extracted future data (2090-2100 under the SSP5-8.5 scenario) The multiple iterations of the three focal scripts were for graphical purposes. 
+
+01_extract_bio-oracle.R - Extract present and future data for variables for large geographic region along the eastern Pacific coastline.
+
+02_format_bio-oracle.R - Filter each variable for the 19 focal *N. canaliculata* field sites.
+
+03_graph_bio-oracle_raster.R - Graph abiotic variables.
+
+### 02 - Biotic
+
+There were two sets of biotic data. The first was abundance/density data of interacting species (prey, competitors, and predators) from [MARINe](https://marine.ucsc.edu/). 
+
+01_summarize_graph_MARINe.R - Filter abundance/density data of interacting species to focal sites and summarize.
+
+02_summarize_Mcalifornianus_shell.R - Filter shell morphology data and summarize.
+
+
+
