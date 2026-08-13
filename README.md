@@ -61,17 +61,48 @@ Filter the Pool-Seq dataset from [Longman et al. (2026)](https://royalsocietypub
 
 ## Part 3 - Genotype environment association analyses using GLM framework
 
+01_run_glms_abiotic:
 
+01_run_glms_biotic:
+
+02_model_enrichment:
 
 
 ## Part 4 - Identify outlier loci for top abiotic and biotic variable using Baypass
 
+To identify outlier loci associated with mean pH and mussel shell thickness we performed genotype-environment association scans while simultaneously accounting for demographic history using [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public). 
+
+01_format_baypass.R - 
+
+02_generate_omega.sh - 
+
+03_baypass_Mcali_Thk.sh - 
+
+03_baypass_ph_mean.sh - 
+
+04_PODs.R - 
+
+05_GEA_PODs:  
+
+- 01_baypass_PODs_ph_mean.sh -
+- 01_baypass_Mcali_Thk.sh -
+- 02_calibrate_baypass.R -
+
+06_summarize_graph_baypass.R -
+
+07_annotate_SNPs_Mcali_thk.R - 
+
+07_annotate_SNPs_ph_mean.R - 
+
+08_window_rnp_100kb: 
+
+09_post_hoc_outlier_analyses:
 
 
 
 ## Part 5 - Genomic offset analyses
 
-Calculate genome-wide geometric genomic offset using [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public) based on scaled future projections of mean pH from Bio-Oracle.
+Calculate genome-wide geometric genomic offset using [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public) based on scaled future projections of mean pH from [Bio-Oracle](https://www.bio-oracle.org/).
 
 01_scale_mean_ph.R - Scale mean pH for current and future data.
 

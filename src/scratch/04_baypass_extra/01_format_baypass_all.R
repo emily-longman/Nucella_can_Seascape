@@ -38,10 +38,6 @@ if (!dir.exists(data_processed_outlier)) {dir.create(data_processed_outlier)}
 # Load pooldata object
 load("data/raw/pooldata/pooldata.RData")
 
-# ================================================================================== #
-
-# Create baypass input files for abiotic mean pH analyses
-
 # Convert to BayPass input file
 pooldata2genobaypass(pooldata, writing.dir = "data/processed/baypass/input_files", subsamplesize = -1)
 # Three output files = genobaypass (allele counts), poolsize (haploid size per pool), & snpdet (snp info matrix). 
@@ -49,7 +45,13 @@ pooldata2genobaypass(pooldata, writing.dir = "data/processed/baypass/input_files
 
 # ================================================================================== #
 
-# Create baypass input files for biotic shell thickness analyses
+# Subset data - cutting sites: 6 (CBL), 15 (VD), 16 (OCT)
+pooldata.subset <- pooldata.subset(pooldata, pool.index=c(1,2,3,4,5,7,8,9,10,11,12,13,14,17,18,19))
+
+# Convert to BayPass input file
+pooldata2genobaypass(pooldata.subset, writing.dir = "data/processed/baypass/input_files", prefix="subset", subsamplesize = -1)
+
+# ================================================================================== #
 
 # Subset data - cut site: 4 (ARA)
 pooldata.subset.18pop <- pooldata.subset(pooldata, pool.index=c(1,2,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19))
@@ -58,3 +60,19 @@ pooldata.subset.18pop <- pooldata.subset(pooldata, pool.index=c(1,2,3,5,6,7,8,9,
 pooldata2genobaypass(pooldata.subset.18pop, writing.dir = "data/processed/baypass/input_files", prefix="subset18pop", subsamplesize = -1)
 
 # ================================================================================== #
+
+
+# Subset data - cut site: 4 (ARA) and 9 (HZD)
+pooldata.subset.17pop <- pooldata.subset(pooldata, pool.index=c(1,2,3,5,6,7,8,10,11,12,13,14,15,16,17,18,19))
+
+# Convert to BayPass input file
+pooldata2genobaypass(pooldata.subset.17pop, writing.dir = "data/processed/baypass/input_files", prefix="subset17pop", subsamplesize = -1)
+
+# ================================================================================== #
+
+
+# 9 pop Subset data - cut site: 6 (CBL), 15 (VD), 16 (OCT) AND 1 (STR), 9 (HZD), 10 (SBR), 14 (PL), 17 (PB), 18 (PGP), 19 (PSN)
+pooldata.subset.9pop <- pooldata.subset(pooldata, pool.index=c(2,3,4,5,7,8,11,12,13))
+
+# Convert to BayPass input file
+pooldata2genobaypass(pooldata.subset.9pop, writing.dir = "data/processed/baypass/input_files", prefix="subset9pop", subsamplesize = -1)
