@@ -62,22 +62,47 @@ Filter the Pool-Seq dataset from [Longman et al. (2026)](https://royalsocietypub
 ## Part 3 - Genotype environment association analyses using GLM framework
 
 
+
+
 ## Part 4 - Identify outlier loci for top abiotic and biotic variable using Baypass
+
+
 
 
 ## Part 5 - Genomic offset analyses
 
+Calculate genome-wide geometric genomic offset using [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public) based on scaled future projections of mean pH from Bio-Oracle.
+
 01_scale_mean_ph.R - Scale mean pH for current and future data.
 
-02_Baypass_GO_mean_ph_scaled.R
+02_Baypass_GO_mean_ph_scaled.R - Perform genomic offset analyses for the 19 populations based on changes in mean pH.
 
 ## Part 6 - Population genetic simulation using SLiM
 
-- 01_mean_ph:
+Perform population genetic simulations using [SLiM](https://github.com/MesserLab/SLiM). First, we created single locus population genetic simulations using a Wright-Fisher model for both mean pH and mussel shell thickness. In the models, we calculated population-level selection using a sigmoidal function, with parameters that dictate the structure of the curves. We used Approximate Bayesian Computation [abc](https://cran.r-project.org/web/packages/abc/index.html) to performs multivariate parameter estimation between the simulations and real data.  Second, we used the structure of the mean pH model to determine how genetic diversity would change with declining pH, as a result of ocean acidification over the time period 2020-2100.
 
-- 02_Mcali:
+01_mean_ph:
+ 
+- 01_guide_file.R - Create a guide file of the parameters. 
+- 02_ph.slim and 02_ph_launch_slim.sh - For the parameters in the guide file, use SLiM to perform simulations for an array of parameters.
+- 03_ABC_SimData.R and 03_ABC_SimData_launch.sh - Calculate the summary statistics for ABC for the simulations.
+- 04_ABC_realData.R - Calculate the summary statistics for ABC for the real data.
+- 05_ABC_analysis_LOclinEst.R - Perform ABC analysis. 
+- 06_format_ph_future.R - Use Bio-Oracle mean pH data for 2020-2100 to calculate population regression equations.
+- 07_ph_future.slim and 07_ph_future_slim_launch.sh - Perform population genetic simulation for 2020-2100. Populations were started at the empirical allele frequencies and the pH regression equations were used to calculate yearly population-level selection coefficients.
+- 08_analyze_ph_future.R - Compile simulations and graph output. 
+- 09_ph_future_vary_m.slim and 09_ph_future_vary_m_launch.slim - Perform simulations with varying migration rates. 
+- 10_analyze_ph_future_vary_m.R - Analyze and graph the output of the previous population genetic simulations.
 
+02_Mcali:
 
+- 01_guide_file.R - Create a guide file of the parameters. 
+- 02_ph.slim and 02_ph_launch_slim.sh - For the parameters in the guide file, use SLiM to perform simulations for an array of parameters.
+- 03_ABC_SimData.R and 03_ABC_SimData_launch.sh - Calculate the summary statistics for ABC for the simulations.
+- 04_ABC_realData.R - Calculate the summary statistics for ABC for the real data.
+- 05_ABC_analysis_LOclinEst.R - Perform ABC analysis. 
+
+03_graph_selection_ph_Mcali.R - Graph the selection curves for the abiotic and biotic data based on the best fit parameters.
 
 
 

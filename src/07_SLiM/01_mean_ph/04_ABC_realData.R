@@ -1,4 +1,4 @@
-# Nucella ABC analysis - real data
+# Calculate summary statistics for ABC analysis - real data
 
 # Clear memory
 rm(list=ls())

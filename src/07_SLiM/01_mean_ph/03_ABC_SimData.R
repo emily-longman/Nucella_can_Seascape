@@ -1,4 +1,4 @@
-# Merge SLiM output - ABC analysis sim data
+# Merge SLiM output & Calculate summary statistics for ABC analysis (sim data)
 
 # Clear memory
 rm(list=ls())
