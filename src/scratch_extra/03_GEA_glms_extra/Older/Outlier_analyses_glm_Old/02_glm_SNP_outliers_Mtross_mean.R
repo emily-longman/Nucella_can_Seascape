@@ -1,0 +1,67 @@
+# Graph window analysis
+
+# Clear memory
+rm(list=ls())
+
+# ================================================================================== #
+
+# Set path as main Github repo
+# Install and load package
+#install.packages(c('rprojroot'))
+library(rprojroot)
+# Specify root path
+root_path <- find_root_file(criterion = has_file("README.md"))
+# Set working directory as path from root
+setwd(root_path)
+
+# ================================================================================== #
+
+# Load packages
+#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'ggplot2', 'RColorBrewer'))
+library(data.table)
+library(tidyverse)
+library(foreach)
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+
+# ================================================================================== #
+
+# Generate output directories
+
+# Figure directory
+out_fig_dir <- paste("output/figures/outliers")
+if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
+
+# ================================================================================== #
+
+# Load Data
+
+# Read in outlier window
+win.Mtross.mean.outliers <- read.csv("data/processed/GEA/glms/glms_window_summary/win.Mtross.mean.outliers.csv", header=T)
+
+# Load GLM real data (glm.model.collated.filt.real)
+load("data/processed/GEA/glms/glms_per_var/glm.collated_M.tross_m_filt_real.Rdata")
+
+# ================================================================================== #
+
+# Identify SNPs in outlier windows
+glm.Mtross.mean.win.outliers <- foreach(win.i=unique(win.Mtross.mean.outliers$win), .combine="rbind", .errorhandling="remove")%do%{
+    
+    # Extract window
+    win.tmp <- win.Mtross.mean.outliers[which(win.Mtross.mean.outliers$win==win.i),]
+
+    # Extract SNPs in window
+    glm.tmp <- glm.model.collated.filt.real %>% filter(
+        glm.model.collated.filt.real$chr == win.tmp$chr.x & 
+        glm.model.collated.filt.real$pos > win.tmp$pos_min &
+        glm.model.collated.filt.real$pos < win.tmp$pos_max)
+}
+
+# Remove duplicates
+glm.Mtross.mean.win.outliers <- glm.Mtross.mean.win.outliers %>% distinct()
+
+# ================================================================================== #
+
+# Save
+save(glm.Mtross.mean.win.outliers, file="data/processed/GEA/glms/glms_window_summary/glm.Mtross.mean.win.outliers.Rdata")

@@ -1,0 +1,58 @@
+# This set of commands will create an interval file (GATK-style) which will be  used in step 08_build_DB.sh
+
+# More specifically, we will extract all of the names of the contigs/scaffolds in the genome. We will then break it up into partitions/chunks with 1000 contigs in each chunk.
+
+#--------------------------------------------------------------------------------
+
+# This script will merge gVCFs into a unified database for genotype calling. 
+
+# Load modules 
+module load R/4.4.0
+
+#--------------------------------------------------------------------------------
+
+# Define important file locations
+
+# WORKING_FOLDER is the core folder where this pipeline is being run.
+WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Pop_Genomics/data/processed/fastq_to_bam
+
+# This is the location where the reference genome is stored.
+REFERENCE_FOLDER=/netfiles/pespenilab_share/Nucella/processed/Base_Genome/Base_Genome_Oct2024/Crassostrea_softmask
+
+# This is the path to the reference genome.
+REFERENCE=$REFERENCE_FOLDER/N.canaliculata_assembly.fasta.softmasked.fa
+
+#--------------------------------------------------------------------------------
+
+# Change directory 
+cd $WORKING_FOLDER/guide_files
+
+# Get all of the contig names 
+grep ">" $REFERENCE > Scaffold_names.txt
+
+# Get rid of the ">"
+sed -i 's/>//g' Scaffold_names.txt
+
+#--------------------------------------------------------------------------------
+
+# Open R
+
+R 
+
+# Install packages
+install.packages(c('data.table', 'tidyverse', 'groupdata2'))
+
+library(data.table)
+library(tidyverse)
+library(groupdata2)
+
+data <- fread("Scaffold_names.txt", header = F)
+
+group(data, n=500, method = "greedy") -> Guide_file_array
+
+write.table(Guide_file_array, "DB_intervals_array.txt", col.names = F, row.names = F, quote = F)
+
+# Note Guide_file_array has dimensions:  18919, 2
+# There are 38 partitions, each with 500 contig names in each partition
+
+q()
