@@ -1,4 +1,4 @@
-# Use poolfstat to convert VCF to Baypass input file and create PODs
+# Use poolfstat to create PODs
 
 # Clear memory
 rm(list=ls())

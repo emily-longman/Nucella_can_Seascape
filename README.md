@@ -47,17 +47,17 @@ We extracted decadal environmental data for the 19 *N. canaliculata* field sites
 
 ### 02 - Biotic
 
-There were two sets of biotic data. The first was abundance/density data of interacting species (prey, competitors, and predators) from [MARINe](https://marine.ucsc.edu/). 
+There were two sets of biotic data. The first was abundance/density data of interacting species (prey, competitors, and predators) from [MARINe](https://marine.ucsc.edu/), 16 of which match the *N. canaliculata* populations. The second is data on the shell morphology of the mussel prey species *Mytilus californianus* which is a foundation species on rocky shores along the west coast of North America. This latter dataset includes 18 field sites, which match the *N. canaliculata* populations.
 
 01_summarize_graph_MARINe.R - Filter abundance/density data of interacting species to focal sites and summarize.
 
-02_summarize_Mcalifornianus_shell.R - Filter shell morphology data and summarize.
+02_summarize_Mcalifornianus_shell.R - Filter the shell morphology data and summarize.
 
 ## Part 2 - Demography and population structure
 
 Filter the Pool-Seq dataset from [Longman et al. (2026)](https://royalsocietypublishing.org/rspb/article/293/2070/20253148/481573/Geographic-divergence-in-population-genomics-and) and perform population structure analyses. 
 
-01_pca_poolfstat.R - Use poolfstat to fiter VCF, creating a poolobject with ~8M SNPs, and perform a PCA on the Pool-seq dataset.
+01_pca_poolfstat.R - Use [poolfstat](https://cran.r-project.org/web/packages/poolfstat/index.html) to fiter VCF, creating a poolobject with ~8M SNPs, and perform a PCA on the Pool-seq dataset.
 
 ## Part 3 - Genotype environment association analyses using GLM framework
 
@@ -96,15 +96,15 @@ We used generalized linear models (GLMs) to identify associations between *N. ca
 
 To identify outlier loci associated with mean pH and mussel shell thickness we performed genotype-environment association scans while simultaneously accounting for demographic history using [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public). 
 
-01_format_baypass.R - 
+01_format_baypass.R - Use [poolfstat](https://cran.r-project.org/web/packages/poolfstat/index.html) to generate the Baypass input files for the entire 19 population dataset, and the 18 populations that we included in the mussel shell thickness analyses.
 
-02_generate_omega.sh - 
+02_generate_omega.sh and  02_generate_omega_subset18pop.sh - Use [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public) to generate the omega relatedness matrix for the appropriate number of populations.
 
-03_baypass_Mcali_Thk.sh - 
+03_baypass_Mcali_Thk.sh - Perform 5 runs of [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public) using the mussel cross-sectional thickness data as a covariate. 
 
-03_baypass_ph_mean.sh - 
+03_baypass_ph_mean.sh - Perform 5 runs of [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public) using mean pH data as a covariate. 
 
-04_PODs.R - 
+04_PODs.R and 04_PODs_subset_18pop.R - Use [poolfstat](https://cran.r-project.org/web/packages/poolfstat/index.html) create 10 pseudo-observed dataset (PODs).
 
 05_GEA_PODs:  
 
@@ -121,7 +121,6 @@ To identify outlier loci associated with mean pH and mussel shell thickness we p
 08_window_rnp_100kb: 
 
 09_post_hoc_outlier_analyses:
-
 
 
 ## Part 5 - Genomic offset analyses
