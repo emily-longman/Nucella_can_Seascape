@@ -5,25 +5,25 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_bio-oracle
+#SBATCH --job-name=glms_Mcali
 
 # Specify partition
-#SBATCH --partition=general #Note: some needed to be run on the week partitiion
+#SBATCH --partition=general
 
 # Request nodes
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=30:00:00 
+#SBATCH --time=30:00:00 # 5:00:00 for real
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=100G 
+#SBATCH --mem=30G 
 
 # Request CPU
 #SBATCH --cpus-per-task=5
 
 # Submit job array
-#SBATCH --array=1-996%50
+#SBATCH --array=1-996%75
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -34,8 +34,9 @@
 
 #--------------------------------------------------------------------------------
 
-# This script will run the accompanying 02_glms_bio-oracle.R script. 
-# This will run glms and look at the association of the allele frequencies of the outlier SNPs and the Bio-oracle environmental data.
+# This script will run the accompanying 01_glms_Mcali.R script. 
+# For efficiency, there are 5 R scripts separating GLMs with the real data and chunks of the permutations. Note: walltimes vary depending on if running real data versus permutations.
+# This will run glms and look at the association of the allele frequencies of the outlier SNPs and the Marine biotic data.
 
 # Load modules 
 module load gcc/13.3.0
@@ -49,7 +50,7 @@ module load R/4.4.1
 WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 # Script folder.
-SCRIPT_FOLDER=$WORKING_FOLDER/src/03_GEA_glms/01_run_glms_abiotic
+SCRIPT_FOLDER=$WORKING_FOLDER/src/03_GEA_glms/01_run_glms_biotic/02_Mcali_18pop
 
 #--------------------------------------------------------------------------------
 
@@ -88,16 +89,20 @@ cat scaffold.names.${SLURM_ARRAY_TASK_ID}.txt
 cd $WORKING_FOLDER/data/processed/GEA/glms
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "glms_chunk_analysis_abiotic" ]
-then echo "Working glms_chunk_analysis_abiotic folder exist"; echo "Let's move on."; date
-else echo "Working glms_chunk_analysis_abiotic folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_chunk_analysis_abiotic; date
+if [ -d "glms_chunk_analysis_Mcali" ]
+then echo "Working glms_chunk_analysis_Mcali folder exist"; echo "Let's move on."; date
+else echo "Working glms_chunk_analysis_Mcali folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_chunk_analysis_Mcali; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Run R script
 
-Rscript $SCRIPT_FOLDER/02_glms_bio-oracle.R "${SLURM_ARRAY_TASK_ID}"
+#Rscript $SCRIPT_FOLDER/01_glms_Mcali_real.R "${SLURM_ARRAY_TASK_ID}"
+#Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm1:25.R "${SLURM_ARRAY_TASK_ID}"
+#Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm26:50.R "${SLURM_ARRAY_TASK_ID}"
+#Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm51:75.R "${SLURM_ARRAY_TASK_ID}"
+Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm76:100.R "${SLURM_ARRAY_TASK_ID}"
 
 #--------------------------------------------------------------------------------
 

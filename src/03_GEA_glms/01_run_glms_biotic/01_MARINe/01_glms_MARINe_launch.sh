@@ -34,7 +34,8 @@
 
 #--------------------------------------------------------------------------------
 
-# This script will run the accompanying 02_glms_MARINe.R scripts. For efficiency, there are 5 R scripts separating GLMs with the real data and chunks of the permutations. 
+# This script will run the accompanying 02_glms_MARINe.R scripts. 
+# For efficiency, there are 5 R scripts separating GLMs with the real data and chunks of the permutations. Note: walltimes vary depending on if running real data versus permutations.
 # This will run glms and look at the association of the allele frequencies of the outlier SNPs and the Marine biotic data.
 
 # Load modules 

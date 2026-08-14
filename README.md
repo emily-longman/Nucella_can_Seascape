@@ -74,6 +74,11 @@ We used generalized linear models (GLMs) to identify associations between *N. ca
 01_run_glms_biotic:
 
 - 01_MARINe
+
+    - 01_glms_MARINe_launch.sh and 01_glms_MARINe_*.R - Use GLMs to assess associations between allele frequencies and biotic [MARINe](https://marine.ucsc.edu/) variables. For efficiency, there are 5 R scripts, one that permforms GLMs with the real data and four scripts that peforms GLMs with the permuted variables. Note, the different walltime for the real data versus permutations.
+    - 02_extract_glms.R and 02_extract_glms_launch.R - For the GLM output extract the data for each MARINe variable.
+    - 03_merge_glms.R and 03_merge_glms_launch.R - Merge all of the GLM outputs for each MARINe variable.
+
 - 02_Mcali
 
 02_model_enrichment:
