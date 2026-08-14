@@ -120,13 +120,12 @@ To identify outlier loci associated with mean pH and mussel shell thickness we p
 
 08_window_rnp_100kb: 
 
-- 01_generate_window.R - 
-- 02_baypass_window_rnp_Mcali.sh and 02_baypass_window_rnp_Mcali.R -  
-- 02_baypass_window_rnp_ph_mean.sh and 02_baypass_window_rnp_ph_mean.R -  
-- 03_graph_win_Mcali.R - 
-- 03_graph_win_ph_mean.R - 
-- 04_graph_Mcali_outliers.R
-- 04_graph_ph_mean_outliers
+- 01_generate_window.R - Create 100kb windows for genome scan.
+- 02_baypass_window_rnp_Mcali.sh and 02_baypass_window_rnp_Mcali.R - Peform window scan to identify regions with the genome that are enriched with outlier SNPs associated with mussel shell thickness.
+- 02_baypass_window_rnp_ph_mean.sh and 02_baypass_window_rnp_ph_mean.R - Peform window scan to identify regions with the genome that are enriched with outlier SNPs associated with mean pH.
+- 03_graph_win_Mcali.R - Graph window scan output for mussel shell thickness.
+- 03_graph_win_ph_mean.R - Graph window scan output for mean pH.
+- 04_graph_ph_mean_outliers_win.R - Analyze and graph the Bayes Factors and XTX for the SNPs within the top outlier window. Additionally, graph allele frequencies for the SNPs with the highest association values.
 
 09_post_hoc_outlier_analyses:
 

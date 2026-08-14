@@ -42,6 +42,8 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 
 # ================================================================================== #
 
+# Load data
+
 # Load mean bf data from 5 baypass runs
 load("data/processed/baypass/abiotic/bf.ph.mean.sum.Rdata")
 # Load windows
@@ -51,11 +53,6 @@ top.win <- win.out.order.outliers[which(win.out.order.outliers$rnp.binom.POD == 
 
 # Load POD thresholds
 load("data/processed/baypass/abiotic/ph_mean_POD_thr.Rdata")
-
-# Load SNPs of interest
-#bf.ph.mean.sum.outliers.annotated <- read.csv("data/processed/baypass/bf.ph.mean.sum.outliers.annotated.csv", header=T)
-# Extract just those on g27343
-#bf.ph.mean.g27343 <- bf.ph.mean.sum.outliers.annotated %>% filter(Gene_Name == "g27343")
 
 # Load bio-oracle environmental data
 bio_oracle_sites_2010 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", header=T)
