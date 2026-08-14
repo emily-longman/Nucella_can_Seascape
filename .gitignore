@@ -6,6 +6,9 @@
 .DS_store
 .here
 
+# Other files to ignore
+src/scratch/*
+
 # Directories with large data files
 scratch/*
 data/raw/*
