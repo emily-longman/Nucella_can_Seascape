@@ -2,7 +2,7 @@
 
 ## Project Summary
 
-We used population genomic data along with abiotic and biotic datasets to identify the ecological drivers most strongly associated with patterns of adaptive genomic variation in the channeled dogwhelk, *Nucella canaliculata*. Our ecological datasets include climatic data on oceanic conditions ([Bio-Oracle](https://www.bio-oracle.org/)), biotic data on the abundance of N. canaliculata prey, competitors, and predators from a large-scale monitoring program on Pacific Coast rocky shores (i.e., [MARINe](https://marine.ucsc.edu/): Multi-Agency Rocky Intertidal Network), and a new dataset on the shell traits of the rocky shore foundation mussel species, *M. californianus*. Leveraging these signals of local adaptation, we used genomic analyses and population genetic simulations to predict the vulnerability of populations to ocean acidification. 
+We used population genomic data along with abiotic and biotic datasets to identify the ecological drivers most strongly associated with patterns of adaptive genomic variation in the channeled dogwhelk, *Nucella canaliculata*, as well as uncover their genetic bases. Our ecological datasets include climatic data on oceanic conditions ([Bio-Oracle](https://www.bio-oracle.org/)), biotic data on the abundance of *N. canaliculata* prey, competitors, and predators from a large-scale monitoring program on Pacific Coast rocky shores (i.e., [MARINe](https://marine.ucsc.edu/): Multi-Agency Rocky Intertidal Network), and a new dataset on the shell traits of the rocky shore mussel *Mytilus californianus*. Leveraging these signals of local adaptation, we used genomic offset analyses and population genetic simulations to predict the vulnerability of populations to ocean acidification. 
 
 The bioinformatics pipeline was completed on the Vermont Advanced Computing Center ([VACC](https://www.uvm.edu/vacc)).
 
@@ -14,7 +14,8 @@ The bioinformatics pipeline was completed on the Vermont Advanced Computing Cent
 
 ## File Structure
 
-The files in this project are organized in the following structure. All files for arrays and metadata are in "guide_files". All subsequent directories will be generated therein. The VCF for the pool-seq data can be found on [Zenodo](https://zenodo.org/records/18623551).
+The files in this project are organized in the following structure. All metadata and array guide files are in the "guide_files" directory. All subsequent directories are generated therein. In terms of the raw data, (1) the VCF for the pool-seq data can be found on [Zenodo](https://zenodo.org/records/18623551), (2) the biotic data from [MARINe](https://marine.ucsc.edu/) can be obtained through their data request form, and (3) the *M. californianus* shell morphology data can be found on Zenodo.
+
  - data/
      - raw/
      - processed/
@@ -33,7 +34,7 @@ The files in this project are organized in the following structure. All files fo
 
 ## Part 1 - Compile ecological data
 
-To identify which ecological selective forces are driving patterns of adaptive variation in *N. canaliculata*, we used several ecologically abiotic and biotic variables.  
+To identify which ecological selective forces are driving patterns of adaptive variation in *N. canaliculata*, we used several ecologically-relevant abiotic and biotic variables.  
 
 ### 01 - Abiotic
 
