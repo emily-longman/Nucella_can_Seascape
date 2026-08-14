@@ -81,8 +81,16 @@ We used generalized linear models (GLMs) to identify associations between *N. ca
 
 - 02_Mcali
 
+    - 01_glms_Mcali_launch.sh and 01_glms_Mcali_*.R - Use GLMs to assess associations between allele frequencies and biotic mussel morphology variables. For efficiency, there are 5 R scripts, one that permforms GLMs with the real data and four scripts that peforms GLMs with the permuted variables. Note, the different walltime for the real data versus permutations.
+    - 02_extract_glms.R and 02_extract_glms_launch.R - For the GLM output extract the data for each mussel morphology variable.
+    - 03_merge_glms.R and 03_merge_glms_launch.R - Merge all of the GLM outputs for each mussel morphology variable.
+
+
 02_model_enrichment:
 
+- 01_filt_glms_launch.sh and 01_filt_glm.R -
+- 02_model_enrichment_launch.sh and 02_model_enrichment.R - 
+- 03_graph_glms.R - 
 
 ## Part 4 - Identify outlier loci for top abiotic and biotic variable using Baypass
 
