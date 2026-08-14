@@ -1,4 +1,4 @@
-# Create windows for GLM summarization
+# Create windows
 
 # Clear memory
 rm(list=ls())

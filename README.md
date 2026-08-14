@@ -108,17 +108,25 @@ To identify outlier loci associated with mean pH and mussel shell thickness we p
 
 05_GEA_PODs:  
 
-- 01_baypass_PODs_ph_mean.sh -
-- 01_baypass_Mcali_Thk.sh -
-- 02_calibrate_baypass.R -
+- 01_baypass_PODs_ph_mean.sh - Perform 10 runs of BayPass using the POD as the input and mean pH as a covariate.
+- 01_baypass_Mcali_Thk.sh - Perform 10 runs of BayPass using the POD as the input and mussel shell thickness as a covariate.
+- 02_calibrate_baypass.R - Summarize the POD output and generate 95%, 99% and 99.9% thresholds for both ecological variables.
 
-06_summarize_graph_baypass.R -
+06_summarize_graph_baypass.R - Analyze the BayPass data for both ecological variables.
 
-07_annotate_SNPs_Mcali_thk.R - 
+07_annotate_SNPs_Mcali.R - Annotate the outlier SNPs associated with mussel cross-sectional shell thickness.
 
-07_annotate_SNPs_ph_mean.R - 
+07_annotate_SNPs_ph_mean.R - Annotate the outlier SNPs associated with mean pH.
 
 08_window_rnp_100kb: 
+
+- 01_generate_window.R - 
+- 02_baypass_window_rnp_Mcali.sh and 02_baypass_window_rnp_Mcali.R -  
+- 02_baypass_window_rnp_ph_mean.sh and 02_baypass_window_rnp_ph_mean.R -  
+- 03_graph_win_Mcali.R - 
+- 03_graph_win_ph_mean.R - 
+- 04_graph_Mcali_outliers.R
+- 04_graph_ph_mean_outliers
 
 09_post_hoc_outlier_analyses:
 
