@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_marine_part1
+#SBATCH --job-name=glms_marine
 
 # Specify partition
 #SBATCH --partition=general
@@ -14,7 +14,7 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=25:00:00 #5:00:00 for real
+#SBATCH --time=30:00:00 #5:00:00 for real
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
 #SBATCH --mem=30G 
@@ -23,7 +23,7 @@
 #SBATCH --cpus-per-task=5
 
 # Submit job array
-#SBATCH --array=1-500%100
+#SBATCH --array=1-996%100
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -34,7 +34,7 @@
 
 #--------------------------------------------------------------------------------
 
-# This script will run the accompanying 02_glms_MARINe.R script. 
+# This script will run the accompanying 02_glms_MARINe.R scripts. For efficiency, there are 5 R scripts separating GLMs with the real data and chunks of the permutations. 
 # This will run glms and look at the association of the allele frequencies of the outlier SNPs and the Marine biotic data.
 
 # Load modules 
