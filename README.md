@@ -67,12 +67,9 @@ We used generalized linear models (GLMs) to identify associations between *N. ca
 
 - 01_chunks_pt1.txt - Interactive session to make list of scaffold names of genome
 - 01_chunks_pt2.R - Create guide file of scaffold chunks for GLMs.
-- 02_glms_bio-oracle_pt1.sh
-- 02_glms_bio-oracle_pt2.sh
-- 02_glms_bio-oracle_pt3.sh
-- 02_glms_bio-oracle.R
-- 03_extract_glms.R and 03_extract_glms_launch.R
-- 04_merge_glms.R and 04_merge_glms_launch.R
+- 02_glms_bio-oracle_launch.sh and 02_glms_bio-oracle.R - Use GLMs to assess associations between allele frequencies and abiotic [Bio-Oracle](https://www.bio-oracle.org/) variables.
+- 03_extract_glms.R and 03_extract_glms_launch.R - For the GLM output extract the data for each abiotic variable.
+- 04_merge_glms.R and 04_merge_glms_launch.R - Merge all of the GLM outputs for each abiotic variable.
 
 01_run_glms_biotic:
 
