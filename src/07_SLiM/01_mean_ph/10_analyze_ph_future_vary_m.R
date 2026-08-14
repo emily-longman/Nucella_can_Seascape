@@ -109,7 +109,7 @@ future_sim_data_vary_m <- future_sim_data_vary_m %>% mutate(m_scientific = forma
 
 # Save output
 save(future_sim_data_vary_m, file = "data/processed/SLiM/ph_future/ph_vary_m/sim_future_data_vary_m.Rdata")
-#load("data/processed/SLiM/ph_future/ph_vary_m/sim_future_data_vary_m.Rdata")
+#load("data/processed/SLiM/ph_future/ph_vary_m_old/sim_future_data_vary_m.Rdata")
 
 # ================================================================================== #
 
@@ -281,6 +281,10 @@ fancy_scientific <- function(l) {
 # For m = 10^-3 in which most of the sim did get the allele when did it arrive?
 mean(future_sim_north_melt$year[which(future_sim_north_melt$m == 0.001)])
 sd(future_sim_north_melt$year[which(future_sim_north_melt$m == 0.001)])
+
+# For m = 10^-2 in which most of the sim did get the allele when did it arrive?
+mean(future_sim_north_melt$year[which(future_sim_north_melt$m == 0.01)])
+sd(future_sim_north_melt$year[which(future_sim_north_melt$m == 0.01)])
 
 # Graph - for those that got the allele when did it occur
 pdf("output/figures/SLiM/ph_future/AF_FC_pops_vary_m_NAs.pdf", width = 6.5, height = 5)

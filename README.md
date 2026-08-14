@@ -61,7 +61,7 @@ Filter the Pool-Seq dataset from [Longman et al. (2026)](https://royalsocietypub
 
 ## Part 3 - Genotype environment association analyses using GLM framework
 
-GLMs...
+We used generalized linear models (GLMs) to identify associations between *N. canaliculata* allele frequencies and abiotic and biotic ecological variables. We used null expectations, calculated from 100 permutations, to assess the relative importance of the ecological variables.
 
 01_run_glms_abiotic:
 
