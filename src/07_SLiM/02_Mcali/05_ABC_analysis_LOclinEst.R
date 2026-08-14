@@ -60,24 +60,22 @@ Mcali <- afs.Mcali[,c(7,13)] %>% distinct()
 
 # Load data
 real_All <- get(load("data/processed/SLiM/Mcali_ABC/real_data.Rdata"))
-sim_All <- get(load("data/processed/SLiM/Mcali_ABC/sim_data_v7.Rdata"))
-# Prevent scientific notation
-sim_All$m <- c(0.00001)
+sim_All <- get(load("data/processed/SLiM/Mcali_ABC/sim_data_v8.Rdata"))
 
 # ================================================================================== #
 
 # Estimate means
 real_data = dplyr::select(ungroup(real_All), 
                           #Fsg, Fgt, Fst,
-                          Fst.thin.mod, Fst.mod.thick, Fst.thin.thick,
+                          #Fst.thin.mod, Fst.mod.thick, Fst.thin.thick,
                           #deltaAF.thick.mod, deltaAF.thick.thin,
                           cor.pearson, 
                           cor.spearman, 
                           corAF.pearson, 
                           corAF.spearman, 
-                          #fix1, 
-                          #fix0, 
-                          #poly, 
+                          fix1, 
+                          fix0, 
+                          poly, 
                           mean.AF,
                           #asym, xmid, scal,
                           #p0, p1, p2, p4, p5, p6,    
@@ -86,15 +84,15 @@ real_data = dplyr::select(ungroup(real_All),
                           )
 simulated_data = dplyr::select(ungroup(sim_All), 
                           #Fsg, Fgt, Fst, 
-                          Fst.thin.mod, Fst.mod.thick, Fst.thin.thick,
+                          #Fst.thin.mod, Fst.mod.thick, Fst.thin.thick,
                           #deltaAF.thick.mod, deltaAF.thick.thin,
                           cor.pearson, 
                           cor.spearman, 
                           corAF.pearson, 
                           corAF.spearman, 
-                          #fix1, 
-                          #fix0, 
-                          #poly, 
+                          fix1, 
+                          fix0, 
+                          poly, 
                           mean.AF, 
                           #p0, p1, p2, p4, p5, p6,    
                           #p7, p8, p9, p10, p11, p12,
@@ -127,7 +125,7 @@ post_long <- pivot_longer(
   values_to = "value")
 
 # Graph posteriors
-pdf("output/figures/SLiM/Mcali_ABC/Mcali_posteriors_v7.pdf", width = 5, height = 8)
+pdf("output/figures/SLiM/Mcali_ABC/Mcali_posteriors_v8_noFST.pdf", width = 5, height = 8)
 ggplot(post_long, aes(x = value)) +
   geom_density(fill = "steelblue", alpha = 0.5) +
   facet_wrap(parameter~. , scales = "free", ncol = 1) +
@@ -183,7 +181,7 @@ sel <- function(x, z, k) {
 }
 
 # Calc selection for the pH values
-afs.Mcali$sel <- sel(afs.Mcali$mean_integrated_thk, 1.85, 40)
+afs.Mcali$sel <- sel(afs.Mcali$mean_integrated_thk, 1.81, 38)
 
 # Graph selection function
 pdf("output/figures/SLiM/Mcali_ABC/Mcali_selection_curve.pdf", width = 7.5, height = 5.5)
@@ -277,7 +275,7 @@ sim_AFs_best$Site <- factor(sim_AFs_best$Site, levels=c("FC", "SLR", "SH", "ARA"
 
 
 # Graph sim
-pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_v7.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_v8.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best, aes(x = AF_true, y = shell_thk, fill = Site)) + geom_point(size = 5, shape = 21) + scale_fill_manual(values = mycolors) +
 labs(x= "AF", y= "Shell Thk") +
 theme_linedraw(base_size=26) + theme(legend.position = "none")
@@ -291,7 +289,7 @@ sim_AFs_best_mean <- sim_AFs_best %>%
 sim_AFs_best_mean$Site <- factor(sim_AFs_best_mean$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_repmeans_v7.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_repmeans_v8.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best_mean, aes(x = AF_true_mean, y = shell_thk, fill = Site)) + geom_point(size = 5, shape = 21) + scale_fill_manual(values = mycolors) + 
 labs(x= "AF", y= "Shell Thk") +
 theme_linedraw(base_size=26) + theme(legend.position = "none")
