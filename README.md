@@ -89,8 +89,8 @@ We used generalized linear models (GLMs) to identify associations between *N. ca
 02_model_enrichment:
 
 - 01_filt_glms_launch.sh and 01_filt_glm.R - For all of the ecological variables, filter the data so only the SNPs in the poolobject rather than the entire VCF.
-- 02_model_enrichment_launch.sh and 02_model_enrichment.R - 
-- 03_graph_glms.R - 
+- 02_model_enrichment_launch.sh and 02_model_enrichment.R - For each variable, summarize the permutations and perform model enrichment.
+- 03_graph_glms.R - Graph the GLM results. 
 
 ## Part 4 - Identify outlier loci for top abiotic and biotic variable using Baypass
 
