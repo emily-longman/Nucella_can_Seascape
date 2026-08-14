@@ -34,7 +34,7 @@
 
 #--------------------------------------------------------------------------------
 
-# This script will run the accompanying 01.5_filt_glms.R script. 
+# This script will run the accompanying 01_filt_glms.R script. 
 # Note: prior to running this script, the merged glms were moved to the Working folder rather than the tmp directory.
 
 # Load modules 
@@ -59,7 +59,7 @@ guide_file=$WORKING_FOLDER/guide_files/Seascape_vars_names.txt
 
 #--------------------------------------------------------------------------------
 
-# Determine the environmental variable to process
+# Determine the ecological variable to process
 
 # Echo slurm array task ID
 echo ${SLURM_ARRAY_TASK_ID}
@@ -67,7 +67,7 @@ echo ${SLURM_ARRAY_TASK_ID}
 # Using the guide file, extract the scaffold names associated based on the Slurm array task ID for a given partition
 i=`sed -n ${SLURM_ARRAY_TASK_ID}p $guide_file`
 
-# State environmental variable
+# State ecological variable
 echo ${i}
 
 #--------------------------------------------------------------------------------
@@ -75,7 +75,6 @@ echo ${i}
 # Run R script
 
 Rscript --vanilla $WORKING_FOLDER/src/03_GEA_glms/02_model_enrichment/02_filt_glms.R "${i}"
-# The --vanilla option prevents restoring or saving workspaces
 
 #--------------------------------------------------------------------------------
 

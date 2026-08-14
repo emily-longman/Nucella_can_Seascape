@@ -57,7 +57,7 @@ There were two sets of biotic data. The first was abundance/density data of inte
 
 Filter the Pool-Seq dataset from [Longman et al. (2026)](https://royalsocietypublishing.org/rspb/article/293/2070/20253148/481573/Geographic-divergence-in-population-genomics-and) and perform population structure analyses. 
 
-01_pca_poolfstat.R - Use poolfstat to fiter VCF and perform a PCA on the Pool-seq dataset.
+01_pca_poolfstat.R - Use poolfstat to fiter VCF, creating a poolobject with ~8M SNPs, and perform a PCA on the Pool-seq dataset.
 
 ## Part 3 - Genotype environment association analyses using GLM framework
 
@@ -88,7 +88,7 @@ We used generalized linear models (GLMs) to identify associations between *N. ca
 
 02_model_enrichment:
 
-- 01_filt_glms_launch.sh and 01_filt_glm.R -
+- 01_filt_glms_launch.sh and 01_filt_glm.R - For all of the ecological variables, filter the data so only the SNPs in the poolobject rather than the entire VCF.
 - 02_model_enrichment_launch.sh and 02_model_enrichment.R - 
 - 03_graph_glms.R - 
 
