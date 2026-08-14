@@ -189,3 +189,74 @@ dev.off()
 
 
 
+
+
+######
+
+# Older graphing
+
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Abiotic_rr_color.pdf", width = 14, height = 5)
+ggplot(summary_abiotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mean_rr_log2), color = col)) + 
+  #geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
+  geom_point(size=7)+ 
+  scale_color_identity() +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "red") +  
+  xlim(-0.365, 0.365) + 
+  labs(x = "Log2(Relative rate \nof model enrichment)",
+       y = "") +
+  coord_flip()+
+  theme_bw(base_size=30) + 
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank())
+dev.off()
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Abiotic_rr_color_taller.pdf", width = 11, height = 10.5)
+ggplot(summary_abiotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mean_rr_log2), color = col)) + 
+  #geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
+  geom_point(size=9)+ 
+  scale_color_identity() +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "red") +  
+  xlim(-0.365, 0.365) + 
+  labs(x = "Log2(Relative rate \nof model enrichment)",
+       y = "") +
+  coord_flip()+
+  theme_linedraw(base_size=45) + labs(title="Abiotic Variables") + theme(plot.title = element_text(hjust = 0.5)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank())
+dev.off()
+
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Biotic_rr_color.pdf", width = 14, height = 6)
+ggplot(summary_biotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mean_rr_log2), color = col)) + 
+  #geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
+  geom_point(size=9)+ 
+  scale_color_identity() +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "red") +  
+  xlim(-0.365, 0.365) + 
+  labs(x = "Log2(Relative rate \nof model enrichment)",
+       y = "") +
+  coord_flip()+
+  theme_bw(base_size=40) + 
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank())
+dev.off()
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Biotic_rr_color_taller.pdf", width = 15, height = 10.5)
+ggplot(summary_biotic, aes(x = mean_rr_log2, y = reorder(variable_full_name, mean_rr_log2), color = col)) + 
+  #geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2))+ 
+  geom_point(size=9)+ 
+  scale_color_identity() +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "red") +  
+  xlim(-0.365, 0.365) + 
+  labs(x = "Log2(Relative rate \nof model enrichment)",
+       y = "") +
+  coord_flip()+
+  theme_linedraw(base_size=45) + labs(title="Biotic Variables") + theme(plot.title = element_text(hjust = 0.5)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank())
+dev.off()
+
+pdf("output/figures/GEA/glms/model_enrichment/GLM_Biotic_rr_sum_alt.pdf", width = 10, height = 9.5)
+ggplot(summary_biotic, aes(x = reorder(variable_full_name_edit, mean_rr_log2), y = mean_rr_log2, color = col)) + 
+  geom_point(size = 10) + 
+  scale_color_identity() +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
+  ylim(-0.27, 0.369) +
+  labs(title="Biotic Variables", x = "", y = expression(Log[2]*(RR~Enrichment))) +
+  coord_flip() +
+  theme_linedraw(base_size=30) + theme(legend.position = "none", plot.title = element_text(hjust = 0.5, margin = margin(b = -1)), axis.text.y = element_text(size = 22))
+dev.off()
+
