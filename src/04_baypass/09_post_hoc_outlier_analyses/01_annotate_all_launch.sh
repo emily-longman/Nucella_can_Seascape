@@ -31,7 +31,7 @@
 
 #--------------------------------------------------------------------------------
 
-# This script will run the accompanying 03_merge_glms.R script. 
+# This script will run the accompanying 01_annotate_all.R script.
 # Note: prior to running this script, the merged glms were moved to the Working folder rather than the tmp directory.
 
 # Load modules 
@@ -63,7 +63,6 @@ fi
 # Run R script
 
 Rscript --vanilla $WORKING_FOLDER/src/05_outlier_analyses/01_annotate_all.R "${SLURM_ARRAY_TASK_ID}"
-# The --vanilla option prevents restoring or saving workspaces
 
 #--------------------------------------------------------------------------------
 

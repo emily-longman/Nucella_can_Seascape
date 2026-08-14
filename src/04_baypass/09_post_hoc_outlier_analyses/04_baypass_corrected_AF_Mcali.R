@@ -44,7 +44,7 @@ snp.meta <- snp.meta %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 # Read in Baypass mean Mcali files
 
-# Load BF output for 5 replicate Baypass runs
+# Load output for 5 replicate Baypass runs
 baypass.Mcali <- foreach(i=1:5, .combine = rbind)%do%{
     message(i)
     tmp <- fread(paste("data/processed/baypass/biotic/Mcali_IntegratedThk/NC_biotic_Mcali_IntegratedThk_run", i, "_summary_yij_pij.out", sep=""))

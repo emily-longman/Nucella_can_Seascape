@@ -114,9 +114,9 @@ To identify outlier loci associated with mean pH and mussel shell thickness we p
 
 06_summarize_graph_baypass.R - Analyze the BayPass data for both ecological variables.
 
-07_annotate_SNPs_Mcali.R - Annotate the outlier SNPs associated with mussel cross-sectional shell thickness.
+07_annotate_SNPs_Mcali.R - Annotate the outlier SNPs associated with mussel cross-sectional shell thickness using [SnpEff](https://pcingola.github.io/SnpEff/).
 
-07_annotate_SNPs_ph_mean.R - Annotate the outlier SNPs associated with mean pH.
+07_annotate_SNPs_ph_mean.R - Annotate the outlier SNPs associated with mean pH using [SnpEff](https://pcingola.github.io/SnpEff/).
 
 08_window_rnp_100kb: 
 
@@ -129,6 +129,11 @@ To identify outlier loci associated with mean pH and mussel shell thickness we p
 
 09_post_hoc_outlier_analyses:
 
+- 01_annotate_all_launch.sh and 01_annotate_all.R - Annotate the entire VCF, using a chunked 500-array approach.
+- 02_merge_annotate.R - Merge the output from the previous scripts, and filter for the ~8M SNP dataset.
+- 03_fishers_exact_test.R - Perform Fisher’s Exact Tests to assess if the mean pH model and shell thickness model were enriched with specific genetic variants.
+- 04_baypass_corrected_AF_Mcali_launch.sh and 04_baypass_corrected_AF_Mcali.R - Summarize the baypass corrected allele frequencies (i.e., the mean of the posterior distribution of the alpha ij parameter) for the 5 shell thickness runs.
+- 04_baypass_corrected_AF_ph_launch.sh and 04_baypass_corrected_AF_ph.R - Summarize the baypass corrected allele frequencies (i.e., the mean of the posterior distribution of the alpha ij parameter) for the 5 mean pH runs.
 
 ## Part 5 - Genomic offset analyses
 
