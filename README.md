@@ -134,6 +134,10 @@ To identify outlier loci associated with mean pH and mussel shell thickness we p
 - 03_fishers_exact_test.R - Perform Fisher’s Exact Tests to assess if the mean pH model and shell thickness model were enriched with specific genetic variants.
 - 04_baypass_corrected_AF_Mcali_launch.sh and 04_baypass_corrected_AF_Mcali.R - Summarize the baypass corrected allele frequencies (i.e., the mean of the posterior distribution of the alpha ij parameter) for the 5 shell thickness runs.
 - 04_baypass_corrected_AF_ph_launch.sh and 04_baypass_corrected_AF_ph.R - Summarize the baypass corrected allele frequencies (i.e., the mean of the posterior distribution of the alpha ij parameter) for the 5 mean pH runs.
+- 05_Mcali_AF_cor.R - Calculate Pearson’s Correlation between the residual structure of the top outlier loci associated with shell thickness and a random sample of 1,000 SNPs.
+- 05_ph_AF_cor.R - Calculate Pearson’s Correlation between the residual structure of the top 51 outlier loci associated with mean pH and a random sample of 1,000 SNPs.
+- 06_effect_sizes.R - Calculate local effect size (Cohen's F2) of shell thickness for individual SNPs. 
+
 
 ## Part 5 - Genomic offset analyses
 
