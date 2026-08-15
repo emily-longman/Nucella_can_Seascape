@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=ph_slim_morevars9_expand2_pt4
+#SBATCH --job-name=ph_slim_morevars9_expand3_pt1
 
 # Specify partition
 #SBATCH --partition=general
@@ -60,15 +60,15 @@ fi
 cd $WORKING_FOLDER/data/processed/SLiM
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "ph_results_morevars9_expand2" ]
-then echo "Working ph_results_morevars9_expand2 folder exist"; echo "Let's move on."; date
-else echo "Working ph_results_morevars9_expand2 folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars9_expand2; date
+if [ -d "ph_results_morevars9_expand3" ]
+then echo "Working ph_results_morevars9_expand3 folder exist"; echo "Let's move on."; date
+else echo "Working ph_results_morevars9_expand3 folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars9_expand3; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Guide file 
-GUIDE_FILE=$WORKING_FOLDER/guide_files/slim_ph_guide_file_morevars9_expand2.txt
+GUIDE_FILE=$WORKING_FOLDER/guide_files/slim_ph_guide_file_morevars9_expand3.txt
 
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers.
 # Threshold      # K         # mag      # m.         #N
@@ -87,18 +87,18 @@ N=`awk -F "\t" '{print $5}' $GUIDE_FILE | sed "${SLURM_ARRAY_TASK_ID}q;d"`
 echo "Threshold:"${thresh} "k:"${k} "mag:"${mag} "m:"${m} "N:" ${N}
 
 # Set root
-ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_results_morevars9_expand2
+ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_results_morevars9_expand3
 
 #--------------------------------------------------------------------------------
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars9_expand2
+cd $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars9_expand3
 
 # Loop through iterations
-#for i in {1..25}
+for i in {1..25}
 #for i in {26..50}
 #for i in {51..75}
-for i in {76..100}
+#for i in {76..100}
 do
 
 # Run slim script
