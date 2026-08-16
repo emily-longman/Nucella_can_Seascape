@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=ph_slim_morevars9_expand3_pt2
+#SBATCH --job-name=ph_slim_morevars9_expand3_pt3
 
 # Specify partition
 #SBATCH --partition=general
@@ -96,8 +96,8 @@ cd $WORKING_FOLDER/data/processed/SLiM/ph_results_morevars9_expand3
 
 # Loop through iterations
 #for i in {1..25}
-for i in {26..50}
-#for i in {51..75}
+#for i in {26..50}
+for i in {51..75}
 #for i in {76..100}
 do
 
