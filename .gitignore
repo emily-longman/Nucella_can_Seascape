@@ -12,4 +12,3 @@ data/raw/*
 data/processed/*
 output/*
 slurmOutput/*
-guide_files/*

@@ -1,0 +1,28 @@
+﻿variable,variable_full_name,variable_full_name_edit,Variable
+thetao_max,Temperature (max),SST (max),Abiotic
+thetao_min,Temperature (min),SST (min),Abiotic
+thetao_range,Temperature (range),SST (range),Abiotic
+thetao_mean,Temperature (mean),SST (mean),Abiotic
+chl_mean,Chlorophyll (mean),Chlorophyll (mean),Abiotic
+o2_mean,O2 (mean),O2 (mean),Abiotic
+ph_min,pH (min),pH (min),Abiotic
+ph_mean,pH (mean),pH (mean),Abiotic
+so_mean,Salinity (mean),Salinity (mean),Abiotic
+B.gland_m,B. glandula (mean),B. glandula (mean),Biotic
+B.gland_hm,B. glandula (harmonic mean),B. glandula (hmean),Biotic
+C.dalli_m,C. dalli (mean),C. dalli (mean),Biotic
+C.dalli_hm,C. dalli (harmonic mean),C. dalli (hmean),Biotic
+M.cali_m,M. californianus (mean),M. californianus (mean),Biotic
+M.cali_hm,M. californianus (harmonic mean),M. californianus (hmean),Biotic
+M.tross_m,M. trossulus (mean),M. trossulus (mean),Biotic
+M.tross_hm,M. trossulus (harmonic mean),M. trossulus (hmean),Biotic
+N.can_m,N. canaliculata (mean),N. canaliculata (mean),Biotic
+N.can_hm,N. canaliculata (harmonic mean),N. canaliculata (hmean),Biotic
+N.ost_m,N. ostrina (mean),N. ostrina (mean),Biotic
+N.ost_hm,N. ostrina (harmonic mean),N. ostrina (hmean),Biotic
+P.och_m,P. ochraceus (mean),P. ochraceus (mean),Biotic
+P.och_hm,P. ochraceus (harmonic mean),P. ochraceus (hmean),Biotic
+mean_STI,Shell Thickness Index (mean),STI (mean),Biotic
+mean_integrated_thk,Integrated thickness (mean),Cross-sectional thk (mean),Biotic
+mean_max_thk,Max thickness (mean),Max thk (mean),Biotic
+mean_min_thk,Min thickness (mean),Min thk (mean),Biotic

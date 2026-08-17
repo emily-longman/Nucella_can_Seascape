@@ -1,0 +1,4 @@
+mean_STI
+mean_integrated_thk
+mean_max_thk
+mean_min_thk

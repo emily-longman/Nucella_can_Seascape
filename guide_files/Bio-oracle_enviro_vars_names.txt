@@ -1,0 +1,9 @@
+thetao_max
+thetao_min
+thetao_range
+thetao_mean
+chl_mean
+o2_mean
+ph_min
+ph_mean
+so_mean

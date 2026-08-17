@@ -1,0 +1,14 @@
+B.gland_m
+B.gland_hm
+C.dalli_m
+C.dalli_hm
+M.cali_m
+M.cali_hm
+M.tross_m
+M.tross_hm
+N.can_m
+N.can_hm
+N.ost_m
+N.ost_hm
+P.och_m
+P.och_hm
