@@ -14,7 +14,7 @@ The bioinformatics pipeline was completed on the Vermont Advanced Computing Cent
 
 ## File Structure
 
-The files associated with this project are organized in the file structure presented below. All metadata and array guide files are in the "guide_files" directory. All subsequent directories are generated therein. In terms of the raw data, (1) the VCF for the pool-seq data can be found on [Zenodo](https://zenodo.org/records/18623551), (2) the biotic data from [MARINe](https://marine.ucsc.edu/) can be obtained through their data request form, and (3) the *M. californianus* shell morphology data can be found on Zenodo.
+The files for this project are organized in the file structure presented below. All metadata and array guide files are in the "guide_files" directory. The raw data associated with this project are: (1) a previously published VCF of pool-seq data from 19 *N. canaliculata* populations, which can be found on [Zenodo](https://zenodo.org/records/18623551), (2) the *N. canaliculata* reference genome, which can be obtained from [NCBI](https://www.ncbi.nlm.nih.gov/), (3) data on the abundance of species that interact with *N. canaliculata* from [MARINe](https://marine.ucsc.edu/), and (4) *M. californianus* shell morphology data, which was generated as part of this project and can be found on Zenodo. All subsequent directories are generated therein. 
 
  - data/
      - raw/
@@ -32,7 +32,7 @@ The files associated with this project are organized in the file structure prese
      - figures/
      - tables/
 
-## Part 1 - Compile ecological data
+## Part 1 - Compile ecological data (01_ecological_data)
 
 To identify which ecological selective forces are driving patterns of adaptive variation in *N. canaliculata*, we used several ecologically-relevant abiotic and biotic variables.  
 
@@ -54,13 +54,13 @@ There were two sets of biotic data. The first was abundance/density data of inte
 
 02_summarize_Mcalifornianus_shell.R - Filter the shell morphology data and summarize.
 
-## Part 2 - Demography and population structure
+## Part 2 - Demography and population structure (02_demography)
 
 Filter the Pool-Seq dataset from [Longman et al. (2026)](https://royalsocietypublishing.org/rspb/article/293/2070/20253148/481573/Geographic-divergence-in-population-genomics-and) and perform population structure analyses. 
 
 01_pca_poolfstat.R - Use [poolfstat](https://cran.r-project.org/web/packages/poolfstat/index.html) to fiter VCF, creating a poolobject with ~8M SNPs, and perform a PCA on the Pool-seq dataset.
 
-## Part 3 - Genotype environment association analyses using GLM framework
+## Part 3 - Genotype environment association analyses using GLM framework (03_GEA_glms)
 
 We used generalized linear models (GLMs) to identify associations between *N. canaliculata* allele frequencies and abiotic and biotic ecological variables. We used null expectations, calculated from 100 permutations, to assess the relative importance of the ecological variables.
 
@@ -93,7 +93,7 @@ We used generalized linear models (GLMs) to identify associations between *N. ca
 - 02_model_enrichment_launch.sh and 02_model_enrichment.R - For each variable, summarize the permutations and perform model enrichment.
 - 03_graph_glms.R - Graph the GLM results. 
 
-## Part 4 - Identify outlier loci for top abiotic and biotic variable using Baypass
+## Part 4 - Identify outlier loci for top abiotic and biotic variable using Baypass (04_baypass)
 
 To identify outlier loci associated with mean pH and mussel shell thickness we performed genotype-environment association scans while simultaneously accounting for demographic history using [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public). 
 
@@ -140,7 +140,7 @@ To identify outlier loci associated with mean pH and mussel shell thickness we p
 - 06_effect_sizes.R - Calculate local effect size (Cohen's F2) for individual SNPs for both ecological models. 
 
 
-## Part 5 - Genomic offset analyses
+## Part 5 - Genomic offset analyses (05_genomic_offset)
 
 Calculate genome-wide geometric genomic offset using [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public) based on scaled future projections of mean pH from [Bio-Oracle](https://www.bio-oracle.org/).
 
@@ -148,7 +148,7 @@ Calculate genome-wide geometric genomic offset using [BayPass](https://forge.inr
 
 02_Baypass_GO_mean_ph_scaled.R - Perform genomic offset analyses for the 19 populations based on changes in mean pH.
 
-## Part 6 - Population genetic simulation using SLiM
+## Part 6 - Population genetic simulation using SLiM (06_SLiM)
 
 Perform population genetic simulations using [SLiM](https://github.com/MesserLab/SLiM). First, we created single locus population genetic simulations using a Wright-Fisher model for both mean pH and mussel shell thickness. In the models, we calculated population-level selection using a sigmoidal function, with parameters that dictate the structure of the curves. We used Approximate Bayesian Computation [abc](https://cran.r-project.org/web/packages/abc/index.html) to performs multivariate parameter estimation between the simulations and real data.  Second, we used the structure of the mean pH model to determine how genetic diversity would change with declining pH, as a result of ocean acidification over the time period 2020-2100.
 
