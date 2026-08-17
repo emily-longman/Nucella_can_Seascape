@@ -110,7 +110,7 @@ slim \
     -d "N=${N}" \
     -d "repId=${i}" \
 	-d "root='${ROOT}'" \
-     $WORKING_FOLDER/src/07_SLiM/02_Mcali/02_Mcali.slim
+     $WORKING_FOLDER/src/06_SLiM/02_Mcali/02_Mcali.slim
 
 done
 

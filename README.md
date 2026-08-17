@@ -52,7 +52,7 @@ There were two sets of biotic data. The first was abundance/density data of inte
 
 01_summarize_graph_MARINe.R - Filter the abundance/density data to the focal *N. canaliculata* field sites and summarize the data.
 
-02_summarize_Mcalifornianus_shell.R - Filter the shell morphology data and summarize.
+02_summarize_Mcalifornianus_shell_traits.R - Filter the shell morphology data and summarize.
 
 ## Part 2 - Demography and population structure (02_demography)
 
@@ -69,22 +69,22 @@ We used generalized linear models (GLMs) to identify associations between *N. ca
 - 01_chunks_pt1.txt - Interactive session to make a list of the scaffold names present in the genome.
 - 01_chunks_pt2.R - Create a guide file, which chunks the list of scaffold names.
 - 02_glms_bio-oracle_launch.sh and 02_glms_bio-oracle.R - Use GLMs to assess associations between allele frequencies (chunked based on the scaffold lists created in the previous scripts) and abiotic [Bio-Oracle](https://www.bio-oracle.org/) variables 
-- 03_extract_glms.R and 03_extract_glms_launch.R - Extract the data for each abiotic variable from the GLM outputs.
-- 04_merge_glms.R and 04_merge_glms_launch.R - Merge all of the GLM outputs for each abiotic variable.
+- 03_extract_glms_launch.sh and 03_extract_glms.R - Extract the data for each abiotic variable from the GLM outputs.
+- 04_merge_glms_launch.sh and 04_merge_glms.R - Merge all of the GLM outputs for each abiotic variable.
 
 01_run_glms_biotic:
 
 - 01_MARINe
 
     - 01_glms_MARINe_launch.sh and 01_glms_MARINe_*.R - Use GLMs to assess associations between allele frequencies (chunked based on the scaffold guide file) and biotic [MARINe](https://marine.ucsc.edu/) variables. For efficiency, there are 5 R scripts, one that performs GLMs with the real ecological variables and four scripts that performs GLMs with the permuted variables. Note the different walltime for the real data versus permutations.
-    - 02_extract_glms.R and 02_extract_glms_launch.R - Extract the data for each MARINe variable from the GLM outputs.
-    - 03_merge_glms.R and 03_merge_glms_launch.R - Merge all of the GLM outputs for each MARINe variable.
+    - 02_extract_glms_launch.sh and 02_extract_glms.R- Extract the data for each MARINe variable from the GLM outputs.
+    - 03_merge_glms_launch.sh and 03_merge_glms.R - Merge all of the GLM outputs for each MARINe variable.
 
 - 02_Mcali
 
     - 01_glms_Mcali_launch.sh and 01_glms_Mcali_*.R - Use GLMs to assess associations between allele frequencies (chunked based on the scaffold guide file) and the mussel morphology variables. For efficiency, there are 5 R scripts, one that performs GLMs with the real data and four scripts that performs GLMs with the permuted variables. Note the different walltime for the real data versus permutations.
-    - 02_extract_glms.R and 02_extract_glms_launch.R - Extract the data for each mussel morphology variable from the GLM outputs.
-    - 03_merge_glms.R and 03_merge_glms_launch.R - Merge all of the GLM outputs for each mussel morphology variable.
+    - 02_extract_glms_launch.sh and 02_extract_glms.R- Extract the data for each mussel morphology variable from the GLM outputs.
+    - 03_merge_glms_launch.sh and 03_merge_glms.R- Merge all of the GLM outputs for each mussel morphology variable.
 
 
 02_model_enrichment:

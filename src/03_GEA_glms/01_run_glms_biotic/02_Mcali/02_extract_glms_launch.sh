@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=merge_glms_biotic_Mcali
+#SBATCH --job-name=extract_glms_biotic_Mcali
 
 # Specify partition
 #SBATCH --partition=general
@@ -17,7 +17,7 @@
 #SBATCH --time=30:00:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=900G 
+#SBATCH --mem=100G 
 
 # Submit job array
 #SBATCH --array=1-4
@@ -57,7 +57,7 @@ guide_file=$WORKING_FOLDER/guide_files/Mcali_vars_names.txt
 # mean_STI
 # mean_integrated_thk
 # mean_max_thk
-# mean_min_thk  
+# mean_min_thk
 
 #--------------------------------------------------------------------------------
 
@@ -74,8 +74,38 @@ echo ${i}
 
 #--------------------------------------------------------------------------------
 
+# Generate Folders and files
+
+# Move to working directory
+cd $WORKING_FOLDER/data/processed/GEA/glms
+
+# This part of the script will check and generate, if necessary, all of the output folders used in the script
+if [ -d "glms_per_env_var" ]
+then echo "Working glms_per_env_var folder exist"; echo "Let's move on."; date
+else echo "Working glms_per_env_var folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/GEA/glms/glms_per_env_var; date
+fi
+
+# Move to working directory
+cd $TMP_FOLDER
+
+# This part of the script will check and generate, if necessary, all of the output folders used in the script
+if [ -d "glms_per_env_var" ]
+then echo "Working glms_per_env_var folder exist"; echo "Let's move on."; date
+else echo "Working glms_per_env_var folder doesnt exist. Let's fix that."; mkdir $TMP_FOLDER/glms_per_env_var; date
+fi
+
+# Change directory
+cd $TMP_FOLDER/glms_per_env_var
+
+if [ -d "glms_${i}" ]
+then echo "Working glms_${i} folder exist"; echo "Let's move on."; date
+else echo "Working glms_${i} folder doesnt exist. Let's fix that."; mkdir $TMP_FOLDER/glms_per_env_var/glms_${i}; date
+fi
+
+#--------------------------------------------------------------------------------
+
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/03_GEA_glms/01_run_glms_biotic/02_Mcali_18pop/03_merge_glms.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/03_GEA_glms/01_run_glms_biotic/02_Mcali/02_extract_glms.R "${i}"
 
 #--------------------------------------------------------------------------------
 

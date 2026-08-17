@@ -73,7 +73,7 @@ echo ${i}
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/03_GEA_glms/02_model_enrichment/02_filt_glms.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/03_GEA_glms/02_model_enrichment/01_filt_glms.R "${i}"
 
 #--------------------------------------------------------------------------------
 

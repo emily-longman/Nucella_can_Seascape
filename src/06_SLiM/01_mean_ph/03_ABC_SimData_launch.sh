@@ -66,7 +66,7 @@ fi
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/07_SLiM/01_mean_ph/03_ABC_SimData.R
+Rscript --vanilla $WORKING_FOLDER/src/06_SLiM/01_mean_ph/03_ABC_SimData.R
 
 #--------------------------------------------------------------------------------
 

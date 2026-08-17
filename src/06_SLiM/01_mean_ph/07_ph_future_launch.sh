@@ -80,7 +80,7 @@ do
 slim \
     -d "repId=${i}" \
 	-d "root='${ROOT}'" \
-     $WORKING_FOLDER/src/07_SLiM/01_mean_ph/07_ph_future.slim
+     $WORKING_FOLDER/src/06_SLiM/01_mean_ph/07_ph_future.slim
 
 done
 
