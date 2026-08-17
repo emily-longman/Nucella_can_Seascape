@@ -115,9 +115,7 @@ fi
 #--------------------------------------------------------------------------------
 
 # Run R script
-
 Rscript --vanilla $WORKING_FOLDER/src/03_GEA_glms/01_run_glms_biotic/01_MARINe/02_extract_glms.R "${i}"
-# The --vanilla option prevents restoring or saving workspaces
 
 #--------------------------------------------------------------------------------
 

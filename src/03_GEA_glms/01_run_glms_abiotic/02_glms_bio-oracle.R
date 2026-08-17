@@ -49,11 +49,6 @@ w = as.numeric(args[1]) # Chunk: this is the chunk (1000 chunks each with 19 sca
 scaffold.names.df <- read.csv(paste("data/processed/GEA/glms/scaffold.names", w, "txt", sep = "."), sep = " ", header=F)
 scaffold.names <- scaffold.names.df$V1
 
-# Load SNPs of interest (baypass POD outlier SNPs - 3,095 SNPs SNPs)
-#baypass_POD_sig_SNPs <- read.table("data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs", header=T)
-baypass_POD_sig_SNPs <- read.table("data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs_threshold_0.01", header=T)
-#baypass_POD_sig_SNPs <- read.table("data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs_threshold_0.001", header=T)
-
 # Load bio-oracle environmental data
 bio_oracle_sites_2010 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", header=T)
 
@@ -73,9 +68,6 @@ names(bio_oracle_sites_2010)[names(bio_oracle_sites_2010) == "location"] <- "sam
 
 # Join bio-oracle dataframe and PCA dataframe
 bio_oracle_sites_2010 <- dplyr::left_join(bio_oracle_sites_2010, pca.df, by = "sampleId")
-
-# Create SNP_id column for outlier SNP list
-baypass_POD_sig_SNPs <- baypass_POD_sig_SNPs %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 # Extract SNP data from GDS
 snp.dt <- data.table(

@@ -106,6 +106,7 @@ Rscript $SCRIPT_FOLDER/01_glms_Mcali_perm76:100.R "${SLURM_ARRAY_TASK_ID}"
 
 #--------------------------------------------------------------------------------
 
+# Remove temporary scaffold guide file
 rm scaffold.names.${SLURM_ARRAY_TASK_ID}.txt
 
 # Say done
