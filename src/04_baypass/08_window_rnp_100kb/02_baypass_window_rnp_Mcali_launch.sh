@@ -78,7 +78,7 @@ fi
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/04_baypass/09_window_rnp_100kb/02_baypass_window_rnp_Mcali_IntegratedThk.R "${SLURM_ARRAY_TASK_ID}"
+Rscript --vanilla $WORKING_FOLDER/src/04_baypass/08_window_rnp_100kb/02_baypass_window_rnp_Mcali.R "${SLURM_ARRAY_TASK_ID}"
 
 #--------------------------------------------------------------------------------
 

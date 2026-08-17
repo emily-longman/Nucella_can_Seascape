@@ -159,7 +159,6 @@ baypass.cor.Mcali.sample.PC1.lat$abs.estimate <- abs(baypass.cor.Mcali.sample.PC
 # Graph correlation of outlier SNP compared to sample
 
 # Set colors
-#cols <- c("#757474", "#29b3e6")
 cols <- c("#757474", "#9e03a9")
 
 # Graph

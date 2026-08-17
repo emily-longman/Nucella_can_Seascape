@@ -231,9 +231,7 @@ dev.off()
 # ================================================================================== #
 
 # Extract outlier (ntLink_3488_113935)
-#Mcali.top.outlier <- Mcali.cohens.fsq.PC1.bf[which(Mcali.cohens.fsq.PC1.bf$cohens.fsq > 8),]
 Mcali.top.outlier <- Mcali.cohens.fsq.PC1.lat.bf[which(Mcali.cohens.fsq.PC1.lat.bf$cohens.fsq > 8 & Mcali.cohens.fsq.PC1.lat.bf$bf_db.mean >= 25),]
-#Mcali.cohensf2.outliers <- Mcali.cohens.fsq.PC1.lat.bf[which(Mcali.cohens.fsq.PC1.lat.bf$cohens.fsq > 11),]
 
 # Get AF for top outlier SNP
 Mcali.outliers.outlier <- Mcali.outliers[which(Mcali.outliers$SNP_id == Mcali.top.outlier$SNP_id),]

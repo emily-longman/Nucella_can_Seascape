@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=corrected_xtx_ph
+#SBATCH --job-name=corrected_AF_ph
 
 # Specify partition
 #SBATCH --partition=general
@@ -44,7 +44,7 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/05_outlier_analyses/04_xtx_ph.R
+Rscript --vanilla $WORKING_FOLDER/src/04_baypass/09_post_hoc_outlier_analyses/04_baypass_corrected_AF_ph.R
 
 #--------------------------------------------------------------------------------
 

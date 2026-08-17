@@ -61,8 +61,7 @@ fi
 #--------------------------------------------------------------------------------
 
 # Run R script
-
-Rscript --vanilla $WORKING_FOLDER/src/05_outlier_analyses/01_annotate_all.R "${SLURM_ARRAY_TASK_ID}"
+Rscript --vanilla $WORKING_FOLDER/src/04_baypass/09_post_hoc_outlier_analyses/01_annotate_all.R "${SLURM_ARRAY_TASK_ID}"
 
 #--------------------------------------------------------------------------------
 

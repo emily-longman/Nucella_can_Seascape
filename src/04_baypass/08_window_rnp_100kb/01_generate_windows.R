@@ -45,60 +45,6 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 
 # ================================================================================== #
 
-# Open the GDS file
-genofile <- seqOpen("data/processed/outlier_analyses/snpeff/N.canaliculata_SNPs.annotate.gds")
-
-# Extract SNP data from GDS (14,897,468 SNPs)
-snp.dt <- data.table(
-        chr=seqGetData(genofile, "chromosome"),
-        pos=seqGetData(genofile, "position"),
-        nAlleles=seqGetData(genofile, "$num_allele"),
-        variant.id=seqGetData(genofile, "variant.id"),
-        allele=seqGetData(genofile, "allele")) %>%
-    mutate(SNP_id = paste(chr, pos, sep = "_"))
-
-# How many SNPs are on each contig:
-SNPS_density <- snp.dt %>% group_by(chr) %>% summarize(n=n())
-
-# Graph SNP density
-pdf("output/figures/baypass/window_summary/glm_chr_nSNP_density.pdf", width = 8, height = 8)
-ggplot(SNPS_density, aes(x=n))+ geom_density() + xlim(0,150)
-dev.off()
-# Use this information to determine level to filter for number of SNPs in a given window
-
-# ================================================================================== #
-
-# Load pooldata object
-#load("data/raw/pooldata/pooldata.RData")
-
-# Extract SNP info for all SNPs
-#pooldata@snp.info %>%
-#  as.data.frame() %>% mutate(rs.id = rownames(.)) ->
-#  pooldata.snp.info
-
-# Rename columns
-#names(pooldata.snp.info)[1:2] = c("chr","pos")
-
-# Make snp_id column
-#pooldata.snp.info<- pooldata.snp.info %>%
-#  mutate(SNP_id = paste(chr, pos, sep = "_"))
-
-# Filter GDS snp.dt to only sites in pooldata snp.info
-#snp.dt.filt <- snp.dt %>% filter(SNP_id %in% pooldata.snp.info$SNP_id)
-
-######
-
-# How many SNPs are on each contig:
-SNPS_density_filt <- snp.dt.filt %>% group_by(chr) %>% summarize(n=n())
-
-# Graph SNP density
-pdf("output/figures/baypass/window_summary/glm_chr_nSNP_filt_density.pdf", width = 8, height = 8)
-ggplot(SNPS_density_filt, aes(x=n))+ geom_density() + xlim(0,150)
-dev.off()
-# Use this information to determine level to filter for number of SNPs in a given window
-
-# ================================================================================== #
-
 # Read in SNP data
 snpdet <- read.table("data/processed/baypass/input_files/snpdet", header=F)
 # Re-name snp metadata

@@ -1,4 +1,4 @@
-# Use poolfstat to convert pooldata to Baypass input file
+# Use poolfstat to convert pooldata to Baypass input files
 
 # Clear memory
 rm(list=ls())

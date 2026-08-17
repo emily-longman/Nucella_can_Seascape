@@ -36,7 +36,7 @@ if (!dir.exists(data_processed_outlier)) {dir.create(data_processed_outlier)}
 # ================================================================================== #
 # ================================================================================== #
 
-# Load POD files - ph Mean
+# Load POD files - mean pH
 
 # Create list of file names
 file_names = as.list(dir(path = 'data/processed/baypass/abiotic/ph_mean_POD/', pattern = "*summary_betai_reg.out"))
