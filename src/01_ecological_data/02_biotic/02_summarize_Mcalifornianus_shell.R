@@ -1,4 +1,4 @@
-# Subset M. californianus thickness dataset
+# Subset and summarize M. californianus thickness dataset
 
 # Clear memory
 rm(list=ls()) 
@@ -33,6 +33,8 @@ library(viridis)
 # ================================================================================== #
 
 # Color palette
+nb.cols <- 19
+mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
 viridiscolors <- viridis(n=19)
 viridiscolors18 <- viridiscolors[-4]
 
@@ -45,21 +47,15 @@ out_dir <- paste("data/processed/GEA/enviro/Mcali_thk")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # Figure directory
-out_dir_fig <- paste("output/figures/enviroMcali_thk")
+out_dir_fig <- paste("output/figures/enviro/Mcali_thk")
 if (!dir.exists(out_dir_fig)) {dir.create(out_dir_fig)}
-
-# ================================================================================== #
-
-# Set colors
-nb.cols <- 19
-mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
 
 # ================================================================================== #
 
 # Load data
 
 # Read in mussel shell data
-Mcali <- read.csv("data/raw/Mcali_thk/Mcali_shell_thk.csv", header=T)
+Mcali <- read.csv("data/raw/Mcali_thk/Mcalifornianus_shell_traits.csv", header=T)
 
 # Read metadata
 meta <- read.csv("guide_files/Populations_metadata.csv", header=T)
@@ -270,7 +266,7 @@ levels=c("STR", "OCT", "HZD", "PB", "PSN", "SBR", "PL", "PGP", "BMR", "FR", "VD"
 
 # Summarize data
 Mcali_data_sub_sum <- Mcali_data_sub %>% group_by(Site.Code) %>% summarise(mean_STI = mean(STI), mean_integrated_thk = mean(Integrated.Thk))
-# Bind
+# Join
 Mcali_data_sub_sum_meta <- left_join(Mcali_data_sub_sum, meta, by="Site.Code")
 
 # Cut ARA since outlier for collection

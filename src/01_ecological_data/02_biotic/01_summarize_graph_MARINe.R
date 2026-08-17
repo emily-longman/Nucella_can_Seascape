@@ -1,5 +1,4 @@
-# Graph MARINe data for N. canaliculata collection sites
-# Note: prior to running the R script, need to load R and GDAL module on the VACC (module load R/4.4.1)
+# Summarize and graph MARINe data for N. canaliculata collection sites
 
 # Clear memory
 rm(list=ls())
