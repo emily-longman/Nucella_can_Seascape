@@ -59,7 +59,7 @@ data.frame(
 
 str(hist.obj.env)
 
-# Graph pval distribution - remove 0.995 values as these are artifacts
+# Graph pval distribution
 pdf(paste0("output/figures/GEA/glms/pval_dist/glm_pval_dist_log_scale_", var, ".pdf"), width = 12, height = 8)
 ggplot(hist.obj.env[which(hist.obj.env$hist.obj.mids < 0.995),], aes(x=(hist.obj.mids),y=hist.obj.counts, group=perm, color=perm==0)) +
   geom_line(aes(alpha=perm==0 ), linewidth = 2.5) + 
@@ -72,7 +72,7 @@ ggplot(hist.obj.env[which(hist.obj.env$hist.obj.mids < 0.995),], aes(x=(hist.obj
   scale_x_log10()
 dev.off()
 
-# Graph pval distribution - remove 0.995 values as these are artifacts
+# Graph pval distribution
 pdf(paste0("output/figures/GEA/glms/pval_dist/glm_pval_dist_log_scale_", var, "alt2.pdf"), width = 7.5, height = 5)
 ggplot(hist.obj.env[which(hist.obj.env$hist.obj.mids < 0.995),], aes(x=(hist.obj.mids),y=hist.obj.counts/1000000, group=perm, color=perm==0)) +
   geom_line(aes(alpha=perm==0 ), linewidth = 3.5) + 
