@@ -176,8 +176,4 @@ To determine the adaptive potential of populations to ocean acidification, we as
 - 04_ABC_realData.R - Calculate the summary statistics for ABC for the real data.
 - 05_ABC_analysis_LOclinEst.R - Perform ABC analysis. 
 
-03_graph_selection_ph_Mcali.R - Graph the selection curves for the abiotic and biotic data based on the best fit parameters.
-
-
-
 

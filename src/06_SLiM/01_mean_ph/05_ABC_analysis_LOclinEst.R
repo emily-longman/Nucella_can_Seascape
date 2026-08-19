@@ -122,6 +122,8 @@ abc_fit <- abc(
 
 # ================================================================================== #
 
+# Posterior
+
 # Extract posterior
 post <- as.data.frame(abc_fit$adj.values)
 # Reformat
@@ -131,8 +133,13 @@ post_long <- pivot_longer(
   names_to = "parameter",
   values_to = "value")
 
+# Mean posterior for each parameter
+post_long %>%
+  group_by(parameter) %>%
+  summarise(mean.par = mean(value, na.rm = T))
+
 # Graph posteriors
-pdf("output/figures/SLiM/ph_ABC/pH_posteriors_morvars9_all_nop4.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph_ABC/pH_posteriors_morvars9_all.pdf", width = 5, height = 5)
 ggplot(post_long, aes(x = value)) +
   geom_density(fill = "steelblue", alpha = 0.5) +
   facet_wrap(parameter~. , scales = "free", ncol = 1) +
@@ -142,11 +149,6 @@ dev.off()
 # ================================================================================== #
 
 # Report the simulation that best match the data
-
-# Mean posterior for each parameter
-post_long %>%
-  group_by(parameter) %>%
-  summarise(mean.par = mean(value, na.rm = T))
 
 # Extract best parameters
 best <- which.max(abc_fit$weights)

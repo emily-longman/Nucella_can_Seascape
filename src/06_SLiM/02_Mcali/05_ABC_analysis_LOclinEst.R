@@ -120,6 +120,11 @@ post_long <- pivot_longer(
   names_to = "parameter",
   values_to = "value")
 
+# Mean posterior for each parameter
+post_long %>%
+  group_by(parameter) %>%
+  summarise(mean.par = mean(value, na.rm = T))
+
 # Graph posteriors
 pdf("output/figures/SLiM/Mcali_ABC/Mcali_posteriors_v8.pdf", width = 5, height = 8)
 ggplot(post_long, aes(x = value)) +
@@ -131,11 +136,6 @@ dev.off()
 # ================================================================================== #
 
 # Report the simulation that best match the data
-
-# Mean posterior for each parameter
-post_long %>%
-  group_by(parameter) %>%
-  summarise(mean.par = mean(value, na.rm = T))
 
 # Extract best parameters
 best <- which.max(abc_fit$weights)
