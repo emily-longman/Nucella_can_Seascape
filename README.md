@@ -151,7 +151,7 @@ Calculate genome-wide geometric genomic offset using [BayPass](https://forge.inr
 
 ## Part 6 - Population genetic simulation using SLiM (06_SLiM)
 
-We performed population genetic simulations using [SLiM](https://github.com/MesserLab/SLiM) to contextualize the patterns of local adaptation. To do so, we created single locus population genetic simulations using a Wright-Fisher model based on the top outlier loci associated with both mean pH and mussel shell thickness. In the models, we calculated population-level selection using a sigmoidal function, with multiple parameters that dictate the structure of the curves. We used Approximate Bayesian Computation [ABC](https://cran.r-project.org/web/packages/abc/index.html) to perform multivariate parameter estimation between the simulations and real data.  
+We performed population genetic simulations using [SLiM](https://github.com/MesserLab/SLiM) to contextualize the patterns of local adaptation. To do so, we created single locus population genetic simulations using a Wright-Fisher model based on the top outlier loci associated with both mean pH and mussel shell thickness. In the models, we calculated population-level selection using a sigmoidal function, with multiple parameters that dictate the structure of the curves. We used Approximate Bayesian Computation [ABC](https://cran.r-project.org/web/packages/abc/index.html) to perform multivariate parameter estimation between the simulations and real data. Note: for both selective forces, scripts 01-05 were used iteratively for parameter optimization. 
 
 To determine the adaptive potential of populations to ocean acidification, we assessed how genetic diversity would change with declining pH.
 

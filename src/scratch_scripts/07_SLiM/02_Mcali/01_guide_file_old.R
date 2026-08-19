@@ -57,14 +57,49 @@ afs.Mcali$Site <- factor(afs.Mcali$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL
 # Subset data
 afs.Mcali_sub <- afs.Mcali[,c(10,13)]
 
+# Fit using self-starting parameters
+mod <- nls(AF ~ SSlogis(mean_integrated_thk, Asym, xmid, scal), data = afs.Mcali_sub)
+mod_fit <- coef(mod)
+
+# Graph data with sigmoid curve
+pdf("output/figures/SLiM/Mcali/real_AFs_topsnp_sigmoid_flipped.pdf", width = 5, height = 5)
+ggplot(afs.Mcali, aes(x = mean_integrated_thk, y = AF, fill = Site)) + geom_point(size = 3, shape = 21) + scale_fill_manual(values = mycolors) +
+stat_function(fun = SSlogis, args = list(Asym = mod_fit["Asym"], xmid = mod_fit["xmid"], scal = mod_fit["scal"])) + theme_linedraw()
+dev.off()
+
 # ================================================================================== #
 
-# Logistic sigmoid function
+
+# Function
+
+# Logistic sigmoid scaled to [-1, 1]
+# where:
+# z = switching point
+# k = width of transition
+
 
 # Selection
-sel <- function(x, z, k, mag) {
-  mag / (1 + exp((x - z)/k)) - (mag/2)
+sel <- function(x, z, k) {
+  1 / (1 + exp((x - z)/k)) - 0.5
 }
+
+# Graph
+pdf("output/figures/SLiM/Mcali/Mcali_selection.pdf", width = 5, height = 5)
+plot(afs.Mcali$mean_integrated_thk, sel(afs.Mcali$mean_integrated_thk, 1.92, 0.32))
+dev.off()
+pdf("output/figures/SLiM/Mcali/Mcali_selection_zoomed_out.pdf", width = 5, height = 5)
+plot(seq(0, 5, by = 0.01), sel(seq(0, 5, by = 0.01), 1.98, 0.12))
+dev.off()
+
+# Fitness curves
+fit <- function(x, z, k) {
+  1 + (1 / (1 + exp((x - z)/k)) - 0.5)
+}
+
+# Graph
+pdf("output/figures/SLiM/Mcali/Mcali_fitness.pdf", width = 5, height = 5)
+plot(afs.Mcali$mean_integrated_thk, fit(afs.Mcali$mean_integrated_thk, 1.98, 0.12))
+dev.off()
 
 # ================================================================================== #
 
