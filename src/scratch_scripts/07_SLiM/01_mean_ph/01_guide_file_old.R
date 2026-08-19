@@ -42,60 +42,16 @@ ph <- afs.ph[, c(2,8)] %>% distinct()
 
 # ================================================================================== #
 
-# Function
-
-# Logistic sigmoid scaled to [-1, 1]
+# Logistic sigmoid function
 # where:
 # z = switching point
 # k = width of transition
 
-# OLD
-#f <- function(x, z, k) {
-#  1 + (2 / (1 + exp(-(x - z)/k)) - 1)
-#}
-#f_alt <- function(x, z, k) {
-#  1 + (-1 * (2 / (1 + exp(-(x - z)/k)) - 1))
-#}
-# OLD
-#pdf("output/figures/SLiM/pH_dist.pdf", width = 5, height = 5)
-#plot(ph$ph_mean, f(ph$ph_mean, 7.975, 0.001))
-#dev.off()
-
-
 # Selection
-s_v2 <- function(x, z, k) {
-  2 / (1 + exp((x - z)/k)) - 1
+sel <- function(x, z, k) {
+  1 / (1 + exp((x - z)/k)) - 0.5
 }
-#s_v2_alt <- function(x, z, k) {
-#  -1 * (2 / (1 + exp((x - z)/k)) - 1)
-#}
 
-# Graph
-pdf("output/figures/SLiM/ph/pH_dist_sel_v2.pdf", width = 5, height = 5)
-plot(seq(7, 9, by = 0.01), s_v2(seq(7, 9, by = 0.01), 7.99, 0.1))
-dev.off()
-#pdf("output/figures/SLiM/mean_ph/pH_dist_sel_v2_alt.pdf", width = 5, height = 5)
-#plot(ph$ph_mean, s_v2_alt(ph$ph_mean, 7.975, 0.1))
-#dev.off()
-
-
-# Fitness curves
-f_v2 <- function(x, z, k) {
-  1 + (2 / (1 + exp((x - z)/k)) - 1)
-}
-#f_v2_alt <- function(x, z, k) {
-#  1 + (-1 * (2 / (1 + exp((x - z)/k)) - 1))
-#}
-
-# Graph
-pdf("output/figures/SLiM/ph/pH_dist_v2.pdf", width = 5, height = 5)
-plot(ph$ph_mean, f_v2(ph$ph_mean, 7.975, 0.01))
-dev.off()
-#pdf("output/figures/SLiM/mean_ph/pH_dist_v2_alt.pdf", width = 5, height = 5)
-#plot(ph$ph_mean, f_v2_alt(ph$ph_mean, 7.975, 0.01))
-#dev.off()
-
-# Good options for k: 0.1, 0.01, 0.001
 
 # ================================================================================== #
 
@@ -113,8 +69,6 @@ guide_file_expandedparam <- expand.grid(thresh, k_1, k_2, m)
 # Write table
 write.table(guide_file_expandedparam, file = "guide_files/slim_ph_guide_file_expandedparam.txt", sep = "\t", quote = FALSE, row.names=F, col.names=F)
 
-
-# ================================================================================== #
 # ================================================================================== #
 
 
