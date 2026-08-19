@@ -194,6 +194,7 @@ sel <- function(x, z, k) {
 
 # Calc selection for the pH values
 ph$sel <- sel(ph$ph_mean, thresh_best, k_best)
+ph_larger_range <- data.frame(ph = seq(7.5, 8.5, by = 0.001), sel = sel(seq(7.5, 8.5, by = 0.001), thresh_best, k_best))
 
 # Graph selection function
 pdf("output/figures/SLiM/ph_ABC/pH_selection_curve.pdf", width = 7.5, height = 5.5)
@@ -205,8 +206,18 @@ ggplot(ph, aes(x = ph_mean, y = sel)) +
 dev.off()
 
 # For visualization purposes see bigger range
+pdf("output/figures/SLiM/ph_ABC/pH_selection_curve_biggerph_range.pdf", width = 9, height = 6)
+ggplot(ph_larger_range, aes(x = ph, y = sel)) +
+  annotate("rect", xmin = min(ph$ph_mean), xmax = max(ph$ph_mean), ymin = -Inf, ymax = Inf, fill = "grey", alpha = 0.5) +
+  geom_line() +
+  geom_hline(yintercept = 0, linetype = "dashed") + 
+  geom_point(data = ph, aes(x = ph_mean, y = sel), size = 2, col = "red") + 
+  labs(x = "Mean pH", y = "Selection coefficient") + 
+  theme_linedraw(base_size = 30)
+dev.off()
+
 pdf("output/figures/SLiM/ph_ABC/pH_selection_curve_biggerph_range.pdf", width = 5, height = 5)
-plot(seq(7.8, 8.1, by = 0.01), sel(seq(7.8, 8.1, by = 0.01), 7.988, 0.12))
+plot(seq(7.8, 8.1, by = 0.01), sel(seq(7.8, 8.1, by = 0.01), thresh_best, k_best))
 dev.off()
 
 # Calculate absolute selection coefficients
