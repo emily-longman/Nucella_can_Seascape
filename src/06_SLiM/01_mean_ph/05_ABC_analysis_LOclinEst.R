@@ -83,9 +83,9 @@ real_data = dplyr::select(ungroup(real_All),
                           #poly,
                           mean.AF,
                           #asym, xmid, scal,
-                          #p0, p1, p2, p3, p4,
-                          p5,
-                          #p6, p7, p8, p9, p10, p11, p12,
+                          #p0, p1, p2, p3, 
+                          #p4,
+                          #p5,p6, p7, p8, p9, p10, p11, p12,
                           #p13, p14, p15, p16, p17, p18
                           )
 simulated_data = dplyr::select(ungroup(sim_All), 
@@ -98,9 +98,9 @@ simulated_data = dplyr::select(ungroup(sim_All),
                           #fix0, 
                           #poly, 
                           mean.AF,
-                          #p0, p1, p2, p3, p4, 
-                          p5, 
-                          #p6, p7, p8, p9, p10, p11, p12,
+                          #p0, p1, p2, p3, 
+                          #p4, 
+                          #p5, p6, p7, p8, p9, p10, p11, p12,
                           #p13, p14, p15, p16, p17, p18
                           )
 
@@ -132,7 +132,7 @@ post_long <- pivot_longer(
   values_to = "value")
 
 # Graph posteriors
-pdf("output/figures/SLiM/ph_ABC/pH_posteriors_morvars9_test.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph_ABC/pH_posteriors_morvars9_all_nop4.pdf", width = 5, height = 5)
 ggplot(post_long, aes(x = value)) +
   geom_density(fill = "steelblue", alpha = 0.5) +
   facet_wrap(parameter~. , scales = "free", ncol = 1) +
@@ -191,7 +191,7 @@ sel <- function(x, z, k) {
 }
 
 # Calc selection for the pH values
-ph$sel <- sel(ph$ph_mean, 7.986, 0.15)
+ph$sel <- sel(ph$ph_mean, thresh_best, k_best)
 
 # Graph selection function
 pdf("output/figures/SLiM/ph_ABC/pH_selection_curve.pdf", width = 7.5, height = 5.5)
@@ -276,7 +276,7 @@ sim_AFs_best <- sim_Data.melt %>%
 sim_AFs_best$Site <- factor(sim_AFs_best$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/ph_ABC/sim_AFs_best_morevars9_all4_test.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph_ABC/sim_AFs_best_morevars9_all_nop4.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best, aes(x = AF_true, y = ph_mean, fill = Site)) + geom_point(size = 5, shape = 21, alpha=0.8) + 
   scale_fill_manual(values = mycolors) + labs(x="AF", y="Mean pH") + theme_linedraw(base_size=24) + theme(legend.position = "none")
 dev.off()
@@ -290,7 +290,7 @@ sim_AFs_best_mean <- sim_AFs_best %>%
 sim_AFs_best_mean$Site <- factor(sim_AFs_best_mean$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/ph_ABC/sim_AFs_best_repmeans_morevars9_all4_test.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph_ABC/sim_AFs_best_repmeans_morevars9_all_nop4.pdf", width = 5, height = 5)
 ggplot(sim_AFs_best_mean, aes(x = AF_true_mean, y = ph_mean, fill = Site)) + geom_point(size = 5, shape = 21) + 
   scale_fill_manual(values = mycolors) + labs(x="AF", y="Mean pH") + theme_linedraw(base_size=24) + theme(legend.position = "none")
 dev.off()

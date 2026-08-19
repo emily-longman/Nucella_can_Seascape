@@ -73,9 +73,7 @@ real_data = dplyr::select(ungroup(real_All),
                           cor.spearman, 
                           corAF.pearson, 
                           corAF.spearman, 
-                          fix1, 
-                          fix0, 
-                          poly, 
+                          #fix1, fix0, poly, 
                           mean.AF,
                           #asym, xmid, scal,
                           #p0, p1, p2, p4, p5, p6,    
@@ -90,9 +88,7 @@ simulated_data = dplyr::select(ungroup(sim_All),
                           cor.spearman, 
                           corAF.pearson, 
                           corAF.spearman, 
-                          fix1, 
-                          fix0, 
-                          poly, 
+                          #fix1, fix0, poly, 
                           mean.AF, 
                           #p0, p1, p2, p4, p5, p6,    
                           #p7, p8, p9, p10, p11, p12,
@@ -125,7 +121,7 @@ post_long <- pivot_longer(
   values_to = "value")
 
 # Graph posteriors
-pdf("output/figures/SLiM/Mcali_ABC/Mcali_posteriors_v8_noFST.pdf", width = 5, height = 8)
+pdf("output/figures/SLiM/Mcali_ABC/Mcali_posteriors_v8.pdf", width = 5, height = 8)
 ggplot(post_long, aes(x = value)) +
   geom_density(fill = "steelblue", alpha = 0.5) +
   facet_wrap(parameter~. , scales = "free", ncol = 1) +
@@ -181,7 +177,7 @@ sel <- function(x, z, k) {
 }
 
 # Calc selection for the pH values
-afs.Mcali$sel <- sel(afs.Mcali$mean_integrated_thk, 1.81, 38)
+afs.Mcali$sel <- sel(afs.Mcali$mean_integrated_thk, thresh_best, k_best)
 
 # Graph selection function
 pdf("output/figures/SLiM/Mcali_ABC/Mcali_selection_curve.pdf", width = 7.5, height = 5.5)
