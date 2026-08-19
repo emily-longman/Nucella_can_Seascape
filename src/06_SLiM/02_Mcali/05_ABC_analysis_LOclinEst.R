@@ -191,12 +191,12 @@ ggplot(afs.Mcali, aes(x = mean_integrated_thk, y = sel)) +
 dev.off()
 
 # For visualization purposes see bigger range
-pdf("output/figures/SLiM/Mcali_ABC/Mcali_selection_curve_bigger_range.pdf", width = 9, height = 6)
+pdf("output/figures/SLiM/Mcali_ABC/Mcali_selection_curve_bigger_range.pdf", width = 12, height = 8)
 ggplot(Mcali_larger_range, aes(x = thk, y = sel)) +
   annotate("rect", xmin = min(afs.Mcali$mean_integrated_thk), xmax = max(afs.Mcali$mean_integrated_thk), ymin = -Inf, ymax = Inf, fill = "darkgrey", alpha = 0.5) +
   geom_line() +
   geom_hline(yintercept = 0, linetype = "dashed") + 
-  geom_point(data = afs.Mcali, aes(x = mean_integrated_thk, y = sel), size = 2, col = "blue") + 
+  geom_point(data = afs.Mcali, aes(x = mean_integrated_thk, y = sel), shape = 21, size = 5, col = "black", fill = "white") + 
   labs(x = "Shell Thickness", y = "Selection coefficient") + 
   theme_linedraw(base_size = 30)
 dev.off()
@@ -259,7 +259,7 @@ sim_All[which(sim_All$thresh == thresh_best & sim_All$k == k_best),]
 # Make Site factor
 afs.Mcali.sims$Site <- factor(afs.Mcali.sims$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 # Graph real
-pdf("output/figures/SLiM/Mcali_ABC/real_AFs_topsnp.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/Mcali_ABC/real_AFs_topsnp.pdf", width = 8, height = 8)
 ggplot(afs.Mcali.sims, aes(x = AF, y = mean_integrated_thk, fill = Site)) + geom_point(size = 5, shape = 21) +  scale_fill_manual(values = mycolors) + 
   labs(x= "AF", y= "Shell Thk") +
   theme_linedraw(base_size=26) + theme(legend.position = "none")
@@ -278,10 +278,10 @@ sim_AFs_best$Site <- factor(sim_AFs_best$Site, levels=c("FC", "SLR", "SH", "ARA"
 
 
 # Graph sim
-pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_v8.pdf", width = 5, height = 5)
-ggplot(sim_AFs_best, aes(x = AF_true, y = shell_thk, fill = Site)) + geom_point(size = 5, shape = 21) + scale_fill_manual(values = mycolors) +
+pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_v8.pdf", width = 8, height = 8)
+ggplot(sim_AFs_best, aes(x = AF_true, y = shell_thk, fill = Site)) + geom_point(size = 8, shape = 21) + scale_fill_manual(values = mycolors) +
 labs(x= "AF", y= "Shell Thk") +
-theme_linedraw(base_size=26) + theme(legend.position = "none")
+theme_linedraw(base_size=30) + theme(legend.position = "none")
 dev.off()
 
 # Calculate the AF average of the iterations of the best param
@@ -292,48 +292,15 @@ sim_AFs_best_mean <- sim_AFs_best %>%
 sim_AFs_best_mean$Site <- factor(sim_AFs_best_mean$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_repmeans_v8.pdf", width = 5, height = 5)
-ggplot(sim_AFs_best_mean, aes(x = AF_true_mean, y = shell_thk, fill = Site)) + geom_point(size = 5, shape = 21) + scale_fill_manual(values = mycolors) + 
-labs(x= "AF", y= "Shell Thk") +
-theme_linedraw(base_size=26) + theme(legend.position = "none")
+pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_repmeans_v8.pdf", width = 8, height = 8)
+ggplot(sim_AFs_best_mean, aes(x = AF_true_mean, y = shell_thk, fill = Site)) + geom_point(size = 8, shape = 21) + scale_fill_manual(values = mycolors) + 
+labs(x= "Allele Frequency", y= "Shell Thickness") +
+theme_linedraw(base_size=30) + theme(legend.position = "none")
 dev.off()
 
-
-# Fit using self-starting parameters - getting error
-#sim_AFs_best_mean_sub <- sim_AFs_best_mean[,c("AF_true_mean","shell_thk")]
-#mod_sim <- nlsLM(AF_true_mean ~ SSlogis(shell_thk, Asym, xmid, scal), data = sim_AFs_best_mean_sub)
-#mod_sim_fit <- coef(mod_sim)
-
-
-
-##############
-
-# Visually look at sims to see best match
-# Extract best
-sim_AFs_test <- sim_Data.melt %>%
-  filter(thresh == "1.85", k == "40", m == "0.00001") %>%
-  #filter(thresh == "2", k == "0.2") %>%
-  left_join(dplyr::select(ecovars, Site, sim_eq, shell_thk))
-# Make Site factor
-sim_AFs_test$Site <- factor(sim_AFs_test$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
-
 # Graph sim
-pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_v6_test.pdf", width = 5, height = 5)
-ggplot(sim_AFs_test, aes(x = AF_true, y = shell_thk, fill = Site)) + geom_point(size = 5, shape = 21) + scale_fill_manual(values = mycolors) +
-labs(x= "AF", y= "Shell Thk") +
-theme_linedraw(base_size=26) + theme(legend.position = "none")
-dev.off()
-
-# Calculate the AF average of the iterations of the best param
-sim_AFs_test_mean <- sim_AFs_test %>%
-  group_by(m, thresh, k, mag, N, sim_eq) %>% reframe(AF_true_mean = mean(AF_true)) %>% 
-  left_join(dplyr::select(ecovars, Site, sim_eq, shell_thk))
-  # Make Site factor
-sim_AFs_test_mean$Site <- factor(sim_AFs_test_mean$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
-
-# Graph sim
-pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_v6_test_repmeans.pdf", width = 5, height = 5)
-ggplot(sim_AFs_test_mean, aes(x = AF_true_mean, y = shell_thk, fill = Site)) + geom_point(size = 5, shape = 21) + scale_fill_manual(values = mycolors) + 
-labs(x= "AF", y= "Shell Thk") +
-theme_linedraw(base_size=26) + theme(legend.position = "none")
+pdf("output/figures/SLiM/Mcali_ABC/sim_AFs_best_repmeans_v8_legend.pdf", width = 8, height = 8)
+ggplot(sim_AFs_best_mean, aes(x = AF_true_mean, y = shell_thk, fill = Site)) + geom_point(size = 8, shape = 21) + scale_fill_manual(values = mycolors) + 
+labs(x= "AF", y= "Shell Thickness") +
+theme_linedraw(base_size=30) 
 dev.off()

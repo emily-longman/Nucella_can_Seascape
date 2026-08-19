@@ -59,14 +59,7 @@ ph <- afs.ph[, c(2,8)] %>% distinct()
 
 # Load data
 real_All <- get(load("data/processed/SLiM/ph_ABC/real_data.Rdata"))
-sim_All_pt1 <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars9.Rdata"))
-sim_All_pt2 <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars9_expand.Rdata"))
-sim_All_pt3 <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars9_expand2.Rdata"))
-sim_All_pt4 <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars9_expand3.Rdata"))
-
-sim_All_bind <- rbind(sim_All_pt1, sim_All_pt2)
-sim_All_bind2 <- rbind(sim_All_bind, sim_All_pt3)
-sim_All <- rbind(sim_All_bind2, sim_All_pt4)
+sim_All <- get(load("data/processed/SLiM/ph_ABC/sim_data_morevars9.Rdata"))
 
 # ================================================================================== #
 
@@ -139,7 +132,7 @@ post_long %>%
   summarise(mean.par = mean(value, na.rm = T))
 
 # Graph posteriors
-pdf("output/figures/SLiM/ph_ABC/pH_posteriors_morvars9_all.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph_ABC/pH_posteriors_morvars9.pdf", width = 5, height = 5)
 ggplot(post_long, aes(x = value)) +
   geom_density(fill = "steelblue", alpha = 0.5) +
   facet_wrap(parameter~. , scales = "free", ncol = 1) +
@@ -206,12 +199,12 @@ ggplot(ph, aes(x = ph_mean, y = sel)) +
 dev.off()
 
 # For visualization purposes see bigger range
-pdf("output/figures/SLiM/ph_ABC/pH_selection_curve_biggerph_range.pdf", width = 9, height = 6)
+pdf("output/figures/SLiM/ph_ABC/pH_selection_curve_biggerph_range.pdf", width = 12, height = 8)
 ggplot(ph_larger_range, aes(x = ph, y = sel)) +
   annotate("rect", xmin = min(ph$ph_mean), xmax = max(ph$ph_mean), ymin = -Inf, ymax = Inf, fill = "darkgrey", alpha = 0.5) +
   geom_line() +
   geom_hline(yintercept = 0, linetype = "dashed") + 
-  geom_point(data = ph, aes(x = ph_mean, y = sel), size = 2, col = "blue") + 
+  geom_point(data = ph, aes(x = ph_mean, y = sel), shape = 21, size = 5, col = "black", fill = "white") + 
   labs(x = "pH", y = "Selection coefficient") + 
   theme_linedraw(base_size = 30)
 dev.off()
@@ -264,7 +257,7 @@ sim_All[which(sim_All$thresh == thresh_best & sim_All$k == k_best),]
 # Make Site factor
 topsnp$Site <- factor(topsnp$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 # Graph real
-pdf("output/figures/SLiM/ph_ABC/real_AFs_topsnp.pdf", width = 5, height = 5)
+pdf("output/figures/SLiM/ph_ABC/real_AFs_topsnp.pdf", width = 8, height = 8)
 ggplot(topsnp, aes(x = AF, y = ph_mean, fill = Site)) + geom_point(size = 6, shape = 21) +  
   scale_fill_manual(values = mycolors) + labs(x="AF", y="Mean pH") + theme_linedraw(base_size=24) + theme(legend.position = "none")
 dev.off()
@@ -278,16 +271,14 @@ sim_AFs_best <- sim_Data.melt %>%
   filter(thresh == thresh_best, k == k_best) %>%
   #filter(thresh == thresh_best, k == k_best, m == m_best) %>%
   #filter(m == m_best, thresh == thresh_best, k == k_best, mag == mag_best, N == N_best) %>%
-  #filter(m == mig_best, thresh == thresh_best, k_1 == k_1_best, k_2 == k_2_best) %>% 
-  #filter(thresh == thresh_best, k_1 == k_1_best, k_2 == k_2_best) %>% 
   left_join(dplyr::select(ecovars, Site, sim_eq, ph_mean))
 # Make Site factor
 sim_AFs_best$Site <- factor(sim_AFs_best$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/ph_ABC/sim_AFs_best_morevars9_all_nop4.pdf", width = 5, height = 5)
-ggplot(sim_AFs_best, aes(x = AF_true, y = ph_mean, fill = Site)) + geom_point(size = 5, shape = 21, alpha=0.8) + 
-  scale_fill_manual(values = mycolors) + labs(x="AF", y="Mean pH") + theme_linedraw(base_size=24) + theme(legend.position = "none")
+pdf("output/figures/SLiM/ph_ABC/sim_AFs_best_morevars9.pdf", width = 8, height = 8)
+ggplot(sim_AFs_best, aes(x = AF_true, y = ph_mean, fill = Site)) + geom_point(size = 8, shape = 21, alpha=0.8) + 
+  scale_fill_manual(values = mycolors) + labs(x="AF", y="Mean pH") + theme_linedraw(base_size=30) + theme(legend.position = "none")
 dev.off()
 
 # Calculate the AF average of the iterations of the best param
@@ -299,39 +290,12 @@ sim_AFs_best_mean <- sim_AFs_best %>%
 sim_AFs_best_mean$Site <- factor(sim_AFs_best_mean$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph sim
-pdf("output/figures/SLiM/ph_ABC/sim_AFs_best_repmeans_morevars9_all_nop4.pdf", width = 5, height = 5)
-ggplot(sim_AFs_best_mean, aes(x = AF_true_mean, y = ph_mean, fill = Site)) + geom_point(size = 5, shape = 21) + 
-  scale_fill_manual(values = mycolors) + labs(x="AF", y="Mean pH") + theme_linedraw(base_size=24) + theme(legend.position = "none")
+pdf("output/figures/SLiM/ph_ABC/sim_AFs_best_repmeans_morevars9.pdf", width = 8, height = 8)
+ggplot(sim_AFs_best_mean, aes(x = AF_true_mean, y = ph_mean, fill = Site)) + geom_point(size = 8, shape = 21) + 
+  scale_fill_manual(values = mycolors) + labs(x="Allele Frequency", y="Mean pH") + theme_linedraw(base_size=30) + theme(legend.position = "none")
 dev.off()
 
-
-# Fit sigmoid
-sim_AFs_best_mean_sub <- sim_AFs_best_mean[,c("AF_true_mean","ph_mean")]
-mod_sim <- nlsLM(AF_true_mean ~ SSlogis(ph_mean, Asym, xmid, scal), data = sim_AFs_best_mean_sub)
-mod_sim_fit <- coef(mod_sim)
-
-##############
-
-# Visually look at sims to see best match
-# Extract best
-sim_AFs_test <- sim_Data.melt %>%
-  filter(thresh == 7.988, k == 0.265, m == 0.0001) %>%
-  left_join(dplyr::select(ecovars, Site, sim_eq, ph_mean))
-# Make Site factor
-sim_AFs_test$Site <- factor(sim_AFs_test$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
-
-# Graph sim
-pdf("output/figures/SLiM/ph_ABC/sim_AFs_best_v9_test.pdf", width = 5, height = 5)
-ggplot(sim_AFs_test, aes(x = AF_true, y = ph_mean, fill = Site)) + geom_point(size = 5, shape = 21) + 
-  scale_fill_manual(values = mycolors) + labs(x= "AF", y= "Mean pH") + theme_linedraw(base_size=26) + theme(legend.position = "none")
+pdf("output/figures/SLiM/ph_ABC/sim_AFs_best_repmeans_morevars9_legend.pdf", width = 8, height = 8)
+ggplot(sim_AFs_best_mean, aes(x = AF_true_mean, y = ph_mean, fill = Site)) + geom_point(size = 8, shape = 21) + 
+  scale_fill_manual(values = mycolors) + labs(x="AF", y="Mean pH") + theme_linedraw(base_size=30) 
 dev.off()
-
-sim_AFs_test_mean <- sim_AFs_test %>%
-  #group_by(m, thresh, k_1, k_2, sim_eq) %>% reframe(AF_true_mean = mean(AF_true)) %>% 
-  group_by(m, thresh, k, mag, N, sim_eq) %>% reframe(AF_true_mean = mean(AF_true)) %>% 
-  left_join(dplyr::select(ecovars, Site, sim_eq, ph_mean))
-# Fit sigmoid
-sim_AFs_test_mean_sub <- sim_AFs_test_mean[,c("AF_true_mean","ph_mean")]
-mod_sim_test <- nlsLM(AF_true_mean ~ SSlogis(ph_mean, Asym, xmid, scal), data = sim_AFs_test_mean_sub)
-mod_sim_test_fit <- coef(mod_sim_test)
-

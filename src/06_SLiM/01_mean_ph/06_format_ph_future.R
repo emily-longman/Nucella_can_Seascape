@@ -187,8 +187,8 @@ do(data.frame(Site = .$Site, year = 2020:2100, ph = .$intercept + .$slope * (202
 thresh = 7.991
 
 # Graph
-pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle.pdf", width = 6.5, height = 6)
-ggplot(ph_ssp585_sites, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 3, shape = 16, alpha = 0.9) +
+pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle.pdf", width = 10, height = 8)
+ggplot(ph_ssp585_sites, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 5, shape = 16, alpha = 0.9) +
     geom_line(data = pred, aes(x = year, y = ph, color = Site), linewidth = 1)+
     #geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
     geom_hline(yintercept=thresh, col = "black", linetype = "dashed") +
