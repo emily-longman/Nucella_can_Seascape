@@ -3,20 +3,19 @@
 initialize() {
 	initializeMutationRate(0);
 	initializeMutationType("m1", 0.5, "f", 0.0);    // type 1
-	initializeMutationType("m2", 0.5, "f", 0.0);    // type 2
+	//initializeMutationType("m2", 0.5, "f", 0.0);    // type 2
 	initializeGenomicElementType("g1", c(m1), c(1));
 	initializeGenomicElement(g1, 0, 0);
 	initializeRecombinationRate(0);
 	defineGlobal("COUNT", 19);
-	defineGlobal("N", 2500);
+	//defineGlobal("N", 2500);
 	m1.convertToSubstitution = F;
-	m2.convertToSubstitution = F;
+	//m2.convertToSubstitution = F;
 	
 	//user parameters
-	defineGlobal("m", 0.001);
+	//defineGlobal("m", 0.001);
 	//defineConstant("thresh", 7.975);
-	//defineConstant("k_1", 0.001);
-	//defineConstant("k_2", 0.001);
+	//defineConstant("k", 0.001);
 	//defineConstant("repId", 1);
     //defineConstant("root",  "/Users/emilylongman/Documents/UVM/Population_Genomics/SLiM/slim_dumping/");
 
@@ -25,21 +24,11 @@ initialize() {
 // fitness calls
 mutationEffect(m1) {
     
-    if(k_1 == 0) {
+    if(k == 0) {
     return 1.0; // Neutrality is indicated by a relative fitness of 1.0
     } else{
     env = individual.subpopulation.getValue("env");
-    return 1+(2/(1+exp((env - thresh)/k_1))-1);
-    }
-}
-
-mutationEffect(m2) {
-    
-    if(k_2 == 0) {
-    return 1.0; // Neutrality is indicated by a relative fitness of 1.0
-    } else{
-    env = individual.subpopulation.getValue("env");
-    return 1+(-1*(2/(1+exp((env - thresh)/k_2))-1));
+    return 1+(mag/(1+exp((env - thresh)/k))-(mag/2));
     }
 }
 
@@ -74,12 +63,6 @@ mutationEffect(m2) {
         
         
    notSampled = setDifference(sim.subpopulations.haplosomes, g);
-   
-	mut2 = sim.subpopulations.haplosomes[0].addNewDrawnMutation(m2, 0);
-
-   for (genome2 in notSampled)
-    if (!genome2.containsMutations(mut2))
-        genome2.addMutations(mut2);
         
 }
 
@@ -113,14 +96,14 @@ early() {
 
 // general late calls
 
-1:9999 late() {
+1:20000 late() {
 
 	if (size(sim.mutationsOfType(m1)) == 0){
     freq0 = rep(0,  COUNT);
 	cat(freq0);
 	state="lost";
 	writeFile(
-	paste(root, "/", "phclineAFs.",repId,"_", m,"_", thresh,"_", k_1,"_", k_2,"_", N , "_", state, "_" ,sim.cycle,
+	paste(root, "/", "phclineAFs.",repId,"_", m,"_", thresh,"_", k,"_", mag,"_", N , "_", state, "_" , sim.cycle,
 	"." , "txt", sep=""),
 	paste(freq0),
 	append=F);
@@ -129,7 +112,7 @@ early() {
 	sim.simulationFinished();			
 			}//close if
 			
-	if (sim.cycle == 9999){
+	if (sim.cycle == 20000){
 	
 	 mut1 = sim.mutationsOfType(m1);
 	 freq1=NULL;
@@ -140,7 +123,7 @@ early() {
 	state="poly";
 	
     writeFile(
-	 paste(root, "/", "phclineAFs.",repId,"_", m,"_", thresh,"_", k_1,"_", k_2,"_", N , "_", state, "_" ,sim.cycle,
+	 paste(root, "/", "phclineAFs.",repId,"_", m,"_", thresh,"_", k,"_", mag,"_", N , "_", state, "_" , sim.cycle,
 	 "." , "txt", sep=""),
 	 paste(freq1),
 	 append=F);
