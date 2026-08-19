@@ -212,7 +212,7 @@ ggplot(ph_larger_range, aes(x = ph, y = sel)) +
   geom_line() +
   geom_hline(yintercept = 0, linetype = "dashed") + 
   geom_point(data = ph, aes(x = ph_mean, y = sel), size = 2, col = "blue") + 
-  labs(x = "Mean pH", y = "Selection coefficient") + 
+  labs(x = "pH", y = "Selection coefficient") + 
   theme_linedraw(base_size = 30)
 dev.off()
 
