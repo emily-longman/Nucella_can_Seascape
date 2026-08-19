@@ -32,6 +32,7 @@
 #--------------------------------------------------------------------------------
 
 # This script will run the accompanying slim script. 
+# For efficiency, this script was run four times, with each run being 25 iterations of each parameter combination. 
 
 # Load modules 
 module load slim/5.0
