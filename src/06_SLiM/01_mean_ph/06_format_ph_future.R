@@ -177,17 +177,6 @@ write.csv(ph_ssp585_sites_2090, "data/processed/SLiM/ph_future/ph_future_2090_si
 
 # ================================================================================== #
 
-# Graph
-pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle.pdf", width = 6.5, height = 6)
-ggplot(ph_ssp585_sites, aes(x = decade, y = ph_mean, color = location)) + geom_point(size = 3, shape = 16, alpha = 0.9) +
-    geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
-    geom_hline(yintercept=7.987, col = "black", linetype = "dashed") +
-    ylim(7.6, 8.078) +
-    scale_fill_manual(values = mycolors) + scale_color_manual(values = mycolors) + 
-    labs(x = "Years", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
-dev.off()
-
-
 # For visualization purposes make x-axis go from 2020-2100
 
 # Calc pred pH adjusted for 2020-2100
@@ -195,10 +184,10 @@ pred <- ph_future_lm %>%rowwise() %>%
 do(data.frame(Site = .$Site, year = 2020:2100, ph = .$intercept + .$slope * (2020:2100 - 2020)))
 
 # Threshold from simulations
-thresh = 7.986
+thresh = 7.991
 
 # Graph
-pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_alt.pdf", width = 6.5, height = 6)
+pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle.pdf", width = 6.5, height = 6)
 ggplot(ph_ssp585_sites, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 3, shape = 16, alpha = 0.9) +
     geom_line(data = pred, aes(x = year, y = ph, color = Site), linewidth = 1)+
     #geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
@@ -221,50 +210,18 @@ sel <- function(x, z, k) {
 pred_2100 <- pred[which(pred$year == 2100),]
 
 # Calc selection for the pH values
-pred_2100$sel <- sel(pred_2100$ph, 7.986, 0.15)
-
-
+pred_2100$sel <- sel(pred_2100$ph, 7.991, 0.265)
 
 # ================================================================================== #
 
-# 4 population subset
+# When will each pop be below the threshold?
+pop_below_thresh <- foreach(i=levels(pred$Site), .combine="rbind", .errorhandling = "remove")%do%{  
+  
+  pop_i = pred[which(pred$Site==i),]
+  min_year_i = min(pop_i$year[which(pop_i$ph<thresh)])
 
-# Graph subset of poplations
-ph_ssp585_sites_sub <- ph_ssp585_sites %>% filter(location == "FC" | location == "CBL" | location == "BMR" | location == "STR")
-ph_ssp585_sites_sub$location <- factor(ph_ssp585_sites_sub$location, levels = c("FC", "CBL", "BMR", "STR"))
-pred_sub <- pred %>% filter(Site == "FC" | Site == "CBL" | Site == "BMR" | Site == "STR")
-pred_sub$Site <- factor(pred_sub$Site, levels = c("FC", "CBL", "BMR", "STR"))
+  data.frame(
+    pop = i,
+    min_year = min_year_i)
+}
 
-# Graph subset
-pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_subset.pdf", width = 7.5, height = 5)
-ggplot(ph_ssp585_sites_sub, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 3, shape = 16, alpha = 0.9) +
-    geom_line(data = pred_sub, aes(x = year, y = ph, color = Site), linewidth = 2.5)+
-    #geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
-    geom_hline(yintercept=thresh, col = "black", linetype = "dashed") +
-    ylim(7.6, 8.078) +
-    scale_fill_manual(values = mycolors_sub) + scale_color_manual(values = mycolors_sub) + 
-    labs(x = "Year", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
-dev.off()
-
-pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_subset_smaller.pdf", width = 5, height = 3.5)
-ggplot(ph_ssp585_sites_sub, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 3, shape = 16, alpha = 0.9) +
-    geom_line(data = pred_sub, aes(x = year, y = ph, color = Site), linewidth = 2)+
-    scale_x_continuous(limits = c(2020, 2100), breaks = c(2020, 2060, 2100)) +
-    scale_y_continuous(limits = c(7.6, 8.078), breaks = c(7.6, 7.8, 8.0)) +
-    #geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
-    geom_hline(yintercept=thresh, col = "black", linetype = "dashed") +
-   #ylim(7.6, 8.078) +
-    scale_fill_manual(values = mycolors_sub) + scale_color_manual(values = mycolors_sub) + 
-    labs(x = "", y = "Mean pH") + theme_linedraw(base_size = 24) + theme(legend.position = "none")
-dev.off()
-
-
-# ================================================================================== #
-
-# When will FC be below the threshold
-
-# Subset
-FC <- pred[which(pred$Site=="FC"),]
-
-# Calc year when FC will be below thresh
-min(FC$year[which(FC$ph<thresh)])

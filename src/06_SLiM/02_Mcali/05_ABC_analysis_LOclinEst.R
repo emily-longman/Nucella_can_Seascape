@@ -178,6 +178,8 @@ sel <- function(x, z, k) {
 
 # Calc selection for the pH values
 afs.Mcali$sel <- sel(afs.Mcali$mean_integrated_thk, thresh_best, k_best)
+Mcali_larger_range <- data.frame(thk = seq(0, 5, by = 0.001), sel = sel(seq(0, 5, by = 0.001), thresh_best, k_best))
+
 
 # Graph selection function
 pdf("output/figures/SLiM/Mcali_ABC/Mcali_selection_curve.pdf", width = 7.5, height = 5.5)
@@ -189,14 +191,19 @@ ggplot(afs.Mcali, aes(x = mean_integrated_thk, y = sel)) +
 dev.off()
 
 # For visualization purposes see bigger range
-pdf("output/figures/SLiM/Mcali_ABC/Mcali_selection_curve_biggerph_range.pdf", width = 5, height = 5)
-plot(seq(0, 5, by = 0.01), sel(seq(0, 5, by = 0.01), 1.85, 40))
+pdf("output/figures/SLiM/Mcali_ABC/Mcali_selection_curve_bigger_range.pdf", width = 9, height = 6)
+ggplot(Mcali_larger_range, aes(x = thk, y = sel)) +
+  annotate("rect", xmin = min(afs.Mcali$mean_integrated_thk), xmax = max(afs.Mcali$mean_integrated_thk), ymin = -Inf, ymax = Inf, fill = "darkgrey", alpha = 0.5) +
+  geom_line() +
+  geom_hline(yintercept = 0, linetype = "dashed") + 
+  geom_point(data = afs.Mcali, aes(x = mean_integrated_thk, y = sel), size = 2, col = "blue") + 
+  labs(x = "Shell Thickness", y = "Selection coefficient") + 
+  theme_linedraw(base_size = 30)
 dev.off()
 
 # Calculate absolute selection coefficients
 Mcali_sel_mean <- mean(abs(afs.Mcali$sel))
 Mcali_sel_sd <- sd(abs(afs.Mcali$sel))
-
 
 
 # ================================================================================== #
