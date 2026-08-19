@@ -191,7 +191,7 @@ min_func <- function(x) {
 if (all(is.na(x))) (NA) else min(x, na.rm = TRUE)
 }
 
-# Loop through the iterations and calc when allele gets to SLR and FC
+# Loop through the iterations and calc when allele gets to northernmost pop
 future_sim_north <-
     foreach(mig=levels(future_sim_data_vary_m$m), .combine="rbind", .errorhandling = "remove")%do%{  
         # Filter for m
@@ -202,7 +202,7 @@ future_sim_north <-
         # Filter per rep
         tmp2 <- tmp %>% filter(repId == i)
 
-        # Make table that calculates when SLR and FC first get the allele
+        # Make table that calculates when northernmost pop first get the allele
         o =
         data.frame(
         repId = i,
@@ -239,8 +239,8 @@ fancy_scientific <- function(l) {
 mean(future_sim_north_melt$year[which(future_sim_north_melt$m == 0.01)])
 sd(future_sim_north_melt$year[which(future_sim_north_melt$m == 0.01)])
 
-# Graph - for those that got the allele when did it occur
-pdf("output/figures/SLiM/ph_future/AF_FC_pops_vary_m_NAs.pdf", width = 7.5, height = 8)
+# Graph - For each migration, how many sims failed to have allele get to FC?
+pdf("output/figures/SLiM/ph_future/AF_FC_pops_vary_m_NAs.pdf", width = 7.5, height = 8.1)
 ggplot(future_sim_north_melt_NA, aes(y = na_perc, x = m_scientific, fill = Site, color = Site)) + 
     geom_point(size = 12) +
     scale_fill_manual(values =  mycolors_sub[1]) + scale_color_manual(values =  mycolors_sub[1]) + 
