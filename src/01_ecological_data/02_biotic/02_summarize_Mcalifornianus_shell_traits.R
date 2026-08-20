@@ -300,11 +300,11 @@ ggplot(data = west_coast) +
   theme(
     panel.grid.major = element_blank(), # Removes major grid lines
     panel.grid.minor = element_blank(), # Removes minor grid lines
-    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) + 
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.5)) + 
   theme(legend.title = element_text(size = 24), legend.text = element_text(size = 22), legend.position = c(0.78, 0.515))
 dev.off()
 
-pdf("output/figures/enviro/Mcali_thk/Mcali_integrated_thick_18sites_2024_wider.pdf", width = 10, height = 10.5)
+pdf("output/figures/enviro/Mcali_thk/Mcali_integrated_thick_18sites_2024_wider.pdf", width = 10, height = 10.485)
 ggplot(data = west_coast) + 
   geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
   geom_point(data = Mcali_data_sub_sum.18, aes(x = Long, y = Lat, fill = mean_integrated_thk), shape = 21, size = 15) + 
@@ -316,6 +316,6 @@ ggplot(data = west_coast) +
   theme(
     panel.grid.major = element_blank(), # Removes major grid lines
     panel.grid.minor = element_blank(), # Removes minor grid lines
-    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) + 
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.5)) + 
   theme(legend.title = element_text(size = 30), legend.text = element_text(size = 28), legend.position = c(0.82, 0.44), legend.margin = margin(0, 0, 0, 0))
 dev.off()
