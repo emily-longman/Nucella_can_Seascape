@@ -31,7 +31,7 @@ library(raster)
 # ================================================================================== #
 
 # Figure directory
-out_dir_fig <- paste("output/figures/enviro_data/Bio-oracle")
+out_dir_fig <- paste("output/figures/enviro/Bio-oracle")
 if (!dir.exists(out_dir_fig)) {dir.create(out_dir_fig)}
 
 # ================================================================================== #

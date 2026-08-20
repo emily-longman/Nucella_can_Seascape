@@ -36,7 +36,6 @@ library(scales)
 # Color palette
 nb.cols <- 19
 mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
-mycolors_sub <- hcl.colors(n = 7, palette = "SunsetDark")[c(1,3,4,6)]
 mycolors_sub5 <- hcl.colors(n = 7, palette = "SunsetDark")[c(1,3,4,6,7)]
 
 # ================================================================================== #
@@ -102,8 +101,8 @@ future_sim_data_vary_m$m <- as.numeric(future_sim_data_vary_m$m)
 future_sim_data_vary_m <- future_sim_data_vary_m %>% mutate(m_scientific = format(m, scientific = TRUE, digits = 1))
 
 # Save output
-save(future_sim_data_vary_m, file = "data/processed/SLiM/ph_future/ph_vary_m/sim_future_data_vary_m.Rdata")
-#load("data/processed/SLiM/ph_future/ph_vary_m_old/sim_future_data_vary_m.Rdata")
+save(future_sim_data_vary_m, file = "data/processed/SLiM/ph_future/sim_future_data_vary_m.Rdata")
+#load("data/processed/SLiM/ph_future/sim_future_data_vary_m.Rdata")
 
 # ================================================================================== #
 
@@ -243,7 +242,7 @@ sd(future_sim_north_melt$year[which(future_sim_north_melt$m == 0.01)])
 pdf("output/figures/SLiM/ph_future/AF_FC_pops_vary_m_NAs.pdf", width = 7.5, height = 8.1)
 ggplot(future_sim_north_melt_NA, aes(y = na_perc, x = m_scientific, fill = Site, color = Site)) + 
     geom_point(size = 12) +
-    scale_fill_manual(values =  mycolors_sub[1]) + scale_color_manual(values =  mycolors_sub[1]) + 
+    scale_fill_manual(values =  mycolors_sub5[1]) + scale_color_manual(values =  mycolors_sub5[1]) + 
     scale_x_discrete(labels = fancy_scientific) + ylim(-5, 105)+
     labs(x = "Migration", y = "% Simulations Allele\nFailed to Arrive") + theme_linedraw(base_size = 30) + 
     guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
@@ -262,8 +261,8 @@ pdf("output/figures/SLiM/ph_future/AF_OR_pops_vary_m_smaller.pdf", width = 3, he
 ggplot(future_sim_north_melt_subset, aes(y = year, x = m_scientific,  color = Site, fill = Site)) + 
     #geom_jitter(col = "black", alpha = 0.6) + 
     geom_violin() +
-    scale_fill_manual(values = mycolors_sub[1]) + 
-    scale_color_manual(values = mycolors_sub[1]) + 
+    scale_fill_manual(values = mycolors_sub5[1]) + 
+    scale_color_manual(values = mycolors_sub5[1]) + 
     scale_x_discrete(labels = fancy_scientific) + ylim(2022, 2100) + 
     labs(x = "Migration", y = "") + theme_linedraw(base_size = 24) + 
     guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 

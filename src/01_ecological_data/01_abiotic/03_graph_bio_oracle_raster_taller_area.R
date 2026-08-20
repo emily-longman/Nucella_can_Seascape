@@ -10,7 +10,7 @@ rm(list=ls())
 
 # Set path as main Github repo
 # Install and load package
-install.packages(c('rprojroot'))
+#install.packages(c('rprojroot'))
 library(rprojroot)
 # Specify root path
 root_path <- find_root_file(criterion = has_file("README.md"))
@@ -20,7 +20,7 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-install.packages(c('data.table', 'tidyverse', 'ggplot2', 'RColorBrewer', 'terra', 'raster'))
+#install.packages(c('data.table', 'tidyverse', 'ggplot2', 'RColorBrewer', 'terra', 'raster'))
 library(data.table)
 library(tidyverse)
 library(ggplot2)
@@ -31,7 +31,7 @@ library(raster)
 # ================================================================================== #
 
 # Figure directory
-out_dir_fig <- paste("output/figures/enviro_data/Bio-oracle")
+out_dir_fig <- paste("output/figures/enviro/Bio-oracle")
 if (!dir.exists(out_dir_fig)) {dir.create(out_dir_fig)}
 
 # ================================================================================== #
@@ -48,7 +48,7 @@ bio_oracle_2010 <- bio_oracle %>%
 # Specify parameters
 
 # Set geographic constraints
-latitude_range <- c(32, 48.5)
+latitude_range <- c(32, 46.5)
 longitude_range <- c(-125, -118.5)
 
 # Set study extent
@@ -99,12 +99,12 @@ ggplot(raster_df_ph, aes(x = x, y = y, fill = layer)) +
   theme(
     panel.grid.major = element_blank(), # Removes major grid lines
     panel.grid.minor = element_blank(), # Removes minor grid lines
-    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.5)) +
   theme(legend.title = element_text(size = 26), legend.text = element_text(size = 20), legend.position = c(0.75, 0.85), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
   #theme(plot.title = element_text(hjust=0.5))
 dev.off()
 
-pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_ph_mean_ggplot_taller2.pdf",  width = 6, height = 11) 
+pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_ph_mean_ggplot_taller2.pdf",  width = 6.5, height = 10.52) 
 ggplot(raster_df_ph, aes(x = x, y = y, fill = layer)) +
   geom_raster(aes(fill=layer)) +
   scale_x_continuous(expand = c(0, 0), breaks = c(-125, -122, -119)) +
@@ -116,12 +116,8 @@ ggplot(raster_df_ph, aes(x = x, y = y, fill = layer)) +
   theme(
     panel.grid.major = element_blank(), # Removes major grid lines
     panel.grid.minor = element_blank(), # Removes minor grid lines
-    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
-  theme(legend.title = element_text(size = 26), legend.text = element_text(size = 20), legend.position = c(0.75, 0.85), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.5)) +
+  theme(legend.title = element_text(size = 26), legend.text = element_text(size = 20), legend.position = c(0.74, 0.865), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
   #theme(plot.title = element_text(hjust=0.5))
 dev.off()
-
-
-# ================================================================================== #
-# ================================================================================== #
 
