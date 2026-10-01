@@ -132,7 +132,7 @@ sites <- data.frame(
 
 sites <- sites %>% mutate(shape = case_when(site.abrev %in% c("STR", "OCT", "HZD", "PB", "PSN", "SBR", "PL") ~ "S", 
                    site.abrev %in% c("PGP", "BMR", "FR", "VD", "KH", "STC", "PSG", "CBL", "ARA", "SH", "SLR", "FC") ~ "N"))
-sites <- sites %>% mutate(site.abrev = factor(site.abrev, levels = latitude)) %>% arrange(site.abrev)
+sites <- sites %>% mutate(site.abrev = factor(site.abrev, levels = lat)) %>% arrange(site.abrev)
 
 
 # Coordinates of site labels
@@ -180,4 +180,40 @@ ggplot(data = west_coast) +
   xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 32) + 
   theme(panel.grid = element_blank(), legend.title = element_text(size = 32), legend.text = element_text(size = 28), legend.key.size = unit(1.2, "cm"), legend.position = c(0.81, 0.53)) + 
   guides(shape = "none")
+dev.off()
+
+
+
+
+sites$site.abrev <- factor(sites$site.abrev, levels = c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+
+# Extra figure for apps
+pdf("output/figures/Site_map_tmp.pdf", width = 6, height = 8)
+ggplot(data = west_coast) +
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
+  geom_point(data = sites, aes(x = longitude, y = latitude, fill = factor(site.abrev)), size = 10, shape = 21) + coord_fixed(1.3) +
+  #scale_shape_manual(values = c(21, 23)) + 
+  scale_fill_manual(values = mycolors) +
+  #scale_fill_gradient(low = "#ffc800", high = "black") + 
+  #scale_fill_gradientn(colours=brewer.pal(9, "BuPu"), breaks = c(-0.3, -0.15, 0.00, 0.15)) +
+  #geom_text(data=sites, aes(long.site.labels.abrev-0.35, lat.site.labels, label=site.abrev), size = 8) + 
+  scale_x_continuous(limits = c(-125., -114.1), breaks = seq(-125, -114.1, by = 3), expand = expansion(mult = c(0.04, 0.01))) +
+  xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 30) + 
+  theme(legend.position = "none")
+  #theme(panel.grid = element_blank(), legend.title = element_text(size = 24), legend.text = element_text(size = 16), legend.key.size = unit(0.6, "cm"), legend.position = c(0.9, 0.51)) + 
+  #guides(shape = "none")
+dev.off()
+
+
+# Graph PC1 versus latitude
+pdf("output/figures/Lat_PC1.pdf", width = 7, height = 8)
+ggplot(data = sites, aes(x = latitude, y = PC1, fill = factor(site.abrev))) +
+  geom_point(size = 10, shape = 21) +
+  scale_fill_manual(values = mycolors) +
+  #scale_x_continuous(limits = c(-125., -114.1), breaks = seq(-125, -114.1, by = 3), expand = expansion(mult = c(0.04, 0.01))) +
+  xlab("Latitude") + ylab("PC1") + theme_classic(base_size = 30) + 
+  geom_vline(xintercept=36.8007, linetype="dashed", color="black") +
+  theme(legend.position = "none")
+  #theme(panel.grid = element_blank(), legend.title = element_text(size = 24), legend.text = element_text(size = 16), legend.key.size = unit(0.6, "cm"), legend.position = c(0.9, 0.51)) + 
+  #guides(shape = "none")
 dev.off()
