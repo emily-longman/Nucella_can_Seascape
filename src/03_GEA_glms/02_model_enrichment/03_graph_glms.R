@@ -57,8 +57,8 @@ write.csv(all_ratios, "data/processed/GEA/glms/glms_summary/All_vars_rr.csv", ro
 # ================================================================================== #
 
 # Get names of variables
-abiotic_vars <- var_full_names$variable[which(var_full_names$group=="Abiotic")]
-biotic_vars <- var_full_names$variable[which(var_full_names$group=="Biotic")]
+abiotic_vars <- var_full_names$variable[which(var_full_names$Variable=="Abiotic")]
+biotic_vars <- var_full_names$variable[which(var_full_names$Variable=="Biotic")]
 
 # ================================================================================== #
 

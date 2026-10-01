@@ -136,9 +136,9 @@ ggplot(raster_df_ph_diff, aes(x = x, y = y, fill = diff)) +
   theme(
     panel.grid.major = element_blank(), # Removes major grid lines
     panel.grid.minor = element_blank(), # Removes minor grid lines
-    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.5)) +
   labs(x = "Longitude", y = "Latitude") +
-  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.7, 0.82), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+  theme(legend.title = element_text(size = 26), legend.text = element_text(size = 20), legend.position = c(0.725, 0.83), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
   #theme(plot.title = element_text(hjust=0.5))
 dev.off()
 
