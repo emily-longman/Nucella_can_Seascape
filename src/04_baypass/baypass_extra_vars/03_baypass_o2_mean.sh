@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=baypass_chl_mean
+#SBATCH --job-name=baypass_o2_mean
 
 # Specify partition
 #SBATCH --partition=week
@@ -53,7 +53,7 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 echo "Doing Baypass run:" ${SLURM_ARRAY_TASK_ID}
 
 # Set var
-var=chl_mean
+var=o2_mean
 
 #--------------------------------------------------------------------------------
 
