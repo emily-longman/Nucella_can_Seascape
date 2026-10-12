@@ -58,3 +58,13 @@ pooldata.subset.18pop <- pooldata.subset(pooldata, pool.index=c(1,2,3,5,6,7,8,9,
 pooldata2genobaypass(pooldata.subset.18pop, writing.dir = "data/processed/baypass/input_files", prefix="subset18pop", subsamplesize = -1)
 
 # ================================================================================== #
+
+# Create baypass input files for biotic MARINe analyses
+
+# Subset data - cut site: (CBL, VD, OCT)
+pooldata.subset.16pop <- pooldata.subset(pooldata, pool.index=c(....))
+
+# Convert to BayPass input file
+pooldata2genobaypass(pooldata.subset.16pop, writing.dir = "data/processed/baypass/input_files", prefix="subset16pop", subsamplesize = -1)
+
+# ================================================================================== #
