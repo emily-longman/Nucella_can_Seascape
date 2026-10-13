@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=LFMM_abiotic_perm_0-25
+#SBATCH --job-name=LFMM_abiotic_perm_1:25
 
 # Specify partition
 #SBATCH --partition=general
