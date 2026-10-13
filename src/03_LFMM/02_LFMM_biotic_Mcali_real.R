@@ -49,7 +49,7 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 load("data/raw/pooldata/pooldata.RData")
 
 # Load lfmm data
-allele_freqs_t_16pop <- fread("data/processed/LFMM_analyses/Ncan_afs_16pop.lfmm")
+allele_freqs_t_18pop <- fread("data/processed/LFMM_analyses/Ncan_afs_18pop.lfmm")
 
 # Load M californianus shell thickness data
 Mcalifornianus_data <- read.csv("data/processed/GEA/enviro_data/Mcali_thk/Mcalifornianus_data_clean_18pop.csv", header=T)
@@ -69,8 +69,8 @@ biotic_scaled_var <- biotic_scaled %>% select(all_of(var))
 
 # Univariate lfmm
 
-# Run LFMM2 on only ph mean
-mod_lfmm2 <- lfmm2(input = allele_freqs_t_16pop, env = biotic_scaled_var, K = 1, effect.sizes = TRUE)
+# Run LFMM2 on only one var
+mod_lfmm2 <- lfmm2(input = allele_freqs_t_18pop, env = biotic_scaled_var, K = 1, effect.sizes = TRUE)
 
 # Save
 save(mod_lfmm2, file = paste0("data/processed/LFMM_analyses/real/mod_lfmm2_", var, ".RData"))
@@ -80,7 +80,7 @@ save(mod_lfmm2, file = paste0("data/processed/LFMM_analyses/real/mod_lfmm2_", va
 # V - loadings of the latent factors on the SNPs
 
 # Compute p-values
-pv <- lfmm2.test(object = mod_lfmm2, input = allele_freqs_t_16pop, env = biotic_scaled_var)
+pv <- lfmm2.test(object = mod_lfmm2, input = allele_freqs_t_18pop, env = biotic_scaled_var)
 
 # Save
 save(pv, file = paste0("data/processed/LFMM_analyses/real/pv_", var,".RData"))

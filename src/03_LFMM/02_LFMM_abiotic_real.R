@@ -69,7 +69,7 @@ abiotic_scaled_var <- abiotic_scaled %>% select(all_of(var))
 
 # Univariate lfmm
 
-# Run LFMM2 on only ph mean
+# Run LFMM2 on only one var
 mod_lfmm2 <- lfmm2(input = allele_freqs_t, env = abiotic_scaled_var, K = 1, effect.sizes = TRUE)
 
 # Save
