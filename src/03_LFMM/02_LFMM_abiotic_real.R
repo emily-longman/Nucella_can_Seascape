@@ -81,7 +81,7 @@ save(mod_lfmm2, file = paste0("data/processed/LFMM_analyses/abiotic/mod_lfmm2_",
 # V - loadings of the latent factors on the SNPs
 
 # Compute p-values
-pv <- lfmm2.test(object = mod_lfmm2_ph_mean, input = allele_freqs_t, env = abiotic_scaled$ph_mean)
+pv <- lfmm2.test(object = mod_lfmm2_ph_mean, input = allele_freqs_t, env = abiotic_scaled_var)
 
 # Save
 save(pv, file = paste0("data/processed/LFMM_analyses/abiotic/pv_", var,".RData"))
