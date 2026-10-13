@@ -70,18 +70,17 @@ biotic_scaled_var <- biotic_scaled %>% select(all_of(var))
 # Univariate lfmm
 
 # Run LFMM2 on only ph mean
-mod_lfmm2 <- lfmm2(input = allele_freqs_t, env = biotic_scaled_var, K = 1, effect.sizes = TRUE)
+mod_lfmm2 <- lfmm2(input = allele_freqs_t_18pop, env = biotic_scaled_var, K = 1, effect.sizes = TRUE)
 
 # Save
 save(mod_lfmm2, file = paste0("data/processed/LFMM_analyses/biotic/mod_lfmm2_", var, ".RData"))
-
 
 # B - effect size of the environmental variables per SNP
 # U - latent factors per pop
 # V - loadings of the latent factors on the SNPs
 
 # Compute p-values
-pv <- lfmm2.test(object = mod_lfmm2_ph_mean, input = allele_freqs_t, env = abiotic_scaled$ph_mean)
+pv <- lfmm2.test(object = mod_lfmm2, input = allele_freqs_t_18pop, env = biotic_scaled_var)
 
 # Save
 save(pv, file = paste0("data/processed/LFMM_analyses/abiotic/pv_", var,".RData"))

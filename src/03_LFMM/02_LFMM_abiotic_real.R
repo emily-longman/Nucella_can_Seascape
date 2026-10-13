@@ -38,8 +38,8 @@ var = as.character(args[1]) #Environmental variable
 # Generate output directories
 out_dir <- paste("data/processed/LFMM_analyses")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
-out_dir_abiotic <- paste("data/processed/LFMM_analyses/abiotic")
-if (!dir.exists(out_dir_abiotic)) {dir.create(out_dir_abiotic)}
+out_dir_real <- paste("data/processed/LFMM_analyses/real")
+if (!dir.exists(out_dir_real)) {dir.create(out_dir_real)}
 out_fig_dir <- paste("output/figures/LFMM_analyses")
 if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 
@@ -73,16 +73,15 @@ abiotic_scaled_var <- abiotic_scaled %>% select(all_of(var))
 mod_lfmm2 <- lfmm2(input = allele_freqs_t, env = abiotic_scaled_var, K = 1, effect.sizes = TRUE)
 
 # Save
-save(mod_lfmm2, file = paste0("data/processed/LFMM_analyses/abiotic/mod_lfmm2_", var, ".RData"))
-
+save(mod_lfmm2, file = paste0("data/processed/LFMM_analyses/real/mod_lfmm2_", var, ".RData"))
 
 # B - effect size of the environmental variables per SNP
 # U - latent factors per pop
 # V - loadings of the latent factors on the SNPs
 
 # Compute p-values
-pv <- lfmm2.test(object = mod_lfmm2_ph_mean, input = allele_freqs_t, env = abiotic_scaled_var)
+pv <- lfmm2.test(object = mod_lfmm2, input = allele_freqs_t, env = abiotic_scaled_var)
 
 # Save
-save(pv, file = paste0("data/processed/LFMM_analyses/abiotic/pv_", var,".RData"))
+save(pv, file = paste0("data/processed/LFMM_analyses/real/pv_", var,".RData"))
 
