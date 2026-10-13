@@ -34,7 +34,7 @@
 
 #--------------------------------------------------------------------------------
 
-# This script will run the accompanying 02_LFMM_abiotic_real.R script. 
+# This script will run the accompanying 02_LFMM_biotic_Mcali_real.R script. 
 
 # Load modules 
 module load R/4.4.1
