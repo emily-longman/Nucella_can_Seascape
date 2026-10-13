@@ -45,6 +45,9 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 
 # ================================================================================== #
 
+# Load pooldata
+load("data/raw/pooldata/pooldata.RData")
+
 # Load lfmm data
 allele_freqs_t <- fread("data/processed/LFMM_analyses/Ncan_afs.lfmm")
 
