@@ -1,4 +1,5 @@
-# Use poolfstat to convert VCF to Baypass input file
+# Use poolfstat to perform a PCA and graph population structure
+# module load gdal
 
 # Clear memory
 rm(list=ls())
@@ -23,6 +24,7 @@ library(tidyverse)
 library(ggplot2)
 library(RColorBrewer)
 library(viridis)
+library(ggspatial)
 
 # ================================================================================== #
 
@@ -136,11 +138,11 @@ sites <- sites %>% mutate(site.abrev = factor(site.abrev, levels = lat)) %>% arr
 
 
 # Coordinates of site labels
-lat.site.labels <- c(44.83777+0.09, 44.50540+0.02, 44.24999-0.09, 43.30402, 42.84097, 41.77121, 40.03011, 39.60461-0.04, 39.28090-0.09, 38.51198+0.05, 38.31900-0.11, 
-               37.18506+0.05, 36.51939+0.15, 36.44750-0.1, 35.72893+0.15, 35.66549-0.13, 35.28994-0.11, 34.88117-0.09, 34.73024-0.29)
+lat.site.labels <- c(44.83777+0.09, 44.50540+0.02, 44.24999-0.09, 43.30402, 42.84097, 41.77121, 40.03011, 39.60461-0.04, 39.28090-0.09, 38.51198+0.04, 38.31900-0.2, 
+               37.18506+0.03, 36.51939+0.15, 36.44750-0.1, 35.72893+0.15, 35.66549-0.13, 35.28994-0.11, 34.88117-0.09, 34.73024-0.29)
 
 long.site.labels.abrev <- c(-124.0593-0.5, -124.0848-0.67, -124.1148-0.58, -124.4015-0.62, -124.5647-0.60, -124.2529-0.65, 
-                      -124.0809-0.65, -123.7895-0.5, -123.8036-0.58, -123.2551-0.6, -123.0740-0.75, -122.3976-0.7, 
+                      -124.0809-0.65, -123.7895-0.5, -123.8036-0.58, -123.2551-0.6, -123.0740-0.55, -122.3976-0.6, 
                       -121.9537-0.7, -121.9290-0.75, -121.3187-0.78, -121.2868-0.5, -120.8838-0.72, -120.6399-0.78, -120.6157-0.62)
 
 
@@ -183,37 +185,39 @@ ggplot(data = west_coast) +
 dev.off()
 
 
+# Graph as sf object to include a scale bar
+library(sf)
+library(ggspatial)
+library(rnaturalearth)
 
+# Download country polygons
+us <- ne_states(country = "United States of America", returnclass = "sf")
+# Keep California and Oregon
+west_coast <- subset(us, name %in% c("California", "Oregon"))
+# Project to California Albers (meters)
+west_coast <- st_transform(west_coast, 3310)
 
-sites$site.abrev <- factor(sites$site.abrev, levels = c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+# Tranform to projects CRS
+sites_sf <- st_as_sf(sites, coords = c("longitude", "latitude"), crs = 4326)
+sites_sf <- st_transform(sites_sf, 3310)
 
-# Extra figure for apps
-pdf("output/figures/Site_map_tmp.pdf", width = 6, height = 8)
-ggplot(data = west_coast) +
-  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
-  geom_point(data = sites, aes(x = longitude, y = latitude, fill = factor(site.abrev)), size = 10, shape = 21) + coord_fixed(1.3) +
-  #scale_shape_manual(values = c(21, 23)) + 
-  scale_fill_manual(values = mycolors) +
-  #scale_fill_gradient(low = "#ffc800", high = "black") + 
-  #scale_fill_gradientn(colours=brewer.pal(9, "BuPu"), breaks = c(-0.3, -0.15, 0.00, 0.15)) +
-  #geom_text(data=sites, aes(long.site.labels.abrev-0.35, lat.site.labels, label=site.abrev), size = 8) + 
-  scale_x_continuous(limits = c(-125., -114.1), breaks = seq(-125, -114.1, by = 3), expand = expansion(mult = c(0.04, 0.01))) +
-  xlab("Longitude") + ylab("Latitude") + theme_classic(base_size = 30) + 
-  theme(legend.position = "none")
-  #theme(panel.grid = element_blank(), legend.title = element_text(size = 24), legend.text = element_text(size = 16), legend.key.size = unit(0.6, "cm"), legend.position = c(0.9, 0.51)) + 
-  #guides(shape = "none")
-dev.off()
-
-
-# Graph PC1 versus latitude
-pdf("output/figures/Lat_PC1.pdf", width = 7, height = 8)
-ggplot(data = sites, aes(x = latitude, y = PC1, fill = factor(site.abrev))) +
-  geom_point(size = 10, shape = 21) +
-  scale_fill_manual(values = mycolors) +
-  #scale_x_continuous(limits = c(-125., -114.1), breaks = seq(-125, -114.1, by = 3), expand = expansion(mult = c(0.04, 0.01))) +
-  xlab("Latitude") + ylab("PC1") + theme_classic(base_size = 30) + 
-  geom_vline(xintercept=36.8007, linetype="dashed", color="black") +
-  theme(legend.position = "none")
-  #theme(panel.grid = element_blank(), legend.title = element_text(size = 24), legend.text = element_text(size = 16), legend.key.size = unit(0.6, "cm"), legend.position = c(0.9, 0.51)) + 
-  #guides(shape = "none")
+# Graph 
+pdf("output/figures/Site_map_PC1_scalebar.pdf", width = 9.72, height = 14)
+ggplot(west_coast) +
+  geom_sf(fill = "white", color = "black", linewidth = 1.2) +
+  geom_sf(data = sites_sf, aes(shape = shape, fill = PC1), size = 12) + 
+  coord_sf(xlim = c(-125.8, -114.1), default_crs = st_crs(4326)) + 
+  scale_shape_manual(values = c(21, 23)) + 
+  scale_fill_gradientn(colours=brewer.pal(9, "RdGy"), breaks = c(-0.3, -0.15, 0.00, 0.15)) +
+  geom_text(data=sites, aes(long.site.labels.abrev-0.35, lat.site.labels, label=site.abrev), size = 8) + 
+  annotation_scale(location = "bl", width_hint = 0.2, text_cex = 2, pad_x = unit(0.5, "cm"), pad_y = unit(0.75, "cm")) + 
+  annotation_north_arrow(location = "tr", which_north = "true", style = north_arrow_fancy_orienteering) +
+  scale_x_continuous(breaks = seq(-125, -116, by = 3), labels = function(x) x) +
+  scale_y_continuous(breaks = seq(32, 44, by = 4), labels = function(y) y) +
+  xlab("Longitude") + ylab("Latitude") +
+  theme_linedraw(base_size = 30) +
+  theme(panel.grid = element_blank(), 
+    panel.border = element_rect(linewidth = 1.5),
+    legend.title = element_text(size = 32), legend.text = element_text(size = 30), legend.key.size = unit(1.2, "cm"), legend.position = c(0.81, 0.51)) + 
+  guides(shape = "none")
 dev.off()
