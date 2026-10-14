@@ -72,7 +72,8 @@ echo ${i}
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_MARINe_perm1:25.R "${i}"
+#Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_MARINe_perm1:25.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_MARINe_perm26:50.R "${i}"
 
 #--------------------------------------------------------------------------------
 
