@@ -33,6 +33,12 @@ source("/gpfs1/home/e/l/elongman/software/baypass_public/utils/baypass_utils.R")
 
 # ================================================================================== #
 
+# Color palette
+mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(19))
+viridiscolors <- viridis(n=19)
+
+# ================================================================================== #
+
 # Load data
 
 # Load ph var in future (2090 ssp 585)
@@ -150,6 +156,64 @@ ggplot(data = west_coast) +
   geom_point(data = go.scaled.output, aes(x = Long, y = Lat, fill = GO.scaled), shape = 21, size = 8) + 
   #scale_fill_viridis(option="rocket", breaks = c(0.085, 0.090, 0.095)) +
   scale_fill_gradientn(colours=brewer.pal(9, "Greys"), name="gGO", breaks = c(0.085, 0.090, 0.095)) +
+  coord_fixed(1.3) +
+  scale_x_continuous(limits = c(-125, -114.1), breaks = seq(-125, -114.1, by = 3)) + ylim(32.5, 46.5) +
+  #xlim(c(-125, -112.5)) +
+  xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 30) + 
+  theme(
+    panel.grid.major = element_blank(), # Removes major grid lines
+    panel.grid.minor = element_blank(), # Removes minor grid lines
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.5)) + # Keeps outer rectangle
+  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.76, 0.81), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+dev.off()
+
+# ================================================================================== #
+
+# Extract matrix of RONA estimates between all reference (rows) and target environments (columns)
+rona.scaled.matrix <- Ncan_GO_scaled$rona
+rownames(rona.scaled.matrix) <- pooldata@poolnames
+colnames(rona.scaled.matrix) <- pooldata@poolnames
+
+# Extract diagonal
+rona.scaled <- diag(rona.scaled.matrix)
+
+# Make Site a column
+Site <- names(rona.scaled)
+
+# Make table
+rona.scaled.output <- data.table(Site, rona.scaled)
+
+# Join with metadata
+rona.scaled.output <- left_join(meta, rona.scaled.output, by="Site")
+
+# Order
+rona.scaled.output$Site <- factor(rona.scaled.output$Site, levels=c("STR", "OCT", "HZD", "PB", "PSN", "SBR", "PL", "PGP", "BMR", "FR", "VD", "KH", "STC", "PSG", "CBL", "ARA", "SH", "SLR", "FC"))
+
+# Save output
+save(rona.scaled.output, file = "data/processed/genomic_offset/Nucella_rona.Rdata")
+
+# ================================================================================== #
+
+# Graph RONA
+pdf("output/figures/genomic_offset/Baypass_scaled_rona.pdf", width = 8, height = 14)
+ggplot(rona.scaled.output, aes(x = Site, y = rona.scaled, fill = Site)) + geom_col() + 
+scale_fill_manual(values = rev(mycolors)) + ylab("RONA") +
+coord_flip() +
+theme_bw(base_size = 24) + theme(legend.position="none")
+dev.off()
+
+# Graph as map
+# Get state data
+states <- map_data("state")
+# Subset data for only California and Oregon
+west_coast <- subset(states, region %in% c("california", "oregon"))
+
+# Graph RONA - alt coloring Grey
+pdf("output/figures/genomic_offset/Baypass_scaled_rona_map_grey.pdf", width = 8, height = 8)
+ggplot(data = west_coast) + 
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
+  geom_point(data = rona.scaled.output, aes(x = Long, y = Lat, fill = rona.scaled), shape = 21, size = 8) + 
+  scale_fill_gradientn(colours=brewer.pal(9, "Greys"), name="RONA", breaks = c(0.195, 0.20, 0.205)) +
   coord_fixed(1.3) +
   scale_x_continuous(limits = c(-125, -114.1), breaks = seq(-125, -114.1, by = 3)) + ylim(32.5, 46.5) +
   #xlim(c(-125, -112.5)) +
