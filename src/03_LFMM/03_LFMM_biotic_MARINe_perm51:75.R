@@ -60,7 +60,7 @@ MARINe_data <- read.csv("data/processed/GEA/enviro_data/MARINe/MARINe_data_16pop
 scaled_var <- MARINe_data %>% select(all_of(var)) %>% scale()
 
 # Permutations to generate null expectation for LFMM
-foreach(l=26:50)%do%{
+foreach(l=51:75)%do%{
 
     # Set seed
     set.seed(l)
