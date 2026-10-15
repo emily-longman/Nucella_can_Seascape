@@ -185,7 +185,7 @@ pdf("output/figures/genomic_offset/Baypass_scaled_ssp585_rona_map_grey.pdf", wid
 ggplot(data = west_coast) + 
   geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
   geom_point(data = rona.scaled.ssp585.output, aes(x = Long, y = Lat, fill = rona.scaled), shape = 21, size = 8) + 
-  scale_fill_gradientn(colours=brewer.pal(9, "Greys"), name="RONA", breaks = c(0.140, 0.145, 0.150)) +
+  scale_fill_gradientn(colours=brewer.pal(9, "Greys"), name="RONA") +
   coord_fixed(1.3) +
   scale_x_continuous(limits = c(-125, -114.1), breaks = seq(-125, -114.1, by = 3)) + ylim(32.5, 46.5) +
   #xlim(c(-125, -112.5)) +
