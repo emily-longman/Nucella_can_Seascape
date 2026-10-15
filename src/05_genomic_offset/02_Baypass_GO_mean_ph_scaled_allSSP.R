@@ -689,3 +689,40 @@ ggplot(data = west_coast) +
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.5)) + # Keeps outer rectangle
   theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.76, 0.81), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
+
+
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
+
+# Put all in one dataframe to graph with similar scale
+
+# Add scenario
+rona.scaled.ssp585.output$scenario <- "SSP5-8.5"
+rona.scaled.ssp370.output$scenario <- "SSP3-7.0"
+rona.scaled.ssp245.output$scenario <- "SSP2-4.5"
+rona.scaled.ssp126.output$scenario <- "SSP1-2.6"
+rona.scaled.ssp119.output$scenario <- "SSP1-1.9"
+
+# Join
+rona.all <- bind_rows(rona.scaled.ssp119.output, rona.scaled.ssp126.output, rona.scaled.ssp245.output, rona.scaled.ssp370.output, rona.scaled.ssp585.output)
+
+# Set fill limits
+fill.limits <- range(rona.all$rona.scaled)
+
+# Graph RONA for all SSP scenarios
+pdf("output/figures/genomic_offset/Baypass_scaled_sspALL_rona_map_grey.pdf", width = 20, height = 8)
+ggplot(data = west_coast) + 
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
+  geom_point(data = rona.all, aes(x = Long, y = Lat, fill = rona.scaled), shape = 21, size = 8) + 
+  facet_wrap(~scenario, ncol = 5) +
+  scale_fill_gradientn(colours=brewer.pal(9, "Greys"), name="RONA") +
+  coord_fixed(1.3) +
+  scale_x_continuous(limits = c(-125, -114.1), breaks = seq(-125, -114.1, by = 3)) + ylim(32.5, 46.5) +
+  xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 30) + 
+  theme(
+    panel.grid.major = element_blank(), # Removes major grid lines
+    panel.grid.minor = element_blank(), # Removes minor grid lines
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.5)) + # Keeps outer rectangle
+  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.95, 0.80), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+dev.off()
