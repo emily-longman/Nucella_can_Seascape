@@ -52,7 +52,7 @@ load("data/processed/baypass/biotic/baypass.Mcali.sum.RData")
 load("data/processed/baypass/biotic/Mcali.cohens.fsq.PC1.lat.bf.RData")
 
 # Load M californianus shell thickness data
-Mcalifornianus_data <- read.csv("data/processed/GEA/enviro_data/Mcali_thk/Mcalifornianus_data_clean_18pop.csv", header=T)
+Mcalifornianus_data <- read.csv("data/processed/enviro_data/Mcali_thk/Mcalifornianus_data_clean_18pop.csv", header=T)
 Mcali <- Mcalifornianus_data[,c(1,3,4,7)]
 Mcali <- Mcali %>% rename(Site = Site.Code, latitude = Latitude, longitude = Longitude)
 

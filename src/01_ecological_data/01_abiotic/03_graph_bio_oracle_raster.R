@@ -37,14 +37,14 @@ if (!dir.exists(out_dir_fig)) {dir.create(out_dir_fig)}
 # ================================================================================== #
 
 # Read in Bio-oracle present data
-bio_oracle <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle.csv", header=T)
+bio_oracle <- read.csv("data/processed/enviro_data/Bio-oracle/bio_oracle.csv", header=T)
 
 # Extract the most recent data (i.e., 2010-01-01T00:00:00Z, which represents 2010-~2020)
 bio_oracle_2010 <- bio_oracle %>% 
   filter(time == "2010-01-01T00:00:00Z")
 
 # Read in Bio-oracle future data
-bio_oracle_ssp585 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_ssp585.csv", header=T)
+bio_oracle_ssp585 <- read.csv("data/processed/enviro_data/Bio-oracle/bio_oracle_ssp585.csv", header=T)
 
 # Extract only the last decade of data (i.e., 2090-2100)
 bio_oracle_ssp585_2090 <- bio_oracle_ssp585 %>% 
@@ -179,7 +179,7 @@ for (var in env_variables) {
     dev.off()
  
     # Save the raster to a file
-    raster_filename <- paste0("data/processed/GEA/enviro_data/Bio-oracle/tif_files/bio-oracle_present_", var, "_raster.tif")
+    raster_filename <- paste0("data/processed/enviro_data/Bio-oracle/tif_files/bio-oracle_present_", var, "_raster.tif")
     writeRaster(env_raster, filename = raster_filename, format = "GTiff", overwrite = TRUE)
   } else {
     warning(paste("Environmental variable", var, "not found in bio_oracle_2010"))
@@ -189,7 +189,7 @@ for (var in env_variables) {
 # ================================================================================== #
 
 # Save full path of tif files as envtif
-env_tif <- list.files("data/processed/GEA/enviro_data/Bio-oracle/tif_files/", pattern ="bio-oracle_present_", full.names = TRUE)
+env_tif <- list.files("data/processed/enviro_data/Bio-oracle/tif_files/", pattern ="bio-oracle_present_", full.names = TRUE)
 
 # Stack tif files
 env_stack <- stack(env_tif)
@@ -203,7 +203,7 @@ env_values$cell <- 1:nrow(env_values)
 # ================================================================================== #
 
 # Save the raster stack
-writeRaster(env_stack, "data/processed/GEA/enviro_data/Bio-oracle/tif_files/bio-oracle_env_present_stack_raster.tif", format = "GTiff")
+writeRaster(env_stack, "data/processed/enviro_data/Bio-oracle/tif_files/bio-oracle_env_present_stack_raster.tif", format = "GTiff")
 
 # ================================================================================== #
 # ================================================================================== #
@@ -232,7 +232,7 @@ for (var in env_variables) {
     dev.off()
  
     # Save the raster to a file
-    raster_filename <- paste0("data/processed/GEA/enviro_data/Bio-oracle/tif_files/bio-oracle_ssp585", var, "_raster.tif")
+    raster_filename <- paste0("data/processed/enviro_data/Bio-oracle/tif_files/bio-oracle_ssp585", var, "_raster.tif")
     writeRaster(env_raster, filename = raster_filename, format = "GTiff", overwrite = TRUE)
   } else {
     warning(paste("Environmental variable", var, "not found in bio_oracle_ssp585_2090"))
@@ -242,7 +242,7 @@ for (var in env_variables) {
 # ================================================================================== #
 
 # Save full path of tif files as envtif
-env_ssp585_tif <- list.files("data/processed/GEA/enviro_data/Bio-oracle/tif_files/", pattern ="bio-oracle_ssp585", full.names = TRUE)
+env_ssp585_tif <- list.files("data/processed/enviro_data/Bio-oracle/tif_files/", pattern ="bio-oracle_ssp585", full.names = TRUE)
 
 # Stack tif files
 env_ssp585_stack <- stack(env_ssp585_tif)
@@ -256,7 +256,7 @@ env_ssp585_values$cell <- 1:nrow(env_ssp585_values)
 # ================================================================================== #
 
 # Save the raster stack
-writeRaster(env_ssp585_stack, "data/processed/GEA/enviro_data/Bio-oracle/tif_files/bio-oracle_env_ssp585_stack_raster.tif", format = "GTiff")
+writeRaster(env_ssp585_stack, "data/processed/enviro_data/Bio-oracle/tif_files/bio-oracle_env_ssp585_stack_raster.tif", format = "GTiff")
 
 # ================================================================================== #
 

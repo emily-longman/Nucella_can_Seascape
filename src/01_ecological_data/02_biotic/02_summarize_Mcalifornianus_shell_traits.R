@@ -43,7 +43,7 @@ viridiscolors18 <- viridiscolors[-4]
 # Generate output directories
 
 # Data directory
-out_dir <- paste("data/processed/GEA/enviro/Mcali_thk")
+out_dir <- paste("data/processed/enviro/Mcali_thk")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # Figure directory
@@ -125,9 +125,9 @@ Mcali_data_sub <- rbind(Mcali_data_sub, Mcali[1097,])
 # ================================================================================== #
 
 # Save dataset
-write.csv(Mcali_data_sub, "data/processed/GEA/enviro_data/Mcali_thk/Mcalifornianus_data_subset.csv", row.names=F)
+write.csv(Mcali_data_sub, "data/processed/enviro_data/Mcali_thk/Mcalifornianus_data_subset.csv", row.names=F)
 # Read data
-Mcali_data_sub <- read.csv("data/processed/GEA/enviro_data/Mcali_thk/Mcalifornianus_data_subset.csv")
+Mcali_data_sub <- read.csv("data/processed/enviro_data/Mcali_thk/Mcalifornianus_data_subset.csv")
 
 # ================================================================================== #
 
@@ -248,7 +248,7 @@ Mcalifornianus_data_clean <- Mcalifornianus_data[, c(1:5,6,9,12,15)]
 # ================================================================================== #
 
 # Save dataset
-write.csv(Mcalifornianus_data_clean, "data/processed/GEA/enviro_data/Mcali_thk/Mcalifornianus_data_clean.csv", row.names=F)
+write.csv(Mcalifornianus_data_clean, "data/processed/enviro_data/Mcali_thk/Mcalifornianus_data_clean.csv", row.names=F)
 
 # ================================================================================== #
 # ================================================================================== #

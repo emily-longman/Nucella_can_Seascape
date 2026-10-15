@@ -55,7 +55,7 @@ top.win <- win.out.order.outliers[which(win.out.order.outliers$rnp.binom.POD == 
 load("data/processed/baypass/abiotic/ph_mean_POD_thr.Rdata")
 
 # Load bio-oracle environmental data
-bio_oracle_sites_2010 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", header=T)
+bio_oracle_sites_2010 <- read.csv("data/processed/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", header=T)
 # Extract just mean pH and rename location to Site
 ph <- bio_oracle_sites_2010[,c(1,2,3,11,13)]
 ph <- ph %>% rename(Site = location)

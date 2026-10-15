@@ -46,5 +46,5 @@ mutate(latitude = as.numeric(latitude), longitude = as.numeric(longitude))
 # ================================================================================== #
 
 # Write table
-write.csv(bio_oracle, "data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_taller_area.csv", row.names=FALSE)
+write.csv(bio_oracle, "data/processed/enviro_data/Bio-oracle/bio_oracle_taller_area.csv", row.names=FALSE)
 

@@ -31,7 +31,7 @@ library(psych)
 # ================================================================================== #
 
 # Generate output directories
-out_dir <- paste("data/processed/GEA/enviro_data/MARINe")
+out_dir <- paste("data/processed/enviro_data/MARINe")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # Figure directory
@@ -104,14 +104,14 @@ point_contact_filt_sum$prey_species <- ifelse(
     point_contact_filt_sum$species_lump == "Mytilus trossulus/galloprovincialis/edulis", "Mussel", "Barnacle" )
 
 # Write summary table
-write.csv(point_contact_filt_sum, "data/processed/GEA/enviro_data/MARINe/point_contact_filt_sum.csv", row.names=F)
+write.csv(point_contact_filt_sum, "data/processed/enviro_data/MARINe/point_contact_filt_sum.csv", row.names=F)
 
 # ================================================================================== #
 
 # Graph prey percent cover
 
 # Temporal trend of prey
-pdf("output/figures/GEA/enviro/MARINe/MARINe_prey_perc_cov_mussel_temporal_trend.pdf", width = 16, height = 10)
+pdf("output/figures/enviro/MARINe/MARINe_prey_perc_cov_mussel_temporal_trend.pdf", width = 16, height = 10)
 ggplot(data = point_contact_filt, aes(x=year, y=percent_cover, group=marine_site_name, color=marine_site_name)) + 
 geom_point(size=2.5) + 
 geom_line() + scale_color_manual(values=mycolors) + facet_wrap(~species_lump) +
@@ -126,7 +126,7 @@ point_contact_filt_sum$marine_site_name <- factor(point_contact_filt_sum$marine_
     "Coquille Point", "Cape Arago", "Bob Creek", "Seal Rock", "Fogarty Creek"))
 
 # Graph summary of prey percent cover
-pdf("output/figures/GEA/enviro/MARINe/MARINe_prey_perc_cov_mycol.pdf", width = 16, height = 10)
+pdf("output/figures/enviro/MARINe/MARINe_prey_perc_cov_mycol.pdf", width = 16, height = 10)
 ggplot(data = point_contact_filt_sum, aes(x=mean, y=marine_site_name, fill = species_lump, colour=species_lump)) + geom_point(size=2.5) + 
 geom_errorbar(aes(xmin=mean-se, xmax=mean+se), width=.2) +
 scale_fill_manual(values=mycolors_prey) + 
@@ -191,7 +191,7 @@ quadrat_filt_sum <- quadrat_filt %>%
     metric = "density") %>% as.data.frame() %>% distinct()
 
 # Write summary table
-write.csv(quadrat_filt_sum, "data/processed/GEA/enviro_data/MARINe/quadrat_filt_sum.csv", row.names=F)
+write.csv(quadrat_filt_sum, "data/processed/enviro_data/MARINe/quadrat_filt_sum.csv", row.names=F)
 
 # ================================================================================== #
 
@@ -204,7 +204,7 @@ quadrat_filt_sum$marine_site_name <- factor(quadrat_filt_sum$marine_site_name,
     "Coquille Point", "Cape Arago", "Bob Creek", "Seal Rock", "Fogarty Creek"))
 
 # Graph summary of competitor density
-pdf("output/figures/GEA/enviro/MARINe/MARINe_competitor_density.pdf", width = 10, height = 10)
+pdf("output/figures/enviro/MARINe/MARINe_competitor_density.pdf", width = 10, height = 10)
 ggplot(data = quadrat_filt_sum, aes(x=mean, y=marine_site_name, fill = species_lump, colour=species_lump)) + geom_point(size=3) + 
 geom_errorbar(aes(xmin=mean-se, xmax=mean+se), width=.2) +
 scale_fill_manual(values=mycolors_comp) +
@@ -214,7 +214,7 @@ theme_bw(base_size = 16)
 dev.off()
 
 # Temporal trend of competitors
-pdf("output/figures/GEA/enviro/MARINe/MARINe_competitors_density_temporal_trend.pdf", width = 16, height = 8)
+pdf("output/figures/enviro/MARINe/MARINe_competitors_density_temporal_trend.pdf", width = 16, height = 8)
 ggplot(data = quadrat_filt, aes(x=year, y=density_per_m2, group=marine_site_name, color=marine_site_name)) + 
 geom_point(size=2.5) + 
 geom_line() + scale_color_manual(values=mycolors) + facet_wrap(~species_lump) +
@@ -236,14 +236,14 @@ swath_filt_sum <- swath_filt %>%
     metric = "density") %>% as.data.frame() %>% distinct()
 
 # Write summary table
-write.csv(swath_filt_sum, "data/processed/GEA/enviro_data/MARINe/swath_filt_sum.csv", row.names=F)
+write.csv(swath_filt_sum, "data/processed/enviro_data/MARINe/swath_filt_sum.csv", row.names=F)
 
 # ================================================================================== #
 
 # Graph predator (Pisaster) density
 
 # Temporal trend of Pisaster
-pdf("output/figures/GEA/enviro/MARINe/MARINe_pisaster_density_temporal_trend.pdf", width = 16, height = 10)
+pdf("output/figures/enviro/MARINe/MARINe_pisaster_density_temporal_trend.pdf", width = 16, height = 10)
 ggplot(data = swath_filt, aes(x=year, y=density_per_m2, group=marine_site_name, color=marine_site_name)) + geom_point(size=2.5) + 
 geom_line() + scale_color_manual(values=mycolors) +
 xlab("Year") + ylab("Pisaster density") +
@@ -257,7 +257,7 @@ swath_filt_sum$marine_site_name <- factor(swath_filt_sum$marine_site_name,
     "Coquille Point", "Cape Arago", "Bob Creek", "Seal Rock", "Fogarty Creek"))
 
 # Graph Pisaster density
-pdf("output/figures/GEA/enviro/MARINe/MARINe_pisaster_density.pdf", width = 8, height = 10)
+pdf("output/figures/enviro/MARINe/MARINe_pisaster_density.pdf", width = 8, height = 10)
 ggplot(data = swath_filt_sum, aes(x=mean, y=marine_site_name,)) + geom_point(size=3, col="#730b43") + 
 geom_errorbar(aes(xmin=mean-se, xmax=mean+se), width=.2, col="#730b43") +
 xlab(bquote("Pisaster Density/ m"^2)) + ylab("") +
@@ -276,4 +276,4 @@ colnames(quadrat_filt_sum)[6] <- "species_lump"
 marine_sum <- rbind(point_contact_filt_sum[,-15], quadrat_filt_sum, swath_filt_sum)
 
 # Write summary table
-write.csv(marine_sum, "data/processed/GEA/enviro_data/MARINe/marine_long_sum.csv", row.names=F)
+write.csv(marine_sum, "data/processed/enviro_data/MARINe/marine_long_sum.csv", row.names=F)

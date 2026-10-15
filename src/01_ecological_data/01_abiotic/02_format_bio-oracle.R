@@ -90,9 +90,9 @@ filter(time == "2010-01-01T00:00:00Z")
 # ================================================================================== #
 
 # Write table
-write.csv(bio_oracle, "data/processed/GEA/enviro_data/Bio-oracle/bio_oracle.csv", row.names=FALSE)
-write.csv(bio_oracle_sites, "data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites.csv", row.names=FALSE)
-write.csv(bio_oracle_sites_2010, "data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", row.names=FALSE)
+write.csv(bio_oracle, "data/processed/enviro_data/Bio-oracle/bio_oracle.csv", row.names=FALSE)
+write.csv(bio_oracle_sites, "data/processed/enviro_data/Bio-oracle/bio_oracle_sites.csv", row.names=FALSE)
+write.csv(bio_oracle_sites_2010, "data/processed/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", row.names=FALSE)
 
 # ================================================================================== #
 # ================================================================================== #
@@ -159,6 +159,6 @@ filter(time == "2090-01-01T00:00:00Z")
 # ================================================================================== #
 
 # Write table
-write.csv(bio_oracle_ssp585, "data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_ssp585.csv", row.names=FALSE)
-write.csv(bio_oracle_ssp585_sites, "data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_ssp585_sites.csv", row.names=FALSE)
-write.csv(bio_oracle_sites_ssp585_2090, "data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_ssp585_2090.csv", row.names=FALSE)
+write.csv(bio_oracle_ssp585, "data/processed/enviro_data/Bio-oracle/bio_oracle_ssp585.csv", row.names=FALSE)
+write.csv(bio_oracle_ssp585_sites, "data/processed/enviro_data/Bio-oracle/bio_oracle_ssp585_sites.csv", row.names=FALSE)
+write.csv(bio_oracle_sites_ssp585_2090, "data/processed/enviro_data/Bio-oracle/bio_oracle_sites_ssp585_2090.csv", row.names=FALSE)
