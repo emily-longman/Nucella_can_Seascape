@@ -52,7 +52,7 @@ load("data/raw/pooldata/pooldata.RData")
 allele_freqs_t <- fread("data/processed/LFMM_analyses/Ncan_afs.lfmm")
 
 # Load bio-oracle environmental data
-bio_oracle_sites_2010 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", header=T)
+bio_oracle_sites_2010 <- read.csv("data/processed/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", header=T)
 
 # ================================================================================== #
 

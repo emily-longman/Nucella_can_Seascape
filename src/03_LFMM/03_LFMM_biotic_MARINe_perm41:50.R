@@ -52,7 +52,7 @@ load("data/raw/pooldata/pooldata.RData")
 allele_freqs_t_16pop <- fread("data/processed/LFMM_analyses/Ncan_afs_16pop.lfmm")
 
 # Load MARINe data
-MARINe_data <- read.csv("data/processed/GEA/enviro_data/MARINe/MARINe_data_16pops.csv", header=T)
+MARINe_data <- read.csv("data/processed/enviro_data/MARINe/MARINe_data_16pops.csv", header=T)
 
 # ================================================================================== #
 

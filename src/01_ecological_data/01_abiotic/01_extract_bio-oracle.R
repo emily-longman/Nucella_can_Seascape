@@ -124,7 +124,7 @@ list.files(out_dir_present)
 # Extract future day data for range of sites
 
 # Define time, lat, and long (set lat and long to fully encompass all sites)
-time = c('2080-01-01T00:00:00Z', '2090-01-01T00:00:00Z')
+time = c('2020-01-01T00:00:00Z', '2090-01-01T00:00:00Z')
 latitude = c(34, 45)
 longitude = c(-120, -125)
 

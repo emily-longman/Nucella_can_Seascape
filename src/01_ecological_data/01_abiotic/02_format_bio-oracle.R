@@ -233,11 +233,6 @@ write.csv(bio_oracle_ssp370_sites, "data/processed/enviro_data/Bio-oracle/bio_or
 write.csv(bio_oracle_sites_ssp370_2090, "data/processed/enviro_data/Bio-oracle/bio_oracle_sites_ssp370_2090.csv", row.names=FALSE)
 
 
-# Order
-bio_oracle_sites_ssp370_2090_ordered <- bio_oracle_sites_ssp370_2090 %>% mutate(location = factor(location, levels = pooldata@poolnames)) %>% arrange(location)
-write.csv(bio_oracle_sites_ssp370_2090_ordered, "data/processed/enviro_data/Bio-oracle/bio_oracle_sites_ssp370_2090_ordered.csv", row.names=FALSE)
-
-
 # ================================================================================== #
 
 # Future data - ssp245
@@ -305,12 +300,6 @@ filter(time == "2090-01-01T00:00:00Z")
 write.csv(bio_oracle_ssp245, "data/processed/enviro_data/Bio-oracle/bio_oracle_ssp245.csv", row.names=FALSE)
 write.csv(bio_oracle_ssp245_sites, "data/processed/enviro_data/Bio-oracle/bio_oracle_ssp245_sites.csv", row.names=FALSE)
 write.csv(bio_oracle_sites_ssp245_2090, "data/processed/enviro_data/Bio-oracle/bio_oracle_sites_ssp245_2090.csv", row.names=FALSE)
-
-
-# Order
-bio_oracle_sites_ssp245_2090_ordered <- bio_oracle_sites_ssp245_2090 %>% mutate(location = factor(location, levels = pooldata@poolnames)) %>% arrange(location)
-write.csv(bio_oracle_sites_ssp245_2090_ordered, "data/processed/enviro_data/Bio-oracle/bio_oracle_sites_ssp245_2090_ordered.csv", row.names=FALSE)
-
 
 # ================================================================================== #
 
@@ -380,12 +369,6 @@ write.csv(bio_oracle_ssp126, "data/processed/enviro_data/Bio-oracle/bio_oracle_s
 write.csv(bio_oracle_ssp126_sites, "data/processed/enviro_data/Bio-oracle/bio_oracle_ssp126_sites.csv", row.names=FALSE)
 write.csv(bio_oracle_sites_ssp126_2090, "data/processed/enviro_data/Bio-oracle/bio_oracle_sites_ssp126_2090.csv", row.names=FALSE)
 
-
-# Order
-bio_oracle_sites_ssp126_2090_ordered <- bio_oracle_sites_ssp126_2090 %>% mutate(location = factor(location, levels = pooldata@poolnames)) %>% arrange(location)
-write.csv(bio_oracle_sites_ssp126_2090_ordered, "data/processed/enviro_data/Bio-oracle/bio_oracle_sites_ssp126_2090_ordered.csv", row.names=FALSE)
-
-
 # ================================================================================== #
 
 # Future data - ssp119
@@ -454,7 +437,3 @@ write.csv(bio_oracle_ssp119, "data/processed/enviro_data/Bio-oracle/bio_oracle_s
 write.csv(bio_oracle_ssp119_sites, "data/processed/enviro_data/Bio-oracle/bio_oracle_ssp119_sites.csv", row.names=FALSE)
 write.csv(bio_oracle_sites_ssp119_2090, "data/processed/enviro_data/Bio-oracle/bio_oracle_sites_ssp119_2090.csv", row.names=FALSE)
 
-
-# Order
-bio_oracle_sites_ssp119_2090_ordered <- bio_oracle_sites_ssp119_2090 %>% mutate(location = factor(location, levels = pooldata@poolnames)) %>% arrange(location)
-write.csv(bio_oracle_sites_ssp119_2090_ordered, "data/processed/enviro_data/Bio-oracle/bio_oracle_sites_ssp119_2090_ordered.csv", row.names=FALSE)
