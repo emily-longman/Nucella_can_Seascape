@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=LFMM_abiotic_perm_76:100
+#SBATCH --job-name=LFMM_abiotic_perm_13:25
 
 # Specify partition
 #SBATCH --partition=general
@@ -73,9 +73,10 @@ echo ${i}
 
 # Run R script
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm1:25.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm13:25.R "${i}"
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm26:50.R "${i}"
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm51:75.R "${i}"
-Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm76:100.R "${i}"
+#Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm76:100.R "${i}"
 
 #--------------------------------------------------------------------------------
 
