@@ -134,7 +134,7 @@ names(constraints) = c("time", "latitude", "longitude")
 
 # ================================================================================== #
 
-# Future data - worst case scenario
+# Future data - worst case scenario (SSP5-8.5)
 
 # Set dataset IDs
 SST_SSP585 <- "thetao_ssp585_2020_2100_depthsurf"
@@ -183,14 +183,162 @@ for (dataset in datasets) {
   }
 }
 
+# ================================================================================== #
 
-# Check list of files in output directory
-list.files(out_dir_future)
+# Future data - dangerous emissions (SSP3-7.0)
 
+# Set dataset IDs
+SST_SSP370 <- "thetao_ssp370_2020_2100_depthsurf"
+pH_SSP370 <- "ph_ssp370_2020_2100_depthsurf"
+Chl_SSP370 <- "chl_ssp370_2020_2100_depthsurf"
+O2_SSP370 <- "o2_ssp370_2020_2100_depthsurf"
+sal_SSP370 <- "so_ssp370_2020_2100_depthsurf"
+
+# Specify datasets and summary statistics to download 
+datasets <- list(
+  list(dataset_id = SST_SSP370, variables = c("thetao_max","thetao_min", "thetao_range", "thetao_mean"),
+       constraints = constraints, fmt = "csv", directory = out_dir_future),
+  list(dataset_id = pH_SSP370, variables = c("ph_min", "ph_mean"),
+       constraints = constraints, fmt = "csv", directory = out_dir_future),
+  list(dataset_id = Chl_SSP370, variables = c("chl_mean"),
+       constraints = constraints, fmt = "csv", directory = out_dir_future),
+  list(dataset_id = O2_SSP370, variables = c("o2_mean"),
+       constraints = constraints, fmt = "csv", directory = out_dir_future),
+  list(dataset_id = sal_SSP370, variables = c("so_mean"),
+       constraints = constraints, fmt = "csv", directory = out_dir_future))
+
+
+# Download datasets using for loop
+for (dataset in datasets) {
+  
+  dataset_id <- dataset$dataset_id
+  variables <- dataset$variables
+  constraints <- dataset$constraints
+  
+  # List files before downloading
+  files_before <- list.files(out_dir_future, full.names = TRUE)
+  # Download dataset
+  download_layers(dataset_id, variables = variables, constraints = constraints, fmt = "csv", directory = out_dir_future)
+  # List files after downloading
+  files_after <- list.files(out_dir_future, full.names = TRUE)
+  # Identify the newly downloaded file
+  new_file <- setdiff(files_after, files_before)
+  
+  # Rename the file to match the dataset ID
+  if (length(new_file) == 1) {
+    new_name <- file.path(out_dir_future, paste0(dataset_id, ".csv"))
+    file.rename(new_file, new_name)
+    message("Rename ", new_file, " to ", new_name)
+  } else {
+    message("No new file found for ", dataset_id, " or multiple new files detected.")
+  }
+}
 
 # ================================================================================== #
 
-# Future data - best case scenario
+# Future data - middle of the road emissions (SSP2-4.5)
+
+# Set dataset IDs
+SST_SSP245 <- "thetao_ssp245_2020_2100_depthsurf"
+pH_SSP245 <- "ph_ssp245_2020_2100_depthsurf"
+Chl_SSP245 <- "chl_ssp245_2020_2100_depthsurf"
+O2_SSP245 <- "o2_ssp245_2020_2100_depthsurf"
+sal_SSP245 <- "so_ssp245_2020_2100_depthsurf"
+
+# Specify datasets and summary statistics to download 
+datasets <- list(
+  list(dataset_id = SST_SSP245, variables = c("thetao_max","thetao_min", "thetao_range", "thetao_mean"),
+       constraints = constraints, fmt = "csv", directory = out_dir_future),
+  list(dataset_id = pH_SSP245, variables = c("ph_min", "ph_mean"),
+       constraints = constraints, fmt = "csv", directory = out_dir_future),
+  list(dataset_id = Chl_SSP245, variables = c("chl_mean"),
+       constraints = constraints, fmt = "csv", directory = out_dir_future),
+  list(dataset_id = O2_SSP245, variables = c("o2_mean"),
+       constraints = constraints, fmt = "csv", directory = out_dir_future),
+  list(dataset_id = sal_SSP245, variables = c("so_mean"),
+       constraints = constraints, fmt = "csv", directory = out_dir_future))
+
+
+# Download datasets using for loop
+for (dataset in datasets) {
+  
+  dataset_id <- dataset$dataset_id
+  variables <- dataset$variables
+  constraints <- dataset$constraints
+  
+  # List files before downloading
+  files_before <- list.files(out_dir_future, full.names = TRUE)
+  # Download dataset
+  download_layers(dataset_id, variables = variables, constraints = constraints, fmt = "csv", directory = out_dir_future)
+  # List files after downloading
+  files_after <- list.files(out_dir_future, full.names = TRUE)
+  # Identify the newly downloaded file
+  new_file <- setdiff(files_after, files_before)
+  
+  # Rename the file to match the dataset ID
+  if (length(new_file) == 1) {
+    new_name <- file.path(out_dir_future, paste0(dataset_id, ".csv"))
+    file.rename(new_file, new_name)
+    message("Rename ", new_file, " to ", new_name)
+  } else {
+    message("No new file found for ", dataset_id, " or multiple new files detected.")
+  }
+}
+
+# ================================================================================== #
+
+# Future data - low emissions (SSP1-2.6)
+
+# Set dataset IDs
+SST_SSP126 <- "thetao_ssp126_2020_2100_depthsurf"
+pH_SSP126 <- "ph_ssp126_2020_2100_depthsurf"
+Chl_SSP126 <- "chl_ssp126_2020_2100_depthsurf"
+O2_SSP126 <- "o2_ssp126_2020_2100_depthsurf"
+sal_SSP126 <- "so_ssp126_2020_2100_depthsurf"
+
+# Specify datasets and summary statistics to download 
+datasets <- list(
+  list(dataset_id = SST_SSP126, variables = c("thetao_max","thetao_min", "thetao_range", "thetao_mean"),
+       constraints = constraints, fmt = "csv", directory = out_dir_future),
+  list(dataset_id = pH_SSP126, variables = c("ph_min", "ph_mean"),
+       constraints = constraints, fmt = "csv", directory = out_dir_future),
+  list(dataset_id = Chl_SSP126, variables = c("chl_mean"),
+       constraints = constraints, fmt = "csv", directory = out_dir_future),
+  list(dataset_id = O2_SSP126, variables = c("o2_mean"),
+       constraints = constraints, fmt = "csv", directory = out_dir_future),
+  list(dataset_id = sal_SSP126, variables = c("so_mean"),
+       constraints = constraints, fmt = "csv", directory = out_dir_future))
+
+
+# Download datasets using for loop
+for (dataset in datasets) {
+  
+  dataset_id <- dataset$dataset_id
+  variables <- dataset$variables
+  constraints <- dataset$constraints
+  
+  # List files before downloading
+  files_before <- list.files(out_dir_future, full.names = TRUE)
+  # Download dataset
+  download_layers(dataset_id, variables = variables, constraints = constraints, fmt = "csv", directory = out_dir_future)
+  # List files after downloading
+  files_after <- list.files(out_dir_future, full.names = TRUE)
+  # Identify the newly downloaded file
+  new_file <- setdiff(files_after, files_before)
+  
+  # Rename the file to match the dataset ID
+  if (length(new_file) == 1) {
+    new_name <- file.path(out_dir_future, paste0(dataset_id, ".csv"))
+    file.rename(new_file, new_name)
+    message("Rename ", new_file, " to ", new_name)
+  } else {
+    message("No new file found for ", dataset_id, " or multiple new files detected.")
+  }
+}
+
+# ================================================================================== #
+
+# Future data - best case scenario (SSP1-1.9)
 
 # Set dataset IDs
 SST_SSP119 <- "thetao_ssp119_2020_2100_depthsurf"
@@ -239,7 +387,4 @@ for (dataset in datasets) {
   }
 }
 
-
-# Check list of files in output directory
-list.files(out_dir_future)
 
