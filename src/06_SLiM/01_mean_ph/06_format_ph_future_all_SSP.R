@@ -50,23 +50,22 @@ if (!dir.exists(out_data_dir)) {dir.create(out_data_dir)}
 
 # ================================================================================== #
 
+# Threshold from simulations
+thresh = 7.991
+
+# ================================================================================== #
+
 # Load data
-bio_oracle_ssp585 <- read.csv("data/processed/enviro_data/Bio-oracle/bio_oracle_ssp585.csv")
-write.csv(bio_oracle_ssp585, "data/processed/enviro_data/Bio-oracle/bio_oracle_ssp585.csv", row.names=FALSE)
-
 bio_oracle_ssp585_sites <- read.csv("data/processed/enviro_data/Bio-oracle/bio_oracle_ssp585_sites.csv")
-write.csv(bio_oracle_ssp585_sites, "data/processed/enviro_data/Bio-oracle/bio_oracle_ssp585_sites.csv", row.names=FALSE)
-
-bio_oracle_ssp585_sites
 
 # Extract just mean pH
-
+ph_ssp585_sites <- bio_oracle_ssp585_sites[,c(1,2,3,11,13)]
 
 # Add decade term
 ph_ssp585_sites %<>% group_by(location) %>% mutate(decade=seq(5,75, by=10))
  
 # Calculate slope and intercept for each location
-ph_future_lm <- foreach(i=unique(ph_ssp585_sites$location), .combine="rbind", .errorhandling = "remove")%do%{  
+ph_future_ssp585_lm <- foreach(i=unique(ph_ssp585_sites$location), .combine="rbind", .errorhandling = "remove")%do%{  
     # Filter for specific site
     tmp <- ph_ssp585_sites %>% filter(location == i)
     # Linear model - reformat time so centered on each decade
@@ -79,38 +78,223 @@ ph_future_lm <- foreach(i=unique(ph_ssp585_sites$location), .combine="rbind", .e
 }
 # Set site to factor
 ph_ssp585_sites$location <- factor(ph_ssp585_sites$location, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
-ph_future_lm$Site <- factor(ph_future_lm$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+ph_future_ssp585_lm$Site <- factor(ph_future_ssp585_lm$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Order df by site 
-ph_future_lm <- ph_future_lm[order(ph_future_lm$Site),]
+ph_future_ssp585_lm <- ph_future_ssp585_lm[order(ph_future_ssp585_lm$Site),]
 
 # Save slope and intercept for each pop
-write.csv(ph_future_lm, "data/processed/SLiM/ph_future/ph_future_lm.csv", row.names=F)
+write.csv(ph_future_ssp585_lm, "data/processed/SLiM/ph_future/ph_future_ssp585_lm.csv", row.names=F)
 
-# ================================================================================== #
-
-# Extract last decade 
-ph_ssp585_sites_2090_tmp <- ph_ssp585_sites[which(ph_ssp585_sites$decade == 75),]
-# Reverse order
-ph_ssp585_sites_2090 <- ph_ssp585_sites_2090_tmp[nrow(ph_ssp585_sites_2090_tmp):1,]
-
-write.csv(ph_ssp585_sites_2090, "data/processed/SLiM/ph_future/ph_future_2090_sites.csv", row.names=F)
-
-# ================================================================================== #
 
 # For visualization purposes make x-axis go from 2020-2100
-
 # Calc pred pH adjusted for 2020-2100
-pred <- ph_future_lm %>%rowwise() %>%
-do(data.frame(Site = .$Site, year = 2020:2100, ph = .$intercept + .$slope * (2020:2100 - 2020)))
-
-# Threshold from simulations
-thresh = 7.991
+pred_ssp585 <- ph_future_ssp585_lm %>%rowwise() %>% do(data.frame(Site = .$Site, year = 2020:2100, ph = .$intercept + .$slope * (2020:2100 - 2020)))
 
 # Graph
-pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle.pdf", width = 10, height = 8)
+pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_ssp585.pdf", width = 5.5, height = 5.5)
 ggplot(ph_ssp585_sites, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 5, shape = 16, alpha = 0.9) +
-    geom_line(data = pred, aes(x = year, y = ph, color = Site), linewidth = 1)+
+    geom_line(data = pred_ssp585, aes(x = year, y = ph, color = Site), linewidth = 1)+
+    #geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
+    geom_hline(yintercept=thresh, col = "black", linetype = "dashed") +
+    ylim(7.6, 8.078) +
+    scale_fill_manual(values = mycolors) + scale_color_manual(values = mycolors) + 
+    labs(x = "Year", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
+dev.off()
+
+
+# ================================================================================== #
+
+# Load data
+bio_oracle_ssp370_sites <- read.csv("data/processed/enviro_data/Bio-oracle/bio_oracle_ssp370_sites.csv")
+
+# Extract just mean pH
+ph_ssp370_sites <- bio_oracle_ssp370_sites[,c(1,2,3,11,13)]
+
+# Add decade term
+ph_ssp370_sites %<>% group_by(location) %>% mutate(decade=seq(5,75, by=10))
+ 
+# Calculate slope and intercept for each location
+ph_future_ssp370_lm <- foreach(i=unique(ph_ssp370_sites$location), .combine="rbind", .errorhandling = "remove")%do%{  
+    # Filter for specific site
+    tmp <- ph_ssp370_sites %>% filter(location == i)
+    # Linear model - reformat time so centered on each decade
+    mod <- lm(ph_mean ~ decade, tmp)
+    # Format data
+    data.frame(
+    Site = i,
+    intercept = mod$coefficients[1],
+    slope = mod$coefficients[2])
+}
+# Set site to factor
+ph_ssp370_sites$location <- factor(ph_ssp370_sites$location, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+ph_future_ssp370_lm$Site <- factor(ph_future_ssp370_lm$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+
+# Order df by site 
+ph_future_ssp370_lm <- ph_future_ssp370_lm[order(ph_future_ssp370_lm$Site),]
+
+# Save slope and intercept for each pop
+write.csv(ph_future_ssp370_lm, "data/processed/SLiM/ph_future/ph_future_ssp370_lm.csv", row.names=F)
+
+
+# For visualization purposes make x-axis go from 2020-2100
+# Calc pred pH adjusted for 2020-2100
+pred_ssp370 <- ph_future_ssp370_lm %>%rowwise() %>% do(data.frame(Site = .$Site, year = 2020:2100, ph = .$intercept + .$slope * (2020:2100 - 2020)))
+
+# Graph
+pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_ssp370.pdf", width = 5.5, height = 5.5)
+ggplot(ph_ssp370_sites, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 5, shape = 16, alpha = 0.9) +
+    geom_line(data = pred_ssp370, aes(x = year, y = ph, color = Site), linewidth = 1)+
+    #geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
+    geom_hline(yintercept=thresh, col = "black", linetype = "dashed") +
+    ylim(7.6, 8.078) +
+    scale_fill_manual(values = mycolors) + scale_color_manual(values = mycolors) + 
+    labs(x = "Year", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
+dev.off()
+
+
+# ================================================================================== #
+
+# Load data
+bio_oracle_ssp245_sites <- read.csv("data/processed/enviro_data/Bio-oracle/bio_oracle_ssp245_sites.csv")
+
+# Extract just mean pH
+ph_ssp245_sites <- bio_oracle_ssp245_sites[,c(1,2,3,11,13)]
+
+# Add decade term
+ph_ssp245_sites %<>% group_by(location) %>% mutate(decade=seq(5,75, by=10))
+ 
+# Calculate slope and intercept for each location
+ph_future_ssp245_lm <- foreach(i=unique(ph_ssp245_sites$location), .combine="rbind", .errorhandling = "remove")%do%{  
+    # Filter for specific site
+    tmp <- ph_ssp245_sites %>% filter(location == i)
+    # Linear model - reformat time so centered on each decade
+    mod <- lm(ph_mean ~ decade, tmp)
+    # Format data
+    data.frame(
+    Site = i,
+    intercept = mod$coefficients[1],
+    slope = mod$coefficients[2])
+}
+# Set site to factor
+ph_ssp245_sites$location <- factor(ph_ssp245_sites$location, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+ph_future_ssp245_lm$Site <- factor(ph_future_ssp245_lm$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+
+# Order df by site 
+ph_future_ssp245_lm <- ph_future_ssp245_lm[order(ph_future_ssp245_lm$Site),]
+
+# Save slope and intercept for each pop
+write.csv(ph_future_ssp245_lm, "data/processed/SLiM/ph_future/ph_future_ssp245_lm.csv", row.names=F)
+
+
+# For visualization purposes make x-axis go from 2020-2100
+# Calc pred pH adjusted for 2020-2100
+pred_ssp245 <- ph_future_ssp245_lm %>%rowwise() %>% do(data.frame(Site = .$Site, year = 2020:2100, ph = .$intercept + .$slope * (2020:2100 - 2020)))
+
+# Graph
+pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_ssp245.pdf", width = 5.5, height = 5.5)
+ggplot(ph_ssp245_sites, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 5, shape = 16, alpha = 0.9) +
+    geom_line(data = pred_ssp245, aes(x = year, y = ph, color = Site), linewidth = 1)+
+    #geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
+    geom_hline(yintercept=thresh, col = "black", linetype = "dashed") +
+    ylim(7.6, 8.078) +
+    scale_fill_manual(values = mycolors) + scale_color_manual(values = mycolors) + 
+    labs(x = "Year", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
+dev.off()
+
+
+# ================================================================================== #
+
+# Load data
+bio_oracle_ssp126_sites <- read.csv("data/processed/enviro_data/Bio-oracle/bio_oracle_ssp126_sites.csv")
+
+# Extract just mean pH
+ph_ssp126_sites <- bio_oracle_ssp126_sites[,c(1,2,3,11,13)]
+
+# Add decade term
+ph_ssp126_sites %<>% group_by(location) %>% mutate(decade=seq(5,75, by=10))
+ 
+# Calculate slope and intercept for each location
+ph_future_ssp126_lm <- foreach(i=unique(ph_ssp126_sites$location), .combine="rbind", .errorhandling = "remove")%do%{  
+    # Filter for specific site
+    tmp <- ph_ssp126_sites %>% filter(location == i)
+    # Linear model - reformat time so centered on each decade
+    mod <- lm(ph_mean ~ decade, tmp)
+    # Format data
+    data.frame(
+    Site = i,
+    intercept = mod$coefficients[1],
+    slope = mod$coefficients[2])
+}
+# Set site to factor
+ph_ssp126_sites$location <- factor(ph_ssp126_sites$location, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+ph_future_ssp126_lm$Site <- factor(ph_future_ssp126_lm$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+
+# Order df by site 
+ph_future_ssp126_lm <- ph_future_ssp126_lm[order(ph_future_ssp126_lm$Site),]
+
+# Save slope and intercept for each pop
+write.csv(ph_future_ssp126_lm, "data/processed/SLiM/ph_future/ph_future_ssp126_lm.csv", row.names=F)
+
+
+# For visualization purposes make x-axis go from 2020-2100
+# Calc pred pH adjusted for 2020-2100
+pred_ssp126 <- ph_future_ssp126_lm %>%rowwise() %>% do(data.frame(Site = .$Site, year = 2020:2100, ph = .$intercept + .$slope * (2020:2100 - 2020)))
+
+# Graph
+pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_ssp126.pdf", width = 5.5, height = 5.5)
+ggplot(ph_ssp126_sites, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 5, shape = 16, alpha = 0.9) +
+    geom_line(data = pred_ssp126, aes(x = year, y = ph, color = Site), linewidth = 1)+
+    #geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
+    geom_hline(yintercept=thresh, col = "black", linetype = "dashed") +
+    ylim(7.6, 8.078) +
+    scale_fill_manual(values = mycolors) + scale_color_manual(values = mycolors) + 
+    labs(x = "Year", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
+dev.off()
+
+
+# ================================================================================== #
+
+# Load data
+bio_oracle_ssp119_sites <- read.csv("data/processed/enviro_data/Bio-oracle/bio_oracle_ssp119_sites.csv")
+
+# Extract just mean pH
+ph_ssp119_sites <- bio_oracle_ssp119_sites[,c(1,2,3,11,13)]
+
+# Add decade term
+ph_ssp119_sites %<>% group_by(location) %>% mutate(decade=seq(5,75, by=10))
+ 
+# Calculate slope and intercept for each location
+ph_future_ssp119_lm <- foreach(i=unique(ph_ssp119_sites$location), .combine="rbind", .errorhandling = "remove")%do%{  
+    # Filter for specific site
+    tmp <- ph_ssp119_sites %>% filter(location == i)
+    # Linear model - reformat time so centered on each decade
+    mod <- lm(ph_mean ~ decade, tmp)
+    # Format data
+    data.frame(
+    Site = i,
+    intercept = mod$coefficients[1],
+    slope = mod$coefficients[2])
+}
+# Set site to factor
+ph_ssp119_sites$location <- factor(ph_ssp119_sites$location, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+ph_future_ssp119_lm$Site <- factor(ph_future_ssp119_lm$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+
+# Order df by site 
+ph_future_ssp119_lm <- ph_future_ssp119_lm[order(ph_future_ssp119_lm$Site),]
+
+# Save slope and intercept for each pop
+write.csv(ph_future_ssp119_lm, "data/processed/SLiM/ph_future/ph_future_ssp119_lm.csv", row.names=F)
+
+
+# For visualization purposes make x-axis go from 2020-2100
+# Calc pred pH adjusted for 2020-2100
+pred_ssp119 <- ph_future_ssp119_lm %>%rowwise() %>% do(data.frame(Site = .$Site, year = 2020:2100, ph = .$intercept + .$slope * (2020:2100 - 2020)))
+
+# Graph
+pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_ssp119.pdf", width = 5.5, height = 5.5)
+ggplot(ph_ssp119_sites, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 5, shape = 16, alpha = 0.9) +
+    geom_line(data = pred_ssp119, aes(x = year, y = ph, color = Site), linewidth = 1)+
     #geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
     geom_hline(yintercept=thresh, col = "black", linetype = "dashed") +
     ylim(7.6, 8.078) +
