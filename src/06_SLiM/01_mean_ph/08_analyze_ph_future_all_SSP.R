@@ -165,12 +165,12 @@ save(future245_sim_data, file = "data/processed/SLiM/ph_future/sim_future245_dat
 #load("data/processed/SLiM/ph_future/ph_results/sim_future245_data.Rdata")
 
 #####
-
+################################
 # Load data and merge files - SSP3-7.0
 
 # Create list of file names for data
-file_names = as.list(dir(path = 'data/processed/SLiM/ph_future/ph_results_245/per_simcycle/', pattern = "phclineAFs_future_freq.*"))
-file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/SLiM/ph_future/ph_results_245/per_simcycle/', x))))
+file_names = as.list(dir(path = 'data/processed/SLiM/ph_future/ph_results_370/per_simcycle/', pattern = "phclineAFs_future_freq.*"))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/SLiM/ph_future/ph_results_370/per_simcycle/', x))))
 
 # Read all the files and perform ABC
 future245_sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
@@ -200,6 +200,45 @@ future245_sim_data <- left_join(future245_sim_data, ecovars, by = "sim_eq")
 # Save output
 save(future245_sim_data, file = "data/processed/SLiM/ph_future/sim_future245_data.Rdata")
 #load("data/processed/SLiM/ph_future/ph_results/sim_future245_data.Rdata")
+
+
+
+#####
+
+# Load data and merge files - SSP5-8.5
+
+# Create list of file names for data
+file_names = as.list(dir(path = 'data/processed/SLiM/ph_future/ph_results_585/per_simcycle/', pattern = "phclineAFs_future_freq.*"))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/SLiM/ph_future/ph_results_585/per_simcycle/', x))))
+
+# Read all the files and perform ABC
+future585_sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
+    
+    # State which file loading
+    message(i)
+    # Load file and add file name identifier
+    tmp <- read.table(i) %>%
+            mutate(file_name = i) %>%
+            mutate(file_name = str_remove(file_name, pattern = "data/processed/SLiM/ph_future/ph_results_585/per_simcycle/phclineAFs_future_freq.")) %>% 
+            mutate(file_name = str_remove(file_name, pattern = ".txt"))
+    # Rename pops
+    names(tmp)[1:19] = paste("p", 0:18, sep ="")
+    # Separate columns based on parameters
+    tmp2 <- separate_wider_delim(tmp, cols = file_name, delim = "_", names = c("repId", "m", "thresh", "k", "mag", "N", "state"))
+    # Add year
+    tmp2$year <- c(21:100)
+    # Reformat
+    tmp2_melt <- tmp2 %>%
+            reshape2::melt(id = c("repId","m","thresh","k","mag","N","state","year"), 
+            variable.name = "sim_eq", value.name = "AF_fut")
+}
+
+# Join with ecovars
+future585_sim_data <- left_join(future585_sim_data, ecovars, by = "sim_eq")
+
+# Save output
+save(future585_sim_data, file = "data/processed/SLiM/ph_future/sim_future585_data.Rdata")
+#load("data/processed/SLiM/ph_future/ph_results/sim_future585_data.Rdata")
 
 # ================================================================================== #
 
