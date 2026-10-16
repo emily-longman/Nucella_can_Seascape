@@ -77,8 +77,9 @@ echo ${i}
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm26:50.R "${i}"
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm41:50.R "${i}"
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm51:75.R "${i}"
-Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm74:75.R "${i}"
+#Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm74:75.R "${i}"
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm76:100.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm94:100.R "${i}"
 
 #--------------------------------------------------------------------------------
 
