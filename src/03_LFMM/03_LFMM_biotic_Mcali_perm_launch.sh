@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=LFMM_biotic_Mcali_perm81:100
+#SBATCH --job-name=LFMM_biotic_Mcali_perm45:50
 
 # Specify partition
 #SBATCH --partition=general
