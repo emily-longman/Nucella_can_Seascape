@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=LFMM_abiotic_perm_81:100
+#SBATCH --job-name=LFMM_abiotic_perm_92:93
 
 # Specify partition
 #SBATCH --partition=general
@@ -23,7 +23,7 @@
 #SBATCH --cpus-per-task=20
 
 # Submit job array
-#SBATCH --array=1-9
+#SBATCH --array=1 #1-9
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -76,7 +76,8 @@ echo ${i}
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm21:40.R "${i}"
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm41:60.R "${i}"
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm61:80.R "${i}"
-Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm81:100.R "${i}"
+#Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm81:100.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm92:93.R "${i}"
 
 #--------------------------------------------------------------------------------
 
