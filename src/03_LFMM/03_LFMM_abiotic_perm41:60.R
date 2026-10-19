@@ -1,4 +1,4 @@
-# Analyze biotic stressors with LFMM
+# Analyze abiotic stressors with LFMM
 
 # Clear memory
 rm(list=ls())
@@ -49,18 +49,18 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 load("data/raw/pooldata/pooldata.RData")
 
 # Load lfmm data
-allele_freqs_t_18pop <- fread("data/processed/LFMM_analyses/Ncan_afs_18pop.lfmm")
+allele_freqs_t <- fread("data/processed/LFMM_analyses/Ncan_afs.lfmm")
 
-# Load M californianus shell thickness data
-Mcalifornianus_data <- read.csv("data/processed/enviro_data/Mcali_thk/Mcalifornianus_data_clean_18pop.csv", header=T)
+# Load bio-oracle environmental data
+bio_oracle_sites_2010 <- read.csv("data/processed/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", header=T)
 
 # ================================================================================== #
 
 # Extract and scale variable of interest
-scaled_var <- Mcalifornianus_data %>% select(all_of(var)) %>% scale()
+scaled_var <- bio_oracle_sites_2010 %>% select(all_of(var)) %>% scale()
 
 # Permutations to generate null expectation for LFMM
-foreach(l=13:25)%do%{
+foreach(l=41:60)%do%{
 
     # Set seed
     set.seed(l)
@@ -71,13 +71,13 @@ foreach(l=13:25)%do%{
     # Univariate lfmm
 
     # Run LFMM2 on only one var
-    mod_lfmm2 <- lfmm2(input = allele_freqs_t_18pop, env = scaled_var_shuffle, K = 1, effect.sizes = TRUE)
+    mod_lfmm2 <- lfmm2(input = allele_freqs_t, env = scaled_var_shuffle, K = 1, effect.sizes = TRUE)
 
     # Save
     save(mod_lfmm2, file = paste0("data/processed/LFMM_analyses/perm/mod_lfmm2_", var, "_perm", l, ".RData"))
 
     # Compute p-values
-    pv <- lfmm2.test(object = mod_lfmm2, input = allele_freqs_t_18pop, env = scaled_var_shuffle)
+    pv <- lfmm2.test(object = mod_lfmm2, input = allele_freqs_t, env = scaled_var_shuffle)
 
     # Save
     save(pv, file = paste0("data/processed/LFMM_analyses/perm/pv_", var,"_perm", l, ".RData"))

@@ -165,7 +165,7 @@ save(future245_sim_data, file = "data/processed/SLiM/ph_future/sim_future245_dat
 #load("data/processed/SLiM/ph_future/ph_results/sim_future245_data.Rdata")
 
 #####
-################################
+
 # Load data and merge files - SSP3-7.0
 
 # Create list of file names for data
@@ -173,14 +173,14 @@ file_names = as.list(dir(path = 'data/processed/SLiM/ph_future/ph_results_370/pe
 file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/SLiM/ph_future/ph_results_370/per_simcycle/', x))))
 
 # Read all the files and perform ABC
-future245_sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
+future370_sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
     
     # State which file loading
     message(i)
     # Load file and add file name identifier
     tmp <- read.table(i) %>%
             mutate(file_name = i) %>%
-            mutate(file_name = str_remove(file_name, pattern = "data/processed/SLiM/ph_future/ph_results_245/per_simcycle/phclineAFs_future_freq.")) %>% 
+            mutate(file_name = str_remove(file_name, pattern = "data/processed/SLiM/ph_future/ph_results_370/per_simcycle/phclineAFs_future_freq.")) %>% 
             mutate(file_name = str_remove(file_name, pattern = ".txt"))
     # Rename pops
     names(tmp)[1:19] = paste("p", 0:18, sep ="")
@@ -195,12 +195,11 @@ future245_sim_data <- foreach(i=file_names_v, .combine="rbind", .errorhandling =
 }
 
 # Join with ecovars
-future245_sim_data <- left_join(future245_sim_data, ecovars, by = "sim_eq")
+future370_sim_data <- left_join(future370_sim_data, ecovars, by = "sim_eq")
 
 # Save output
-save(future245_sim_data, file = "data/processed/SLiM/ph_future/sim_future245_data.Rdata")
-#load("data/processed/SLiM/ph_future/ph_results/sim_future245_data.Rdata")
-
+save(future370_sim_data, file = "data/processed/SLiM/ph_future/sim_future370_data.Rdata")
+#load("data/processed/SLiM/ph_future/ph_results/sim_future370_data.Rdata")
 
 
 #####
@@ -240,104 +239,63 @@ future585_sim_data <- left_join(future585_sim_data, ecovars, by = "sim_eq")
 save(future585_sim_data, file = "data/processed/SLiM/ph_future/sim_future585_data.Rdata")
 #load("data/processed/SLiM/ph_future/ph_results/sim_future585_data.Rdata")
 
+
+# ================================================================================== #
+
+# Join all
+future119_sim_data$scenario <- "SSP1-1.9"
+future126_sim_data$scenario <- "SSP1-2.6"
+future245_sim_data$scenario <- "SSP2-4.5"
+future370_sim_data$scenario <- "SSP3-7.0"
+future585_sim_data$scenario <- "SSP5-8.5"
+
+future_sim_data_all <- rbind(future119_sim_data, future126_sim_data, future245_sim_data, future370_sim_data, future585_sim_data)
+
 # ================================================================================== #
 
 # Graph AFs through time
 
 # Make Site factor
-future_sim_data$Site <- factor(future_sim_data$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+future_sim_data_all$Site <- factor(future_sim_data_all$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 
 # Graph all sim AFs through time
-pdf("output/figures/SLiM/ph_future/AF_time_all.pdf", width = 11.5, height = 7)
-ggplot(future_sim_data, aes(x = year, y = AF_fut, color = Site, group=interaction(repId, Site))) + geom_line(linewidth = 1, alpha = 0.4) + 
+pdf("output/figures/SLiM/ph_future/AF_time_all_SSP.pdf", width = 25, height = 6)
+ggplot(future_sim_data_all, aes(x = year, y = AF_fut, color = Site, group=interaction(repId, Site))) + geom_line(linewidth = 1, alpha = 0.4) + 
     scale_color_manual(values = mycolors) + 
+    facet_wrap(~scenario, ncol = 5) +
     labs(x = "Years", y = "AF") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
 dev.off()
 
 # Subset
-future_sim_data_sub <- future_sim_data %>% filter(Site == "FC" | Site == "ARA" | Site == "CBL" | Site == "BMR" | Site == "STR")
+future_sim_data_all_sub <- future_sim_data_all %>% filter(Site == "FC" | Site == "ARA" | Site == "CBL" | Site == "BMR" | Site == "STR")
 
 # Graph subset
-pdf("output/figures/SLiM/ph_future/AF_time_all_sub_5pop.pdf", width = 11.5, height = 7)
-ggplot(future_sim_data_sub, aes(x = year, y = AF_fut, color = Site, group=interaction(repId, Site))) + geom_line(linewidth = 1, alpha = 0.4) + 
+pdf("output/figures/SLiM/ph_future/AF_time_all_SSP_sub_5pop.pdf", width = 25, height = 6)
+ggplot(future_sim_data_all_sub, aes(x = year, y = AF_fut, color = Site, group=interaction(repId, Site))) + geom_line(linewidth = 1, alpha = 0.4) + 
     scale_color_manual(values = mycolors_sub5) + 
+    facet_wrap(~scenario, ncol = 5) +
     labs(x = "Years", y = "AF") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
 dev.off()
 
 # ================================================================================== #
 
 # Average across the iterations
-future_avg <- future_sim_data %>% group_by(year, sim_eq) %>% reframe(AF_fut_avg = mean(AF_fut))
+future_avg_sub <- future_sim_data_all_sub %>% group_by(scenario, year, sim_eq) %>% reframe(AF_fut_avg = mean(AF_fut))
 
 # Join
-future_avg <- left_join(ecovars, future_avg, by = "sim_eq")
+future_avg_sub <- left_join(future_avg_sub, ecovars, by = "sim_eq")
 
 # Make Site factor
-future_avg$Site <- factor(future_avg$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+future_avg_sub$Site <- factor(future_avg_sub$Site, levels=c("FC", "ARA", "CBL", "BMR", "STR"))
 
 # ================================================================================== #
 
 # Graph mean (of reps) AFs through time
 
 # Graph AF vs time
-pdf("output/figures/SLiM/ph_future/AF_time.pdf", width = 10, height = 8.5)
-ggplot(future_avg, aes(x = (year+2000), y = AF_fut_avg, color = Site)) + geom_line(linewidth = 4) + 
-    scale_color_manual(values = mycolors) + scale_y_continuous(limits=c(0,1.0), breaks = c(0, 0.5, 1)) +
-    labs(x = "Year", y = "Allele Frequency") + theme_linedraw(base_size = 32) + theme(legend.position = "none")
-dev.off()
-# Graph AF vs time
-pdf("output/figures/SLiM/ph_future/AF_time_wider.pdf", width = 12, height = 7)
-ggplot(future_avg, aes(x = (year+2000), y = AF_fut_avg, color = Site)) + geom_line(linewidth = 4) + 
-    scale_color_manual(values = mycolors) + scale_y_continuous(limits=c(0,1.0), breaks = c(0, 0.5, 1)) + 
-    labs(x = "Year", y = "Allele Frequency") + theme_linedraw(base_size = 32) + theme(legend.position = "none")
-dev.off()
-
-# Subset
-future_avg_sub <- future_avg %>% filter(Site == "FC" | Site == "ARA" | Site == "CBL" | Site == "BMR" | Site == "STR")
-
-# Graph AF vs time
-pdf("output/figures/SLiM/ph_future/AF_time_sub.pdf", width = 9, height = 8)
+pdf("output/figures/SLiM/ph_future/AF_time_avg_sub.pdf", width = 25, height = 6)
 ggplot(future_avg_sub, aes(x = (year+2000), y = AF_fut_avg, color = Site)) + geom_line(linewidth = 4) + 
+    facet_wrap(~scenario, ncol = 5) +
     scale_color_manual(values = mycolors_sub5) + scale_y_continuous(limits=c(0,1.0), breaks = c(0, 0.5, 1)) +
     labs(x = "Year", y = "Allele Frequency") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
-dev.off()
-
-# ================================================================================== #
-
-# Delta AF
-
-# Final AF
-final_AF <- future_avg$AF_fut_avg[which(future_avg$year == 100)]
-# Add metadata
-ph_AF_change <- data.table(ecovars, final_AF)
-
-# Calc delta AF
-ph_AF_change$delta_AF <- future_avg$AF_fut_avg[which(future_avg$year == 100)] - future_avg$AF_fut_avg[which(future_avg$year == 21)]
-
-# Make Site factor
-ph_AF_change$Site <- factor(ph_AF_change$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
-
-# Graph delta AF as map
-# Get state data
-states <- map_data("state")
-# Subset data for only California and Oregon
-west_coast <- subset(states, region %in% c("california", "oregon"))
-
-# Graph Delta AF
-pdf("output/figures/SLiM/ph_future/Delta_AF_map.pdf", width = 9, height = 9)
-ggplot(data = west_coast) + 
-  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
-  geom_point(data = ph_AF_change, aes(x = Longitude, y = Latitude, fill = delta_AF), shape = 21, size = 9) + 
-  scale_fill_gradientn(colours=brewer.pal(9, "Purples"), name="delta AF", breaks = c(0.0, 0.3, 0.6, 0.9)) +
-  coord_fixed(1.3) +
-  scale_x_continuous(
-    limits = c(-125, -114.1),
-    breaks = seq(-125, -114.1, by = 3) # Tick marks every 0.5 units
-  ) + ylim(32, 48) +
-  xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 32) + 
-  theme(
-    panel.grid.major = element_blank(), # Removes major grid lines
-    panel.grid.minor = element_blank(), # Removes minor grid lines
-    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) + # Keeps outer rectangle
-  theme(legend.title = element_text(size = 22), legend.text = element_text(size = 20), legend.position = c(0.75, 0.825), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()

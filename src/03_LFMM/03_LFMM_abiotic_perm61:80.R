@@ -60,7 +60,7 @@ bio_oracle_sites_2010 <- read.csv("data/processed/enviro_data/Bio-oracle/bio_ora
 scaled_var <- bio_oracle_sites_2010 %>% select(all_of(var)) %>% scale()
 
 # Permutations to generate null expectation for LFMM
-foreach(l=94:100)%do%{
+foreach(l=61:80)%do%{
 
     # Set seed
     set.seed(l)
