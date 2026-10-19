@@ -79,4 +79,3 @@ LFMM_real <- foreach(w=file_names_v, .combine="rbind", .errorhandling = "remove"
 # Save output
 #save(LFMM_real, file = "data/processed/LFMM_analyses/LFMM_real_all.RData")
 save(LFMM_real, file = "data/processed/LFMM_analyses/LFMM_real_abiotic.RData")
-
