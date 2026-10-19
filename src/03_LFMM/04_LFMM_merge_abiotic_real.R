@@ -38,9 +38,11 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 
 # ================================================================================== #
 
-
-
 # Extract p-value for each environmental variable - real
+
+# Snp info
+load("data/processed/LFMM_analyses/snp.info.Rdata")
+str(snp.info)
 
 # Create list of file names for real data
 file_names = as.list(dir(path = 'data/processed/LFMM_analyses/real/', pattern = "pv_*"))
@@ -55,9 +57,10 @@ LFMM_real <- foreach(w=file_names_v, .combine="rbind", .errorhandling = "remove"
     message(w)
     # Load file
     o = get(load(w))
+    str(o)
 
     # Extract p-values and zscores per SNP
-    tmp <- data.frame(o$pvalues, o$zscores)
+    tmp <- data.frame(snp.info, o$pvalues, o$zscores)
 
     # Add column with variable
     tmp %<>% mutate(var = w) %>% mutate(var = str_remove(var, pattern = "data/processed/LFMM_analyses/real/pv_*"))

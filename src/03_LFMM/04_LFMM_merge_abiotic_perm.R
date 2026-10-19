@@ -44,8 +44,11 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 
 # ================================================================================== #
 
-
 # Extract p-value for each environmental variable - perm
+
+# Snp info
+load("data/processed/LFMM_analyses/snp.info.Rdata")
+str(snp.info)
 
 # Create list of file names for perm data
 file_names = as.list(dir(path = 'data/processed/LFMM_analyses/perm/', pattern = paste0("pv_", var, "_*")))
@@ -59,7 +62,7 @@ LFMM_perm <- foreach(w=file_names_v, .combine="rbind", .errorhandling = "remove"
     o = get(load(w))
 
     # Extract p-values and zscores per SNP
-    tmp <- data.frame(o$pvalues, o$zscores)
+    tmp <- data.frame(snp.info, o$pvalues, o$zscores)
 
     # Add column with variable
     tmp$var = var
