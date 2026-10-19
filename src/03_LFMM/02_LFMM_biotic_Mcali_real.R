@@ -52,7 +52,7 @@ load("data/raw/pooldata/pooldata.RData")
 allele_freqs_t_18pop <- fread("data/processed/LFMM_analyses/Ncan_afs_18pop.lfmm")
 
 # Load M californianus shell thickness data
-Mcalifornianus_data <- read.csv("data/processed/GEA/enviro_data/Mcali_thk/Mcalifornianus_data_clean_18pop.csv", header=T)
+Mcalifornianus_data <- read.csv("data/processed/enviro_data/Mcali_thk/Mcalifornianus_data_clean_18pop.csv", header=T)
 
 # ================================================================================== #
 

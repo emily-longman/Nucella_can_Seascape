@@ -40,7 +40,7 @@ if (!dir.exists(out_dir)) {dir.create(out_dir)}
 # Extract glm chunk for each environmental variable - real
 
 # Create list of file names for real data
-file_names = as.list(dir(path = '/gpfs2/scratch/elongman/Nucella_can_Seascape/data/processed//glms/glms_chunk_analysis_Mcali/real/', pattern = "GLM_Mcali_chunk_*"))
+file_names = as.list(dir(path = '/gpfs2/scratch/elongman/Nucella_can_Seascape/data/processed/glms/glms_chunk_analysis_Mcali/real/', pattern = "GLM_Mcali_chunk_*"))
 file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('/gpfs2/scratch/elongman/Nucella_can_Seascape/data/processed/glms/glms_chunk_analysis_Mcali/real/', x))))
 
 # Read all the files and add a column with the chunk
