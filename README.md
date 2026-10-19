@@ -23,8 +23,8 @@ The files for this project are organized in the file structure presented below. 
  - src/
     - 01_ecological_data/
     - 02_demography/
-    - 03_GEA_glms/
-    - 04_GEA_baypass/
+    - 03_glms/
+    - 04_baypass/
     - 05_outlier_analyses/
     - 06_genomic_offest/
     - 07_SLiM/
@@ -60,7 +60,7 @@ Filter the Pool-Seq dataset from [Longman et al. (2026)](https://royalsocietypub
 
 01_pca_poolfstat.R - Use [poolfstat](https://cran.r-project.org/web/packages/poolfstat/index.html) to fiter the VCF, creating a poolobject with ~8M SNPs. Subsequently, perform a PCA on the Pool-seq dataset.
 
-## Part 3 - Genotype environment association analyses using GLM framework (03_GEA_glms)
+## Part 3 - Abiotic and biotic drivers of adaptive genomic variation (03_glms)
 
 We used generalized linear models (GLMs) to identify associations between *N. canaliculata* allele frequencies and abiotic and biotic ecological variables. We used null expectations, calculated from 100 permutations, to assess the relative importance of the ecological variables.
 
