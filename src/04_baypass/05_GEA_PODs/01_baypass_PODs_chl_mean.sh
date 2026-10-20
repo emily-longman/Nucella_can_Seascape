@@ -79,7 +79,7 @@ fi
 # Change directory 
 cd $WORKING_FOLDER/data/processed/baypass/abiotic/chl_mean_POD
 
-# Run baypass in aux covaraiate mode to estimate Bayes Factors
+# Run baypass to estimate Bayes Factors
 $baypass -npop 19 \
 -gfile $WORKING_FOLDER/data/processed/baypass/PODs/G.POD8M.${SLURM_ARRAY_TASK_ID} \
 -poolsizefile $WORKING_FOLDER/data/processed/baypass/input_files/poolsize \

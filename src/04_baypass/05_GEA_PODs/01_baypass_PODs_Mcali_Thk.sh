@@ -79,7 +79,7 @@ fi
 # Change directory 
 cd $WORKING_FOLDER/data/processed/baypass/biotic/Mcali_IntegratedThk_POD
 
-# Run baypass in covariate mode to estimate Bayes Factors
+# Run baypass  to estimate Bayes Factors
 $baypass -npop 18 \
 -gfile $WORKING_FOLDER/data/processed/baypass/PODs/G.POD8M_subset18pop.${SLURM_ARRAY_TASK_ID} \
 -poolsizefile $WORKING_FOLDER/data/processed/baypass/input_files/subset18pop.poolsize \
