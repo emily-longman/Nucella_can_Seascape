@@ -86,7 +86,7 @@ $baypass -npop 19 \
 -omegafile $WORKING_FOLDER/data/processed/baypass/omega/NC_baypass_mat_omega.out \
 -efile $WORKING_FOLDER/guide_files/Baypass_o2_mean.txt \
 -d0yij 4 \
--outprefix NC_abiotic_ph_o2_mean_POD_run${SLURM_ARRAY_TASK_ID} \
+-outprefix NC_abiotic_o2_mean_POD_run${SLURM_ARRAY_TASK_ID} \
 -nthreads 20
 
 #--------------------------------------------------------------------------------
