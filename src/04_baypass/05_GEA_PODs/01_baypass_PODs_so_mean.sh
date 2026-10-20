@@ -84,7 +84,7 @@ $baypass -npop 19 \
 -gfile $WORKING_FOLDER/data/processed/baypass/PODs/G.POD8M.${SLURM_ARRAY_TASK_ID} \
 -poolsizefile $WORKING_FOLDER/data/processed/baypass/input_files/poolsize \
 -omegafile $WORKING_FOLDER/data/processed/baypass/omega/NC_baypass_mat_omega.out \
--efile $WORKING_FOLDER/guide_files/Baypass_2o_mean.txt \
+-efile $WORKING_FOLDER/guide_files/Baypass_so_mean.txt \
 -d0yij 4 \
 -outprefix NC_abiotic_so_mean_POD_run${SLURM_ARRAY_TASK_ID} \
 -nthreads 20
