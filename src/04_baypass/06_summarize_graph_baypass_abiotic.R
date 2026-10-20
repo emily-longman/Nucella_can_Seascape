@@ -1,4 +1,4 @@
-# Graph window analysis
+# Summarize Baypass
 
 # Clear memory
 rm(list=ls())
