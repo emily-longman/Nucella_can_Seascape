@@ -56,6 +56,20 @@ Mcalifornianus_data <- read.csv("data/processed/enviro_data/Mcali_thk/Mcaliforni
 
 # ================================================================================== #
 
+# Identify SNPs with no variance
+snp.var <- apply(allele_freqs_t_18pop, 2, stats::var)
+# How many SNPs have no variance?
+sum(snp.var == 0)
+# Index
+keep <- snp.var > 0
+
+# Filter SNPs with no variance
+allele_freqs_t_18pop_filt <- as.matrix(allele_freqs_t_18pop)[, keep]
+# Check dim
+dim(allele_freqs_t_18pop_filt)
+
+# ================================================================================== #
+
 # Extract and scale variable of interest
 scaled_var <- Mcalifornianus_data %>% select(all_of(var)) %>% scale()
 
@@ -71,13 +85,13 @@ foreach(l=41:60)%do%{
     # Univariate lfmm
 
     # Run LFMM2 on only one var
-    mod_lfmm2 <- lfmm2(input = allele_freqs_t_18pop, env = scaled_var_shuffle, K = 1, effect.sizes = TRUE)
+    mod_lfmm2 <- lfmm2(input = allele_freqs_t_18pop_filt, env = scaled_var_shuffle, K = 1, effect.sizes = TRUE)
 
     # Save
     save(mod_lfmm2, file = paste0("data/processed/LFMM_analyses/perm/mod_lfmm2_", var, "_perm", l, ".RData"))
 
     # Compute p-values
-    pv <- lfmm2.test(object = mod_lfmm2, input = allele_freqs_t_18pop, env = scaled_var_shuffle)
+    pv <- lfmm2.test(object = mod_lfmm2, input = allele_freqs_t_18pop_filt, env = scaled_var_shuffle)
 
     # Save
     save(pv, file = paste0("data/processed/LFMM_analyses/perm/pv_", var,"_perm", l, ".RData"))
