@@ -85,3 +85,22 @@ pv <- lfmm2.test(object = mod_lfmm2, input = allele_freqs_t_16pop, env = biotic_
 # Save
 save(pv, file = paste0("data/processed/LFMM_analyses/real/pv_", var, ".RData"))
 
+
+### Test with smaller dataset size
+allele_freqs_t_16pop_test <- allele_freqs_t_16pop[,1:50000]
+# Run LFMM2 on only one var
+mod_lfmm2 <- lfmm2(input = allele_freqs_t_16pop, env = biotic_scaled_var, K = 1, effect.sizes = TRUE)
+
+# Save
+save(mod_lfmm2, file = paste0("data/processed/LFMM_analyses/real/mod_lfmm2_", var, ".RData"))
+
+# B - effect size of the environmental variables per SNP
+# U - latent factors per pop
+# V - loadings of the latent factors on the SNPs
+
+# Compute p-values
+pv <- lfmm2.test(object = mod_lfmm2, input = allele_freqs_t_16pop, env = biotic_scaled_var)
+
+# Save
+save(pv, file = paste0("data/processed/LFMM_analyses/real/pv_", var, ".RData"))
+
