@@ -67,10 +67,24 @@ biotic_scaled_var <- biotic_scaled %>% select(all_of(var))
 
 # ================================================================================== #
 
+# Identify SNPs with no variance
+snp.var <- apply(allele_freqs_t_16pop, 2, stats::var)
+# How many SNPs have no variance?
+sum(snp.var == 0)
+# Index
+keep <- snp.var > 0
+
+# Filter SNPs with no variance
+allele_freqs_t_16pop_filt <- as.matrix(allele_freqs_t_16pop)[, keep]
+# Check dim
+dim(allele_freqs_t_16pop_filt)
+
+# ================================================================================== #
+
 # Univariate lfmm
 
 # Run LFMM2 on only one var
-mod_lfmm2 <- lfmm2(input = allele_freqs_t_16pop, env = biotic_scaled_var, K = 1, effect.sizes = TRUE)
+mod_lfmm2 <- lfmm2(input = allele_freqs_t_16pop_filt, env = biotic_scaled_var, K = 1, effect.sizes = TRUE)
 
 # Save
 save(mod_lfmm2, file = paste0("data/processed/LFMM_analyses/real/mod_lfmm2_", var, ".RData"))
@@ -80,27 +94,7 @@ save(mod_lfmm2, file = paste0("data/processed/LFMM_analyses/real/mod_lfmm2_", va
 # V - loadings of the latent factors on the SNPs
 
 # Compute p-values
-pv <- lfmm2.test(object = mod_lfmm2, input = allele_freqs_t_16pop, env = biotic_scaled_var)
+pv <- lfmm2.test(object = mod_lfmm2, input = allele_freqs_t_16pop_filt, env = biotic_scaled_var)
 
 # Save
 save(pv, file = paste0("data/processed/LFMM_analyses/real/pv_", var, ".RData"))
-
-
-### Test with smaller dataset size
-allele_freqs_t_16pop_test <- allele_freqs_t_16pop[,1:50000]
-# Run LFMM2 on only one var
-mod_lfmm2 <- lfmm2(input = allele_freqs_t_16pop, env = biotic_scaled_var, K = 1, effect.sizes = TRUE)
-
-# Save
-save(mod_lfmm2, file = paste0("data/processed/LFMM_analyses/real/mod_lfmm2_", var, ".RData"))
-
-# B - effect size of the environmental variables per SNP
-# U - latent factors per pop
-# V - loadings of the latent factors on the SNPs
-
-# Compute p-values
-pv <- lfmm2.test(object = mod_lfmm2, input = allele_freqs_t_16pop, env = biotic_scaled_var)
-
-# Save
-save(pv, file = paste0("data/processed/LFMM_analyses/real/pv_", var, ".RData"))
-
