@@ -70,14 +70,14 @@ hist.obj.env = foreach(i = 0:max(LFMM$perm), .combine = "rbind")%do%{
 }
 
 # Graph pval distribution
-pdf(paste0("output/figures/LFMM_analyses/LFMM_pval_dist_log_scale_", var, ".pdf"), width = 6, height = 5)
+pdf(paste0("output/figures/LFMM_analyses/LFMM_pval_dist_log_scale_", var, ".pdf"), width = 6.25, height = 5)
 ggplot(hist.obj.env, aes(x=(hist.obj.mids), y=hist.obj.counts/1000, group=perm, color=perm==0, alpha=perm==0)) +
   geom_line(linewidth = 2) + 
   scale_alpha_manual(values = c("FALSE" = 0.1, "TRUE" = 1)) +
   scale_size_manual(values = c("FALSE" = 0.7, "TRUE" = 1.5)) +
   scale_color_manual(values = c("FALSE" = "#f63b3b",  "TRUE" = "black")) +
-  scale_y_continuous(labels = function(x) format(x, scientific = FALSE)) +
-  labs(x = "P-values", y = "# Thousand SNPs") +
+  scale_y_continuous(limits = c(0, 1500000), labels = function(x) format(x, scientific = FALSE)) +
+  labs(title = paste0(var), x = "P-values", y = "# Thousand SNPs") +
   theme_bw(base_size = 30) +  theme(legend.position = "none") +
   scale_x_log10()
 dev.off()
@@ -85,26 +85,26 @@ dev.off()
 # ================================================================================== #
 
 # Calc summary stats
-LFMM_summary <- foreach(i = 0:max(LFMM$perm), .combine = "rbind")%do%{
-    # Extract for just one perm
-    tmp <- LFMM %>% filter(perm == i)
+#LFMM_summary <- foreach(i = 0:max(LFMM$perm), .combine = "rbind")%do%{
+#    # Extract for just one perm
+#    tmp <- LFMM %>% filter(perm == i)
 
-    # Create summary df
-    data.frame(
-        var = unique(tmp$var),
-        perm = i,
-        num_SNPs = dim(tmp)[1],
-        mean_zscores = mean(tmp$o.zscores),
-        num_SNPs_pval0.05 = sum(tmp$o.pvalues < 0.05),
-        mean_zscores_pval0.05 = mean(tmp$o.zscores[which(tmp$o.pvalues < 0.05)]),
-        num_SNPs_pval0.01 = sum(tmp$o.pvalues < 0.01),
-        mean_zscores_pval0.01 = mean(tmp$o.zscores[which(tmp$o.pvalues < 0.01)]),
-        num_SNPs_pval0.001 = sum(tmp$o.pvalues < 0.001),
-        mean_zscores_pval0.001 = mean(tmp$o.zscores[which(tmp$o.pvalues < 0.001)]),
-        num_SNPs_pvalbonferroni = sum(tmp$o.pvalues < 0.01/dim(tmp)[1]),
-        mean_zscores_pvalbonferroni = mean(tmp$o.zscores[which(tmp$o.pvalues < (0.01/dim(tmp)[1]))])
-    )
-}
+#    # Create summary df
+#    data.frame(
+#        var = unique(tmp$var),
+#        perm = i,
+#        num_SNPs = dim(tmp)[1],
+#        mean_zscores = mean(tmp$o.zscores),
+#        num_SNPs_pval0.05 = sum(tmp$o.pvalues < 0.05),
+#        mean_zscores_pval0.05 = mean(tmp$o.zscores[which(tmp$o.pvalues < 0.05)]),
+#        num_SNPs_pval0.01 = sum(tmp$o.pvalues < 0.01),
+#        mean_zscores_pval0.01 = mean(tmp$o.zscores[which(tmp$o.pvalues < 0.01)]),
+#        num_SNPs_pval0.001 = sum(tmp$o.pvalues < 0.001),
+#        mean_zscores_pval0.001 = mean(tmp$o.zscores[which(tmp$o.pvalues < 0.001)]),
+#        num_SNPs_pvalbonferroni = sum(tmp$o.pvalues < 0.01/dim(tmp)[1]),
+#        mean_zscores_pvalbonferroni = mean(tmp$o.zscores[which(tmp$o.pvalues < (0.01/dim(tmp)[1]))])
+#    )
+#}
 
 # Save output
-save(LFMM_summary, file = paste0("data/processed/LFMM_analyses/LFMM_summary_", var, ".RData"))
+#save(LFMM_summary, file = paste0("data/processed/LFMM_analyses/LFMM_summary_", var, ".RData"))
