@@ -68,7 +68,7 @@ fi
 #--------------------------------------------------------------------------------
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_vary_m/m_${m}
+cd $WORKING_FOLDER/data/processed/SLiM/ph_future/ph_vary_m
 
 # Set root
 ROOT=$WORKING_FOLDER/data/processed/SLiM/ph_future/ph_vary_m

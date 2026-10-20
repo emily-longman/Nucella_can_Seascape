@@ -20,7 +20,7 @@
 #SBATCH --mem=10G
 
 # Submit job array
-#SBATCH --array=4 #1-5
+#SBATCH --array=1-5
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
