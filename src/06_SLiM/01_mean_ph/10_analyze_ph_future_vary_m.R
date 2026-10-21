@@ -220,12 +220,12 @@ future_sim_north_melt <- future_sim_north %>%
 future_sim_north_melt$m <- as.numeric(future_sim_north_melt$m)
 
 # How many sims didn't get the allele by 2100 in the northernmost pop?
-future_sim_north_melt_NA <- future_sim_north_melt %>%
+future_sim_north_melt_summary <- future_sim_north_melt %>%
   group_by(Site, m) %>%
   summarise(na_count = sum(is.na(year)), na_perc = na_count/length(year)*100)
 
 # Make column with scientific notation
-future_sim_north_melt_NA <- future_sim_north_melt_NA %>% mutate(m_scientific = format(m, scientific = TRUE, digits = 1))
+future_sim_north_melt_summary <- future_sim_north_melt_summary %>% mutate(m_scientific = format(m, scientific = TRUE, digits = 1))
 
 # Make scientific function more presentable
 fancy_scientific <- function(l) {
@@ -240,7 +240,7 @@ sd(future_sim_north_melt$year[which(future_sim_north_melt$m == 0.01)])
 
 # Graph - For each migration, how many sims failed to have allele get to FC?
 pdf("output/figures/SLiM/ph_future/AF_FC_pops_vary_m_NAs.pdf", width = 7.5, height = 8.1)
-ggplot(future_sim_north_melt_NA, aes(y = na_perc, x = m_scientific, fill = Site, color = Site)) + 
+ggplot(future_sim_north_melt_summary, aes(y = na_perc, x = m_scientific, fill = Site, color = Site)) + 
     geom_point(size = 12) +
     scale_fill_manual(values =  mycolors_sub5[1]) + scale_color_manual(values =  mycolors_sub5[1]) + 
     scale_x_discrete(labels = fancy_scientific) + ylim(-5, 105)+

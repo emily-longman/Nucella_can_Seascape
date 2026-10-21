@@ -35,7 +35,6 @@ library(colorspace)
 # Color palette
 nb.cols <- 19
 mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
-mycolors_sub <- hcl.colors(n = 7, palette = "SunsetDark")[c(1,3,4,6)]
 mycolors_sub5 <- hcl.colors(n = 7, palette = "SunsetDark")[c(1,3,4,6,7)]
 
 # ================================================================================== #
@@ -151,7 +150,7 @@ sites5 <- meta %>% filter(Site == "FC" | Site == "ARA" | Site == "CBL" | Site ==
 sites5$Site <- factor(sites5$Site, levels = c("FC", "ARA", "CBL", "BMR", "STR"))
 
 # Graph with sites
-pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_DELTA_ph_mean_ggplot_sites_sub_alt_larger_5pop.pdf",  width = 7.5, height = 10) 
+pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_DELTA_ph_mean_ggplot_sites_sub_alt_larger_5pop.pdf",  width = 7, height = 9) 
 ggplot(raster_df_ph_diff, aes(x = x, y = y, fill = diff)) +
   geom_raster(aes(fill=diff)) +
   scale_fill_gradientn(colours=rev(brewer.pal(6, "YlOrRd")), name="Delta pH") +
@@ -167,7 +166,7 @@ ggplot(raster_df_ph_diff, aes(x = x, y = y, fill = diff)) +
     panel.grid.minor = element_blank(), # Removes minor grid lines
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.5)) +
   labs(x = "Longitude", y = "Latitude") +
-  theme(legend.title = element_text(size = 26), legend.text = element_text(size = 20), legend.position = c(0.725, 0.83), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid")) + guides(fill = "none")
+  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.755, 0.84), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid")) + guides(fill = "none")
 dev.off()
 pdf("output/figures/enviro/Bio-oracle/Raster_bio-oracle_DELTA_ph_mean_ggplot_sites_sub_alt_smaller_5pop.pdf",  width = 6, height = 8) 
 ggplot(raster_df_ph_diff, aes(x = x, y = y, fill = diff)) +

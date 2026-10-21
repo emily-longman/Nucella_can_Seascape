@@ -88,7 +88,33 @@ future119_sim_data <- left_join(future119_sim_data, ecovars, by = "sim_eq")
 
 # Save output
 save(future119_sim_data, file = "data/processed/SLiM/ph_future/sim_future119_data.Rdata")
-#load("data/processed/SLiM/ph_future/ph_results/sim_future119_data.Rdata")
+#load("data/processed/SLiM/ph_future/sim_future119_data.Rdata")
+
+# Make Site factor
+future119_sim_data$Site <- factor(future119_sim_data$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+# Subset
+future119_sim_data_sub <- future119_sim_data %>% filter(Site == "FC" | Site == "ARA" | Site == "CBL" | Site == "BMR" | Site == "STR")
+# Average across the iterations
+future119_avg_sub <- future119_sim_data_sub %>% group_by(scenario, year, sim_eq) %>% 
+        reframe(AF_fut_avg = mean(AF_fut), AF_fut_sd = sd(AF_fut), n = n(), AF_fut_se = AF_fut_sd/sqrt(n), 
+        lower = AF_fut_avg-1.96*AF_fut_se, upper = AF_fut_avg+1.96*AF_fut_se)
+# Join
+future119_avg_sub <- left_join(future119_avg_sub, ecovars, by = "sim_eq")
+# Make Site factor
+future119_avg_sub$Site <- factor(future119_avg_sub$Site, levels=c("FC", "ARA", "CBL", "BMR", "STR"))
+
+# Graph subset
+pdf("output/figures/SLiM/ph_future/AF_time_all_SSP119_sub_5pop_indReps.pdf", width = 5.081, height = 4)
+ggplot() + 
+        geom_line(data = future119_sim_data_sub, aes(x = year+2000, y = AF_fut, color = Site, group=interaction(repId, Site)), 
+                linewidth = 0.5, alpha = 0.01) + 
+        geom_line(data = future119_avg_sub, aes(x = year+2000, y = AF_fut_avg, color = Site), linewidth = 2) +
+        scale_x_continuous(breaks = c(2020, 2060, 2100)) +
+        scale_y_continuous(breaks = c(0, 0.5, 1)) +
+        scale_color_manual(values = mycolors_sub5) + 
+        labs(x = "Years", y = "Allele Frequency") + theme_linedraw(base_size = 30) + theme(legend.position = "none") + 
+        theme(plot.margin = margin(t = 40, r = 30,  b = 5.5, l = 5.5))
+dev.off()
 
 #####
 
@@ -125,7 +151,34 @@ future126_sim_data <- left_join(future126_sim_data, ecovars, by = "sim_eq")
 
 # Save output
 save(future126_sim_data, file = "data/processed/SLiM/ph_future/sim_future126_data.Rdata")
-#load("data/processed/SLiM/ph_future/ph_results/sim_future126_data.Rdata")
+#load("data/processed/SLiM/ph_future/sim_future126_data.Rdata")
+
+# Make Site factor
+future126_sim_data$Site <- factor(future126_sim_data$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+# Subset
+future126_sim_data_sub <- future126_sim_data %>% filter(Site == "FC" | Site == "ARA" | Site == "CBL" | Site == "BMR" | Site == "STR")
+# Average across the iterations
+future126_avg_sub <- future126_sim_data_sub %>% group_by(scenario, year, sim_eq) %>% 
+        reframe(AF_fut_avg = mean(AF_fut), AF_fut_sd = sd(AF_fut), n = n(), AF_fut_se = AF_fut_sd/sqrt(n), 
+        lower = AF_fut_avg-1.96*AF_fut_se, upper = AF_fut_avg+1.96*AF_fut_se)
+# Join
+future126_avg_sub <- left_join(future126_avg_sub, ecovars, by = "sim_eq")
+# Make Site factor
+future126_avg_sub$Site <- factor(future126_avg_sub$Site, levels=c("FC", "ARA", "CBL", "BMR", "STR"))
+
+# Graph subset
+pdf("output/figures/SLiM/ph_future/AF_time_all_SSP126_sub_5pop_indReps.pdf", width = 5.081, height = 4)
+ggplot() + 
+        geom_line(data = future126_sim_data_sub, aes(x = year+2000, y = AF_fut, color = Site, group=interaction(repId, Site)), 
+                linewidth = 0.5, alpha = 0.01) + 
+        geom_line(data = future126_avg_sub, aes(x = year+2000, y = AF_fut_avg, color = Site), linewidth = 2) +
+        scale_x_continuous(breaks = c(2020, 2060, 2100)) +
+        scale_y_continuous(breaks = c(0, 0.5, 1)) +
+        scale_color_manual(values = mycolors_sub5) + 
+        labs(x = "Years", y = "Allele Frequency") + theme_linedraw(base_size = 30) + theme(legend.position = "none") + 
+        theme(plot.margin = margin(t = 40, r = 30,  b = 5.5, l = 5.5))
+dev.off()
+
 
 #####
 
@@ -162,7 +215,35 @@ future245_sim_data <- left_join(future245_sim_data, ecovars, by = "sim_eq")
 
 # Save output
 save(future245_sim_data, file = "data/processed/SLiM/ph_future/sim_future245_data.Rdata")
-#load("data/processed/SLiM/ph_future/ph_results/sim_future245_data.Rdata")
+#load("data/processed/SLiM/ph_future/sim_future245_data.Rdata")
+
+
+# Make Site factor
+future245_sim_data$Site <- factor(future245_sim_data$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+# Subset
+future245_sim_data_sub <- future245_sim_data %>% filter(Site == "FC" | Site == "ARA" | Site == "CBL" | Site == "BMR" | Site == "STR")
+# Average across the iterations
+future245_avg_sub <- future245_sim_data_sub %>% group_by(scenario, year, sim_eq) %>% 
+        reframe(AF_fut_avg = mean(AF_fut), AF_fut_sd = sd(AF_fut), n = n(), AF_fut_se = AF_fut_sd/sqrt(n), 
+        lower = AF_fut_avg-1.96*AF_fut_se, upper = AF_fut_avg+1.96*AF_fut_se)
+# Join
+future245_avg_sub <- left_join(future245_avg_sub, ecovars, by = "sim_eq")
+# Make Site factor
+future245_avg_sub$Site <- factor(future245_avg_sub$Site, levels=c("FC", "ARA", "CBL", "BMR", "STR"))
+
+# Graph subset
+pdf("output/figures/SLiM/ph_future/AF_time_all_SSP245_sub_5pop_indReps.pdf", width = 5.081, height = 4)
+ggplot() + 
+        geom_line(data = future245_sim_data_sub, aes(x = year+2000, y = AF_fut, color = Site, group=interaction(repId, Site)), 
+                linewidth = 0.5, alpha = 0.01) + 
+        geom_line(data = future245_avg_sub, aes(x = year+2000, y = AF_fut_avg, color = Site), linewidth = 2) +
+        scale_x_continuous(breaks = c(2020, 2060, 2100)) +
+        scale_y_continuous(breaks = c(0, 0.5, 1)) +
+        scale_color_manual(values = mycolors_sub5) + 
+        labs(x = "Years", y = "Allele Frequency") + theme_linedraw(base_size = 30) + theme(legend.position = "none") + 
+        theme(plot.margin = margin(t = 40, r = 30,  b = 5.5, l = 5.5))
+dev.off()
+
 
 #####
 
@@ -199,7 +280,7 @@ future370_sim_data <- left_join(future370_sim_data, ecovars, by = "sim_eq")
 
 # Save output
 save(future370_sim_data, file = "data/processed/SLiM/ph_future/sim_future370_data.Rdata")
-#load("data/processed/SLiM/ph_future/ph_results/sim_future370_data.Rdata")
+#load("data/processed/SLiM/ph_future/sim_future370_data.Rdata")
 
 
 #####
@@ -237,8 +318,33 @@ future585_sim_data <- left_join(future585_sim_data, ecovars, by = "sim_eq")
 
 # Save output
 save(future585_sim_data, file = "data/processed/SLiM/ph_future/sim_future585_data.Rdata")
-#load("data/processed/SLiM/ph_future/ph_results/sim_future585_data.Rdata")
+#load("data/processed/SLiM/ph_future/sim_future585_data.Rdata")
 
+# Make Site factor
+future585_sim_data$Site <- factor(future585_sim_data$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
+# Subset
+future585_sim_data_sub <- future585_sim_data %>% filter(Site == "FC" | Site == "ARA" | Site == "CBL" | Site == "BMR" | Site == "STR")
+# Average across the iterations
+future585_avg_sub <- future585_sim_data_sub %>% group_by(scenario, year, sim_eq) %>% 
+        reframe(AF_fut_avg = mean(AF_fut), AF_fut_sd = sd(AF_fut), n = n(), AF_fut_se = AF_fut_sd/sqrt(n), 
+        lower = AF_fut_avg-1.96*AF_fut_se, upper = AF_fut_avg+1.96*AF_fut_se)
+# Join
+future585_avg_sub <- left_join(future585_avg_sub, ecovars, by = "sim_eq")
+# Make Site factor
+future585_avg_sub$Site <- factor(future585_avg_sub$Site, levels=c("FC", "ARA", "CBL", "BMR", "STR"))
+
+# Graph subset
+pdf("output/figures/SLiM/ph_future/AF_time_all_SSP585_sub_5pop_indReps.pdf", width = 5.081, height = 4)
+ggplot() + 
+        geom_line(data = future585_sim_data_sub, aes(x = year+2000, y = AF_fut, color = Site, group=interaction(repId, Site)), 
+                linewidth = 0.5, alpha = 0.01) + 
+        geom_line(data = future585_avg_sub, aes(x = year+2000, y = AF_fut_avg, color = Site), linewidth = 2) +
+        scale_x_continuous(breaks = c(2020, 2060, 2100)) +
+        scale_y_continuous(breaks = c(0, 0.5, 1)) +
+        scale_color_manual(values = mycolors_sub5) + 
+        labs(x = "Years", y = "Allele Frequency") + theme_linedraw(base_size = 30) + theme(legend.position = "none") + 
+        theme(plot.margin = margin(t = 40, r = 30,  b = 5.5, l = 5.5))
+dev.off()
 
 # ================================================================================== #
 

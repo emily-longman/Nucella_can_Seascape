@@ -34,7 +34,7 @@ library(RColorBrewer)
 # Color palette
 nb.cols <- 19
 mycolors <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(nb.cols))
-mycolors_sub <- hcl.colors(n = 7, palette = "SunsetDark")[c(1,3,4,6)]
+mycolors_sub5 <- hcl.colors(n = 7, palette = "SunsetDark")[c(1,3,4,6,7)]
 
 # ================================================================================== #
 
@@ -102,6 +102,21 @@ ggplot(ph_ssp585_sites, aes(x = decade+2020, y = ph_mean, color = location)) + g
     labs(x = "Year", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
 dev.off()
 
+# Graph just 5 simulated sites
+ph_ssp585_sites5 <- ph_ssp585_sites %>% filter(location == "FC" | location == "ARA" | location == "CBL" | location == "BMR" | location == "STR")
+pred_ssp585sites5 <- pred_ssp585 %>% filter(Site == "FC" | Site == "ARA" | Site == "CBL" | Site == "BMR" | Site == "STR")
+# Graph
+pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_ssp585_sub_5pop.pdf", width = 5.08, height = 3)
+ggplot(ph_ssp585_sites5, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 5, shape = 16, alpha = 0.9) +
+    geom_line(data = pred_ssp585sites5, aes(x = year, y = ph, color = Site), linewidth = 1)+
+    #geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
+    scale_x_continuous(breaks = c(2020, 2060, 2100)) +
+    scale_y_continuous(limits = c(7.6, 8.078), breaks = c(7.6, 7.8, 8.0)) +
+    geom_hline(yintercept=thresh, col = "black", linetype = "dashed") +
+    scale_fill_manual(values = mycolors_sub5) + scale_color_manual(values = mycolors_sub5) + 
+    labs(x = "Year", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none") +
+    theme(plot.margin = margin(t = 5.5, r = 30,  b = 5.5, l = 5.5))
+dev.off()
 
 # ================================================================================== #
 
@@ -202,6 +217,21 @@ ggplot(ph_ssp245_sites, aes(x = decade+2020, y = ph_mean, color = location)) + g
     labs(x = "Year", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
 dev.off()
 
+# Graph just 5 simulated sites
+ph_ssp245_sites5 <- ph_ssp245_sites %>% filter(location == "FC" | location == "ARA" | location == "CBL" | location == "BMR" | location == "STR")
+pred_ssp245sites5 <- pred_ssp245 %>% filter(Site == "FC" | Site == "ARA" | Site == "CBL" | Site == "BMR" | Site == "STR")
+# Graph
+pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_ssp245_sub_5pop.pdf", width = 5.08, height = 3)
+ggplot(ph_ssp245_sites5, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 5, shape = 16, alpha = 0.9) +
+    geom_line(data = pred_ssp245sites5, aes(x = year, y = ph, color = Site), linewidth = 1)+
+    #geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
+    scale_x_continuous(breaks = c(2020, 2060, 2100)) +
+    scale_y_continuous(limits = c(7.6, 8.078), breaks = c(7.6, 7.8, 8.0)) +
+    geom_hline(yintercept=thresh, col = "black", linetype = "dashed") +
+    scale_fill_manual(values = mycolors_sub5) + scale_color_manual(values = mycolors_sub5) + 
+    labs(x = "Year", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none") +
+    theme(plot.margin = margin(t = 5.5, r = 30,  b = 5.5, l = 5.5))
+dev.off()
 
 # ================================================================================== #
 
@@ -300,4 +330,20 @@ ggplot(ph_ssp119_sites, aes(x = decade+2020, y = ph_mean, color = location)) + g
     ylim(7.6, 8.078) +
     scale_fill_manual(values = mycolors) + scale_color_manual(values = mycolors) + 
     labs(x = "Year", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none")
+dev.off()
+
+# Graph just 5 simulated sites
+ph_ssp119_sites5 <- ph_ssp119_sites %>% filter(location == "FC" | location == "ARA" | location == "CBL" | location == "BMR" | location == "STR")
+pred_ssp119sites5 <- pred_ssp119 %>% filter(Site == "FC" | Site == "ARA" | Site == "CBL" | Site == "BMR" | Site == "STR")
+# Graph
+pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_ssp119_sub_5pop.pdf", width = 5.08, height = 3)
+ggplot(ph_ssp119_sites5, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 5, shape = 16, alpha = 0.9) +
+    geom_line(data = pred_ssp119sites5, aes(x = year, y = ph, color = Site), linewidth = 1)+
+    #geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
+    scale_x_continuous(breaks = c(2020, 2060, 2100)) +
+    scale_y_continuous(limits = c(7.6, 8.078), breaks = c(7.6, 7.8, 8.0)) +
+    geom_hline(yintercept=thresh, col = "black", linetype = "dashed") +
+    scale_fill_manual(values = mycolors_sub5) + scale_color_manual(values = mycolors_sub5) + 
+    labs(x = "Year", y = "Mean pH") + theme_linedraw(base_size = 30) + theme(legend.position = "none") +
+    theme(plot.margin = margin(t = 5.5, r = 30,  b = 5.5, l = 5.5))
 dev.off()
