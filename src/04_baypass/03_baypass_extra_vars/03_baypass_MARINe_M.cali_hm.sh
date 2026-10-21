@@ -53,7 +53,7 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 echo "Doing Baypass run:" ${SLURM_ARRAY_TASK_ID}
 
 # Set var
-var=M.cali_m
+var=M.cali_hm
 
 #--------------------------------------------------------------------------------
 
