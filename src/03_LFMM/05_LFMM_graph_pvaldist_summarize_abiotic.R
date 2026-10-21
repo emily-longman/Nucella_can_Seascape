@@ -76,7 +76,7 @@ ggplot(hist.obj.env, aes(x=(hist.obj.mids), y=hist.obj.counts/1000, group=perm, 
   scale_alpha_manual(values = c("FALSE" = 0.1, "TRUE" = 1)) +
   scale_size_manual(values = c("FALSE" = 0.7, "TRUE" = 1.5)) +
   scale_color_manual(values = c("FALSE" = "#f63b3b",  "TRUE" = "black")) +
-  scale_y_continuous(limits = c(0, 1500), labels = function(x) format(x, scientific = FALSE)) +
+  scale_y_continuous(limits = c(0, 1750), labels = function(x) format(x, scientific = FALSE)) +
   labs(title = paste0(var), x = "P-values", y = "# Thousand SNPs") +
   theme_bw(base_size = 30) +  theme(legend.position = "none") +
   scale_x_log10()
