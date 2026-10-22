@@ -752,14 +752,25 @@ rona.scaled.ssp119.output$scenario <- "SSP1-1.9"
 rona.all <- bind_rows(rona.scaled.ssp119.output, rona.scaled.ssp126.output, rona.scaled.ssp245.output, rona.scaled.ssp370.output, rona.scaled.ssp585.output)
 
 # Set colors
-ssp_colors = sequential_hcl(5, palette = "Blues 3")
+ssp_colors = sequential_hcl(6, palette = "Blues 3")
 
 # Graph RONA for all SSP scenarios
 pdf("output/figures/genomic_offset/Baypass_scaled_sspALL_rona.pdf", width = 5.75, height = 6)
 ggplot(rona.all, aes(x = Lat, y = rona.scaled, fill = scenario))+
   geom_point(shape = 21, size = 8) + 
-  scale_fill_manual(values = rev(ssp_colors)) +
+  scale_fill_manual(values = rev(ssp_colors[2:6])) +
   scale_x_continuous(limits = c(34, 45.5), breaks = c(36, 40, 44)) +
+  scale_y_continuous(limits = c(-0.01, 0.21), breaks = c(0, 0.1, 0.2)) +
+  labs(x = "Latitude", y = "RONA") +
+  theme_linedraw(base_size = 30) + theme(legend.position = "none")
+dev.off()
+
+# Graph RONA for all SSP scenarios - lines
+pdf("output/figures/genomic_offset/Baypass_scaled_sspALL_rona_lines.pdf", width = 5.75, height = 6)
+ggplot(rona.all, aes(x = Lat, y = rona.scaled, color = scenario))+
+  geom_line(linewidth = 4) + 
+  scale_color_manual(values = rev(ssp_colors[1:5])) +
+  scale_x_continuous(limits = c(34.5, 45.25), breaks = c(36, 40, 44)) +
   scale_y_continuous(limits = c(-0.01, 0.21), breaks = c(0, 0.1, 0.2)) +
   labs(x = "Latitude", y = "RONA") +
   theme_linedraw(base_size = 30) + theme(legend.position = "none")
