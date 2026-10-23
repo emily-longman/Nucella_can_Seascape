@@ -53,6 +53,9 @@ ecovars <- fread("guide_files/Nucella_ph_shellt.txt")
 names(ecovars)[2] = "Site"
 ecovars %<>% mutate(sim_eq = paste("p", 0:18, sep =""))
 
+# m values
+ms <- c(0.01, 0.001, 0.0001, 0.00001, 0.000001)
+
 # ================================================================================== #
 
 # Minimum function to determine when  the allele even get to the northern most populations
@@ -71,9 +74,6 @@ fancy_scientific <- function(l) {
 # ================================================================================== #
 
 # Load data and merge files for each m
-
-# m values
-ms <- c(0.01, 0.001, 0.0001, 0.00001, 0.000001)
 
 # Create list of file names for data
 file_names = as.list(dir(path = 'data/processed/SLiM/ph_future/ph_vary_m_SSP119/', pattern = "phclineAFs_future_freq.*"))
@@ -124,6 +124,16 @@ future_sim_data_vary_m_SSP119 %<>% left_join(ecovars, by = "sim_eq")
 future_sim_data_vary_m_SSP119$Site <- factor(future_sim_data_vary_m_SSP119$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 # Make m a factor
 future_sim_data_vary_m_SSP119$m <- factor(future_sim_data_vary_m_SSP119$m, ms)
+
+# Subset
+future_sim_data_vary_m_SSP119_sub5 <- future_sim_data_vary_m_SSP119 %>% filter(Site == "FC" | Site == "SH" | Site == "CBL" | Site == "BMR" | Site == "STR")
+# Graph AF vs time - per sim
+pdf("output/figures/SLiM/ph_future/AF_time_vary_m_SSP119_sub_5pop.pdf", width = 8, height = 14)
+ggplot(future_sim_data_vary_m_SSP119_sub5, aes(x = (year+2000), y = AF_fut, color = Site, group=interaction(repId, Site))) + 
+    geom_line(linewidth = 1, alpha = 0.2) + 
+    facet_wrap(~m, ncol = 1) + scale_color_manual(values = mycolors_sub5) + 
+    labs(x = "Years", y = "Allele Frequency") + theme_linedraw(base_size = 30) + theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
+dev.off()
 
 # Loop through the iterations and calc when allele gets to northernmost pop
 future_sim_north_SSP119 <-
@@ -221,6 +231,17 @@ future_sim_data_vary_m_SSP126$Site <- factor(future_sim_data_vary_m_SSP126$Site,
 # Make m a factor
 future_sim_data_vary_m_SSP126$m <- factor(future_sim_data_vary_m_SSP126$m, ms)
 
+# Subset
+future_sim_data_vary_m_SSP126_sub5 <- future_sim_data_vary_m_SSP126 %>% filter(Site == "FC" | Site == "SH" | Site == "CBL" | Site == "BMR" | Site == "STR")
+# Graph AF vs time - per sim
+pdf("output/figures/SLiM/ph_future/AF_time_vary_m_SSP126_sub_5pop.pdf", width = 8, height = 14)
+ggplot(future_sim_data_vary_m_SSP126_sub5, aes(x = (year+2000), y = AF_fut, color = Site, group=interaction(repId, Site))) + 
+    geom_line(linewidth = 1, alpha = 0.2) + 
+    facet_wrap(~m, ncol = 1) + scale_color_manual(values = mycolors_sub5) + 
+    labs(x = "Years", y = "Allele Frequency") + theme_linedraw(base_size = 30) + theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
+dev.off()
+
+
 # Loop through the iterations and calc when allele gets to northernmost pop
 future_sim_north_SSP126 <-
     foreach(mig=levels(future_sim_data_vary_m_SSP126$m), .combine="rbind", .errorhandling = "remove")%do%{  
@@ -316,6 +337,17 @@ future_sim_data_vary_m_SSP245 %<>% left_join(ecovars, by = "sim_eq")
 future_sim_data_vary_m_SSP245$Site <- factor(future_sim_data_vary_m_SSP245$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 # Make m a factor
 future_sim_data_vary_m_SSP245$m <- factor(future_sim_data_vary_m_SSP245$m, ms)
+
+# Subset
+future_sim_data_vary_m_SSP245_sub5 <- future_sim_data_vary_m_SSP245 %>% filter(Site == "FC" | Site == "SH" | Site == "CBL" | Site == "BMR" | Site == "STR")
+# Graph AF vs time - per sim
+pdf("output/figures/SLiM/ph_future/AF_time_vary_m_SSP245_sub_5pop.pdf", width = 8, height = 14)
+ggplot(future_sim_data_vary_m_SSP245_sub5, aes(x = (year+2000), y = AF_fut, color = Site, group=interaction(repId, Site))) + 
+    geom_line(linewidth = 1, alpha = 0.2) + 
+    facet_wrap(~m, ncol = 1) + scale_color_manual(values = mycolors_sub5) + 
+    labs(x = "Years", y = "Allele Frequency") + theme_linedraw(base_size = 30) + theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
+dev.off()
+
 
 # Loop through the iterations and calc when allele gets to northernmost pop
 future_sim_north_SSP245 <-
@@ -413,6 +445,16 @@ future_sim_data_vary_m_SSP370$Site <- factor(future_sim_data_vary_m_SSP370$Site,
 # Make m a factor
 future_sim_data_vary_m_SSP370$m <- factor(future_sim_data_vary_m_SSP370$m, ms)
 
+# Subset
+future_sim_data_vary_m_SSP370_sub5 <- future_sim_data_vary_m_SSP370 %>% filter(Site == "FC" | Site == "SH" | Site == "CBL" | Site == "BMR" | Site == "STR")
+# Graph AF vs time - per sim
+pdf("output/figures/SLiM/ph_future/AF_time_vary_m_SSP370_sub_5pop.pdf", width = 8, height = 14)
+ggplot(future_sim_data_vary_m_SSP370_sub5, aes(x = (year+2000), y = AF_fut, color = Site, group=interaction(repId, Site))) + 
+    geom_line(linewidth = 1, alpha = 0.2) + 
+    facet_wrap(~m, ncol = 1) + scale_color_manual(values = mycolors_sub5) + 
+    labs(x = "Years", y = "Allele Frequency") + theme_linedraw(base_size = 30) + theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
+dev.off()
+
 # Loop through the iterations and calc when allele gets to northernmost pop
 future_sim_north_SSP370 <-
     foreach(mig=levels(future_sim_data_vary_m_SSP370$m), .combine="rbind", .errorhandling = "remove")%do%{  
@@ -501,13 +543,22 @@ future_sim_data_vary_m_SSP585 <- future_sim_data_vary_m_SSP585 %>% mutate(m_scie
 save(future_sim_data_vary_m_SSP585, file = "data/processed/SLiM/ph_future/sim_future_data_vary_m_SSP585.RData")
 #load("data/processed/SLiM/ph_future/sim_future_data_vary_m_SSP585.RData")
 
-
 # Join
 future_sim_data_vary_m_SSP585 %<>% left_join(ecovars, by = "sim_eq")
 # Make Site factor
 future_sim_data_vary_m_SSP585$Site <- factor(future_sim_data_vary_m_SSP585$Site, levels=c("FC", "SLR", "SH", "ARA", "CBL", "PSG", "STC", "KH", "VD", "FR", "BMR", "PGP", "PL", "SBR", "PSN", "PB", "HZD", "OCT", "STR"))
 # Make m a factor
 future_sim_data_vary_m_SSP585$m <- factor(future_sim_data_vary_m_SSP585$m, ms)
+
+# Subset
+future_sim_data_vary_m_SSP585_sub5 <- future_sim_data_vary_m_SSP585 %>% filter(Site == "FC" | Site == "SH" | Site == "CBL" | Site == "BMR" | Site == "STR")
+# Graph AF vs time - per sim
+pdf("output/figures/SLiM/ph_future/AF_time_vary_m_SSP585_sub_5pop.pdf", width = 8, height = 14)
+ggplot(future_sim_data_vary_m_SSP585_sub5, aes(x = (year+2000), y = AF_fut, color = Site, group=interaction(repId, Site))) + 
+    geom_line(linewidth = 1, alpha = 0.2) + 
+    facet_wrap(~m, ncol = 1) + scale_color_manual(values = mycolors_sub5) + 
+    labs(x = "Years", y = "Allele Frequency") + theme_linedraw(base_size = 30) + theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
+dev.off()
 
 # Loop through the iterations and calc when allele gets to northernmost pop
 future_sim_north_SSP585 <-
