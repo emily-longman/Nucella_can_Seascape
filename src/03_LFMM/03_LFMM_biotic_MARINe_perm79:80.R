@@ -74,7 +74,7 @@ dim(allele_freqs_t_16pop_filt)
 scaled_var <- MARINe_data %>% select(all_of(var)) %>% scale()
 
 # Permutations to generate null expectation for LFMM
-foreach(l=61:80)%do%{
+foreach(l=79:80)%do%{
 
     # Set seed
     set.seed(l)

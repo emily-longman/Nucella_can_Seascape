@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=LFMM_biotic_MARINe_perm81:100
+#SBATCH --job-name=LFMM_biotic_MARINe_perm98:100
 
 # Specify partition
 #SBATCH --partition=general
@@ -14,16 +14,16 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=10:00:00  #30:00:00 
+#SBATCH --time=30:00:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
 #SBATCH --mem=200G 
 
 # Request CPU
-#SBATCH --cpus-per-task=15 #25
+#SBATCH --cpus-per-task=25
 
 # Submit job array
-#SBATCH --array=14 #1-14
+#SBATCH --array=1,2,5,6,9,13,14  #1-14
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -76,8 +76,9 @@ echo ${i}
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_MARINe_perm21:40.R "${i}"
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_MARINe_perm41:60.R "${i}"
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_MARINe_perm61:80.R "${i}"
-Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_MARINe_perm79:80.R "${i}"
+#Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_MARINe_perm79:80.R "${i}"
 #script --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_MARINe_perm81:100.R "${i}"
+script --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_MARINe_perm98:100.R "${i}"
 
 #--------------------------------------------------------------------------------
 
