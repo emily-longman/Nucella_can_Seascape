@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=LFMM_biotic_Mcali_perm80
+#SBATCH --job-name=LFMM_biotic_Mcali_perm97:100
 
 # Specify partition
 #SBATCH --partition=general
@@ -23,7 +23,7 @@
 #SBATCH --cpus-per-task=10 #25
 
 # Submit job array
-#SBATCH --array=3,4 #1-4
+#SBATCH --array=1 #1-4
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -76,8 +76,9 @@ echo ${i}
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_Mcali_perm21:40.R "${i}"
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_Mcali_perm41:60.R "${i}"
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_Mcali_perm61:80.R "${i}"
-Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_Mcali_perm80.R "${i}"
+#Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_Mcali_perm80.R "${i}"
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_Mcali_perm81:100.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_Mcali_perm97:100.R "${i}"
 
 #--------------------------------------------------------------------------------
 
