@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=LFMM_merge_abiotic_launch
+#SBATCH --job-name=LFMM_merge_perm_abiotic_launch
 
 # Specify partition
 #SBATCH --partition=general
