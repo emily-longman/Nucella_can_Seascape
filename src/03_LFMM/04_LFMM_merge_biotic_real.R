@@ -49,7 +49,7 @@ file_names = as.list(dir(path = 'data/processed/LFMM_analyses/real/', pattern = 
 file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/LFMM_analyses/real/', x))))
 
 # Extract just abiotic
-file_names_v <- file_names_v[c(5,18,21,22,23,24,25,26,27)]
+file_names_v <- file_names_v[-c(5,18,21,22,23,24,25,26,27)]
 
 # Read all the files and add a column with the chunk
 LFMM_real <- foreach(w=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
@@ -78,4 +78,4 @@ LFMM_real <- foreach(w=file_names_v, .combine="rbind", .errorhandling = "remove"
 
 # Save output
 #save(LFMM_real, file = "data/processed/LFMM_analyses/LFMM_real_all.RData")
-save(LFMM_real, file = "data/processed/LFMM_analyses/LFMM_real_abiotic.RData")
+save(LFMM_real, file = "data/processed/LFMM_analyses/LFMM_real_biotic.RData")
