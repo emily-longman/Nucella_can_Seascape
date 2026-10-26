@@ -276,4 +276,23 @@ colnames(quadrat_filt_sum)[6] <- "species_lump"
 marine_sum <- rbind(point_contact_filt_sum[,-15], quadrat_filt_sum, swath_filt_sum)
 
 # Write summary table
-write.csv(marine_sum, "data/processed/enviro_data/MARINe/marine_long_sum.csv", row.names=F)
+write.csv(marine_sum, "data/processed/enviro_data/MARINe/marine_sum.csv", row.names=F)
+
+# ================================================================================== #
+
+# Reformatted and matched sites to N. canaliculata sites
+MARINe_data_16pops <- read.csv("data/processed/enviro_data/MARINe/MARINe_data_16pops.csv", header = T)
+
+# Load geosphere
+library(geodist)
+
+# Calculate distance
+MARINe_data_16pops$distance_m <- geodist(
+    x = MARINe_data_16pops[, c("longitude", "latitude")],
+    y = MARINe_data_16pops[, c("longitude_marine", "latitude_marine")],
+    paired = TRUE, measure = "geodesic")
+
+# Change to km
+MARINe_data_16pops$distance_km <- MARINe_data_16pops$distance_m/1000
+
+MARINe_data_16pops[,c(6,29)]
