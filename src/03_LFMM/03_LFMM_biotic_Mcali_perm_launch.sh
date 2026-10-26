@@ -76,9 +76,7 @@ echo ${i}
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_Mcali_perm21:40.R "${i}"
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_Mcali_perm41:60.R "${i}"
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_Mcali_perm61:80.R "${i}"
-#Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_Mcali_perm80.R "${i}"
-#Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_Mcali_perm81:100.R "${i}"
-Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_Mcali_perm97:100.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_Mcali_perm81:100.R "${i}"
 
 #--------------------------------------------------------------------------------
 
