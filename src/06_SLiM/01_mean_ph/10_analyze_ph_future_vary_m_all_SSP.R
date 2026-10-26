@@ -59,7 +59,6 @@ ms <- c(0.01, 0.001, 0.0001, 0.00001, 0.000001)
 # ================================================================================== #
 
 # Minimum function to determine when  the allele even get to the northern most populations
-
 min_func <- function(x) {
 if (all(is.na(x))) (NA) else min(x, na.rm = TRUE)
 }
@@ -151,9 +150,11 @@ future_sim_north_SSP119 <-
         data.frame(
         repId = i,
         m = mig,
-        FC = min_func(tmp2$year[which(tmp2$Site == "FC" & tmp2$AF_fut > 0)])+2000)
+        FC = min_func(tmp2$year[which(tmp2$Site == "FC" & tmp2$AF_fut > 0)])+2000,
+        avg_AF = mean(tmp2$AF_fut[which(tmp2$Site == "FC" & tmp2$year == 100)]))
     }
 }
+# Allele makes it to FC at high migration, but AF is really low
 
 # Make numeric
 future_sim_north_SSP119$m <- as.numeric(future_sim_north_SSP119$m)
