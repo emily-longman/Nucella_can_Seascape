@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=LFMM_merge_launch_Mcali
+#SBATCH --job-name=LFMM_merge_launch_biotic
 
 # Specify partition
 #SBATCH --partition=general
@@ -14,10 +14,10 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=10:00:00 
+#SBATCH --time=01:00:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=600G 
+#SBATCH --mem=50G 
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%j.out
