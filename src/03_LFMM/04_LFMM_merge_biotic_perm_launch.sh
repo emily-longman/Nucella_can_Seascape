@@ -46,7 +46,7 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 #--------------------------------------------------------------------------------
 
 # Guide file 
-ECOL_VARIABLES=$WORKING_FOLDER/guide_files/Seascape_vars_names_abiotic.txt
+ECOL_VARIABLES=$WORKING_FOLDER/guide_files/Seascape_vars_names_biotic.txt
 
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers. 
 # Env variable name   
@@ -69,7 +69,7 @@ echo ${i}
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/04_LFMM_merge_abiotic_perm.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/04_LFMM_merge_biotic_perm.R "${i}"
 
 #--------------------------------------------------------------------------------
 
