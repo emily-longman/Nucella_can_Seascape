@@ -69,7 +69,7 @@ echo ${i}
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/04_LFMM_merge_abiotic_perm.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/05_merge_abiotic_perm.R "${i}"
 
 #--------------------------------------------------------------------------------
 
