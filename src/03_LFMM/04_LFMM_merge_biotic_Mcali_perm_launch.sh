@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=LFMM_merge_perm_biotic_launch
+#SBATCH --job-name=LFMM_merge_perm_biotic_Mcali_launch
 
 # Specify partition
 #SBATCH --partition=general
@@ -20,7 +20,7 @@
 #SBATCH --mem=500G 
 
 # Submit job array
-#SBATCH --array=1-18
+#SBATCH --array=1-4
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -46,7 +46,7 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 #--------------------------------------------------------------------------------
 
 # Guide file 
-ECOL_VARIABLES=$WORKING_FOLDER/guide_files/Seascape_vars_names_biotic.txt
+ECOL_VARIABLES=$WORKING_FOLDER/guide_files/Seascape_vars_names_biotic_Mcali.txt
 
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers. 
 # Env variable name   
@@ -69,7 +69,7 @@ echo ${i}
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/04_LFMM_merge_biotic_perm.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/04_LFMM_merge_biotic_Mcali_perm.R "${i}"
 
 #--------------------------------------------------------------------------------
 

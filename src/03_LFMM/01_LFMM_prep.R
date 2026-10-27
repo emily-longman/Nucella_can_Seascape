@@ -86,6 +86,19 @@ allele_freqs_t_18pop <- allele_freqs_t[-which(pooldata@poolnames == "ARA"),]
 # Write
 write.lfmm(allele_freqs_t_18pop, "data/processed/LFMM_analyses/Ncan_afs_18pop.lfmm")
 
+# Identify SNPs with no variance
+snp.var <- apply(allele_freqs_t_18pop, 2, stats::var)
+# How many SNPs have no variance?
+sum(snp.var == 0)
+# Index
+keep <- snp.var > 0
+
+# Make snp_id column
+snp.info.18pop <- snp.info[keep,]
+
+# Write snp info - 8,274,302 SNPs
+save(snp.info.18pop, file="data/processed/LFMM_analyses/snp.info.18pop.Rdata")
+
 # ================================================================================== #
 
 # Subset for MARINe analyses - i.e., remove CBL, VD, OCT populations
@@ -93,6 +106,19 @@ allele_freqs_t_16pop <- allele_freqs_t[-which(pooldata@poolnames == "CBL" | pool
 
 # Write
 write.lfmm(allele_freqs_t_16pop, "data/processed/LFMM_analyses/Ncan_afs_16pop.lfmm")
+
+# Identify SNPs with no variance
+snp.var <- apply(allele_freqs_t_16pop, 2, stats::var)
+# How many SNPs have no variance?  SNPs
+sum(snp.var == 0)
+# Index
+keep <- snp.var > 0
+
+# Make snp_id column
+snp.info.16pop <- snp.info[keep,]
+
+# Write snp info - 8,260,461 SNPs
+save(snp.info.16pop, file="data/processed/LFMM_analyses/snp.info.16pop.Rdata")
 
 # ================================================================================== #
 

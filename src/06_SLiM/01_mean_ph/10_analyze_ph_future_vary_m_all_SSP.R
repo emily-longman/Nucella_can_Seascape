@@ -134,6 +134,32 @@ ggplot(future_sim_data_vary_m_SSP119_sub5, aes(x = (year+2000), y = AF_fut, colo
     labs(x = "Years", y = "Allele Frequency") + theme_linedraw(base_size = 30) + theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
 dev.off()
 
+
+# Graph AF vs time - per sim
+future_sim_data_vary_m_SSP119_sub5_msub <- future_sim_data_vary_m_SSP119_sub5[which(future_sim_data_vary_m_SSP119_sub5$m == 0.01 | future_sim_data_vary_m_SSP119_sub5$m == 0.0001  | future_sim_data_vary_m_SSP119_sub5$m == 0.000001),]
+# Average across the iterations
+futureSSP119_avg_sub5_msub <- future_sim_data_vary_m_SSP119_sub5_msub %>% group_by(m, m_scientific, year, Site) %>% 
+        reframe(AF_fut_avg = mean(AF_fut), AF_fut_sd = sd(AF_fut), n = n())
+# Join
+futureSSP119_avg_sub5_msub <- left_join(futureSSP119_avg_sub5_msub, ecovars, by = "Site")
+
+# Graph subset
+pdf("output/figures/SLiM/ph_future/AF_time_vary_m_SSP119_sub_5pop_msub.pdf", width = 5, height = 7)
+ggplot() + 
+        geom_line(data = future_sim_data_vary_m_SSP119_sub5_msub, aes(x = year+2000, y = AF_fut, color = Site, group=interaction(m, repId, Site)), 
+                linewidth = 0.5, alpha = 0.01) + 
+        geom_line(data = futureSSP119_avg_sub5_msub, aes(x = year+2000, y = AF_fut_avg, group = Site, color = Site), linewidth = 2) +
+        facet_wrap(~m_scientific, ncol = 1, labeller = labeller(m_scientific = function(x) paste0("m = ", x))) + 
+        scale_x_continuous(breaks = c(2020, 2060, 2100)) +
+        scale_y_continuous(breaks = c(0, 0.5, 1)) +
+        scale_color_manual(values = mycolors_sub5) + 
+        labs(x = "Years", y = "Allele Frequency") + theme_linedraw(base_size = 30) + 
+        theme(legend.position = "none",
+            strip.text = element_text(size = 14, colour = "black", margin = margin(t = 3, b = 3, l = 0, r = 0)),
+            strip.background = element_rect(fill = "white", colour = "black"), 
+            plot.margin = margin(t = 40, r = 30,  b = 5.5, l = 5.5))
+dev.off()
+
 # Loop through the iterations and calc when allele gets to northernmost pop
 future_sim_north_SSP119 <-
     foreach(mig=levels(future_sim_data_vary_m_SSP119$m), .combine="rbind", .errorhandling = "remove")%do%{  
