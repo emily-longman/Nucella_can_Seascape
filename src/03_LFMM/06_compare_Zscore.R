@@ -41,11 +41,14 @@ LFMM_sum <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")
 
 # Format
 LFMM_sum$var <- as.factor(LFMM_sum$var)
+# Filter NAs
+LFMM_sum_filt <- LFMM_sum[!is.nan(LFMM_sum$mean_zscores_pvalbonferroni),]
 
 # Graph bonferroni zscores
-pdf("output/figures/LFMM_analyses/LFMM_zscore_abiotic.pdf", width = 6, height = 6)
-ggplot(LFMM_sum, aes(x=mean_zscores_pvalbonferroni, y=var, color=perm==0)) +
-  geom_point() + 
-  scale_color_manual(values = c("FALSE" = "#f63b3b",  "TRUE" = "black")) +
-  theme_bw(base_size = 30) +  theme(legend.position = "none") 
+pdf("output/figures/LFMM_analyses/LFMM_filt_zscore_abiotic.pdf", width = 7, height = 8)
+ggplot(LFMM_sum_filt, aes(x=mean_zscores_pvalbonferroni, y=var)) +
+    geom_boxplot(data = LFMM_sum_filt[which(LFMM_sum_filt$perm != 0),], aes(x=mean_zscores_pvalbonferroni, y=var), color = "grey") +
+    geom_point(data = LFMM_sum_filt[which(LFMM_sum_filt$perm == 0),], aes(x=mean_zscores_pvalbonferroni, y=var), color = "black") + 
+    labs(x = "Bonferroni\nZ-scores", y = "") +
+    theme_bw(base_size = 30)
 dev.off()

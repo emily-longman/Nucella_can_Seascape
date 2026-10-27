@@ -72,7 +72,7 @@ echo ${i}
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/05_graph_pvaldist_summarize_abiotic.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/05_summarize_pvaldist_abiotic.R "${i}"
 
 #--------------------------------------------------------------------------------
 
