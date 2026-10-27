@@ -27,6 +27,9 @@ library(magrittr)
 
 # ================================================================================== #
 
+# Load seascape var full names
+var_full_names <- read.csv("guide_files/Seascape_vars_full_names.csv", header=T)
+
 # Load real data
 
 # Abiotic
@@ -90,7 +93,7 @@ ggplot(summary_abiotic, aes(x=mids, y=mean_abs_zscore, color = var)) +
     theme_bw(base_size = 30)
 dev.off()
 
-#####
+###########
 
 # Calc summary stats
 summary_abiotic_sigSNPs <- foreach(i = vars_abiotic, .combine = "rbind")%do%{
@@ -101,34 +104,36 @@ summary_abiotic_sigSNPs <- foreach(i = vars_abiotic, .combine = "rbind")%do%{
     
     # Make table
     data.frame(
-        var = i, 
+        variable = i, 
         n_sig = sum(tmp$o.pvalues < 0.05),
         mean_abs_zscore = mean(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.05)])),
         median_abs_zscore = median(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.05)])),
         max_abs_zscore =  max(abs(tmp$o.zscores)),
         abs_zscore_quant_95 = q[1],
         abs_zscore_quant_99 = q[2],
-        abs_zscore_quant_99.5 = q[3],
         abs_zscore_quant_99.5 = q[3]
     )
 }
 
+# Join with full names
+summary_abiotic_sigSNPs <- left_join(summary_abiotic_sigSNPs, var_full_names, by="variable")
+
 # Graph z scores for p<0.05
-pdf("output/figures/LFMM_analyses/LFMM_zscore_pval0.05.pdf", width = 8, height = 8)
-ggplot(summary_abiotic_sigSNPs, aes(x = mean_abs_zscore, y = reorder(var, mean_abs_zscore))) + 
-  geom_point() + 
-  labs(x = expression("Mean " * abs(z)), y = "") +
+pdf("output/figures/LFMM_analyses/LFMM_zscore_pval0.05_abiotic.pdf", width = 9, height = 5.5)
+ggplot(summary_abiotic_sigSNPs, aes(x = mean_abs_zscore, y = reorder(variable_full_name_edit, mean_abs_zscore))) + 
+  geom_point(size = 8) + 
+  labs(x = expression("Mean " * abs(z)* " for p<0.05"), y = "") +
   xlim(0, 5.5) +
-  theme_linedraw(base_size=30)
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
 dev.off()
 
 # Graph z scores for 99.9%
-pdf("output/figures/LFMM_analyses/LFMM_zscore_99.9perc.pdf", width = 8, height = 8)
-ggplot(summary_abiotic_sigSNPs, aes(x = abs_zscore_quant_99.5, y = reorder(var, abs_zscore_quant_99.5))) + 
-  geom_point() + 
+pdf("output/figures/LFMM_analyses/LFMM_zscore_99.9perc_abiotic.pdf", width = 9, height = 5.5)
+ggplot(summary_abiotic_sigSNPs, aes(x = abs_zscore_quant_99.5, y = reorder(variable_full_name_edit, abs_zscore_quant_99.5))) + 
+  geom_point(size = 8) + 
   labs(x = expression("99.9% Percentile " * abs(z)), y = "") +
-  xlim(0, 5.5) +
-  theme_linedraw(base_size=30)
+  xlim(0, 8) +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
 dev.off()
 
 # ================================================================================== #
@@ -174,6 +179,50 @@ ggplot(summary_biotic_Mcali, aes(x=mids, y=mean_abs_zscore, color = var)) +
 dev.off()
 
 
+###########
+
+# Calc summary stats
+summary_biotic_Mcali_sigSNPs <- foreach(i = vars_Mcali, .combine = "rbind")%do%{
+    # Extract for just one var
+    tmp <- LFMM_real_Mcali %>% filter(var == i)
+    # Summarize
+    q <- quantile(abs(tmp$o.zscores), probs = c(0.95, 0.99, 0.995, 0.999), na.rm = T)
+    
+    # Make table
+    data.frame(
+        variable = i, 
+        n_sig = sum(tmp$o.pvalues < 0.05),
+        mean_abs_zscore = mean(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.05)])),
+        median_abs_zscore = median(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.05)])),
+        max_abs_zscore =  max(abs(tmp$o.zscores)),
+        abs_zscore_quant_95 = q[1],
+        abs_zscore_quant_99 = q[2],
+        abs_zscore_quant_99.5 = q[3]
+    )
+}
+
+
+# Join with full names
+summary_biotic_Mcali_sigSNPs <- left_join(summary_biotic_Mcali_sigSNPs, var_full_names, by="variable")
+
+# Graph z scores for p<0.05
+pdf("output/figures/LFMM_analyses/LFMM_zscore_pval0.05_biotic_Mcali.pdf", width = 9, height = 3.5)
+ggplot(summary_biotic_Mcali_sigSNPs, aes(x = mean_abs_zscore, y = reorder(variable_full_name_edit, mean_abs_zscore))) + 
+  geom_point(size = 8) + 
+  labs(x = expression("Mean " * abs(z)* " for p<0.05"), y = "") +
+  xlim(0, 4.5) +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
+dev.off()
+
+# Graph z scores for 99.9%
+pdf("output/figures/LFMM_analyses/LFMM_zscore_99.9perc_biotic_Mcali.pdf", width = 9, height = 3.5)
+ggplot(summary_biotic_Mcali_sigSNPs, aes(x = abs_zscore_quant_99.5, y = reorder(variable_full_name_edit, abs_zscore_quant_99.5))) + 
+  geom_point(size = 8) + 
+  labs(x = expression("99.9% Percentile " * abs(z)), y = "") +
+  xlim(0, 6.5) +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
+dev.off()
+
 # ================================================================================== #
 
 # List of variables
@@ -216,14 +265,75 @@ ggplot(summary_biotic_MARINe, aes(x=mids, y=mean_abs_zscore, color = var)) +
     theme_bw(base_size = 30)
 dev.off()
 
+###########
+
+# Calc summary stats
+summary_biotic_MARINe_sigSNPs <- foreach(i = vars_MARINe, .combine = "rbind")%do%{
+    # Extract for just one var
+    tmp <- LFMM_real_MARINe %>% filter(var == i)
+    # Summarize
+    q <- quantile(abs(tmp$o.zscores), probs = c(0.95, 0.99, 0.995, 0.999), na.rm = T)
+    
+    # Make table
+    data.frame(
+        variable = i, 
+        n_sig = sum(tmp$o.pvalues < 0.05),
+        mean_abs_zscore = mean(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.05)])),
+        median_abs_zscore = median(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.05)])),
+        max_abs_zscore =  max(abs(tmp$o.zscores)),
+        abs_zscore_quant_95 = q[1],
+        abs_zscore_quant_99 = q[2],
+        abs_zscore_quant_99.5 = q[3]
+    )
+}
+
+
+# Join with full names
+summary_biotic_MARINe_sigSNPs <- left_join(summary_biotic_MARINe_sigSNPs, var_full_names, by="variable")
+
+# Graph z scores for p<0.05
+pdf("output/figures/LFMM_analyses/LFMM_zscore_pval0.05_biotic_MARINe.pdf", width = 9, height = 6.5)
+ggplot(summary_biotic_MARINe_sigSNPs, aes(x = mean_abs_zscore, y = reorder(variable_full_name_edit, mean_abs_zscore))) + 
+  geom_point(size = 8) + 
+  labs(x = expression("Mean " * abs(z)* " for p<0.05"), y = "") +
+  xlim(0, 3) +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
+dev.off()
+
+# Graph z scores for 99.9%
+pdf("output/figures/LFMM_analyses/LFMM_zscore_99.9perc_biotic_MARINe.pdf", width = 9, height = 6.5)
+ggplot(summary_biotic_MARINe_sigSNPs, aes(x = abs_zscore_quant_99.5, y = reorder(variable_full_name_edit, abs_zscore_quant_99.5))) + 
+  geom_point(size = 8) + 
+  labs(x = expression("99.9% Percentile " * abs(z)), y = "") +
+  xlim(0, 12.5) +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
+dev.off()
+
 # ================================================================================== #
 
 # Join biotic datasets
-summary_biotic <- rbind(summary_biotic_Mcali, summary_biotic_MARINe)
+summary_biotic <- rbind(summary_biotic_Mcali_sigSNPs, summary_biotic_MARINe_sigSNPs)
+
+
+# Graph z scores for p<0.05
+pdf("output/figures/LFMM_analyses/LFMM_zscore_pval0.05_biotic.pdf", width = 9, height = 9)
+ggplot(summary_biotic, aes(x = mean_abs_zscore, y = reorder(variable_full_name_edit, mean_abs_zscore))) + 
+  geom_point(size = 8) + 
+  labs(x = expression("Mean " * abs(z)* " for p<0.05"), y = "") +
+  xlim(0, 4.5) +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
+dev.off()
+
+# Graph z scores for 99.9%
+pdf("output/figures/LFMM_analyses/LFMM_zscore_99.9perc_biotic.pdf", width = 9, height = 9)
+ggplot(summary_biotic, aes(x = abs_zscore_quant_99.5, y = reorder(variable_full_name_edit, abs_zscore_quant_99.5))) + 
+  geom_point(size = 8) + 
+  labs(x = expression("99.9% Percentile " * abs(z)), y = "") +
+  xlim(0, 12.5) +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
+dev.off()
 
 # ================================================================================== #
-# ================================================================================== #
-
 
 # Save output
 save(summary, file = "data/processed/LFMM_analyses/LFMM_summary_abiotic.RData")

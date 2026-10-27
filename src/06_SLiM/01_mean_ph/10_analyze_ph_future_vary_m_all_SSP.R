@@ -127,9 +127,9 @@ future_sim_data_vary_m_SSP119$m <- factor(future_sim_data_vary_m_SSP119$m, ms)
 # Subset
 future_sim_data_vary_m_SSP119_sub5 <- future_sim_data_vary_m_SSP119 %>% filter(Site == "FC" | Site == "SH" | Site == "CBL" | Site == "BMR" | Site == "STR")
 # Graph AF vs time - per sim
-pdf("output/figures/SLiM/ph_future/AF_time_vary_m_SSP119_sub_5pop.pdf", width = 8, height = 14)
+pdf("output/figures/SLiM/ph_future/AF_time_vary_m_SSP119_sub_5pop.pdf", width = 5.5, height = 14)
 ggplot(future_sim_data_vary_m_SSP119_sub5, aes(x = (year+2000), y = AF_fut, color = Site, group=interaction(repId, Site))) + 
-    geom_line(linewidth = 1, alpha = 0.2) + 
+    geom_line(linewidth = 1, alpha = 0.2) + scale_y_continuous(breaks = c(0, 0.5, 1)) +
     facet_wrap(~m, ncol = 1) + scale_color_manual(values = mycolors_sub5) + 
     labs(x = "Years", y = "Allele Frequency") + theme_linedraw(base_size = 30) + theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
 dev.off()
@@ -177,7 +177,8 @@ future_sim_north_SSP119 <-
         repId = i,
         m = mig,
         FC = min_func(tmp2$year[which(tmp2$Site == "FC" & tmp2$AF_fut > 0)])+2000,
-        avg_AF = mean(tmp2$AF_fut[which(tmp2$Site == "FC" & tmp2$year == 100)]))
+        FC_common = min_func(tmp2$year[which(tmp2$Site == "FC" & tmp2$AF_fut > 0.05)])+2000,
+        avg_AF_2100 = mean(tmp2$AF_fut[which(tmp2$Site == "FC" & tmp2$year == 100)]))
     }
 }
 # Allele makes it to FC at high migration, but AF is really low
@@ -188,11 +189,11 @@ future_sim_north_SSP119$m <- as.numeric(future_sim_north_SSP119$m)
 # How many sims didn't get the allele by 2100 in the northernmost pop?
 future_sim_north_SSP119_summary <- future_sim_north_SSP119 %>%
   group_by(m) %>%
-  summarise(na_count = sum(is.na(FC)), na_perc = na_count/length(FC)*100)
+  summarise(na_count = sum(is.na(FC)), na_perc = na_count/length(FC)*100, 
+            na_count_common = sum(is.na(FC_common)), na_perc_common = na_count_common/length(FC_common)*100)
 
 # Make column with scientific notation
 future_sim_north_SSP119_summary %<>% mutate(m_scientific = format(m, scientific = TRUE, digits = 1))
-
 
 # Graph - For each migration, how many sims failed to have allele get to FC?
 pdf("output/figures/SLiM/ph_future/AF_FC_pops_vary_m_SSP119.pdf", width = 6, height = 3)
@@ -201,12 +202,24 @@ ggplot(future_sim_north_SSP119_summary, aes(y = na_perc, x = m_scientific)) +
     #scale_fill_manual(values =  mycolors_sub5[1]) + scale_color_manual(values =  mycolors_sub5[1]) + 
     scale_x_discrete(labels = fancy_scientific) + 
     scale_y_continuous(limits=c(-5, 105), breaks = c(0, 50, 100))+
-    labs(x = "Migration", y = "% Simulations\n Allele Failed\n to Arrive") + theme_linedraw(base_size = 30) + 
+    labs(x = "Migration Rate", y = "% Simulations\n Allele Failed\n to Arrive") + theme_linedraw(base_size = 30) + 
     guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
     theme(legend.position = "none")
 dev.off()
 
-#######
+# Graph - For each migration, how many sims failed to have allele become common at FC?
+pdf("output/figures/SLiM/ph_future/AF_FC_pops_vary_m_SSP119_common.pdf", width = 5.2714, height = 3.1)
+ggplot(future_sim_north_SSP119_summary, aes(y = na_perc_common, x = m_scientific)) + 
+    geom_point(size = 5, color = mycolors_sub5[1]) +
+    #scale_fill_manual(values =  mycolors_sub5[1]) + scale_color_manual(values =  mycolors_sub5[1]) + 
+    scale_x_discrete(labels = fancy_scientific) + 
+    scale_y_continuous(limits=c(-5, 105), breaks = c(0, 50, 100))+
+    labs(x = "Migration Rate", y = "% Sims\n MAF > 0.05") + theme_linedraw(base_size = 30) + 
+    guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
+    theme(legend.position = "none", plot.margin = margin(t = 30, r = 5, b = 5, l = 5))
+dev.off()
+
+# ================================================================================== #
 
 # Create list of file names for data
 file_names = as.list(dir(path = 'data/processed/SLiM/ph_future/ph_vary_m_SSP126/', pattern = "phclineAFs_future_freq.*"))
@@ -261,9 +274,9 @@ future_sim_data_vary_m_SSP126$m <- factor(future_sim_data_vary_m_SSP126$m, ms)
 # Subset
 future_sim_data_vary_m_SSP126_sub5 <- future_sim_data_vary_m_SSP126 %>% filter(Site == "FC" | Site == "SH" | Site == "CBL" | Site == "BMR" | Site == "STR")
 # Graph AF vs time - per sim
-pdf("output/figures/SLiM/ph_future/AF_time_vary_m_SSP126_sub_5pop.pdf", width = 8, height = 14)
+pdf("output/figures/SLiM/ph_future/AF_time_vary_m_SSP126_sub_5pop.pdf", width = 5.5, height = 14)
 ggplot(future_sim_data_vary_m_SSP126_sub5, aes(x = (year+2000), y = AF_fut, color = Site, group=interaction(repId, Site))) + 
-    geom_line(linewidth = 1, alpha = 0.2) + 
+    geom_line(linewidth = 1, alpha = 0.2) +  scale_y_continuous(breaks = c(0, 0.5, 1)) +
     facet_wrap(~m, ncol = 1) + scale_color_manual(values = mycolors_sub5) + 
     labs(x = "Years", y = "Allele Frequency") + theme_linedraw(base_size = 30) + theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
 dev.off()
@@ -285,7 +298,9 @@ future_sim_north_SSP126 <-
         data.frame(
         repId = i,
         m = mig,
-        FC = min_func(tmp2$year[which(tmp2$Site == "FC" & tmp2$AF_fut > 0)])+2000)
+        FC = min_func(tmp2$year[which(tmp2$Site == "FC" & tmp2$AF_fut > 0)])+2000,
+        FC_common = min_func(tmp2$year[which(tmp2$Site == "FC" & tmp2$AF_fut > 0.05)])+2000,
+        avg_AF_2100 = mean(tmp2$AF_fut[which(tmp2$Site == "FC" & tmp2$year == 100)]))
     }
 }
 
@@ -295,7 +310,8 @@ future_sim_north_SSP126$m <- as.numeric(future_sim_north_SSP126$m)
 # How many sims didn't get the allele by 2100 in the northernmost pop?
 future_sim_north_SSP126_summary <- future_sim_north_SSP126 %>%
   group_by(m) %>%
-  summarise(na_count = sum(is.na(FC)), na_perc = na_count/length(FC)*100)
+  summarise(na_count = sum(is.na(FC)), na_perc = na_count/length(FC)*100, 
+            na_count_common = sum(is.na(FC_common)), na_perc_common = na_count_common/length(FC_common)*100)
 
 # Make column with scientific notation
 future_sim_north_SSP126_summary %<>% mutate(m_scientific = format(m, scientific = TRUE, digits = 1))
@@ -308,12 +324,24 @@ ggplot(future_sim_north_SSP126_summary, aes(y = na_perc, x = m_scientific)) +
     #scale_fill_manual(values =  mycolors_sub5[1]) + scale_color_manual(values =  mycolors_sub5[1]) + 
     scale_x_discrete(labels = fancy_scientific) + 
     scale_y_continuous(limits=c(-5, 105), breaks = c(0, 50, 100))+
-    labs(x = "Migration", y = "% Simulations\n Allele Failed\n to Arrive") + theme_linedraw(base_size = 30) + 
+    labs(x = "Migration Rate", y = "% Simulations\n Allele Failed\n to Arrive") + theme_linedraw(base_size = 30) + 
     guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
     theme(legend.position = "none")
 dev.off()
 
-#######
+# Graph - For each migration, how many sims failed to have allele become common at FC?
+pdf("output/figures/SLiM/ph_future/AF_FC_pops_vary_m_SSP126_common.pdf", width = 5.2714, height = 3.1)
+ggplot(future_sim_north_SSP126_summary, aes(y = na_perc_common, x = m_scientific)) + 
+    geom_point(size = 5, color = mycolors_sub5[1]) +
+    #scale_fill_manual(values =  mycolors_sub5[1]) + scale_color_manual(values =  mycolors_sub5[1]) + 
+    scale_x_discrete(labels = fancy_scientific) + 
+    scale_y_continuous(limits=c(-5, 105), breaks = c(0, 50, 100))+
+    labs(x = "Migration Rate", y = "% Sims\n MAF > 0.05") + theme_linedraw(base_size = 30) + 
+    guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
+    theme(legend.position = "none", plot.margin = margin(t = 30, r = 5, b = 5, l = 5))
+dev.off()
+
+# ================================================================================== #
 
 # Create list of file names for data
 file_names = as.list(dir(path = 'data/processed/SLiM/ph_future/ph_vary_m_SSP245/', pattern = "phclineAFs_future_freq.*"))
@@ -368,9 +396,9 @@ future_sim_data_vary_m_SSP245$m <- factor(future_sim_data_vary_m_SSP245$m, ms)
 # Subset
 future_sim_data_vary_m_SSP245_sub5 <- future_sim_data_vary_m_SSP245 %>% filter(Site == "FC" | Site == "SH" | Site == "CBL" | Site == "BMR" | Site == "STR")
 # Graph AF vs time - per sim
-pdf("output/figures/SLiM/ph_future/AF_time_vary_m_SSP245_sub_5pop.pdf", width = 8, height = 14)
+pdf("output/figures/SLiM/ph_future/AF_time_vary_m_SSP245_sub_5pop.pdf", width = 5.5, height = 14)
 ggplot(future_sim_data_vary_m_SSP245_sub5, aes(x = (year+2000), y = AF_fut, color = Site, group=interaction(repId, Site))) + 
-    geom_line(linewidth = 1, alpha = 0.2) + 
+    geom_line(linewidth = 1, alpha = 0.2) + scale_y_continuous(breaks = c(0, 0.5, 1)) +
     facet_wrap(~m, ncol = 1) + scale_color_manual(values = mycolors_sub5) + 
     labs(x = "Years", y = "Allele Frequency") + theme_linedraw(base_size = 30) + theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
 dev.off()
@@ -392,7 +420,9 @@ future_sim_north_SSP245 <-
         data.frame(
         repId = i,
         m = mig,
-        FC = min_func(tmp2$year[which(tmp2$Site == "FC" & tmp2$AF_fut > 0)])+2000)
+        FC = min_func(tmp2$year[which(tmp2$Site == "FC" & tmp2$AF_fut > 0)])+2000,
+        FC_common = min_func(tmp2$year[which(tmp2$Site == "FC" & tmp2$AF_fut > 0.05)])+2000,
+        avg_AF_2100 = mean(tmp2$AF_fut[which(tmp2$Site == "FC" & tmp2$year == 100)]))
     }
 }
 
@@ -402,7 +432,8 @@ future_sim_north_SSP245$m <- as.numeric(future_sim_north_SSP245$m)
 # How many sims didn't get the allele by 2100 in the northernmost pop?
 future_sim_north_SSP245_summary <- future_sim_north_SSP245 %>%
   group_by(m) %>%
-  summarise(na_count = sum(is.na(FC)), na_perc = na_count/length(FC)*100)
+  summarise(na_count = sum(is.na(FC)), na_perc = na_count/length(FC)*100, 
+            na_count_common = sum(is.na(FC_common)), na_perc_common = na_count_common/length(FC_common)*100)
 
 # Make column with scientific notation
 future_sim_north_SSP245_summary %<>% mutate(m_scientific = format(m, scientific = TRUE, digits = 1))
@@ -415,12 +446,24 @@ ggplot(future_sim_north_SSP245_summary, aes(y = na_perc, x = m_scientific)) +
     #scale_fill_manual(values =  mycolors_sub5[1]) + scale_color_manual(values =  mycolors_sub5[1]) + 
     scale_x_discrete(labels = fancy_scientific) + 
     scale_y_continuous(limits=c(-5, 105), breaks = c(0, 50, 100))+
-    labs(x = "Migration", y = "% Simulations\n Allele Failed\n to Arrive") + theme_linedraw(base_size = 30) + 
+    labs(x = "Migration Rate", y = "% Simulations\n Allele Failed\n to Arrive") + theme_linedraw(base_size = 30) + 
     guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
     theme(legend.position = "none")
 dev.off()
 
-#######
+# Graph - For each migration, how many sims failed to have allele become common at FC?
+pdf("output/figures/SLiM/ph_future/AF_FC_pops_vary_m_SSP245_common.pdf", width = 5.2714, height = 3.1)
+ggplot(future_sim_north_SSP245_summary, aes(y = na_perc_common, x = m_scientific)) + 
+    geom_point(size = 5, color = mycolors_sub5[1]) +
+    #scale_fill_manual(values =  mycolors_sub5[1]) + scale_color_manual(values =  mycolors_sub5[1]) + 
+    scale_x_discrete(labels = fancy_scientific) + 
+    scale_y_continuous(limits=c(-5, 105), breaks = c(0, 50, 100))+
+    labs(x = "Migration Rate", y = "% Sims\n MAF > 0.05") + theme_linedraw(base_size = 30) + 
+    guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
+    theme(legend.position = "none", plot.margin = margin(t = 30, r = 5, b = 5, l = 5))
+dev.off()
+
+# ================================================================================== #
 
 # Create list of file names for data
 file_names = as.list(dir(path = 'data/processed/SLiM/ph_future/ph_vary_m_SSP370/', pattern = "phclineAFs_future_freq.*"))
@@ -475,9 +518,9 @@ future_sim_data_vary_m_SSP370$m <- factor(future_sim_data_vary_m_SSP370$m, ms)
 # Subset
 future_sim_data_vary_m_SSP370_sub5 <- future_sim_data_vary_m_SSP370 %>% filter(Site == "FC" | Site == "SH" | Site == "CBL" | Site == "BMR" | Site == "STR")
 # Graph AF vs time - per sim
-pdf("output/figures/SLiM/ph_future/AF_time_vary_m_SSP370_sub_5pop.pdf", width = 8, height = 14)
+pdf("output/figures/SLiM/ph_future/AF_time_vary_m_SSP370_sub_5pop.pdf", width = 5.5, height = 14)
 ggplot(future_sim_data_vary_m_SSP370_sub5, aes(x = (year+2000), y = AF_fut, color = Site, group=interaction(repId, Site))) + 
-    geom_line(linewidth = 1, alpha = 0.2) + 
+    geom_line(linewidth = 1, alpha = 0.2) + scale_y_continuous(breaks = c(0, 0.5, 1)) +
     facet_wrap(~m, ncol = 1) + scale_color_manual(values = mycolors_sub5) + 
     labs(x = "Years", y = "Allele Frequency") + theme_linedraw(base_size = 30) + theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
 dev.off()
@@ -498,7 +541,9 @@ future_sim_north_SSP370 <-
         data.frame(
         repId = i,
         m = mig,
-        FC = min_func(tmp2$year[which(tmp2$Site == "FC" & tmp2$AF_fut > 0)])+2000)
+        FC = min_func(tmp2$year[which(tmp2$Site == "FC" & tmp2$AF_fut > 0)])+2000,
+        FC_common = min_func(tmp2$year[which(tmp2$Site == "FC" & tmp2$AF_fut > 0.05)])+2000,
+        avg_AF_2100 = mean(tmp2$AF_fut[which(tmp2$Site == "FC" & tmp2$year == 100)]))
     }
 }
 
@@ -508,7 +553,8 @@ future_sim_north_SSP370$m <- as.numeric(future_sim_north_SSP370$m)
 # How many sims didn't get the allele by 2100 in the northernmost pop?
 future_sim_north_SSP370_summary <- future_sim_north_SSP370 %>%
   group_by(m) %>%
-  summarise(na_count = sum(is.na(FC)), na_perc = na_count/length(FC)*100)
+  summarise(na_count = sum(is.na(FC)), na_perc = na_count/length(FC)*100, 
+            na_count_common = sum(is.na(FC_common)), na_perc_common = na_count_common/length(FC_common)*100)
 
 # Make column with scientific notation
 future_sim_north_SSP370_summary %<>% mutate(m_scientific = format(m, scientific = TRUE, digits = 1))
@@ -521,12 +567,24 @@ ggplot(future_sim_north_SSP370_summary, aes(y = na_perc, x = m_scientific)) +
     #scale_fill_manual(values =  mycolors_sub5[1]) + scale_color_manual(values =  mycolors_sub5[1]) + 
     scale_x_discrete(labels = fancy_scientific) + 
     scale_y_continuous(limits=c(-5, 105), breaks = c(0, 50, 100))+
-    labs(x = "Migration", y = "% Simulations\n Allele Failed\n to Arrive") + theme_linedraw(base_size = 30) + 
+    labs(x = "Migration Rate", y = "% Simulations\n Allele Failed\n to Arrive") + theme_linedraw(base_size = 30) + 
     guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
     theme(legend.position = "none")
 dev.off()
 
-#######
+# Graph - For each migration, how many sims failed to have allele become common at FC?
+pdf("output/figures/SLiM/ph_future/AF_FC_pops_vary_m_SSP370_common.pdf", width = 5.2714, height = 3.1)
+ggplot(future_sim_north_SSP370_summary, aes(y = na_perc_common, x = m_scientific)) + 
+    geom_point(size = 5, color = mycolors_sub5[1]) +
+    #scale_fill_manual(values =  mycolors_sub5[1]) + scale_color_manual(values =  mycolors_sub5[1]) + 
+    scale_x_discrete(labels = fancy_scientific) + 
+    scale_y_continuous(limits=c(-5, 105), breaks = c(0, 50, 100))+
+    labs(x = "Migration Rate", y = "% Sims\n MAF > 0.05") + theme_linedraw(base_size = 30) + 
+    guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
+    theme(legend.position = "none", plot.margin = margin(t = 30, r = 5, b = 5, l = 5))
+dev.off()
+
+# ================================================================================== #
 
 # Create list of file names for data
 file_names = as.list(dir(path = 'data/processed/SLiM/ph_future/ph_vary_m_SSP585/', pattern = "phclineAFs_future_freq.*"))
@@ -580,9 +638,9 @@ future_sim_data_vary_m_SSP585$m <- factor(future_sim_data_vary_m_SSP585$m, ms)
 # Subset
 future_sim_data_vary_m_SSP585_sub5 <- future_sim_data_vary_m_SSP585 %>% filter(Site == "FC" | Site == "SH" | Site == "CBL" | Site == "BMR" | Site == "STR")
 # Graph AF vs time - per sim
-pdf("output/figures/SLiM/ph_future/AF_time_vary_m_SSP585_sub_5pop.pdf", width = 8, height = 14)
+pdf("output/figures/SLiM/ph_future/AF_time_vary_m_SSP585_sub_5pop.pdf", width = 5.5, height = 14)
 ggplot(future_sim_data_vary_m_SSP585_sub5, aes(x = (year+2000), y = AF_fut, color = Site, group=interaction(repId, Site))) + 
-    geom_line(linewidth = 1, alpha = 0.2) + 
+    geom_line(linewidth = 1, alpha = 0.2) + scale_y_continuous(breaks = c(0, 0.5, 1)) +
     facet_wrap(~m, ncol = 1) + scale_color_manual(values = mycolors_sub5) + 
     labs(x = "Years", y = "Allele Frequency") + theme_linedraw(base_size = 30) + theme(strip.background = element_rect(fill = "white",colour = NA), strip.text = element_text(face="bold", color = "black"))+ theme(legend.position = "none")
 dev.off()
@@ -603,7 +661,9 @@ future_sim_north_SSP585 <-
         data.frame(
         repId = i,
         m = mig,
-        FC = min_func(tmp2$year[which(tmp2$Site == "FC" & tmp2$AF_fut > 0)])+2000)
+        FC = min_func(tmp2$year[which(tmp2$Site == "FC" & tmp2$AF_fut > 0)])+2000,
+        FC_common = min_func(tmp2$year[which(tmp2$Site == "FC" & tmp2$AF_fut > 0.05)])+2000,
+        avg_AF_2100 = mean(tmp2$AF_fut[which(tmp2$Site == "FC" & tmp2$year == 100)]))
     }
 }
 
@@ -613,7 +673,8 @@ future_sim_north_SSP585$m <- as.numeric(future_sim_north_SSP585$m)
 # How many sims didn't get the allele by 2100 in the northernmost pop?
 future_sim_north_SSP585_summary <- future_sim_north_SSP585 %>%
   group_by(m) %>%
-  summarise(na_count = sum(is.na(FC)), na_perc = na_count/length(FC)*100)
+  summarise(na_count = sum(is.na(FC)), na_perc = na_count/length(FC)*100, 
+            na_count_common = sum(is.na(FC_common)), na_perc_common = na_count_common/length(FC_common)*100)
 
 # Make column with scientific notation
 future_sim_north_SSP585_summary %<>% mutate(m_scientific = format(m, scientific = TRUE, digits = 1))
@@ -626,7 +687,19 @@ ggplot(future_sim_north_SSP585_summary, aes(y = na_perc, x = m_scientific)) +
     #scale_fill_manual(values =  mycolors_sub5[1]) + scale_color_manual(values =  mycolors_sub5[1]) + 
     scale_x_discrete(labels = fancy_scientific) + 
     scale_y_continuous(limits=c(-5, 105), breaks = c(0, 50, 100))+
-    labs(x = "Migration", y = "% Simulations\n Allele Failed\n to Arrive") + theme_linedraw(base_size = 30) + 
+    labs(x = "Migration Rate", y = "% Simulations\n Allele Failed\n to Arrive") + theme_linedraw(base_size = 30) + 
     guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
     theme(legend.position = "none")
+dev.off()
+
+# Graph - For each migration, how many sims failed to have allele become common at FC?
+pdf("output/figures/SLiM/ph_future/AF_FC_pops_vary_m_SSP585_common.pdf", width = 5.2714, height = 3.1)
+ggplot(future_sim_north_SSP585_summary, aes(y = na_perc_common, x = m_scientific)) + 
+    geom_point(size = 5, color = mycolors_sub5[1]) +
+    #scale_fill_manual(values =  mycolors_sub5[1]) + scale_color_manual(values =  mycolors_sub5[1]) + 
+    scale_x_discrete(labels = fancy_scientific) + 
+    scale_y_continuous(limits=c(-5, 105), breaks = c(0, 50, 100))+
+    labs(x = "Migration Rate", y = "% Sims\n MAF > 0.05") + theme_linedraw(base_size = 30) + 
+    guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
+    theme(legend.position = "none", plot.margin = margin(t = 30, r = 5, b = 5, l = 5))
 dev.off()
