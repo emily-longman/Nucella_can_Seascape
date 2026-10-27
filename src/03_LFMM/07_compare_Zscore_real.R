@@ -27,22 +27,23 @@ library(magrittr)
 
 # ================================================================================== #
 
-# Create list of file names
-file_names = as.list(dir(path = 'data/processed/LFMM_analyses/', pattern = paste0("LFMM_summary_*")))
-file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/LFMM_analyses/', x))))
+# Load real data
+
+# Abiotic
+LFMM_real <- load("data/processed/LFMM_analyses/LFMM_real_abiotic.RData")
+LFMM_real_abiotic <- LFMM_real
+
+# MARINe
+LFMM_real <- load("data/processed/LFMM_analyses/LFMM_real_biotic_MARINe.RData")
+LFMM_real_MARINe <- LFMM_real
+
+# Mcali 
+LFMM_real <- load("data/processed/LFMM_analyses/LFMM_real_biotic_Mcali.RData")
+LFMM_real_Mcali <- LFMM_real
+
+# ================================================================================== #
 
 # Read all the files
-LFMM_sum <- foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
-    # State which file loading
-    message(i)
-    # Load file
-    o = get(load(i))
-}
-
-# Format
-LFMM_sum$var <- as.factor(LFMM_sum$var)
-# Filter NAs
-LFMM_sum_filt <- LFMM_sum[!is.nan(LFMM_sum$mean_zscores_pvalbonferroni),]
 
 # Graph bonferroni zscores
 pdf("output/figures/LFMM_analyses/LFMM_filt_zscore_abiotic.pdf", width = 7, height = 8)

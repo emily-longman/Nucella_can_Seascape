@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=LFMM_abiotic_perm_1:20
+#SBATCH --job-name=LFMM_biotic_MARINe_perm98
 
 # Specify partition
 #SBATCH --partition=general
@@ -20,10 +20,10 @@
 #SBATCH --mem=200G 
 
 # Request CPU
-#SBATCH --cpus-per-task=20
+#SBATCH --cpus-per-task=25
 
 # Submit job array
-#SBATCH --array=1 #1-9
+#SBATCH --array=1-14
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -34,7 +34,7 @@
 
 #--------------------------------------------------------------------------------
 
-# This script will run the accompanying 02_LFMM_abiotic_real.R script. 
+# This script will run the accompanying 03_LFMM_biotic_MARINe_perm.R script. 
 
 # Load modules 
 module load R/4.4.1
@@ -49,7 +49,7 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 #--------------------------------------------------------------------------------
 
 # Guide file 
-ECOL_VARIABLES=$WORKING_FOLDER/guide_files/Seascape_vars_names_abiotic.txt
+ECOL_VARIABLES=$WORKING_FOLDER/guide_files/Seascape_vars_names_biotic_MARINe.txt
 
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers. 
 # Env variable name   
@@ -72,12 +72,11 @@ echo ${i}
 #--------------------------------------------------------------------------------
 
 # Run R script
-#Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm1:20.R "${i}"
-#Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm21:40.R "${i}"
-#Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm41:60.R "${i}"
-#Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm61:80.R "${i}"
-#Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm81:100.R "${i}"
-Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_abiotic_perm92:93.R "${i}"
+#Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_perm/03_LFMM_biotic_MARINe_perm1:20.R "${i}"
+#Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_perm/03_LFMM_biotic_MARINe_perm21:40.R "${i}"
+#Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_perm/03_LFMM_biotic_MARINe_perm41:60.R "${i}"
+#Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_perm/03_LFMM_biotic_MARINe_perm61:80.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_perm/03_LFMM_biotic_MARINe_perm81:100.R "${i}"
 
 #--------------------------------------------------------------------------------
 
