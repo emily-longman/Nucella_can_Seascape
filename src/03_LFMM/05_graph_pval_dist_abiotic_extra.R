@@ -61,13 +61,13 @@ LFMM <- rbind(LFMM_real_var, LFMM_perm)
 # ================================================================================== #
 
 # Bin p-vals
-#hist.obj.env = foreach(i = 0:max(LFMM$perm), .combine = "rbind")%do%{
-#    hist(LFMM$o.pvalues[LFMM$perm == i], breaks = 100) -> hist.obj
-#    data.frame(
-#    hist.obj$mids,
-#    hist.obj$counts,
-#    perm = i) -> o
-#}
+hist.obj.env = foreach(i = 0:max(LFMM$perm), .combine = "rbind")%do%{
+    hist(LFMM$o.pvalues[LFMM$perm == i], breaks = 100) -> hist.obj
+    data.frame(
+    hist.obj$mids,
+    hist.obj$counts,
+    perm = i) -> o
+}
 
 # Graph pval distribution
 #pdf(paste0("output/figures/LFMM_analyses/LFMM_pval_dist_log_scale_", var, ".pdf"), width = 6.25, height = 5)
@@ -91,6 +91,7 @@ LFMM_summary <- foreach(i = 0:max(LFMM$perm), .combine = "rbind")%do%{
 
     # Filter for NA
     tmp_filt <- tmp[!is.nan(tmp$o.zscores),]
+    
     # Create summary df
     data.frame(
         var = unique(tmp_filt$var),

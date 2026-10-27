@@ -41,15 +41,15 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 # Extract p-value for each environmental variable - real
 
 # Snp info
-load("data/processed/LFMM_analyses/snp.info.Rdata")
-str(snp.info)
+load("data/processed/LFMM_analyses/snp.info.18pop.Rdata")
+str(snp.info.18pop)
 
 # Create list of file names for real data
 file_names = as.list(dir(path = 'data/processed/LFMM_analyses/real/', pattern = "pv_*"))
 file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/LFMM_analyses/real/', x))))
 
 # Extract just abiotic
-file_names_v <- file_names_v[-c(5,18,21,22,23,24,25,26,27)]
+file_names_v <- file_names_v[c(10,11,12,13)]
 
 # Read all the files and add a column with the chunk
 LFMM_real <- foreach(w=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
@@ -60,7 +60,7 @@ LFMM_real <- foreach(w=file_names_v, .combine="rbind", .errorhandling = "remove"
     str(o)
 
     # Extract p-values and zscores per SNP
-    tmp <- data.frame(snp.info, o$pvalues, o$zscores)
+    tmp <- data.frame(snp.info.18pop, o$pvalues, o$zscores)
 
     # Add column with variable
     tmp %<>% mutate(var = w) %>% mutate(var = str_remove(var, pattern = "data/processed/LFMM_analyses/real/pv_*"))
@@ -77,5 +77,4 @@ LFMM_real <- foreach(w=file_names_v, .combine="rbind", .errorhandling = "remove"
 }
 
 # Save output
-#save(LFMM_real, file = "data/processed/LFMM_analyses/LFMM_real_all.RData")
-save(LFMM_real, file = "data/processed/LFMM_analyses/LFMM_real_biotic.RData")
+save(LFMM_real, file = "data/processed/LFMM_analyses/LFMM_real_biotic_Mcali.RData")

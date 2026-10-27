@@ -49,6 +49,6 @@ pdf("output/figures/LFMM_analyses/LFMM_filt_zscore_abiotic.pdf", width = 7, heig
 ggplot(LFMM_sum_filt, aes(x=mean_zscores_pvalbonferroni, y=var)) +
     geom_boxplot(data = LFMM_sum_filt[which(LFMM_sum_filt$perm != 0),], aes(x=mean_zscores_pvalbonferroni, y=var), color = "grey") +
     geom_point(data = LFMM_sum_filt[which(LFMM_sum_filt$perm == 0),], aes(x=mean_zscores_pvalbonferroni, y=var), color = "black") + 
-    labs(x = "Bonferroni\nZ-scores", y = "") +
+    labs(x = "Mean Z-score\n(Bonferroni)", y = "") +
     theme_bw(base_size = 30)
 dev.off()

@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=LFMM_graph_summarize_abiotic_launch
+#SBATCH --job-name=LFMM_graph_pval_dists_abiotic_launch
 
 # Specify partition
 #SBATCH --partition=general
@@ -72,7 +72,7 @@ echo ${i}
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/05_summarize_pvaldist_abiotic.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/05_graph_pval_dist_abiotic.R "${i}"
 
 #--------------------------------------------------------------------------------
 

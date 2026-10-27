@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=LFMM_merge_real_launch_biotic
+#SBATCH --job-name=merge_real_biotic_Mcali
 
 # Specify partition
 #SBATCH --partition=general
@@ -43,7 +43,7 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/04_LFMM_merge_abiotic_real.R
+Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/04_merge_biotic_Mcali_real.R
 
 #--------------------------------------------------------------------------------
 
