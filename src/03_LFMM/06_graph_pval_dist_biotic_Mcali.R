@@ -62,7 +62,7 @@ LFMM <- rbind(LFMM_real_var, LFMM_perm)
 
 # Bin p-vals
 hist.obj.env = foreach(i = 0:max(LFMM$perm), .combine = "rbind")%do%{
-    hist(LFMM$o.pvalues[LFMM$perm == i], breaks = 100) -> hist.obj
+    hist(LFMM$o.pvalues[LFMM$perm == i], breaks = 100, plot = FALSE) -> hist.obj
     data.frame(
     hist.obj$mids,
     hist.obj$counts,
