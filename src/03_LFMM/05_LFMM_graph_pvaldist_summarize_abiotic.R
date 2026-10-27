@@ -85,26 +85,26 @@ dev.off()
 # ================================================================================== #
 
 # Calc summary stats
-#LFMM_summary <- foreach(i = 0:max(LFMM$perm), .combine = "rbind")%do%{
-#    # Extract for just one perm
-#    tmp <- LFMM %>% filter(perm == i)
+LFMM_summary <- foreach(i = 0:max(LFMM$perm), .combine = "rbind")%do%{
+    # Extract for just one perm
+    tmp <- LFMM %>% filter(perm == i)
 
-#    # Create summary df
-#    data.frame(
-#        var = unique(tmp$var),
-#        perm = i,
-#        num_SNPs = dim(tmp)[1],
-#        mean_zscores = mean(tmp$o.zscores),
-#        num_SNPs_pval0.05 = sum(tmp$o.pvalues < 0.05),
-#        mean_zscores_pval0.05 = mean(tmp$o.zscores[which(tmp$o.pvalues < 0.05)]),
-#        num_SNPs_pval0.01 = sum(tmp$o.pvalues < 0.01),
-#        mean_zscores_pval0.01 = mean(tmp$o.zscores[which(tmp$o.pvalues < 0.01)]),
-#        num_SNPs_pval0.001 = sum(tmp$o.pvalues < 0.001),
-#        mean_zscores_pval0.001 = mean(tmp$o.zscores[which(tmp$o.pvalues < 0.001)]),
-#        num_SNPs_pvalbonferroni = sum(tmp$o.pvalues < 0.01/dim(tmp)[1]),
-#        mean_zscores_pvalbonferroni = mean(tmp$o.zscores[which(tmp$o.pvalues < (0.01/dim(tmp)[1]))])
-#    )
-#}
+    # Create summary df
+    data.frame(
+        var = unique(tmp$var),
+        perm = i,
+        num_SNPs = dim(tmp)[1],
+        mean_zscores = mean(tmp$o.zscores),
+        num_SNPs_pval0.05 = sum(tmp$o.pvalues < 0.05),
+        mean_zscores_pval0.05 = mean(tmp$o.zscores[which(tmp$o.pvalues < 0.05)]),
+        num_SNPs_pval0.01 = sum(tmp$o.pvalues < 0.01),
+        mean_zscores_pval0.01 = mean(tmp$o.zscores[which(tmp$o.pvalues < 0.01)]),
+        num_SNPs_pval0.001 = sum(tmp$o.pvalues < 0.001),
+        mean_zscores_pval0.001 = mean(tmp$o.zscores[which(tmp$o.pvalues < 0.001)]),
+        num_SNPs_pvalbonferroni = sum(tmp$o.pvalues < 0.01/dim(tmp)[1]),
+        mean_zscores_pvalbonferroni = mean(tmp$o.zscores[which(tmp$o.pvalues < (0.01/dim(tmp)[1]))])
+    )
+}
 
 # Save output
-#save(LFMM_summary, file = paste0("data/processed/LFMM_analyses/LFMM_summary_", var, ".RData"))
+save(LFMM_summary, file = paste0("data/processed/LFMM_analyses/LFMM_summary_", var, ".RData"))
