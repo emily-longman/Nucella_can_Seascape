@@ -23,7 +23,7 @@
 #SBATCH --cpus-per-task=25
 
 # Submit job array
-#SBATCH --array=10 #1-14
+#SBATCH --array=1-14
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -76,9 +76,7 @@ echo ${i}
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_MARINe_perm21:40.R "${i}"
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_MARINe_perm41:60.R "${i}"
 #Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_MARINe_perm61:80.R "${i}"
-#Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_MARINe_perm81:100.R "${i}"
-Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_MARINe_perm98.R "${i}"
-#Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_MARINe_perm99:100.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_LFMM_biotic_MARINe_perm81:100.R "${i}"
 
 #--------------------------------------------------------------------------------
 
