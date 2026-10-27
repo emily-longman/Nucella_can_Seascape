@@ -81,3 +81,15 @@ ggplot(hist.obj.env, aes(x=(hist.obj.mids), y=hist.obj.counts/1000, group=perm, 
   theme_bw(base_size = 30) +  theme(legend.position = "none") +
   scale_x_log10()
 dev.off()
+
+# Raw
+pdf(paste0("output/figures/LFMM_analyses/LFMM_pval_dist_log_scale_", var, "_raw.pdf"), width = 6.25, height = 5)
+ggplot(hist.obj.env, aes(x=(hist.obj.mids), y=hist.obj.counts/1000, group=perm, color=perm==0, alpha=perm==0)) +
+  geom_line(linewidth = 2) + 
+  scale_alpha_manual(values = c("FALSE" = 0.1, "TRUE" = 1)) +
+  scale_size_manual(values = c("FALSE" = 0.7, "TRUE" = 1.5)) +
+  scale_color_manual(values = c("FALSE" = "#f63b3b",  "TRUE" = "black")) +
+  labs(title = paste0(var), x = "P-values", y = "# Thousand SNPs") +
+  theme_bw(base_size = 30) +  theme(legend.position = "none") +
+  scale_x_log10()
+dev.off()
