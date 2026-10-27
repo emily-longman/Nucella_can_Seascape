@@ -1,4 +1,4 @@
-# Graph p-val dist abiotic LFMM output
+# Graph p-val dist LFMM output
 
 # Clear memory
 rm(list=ls())

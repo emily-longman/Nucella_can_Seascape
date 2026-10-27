@@ -34,7 +34,7 @@
 
 #--------------------------------------------------------------------------------
 
-# This script will run the accompanying 04_LFMM_merge_abiotic_launch.R script. 
+# This script will run the accompanying 06_graph_pval_dist_abiotic.R script. 
 
 # Load modules 
 module load R/4.4.1
