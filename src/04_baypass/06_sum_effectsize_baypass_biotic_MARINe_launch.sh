@@ -69,7 +69,7 @@ echo ${i}
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/04_baypass/06_summarize_graph_baypass_biotic_MARINe.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/04_baypass/06_sum_effectsize_baypass_biotic_MARINe.R "${i}"
 
 #--------------------------------------------------------------------------------
 
