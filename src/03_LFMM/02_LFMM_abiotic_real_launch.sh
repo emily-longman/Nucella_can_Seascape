@@ -72,7 +72,8 @@ echo ${i}
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/02_LFMM_abiotic_real.R "${i}"
+#Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/02_LFMM_abiotic_real.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/02_LFMM_abiotic_real_5runs.R "${i}"
 
 #--------------------------------------------------------------------------------
 
