@@ -7,7 +7,7 @@ rm(list=ls())
 
 # Set path as main Github repo
 # Install and load package
-install.packages(c('rprojroot'))
+#install.packages(c('rprojroot'))
 library(rprojroot)
 # Specify root path
 root_path <- find_root_file(criterion = has_file("README.md"))
@@ -17,7 +17,7 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'groupdata2', 'poolfstat', 'ggplot2', 'RColorBrewer', 'viridis', 'colorspace'))
+#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'groupdata2', 'poolfstat', 'ggplot2', 'RColorBrewer', 'viridis', 'colorspace'))
 library(data.table)
 library(tidyverse)
 library(foreach)
@@ -210,6 +210,22 @@ ggplot(data = west_coast) +
     panel.grid.minor = element_blank(), # Removes minor grid lines
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.5)) + # Keeps outer rectangle
   theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.745, 0.77), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+dev.off()
+
+pdf("output/figures/genomic_offset/Baypass_scaled_ssp585_rona_map_grey_wider.pdf", width = 7.05, height = 6.5)
+ggplot(data = west_coast) + 
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
+  geom_point(data = rona.scaled.ssp585.output, aes(x = Long, y = Lat, fill = rona.scaled), shape = 21, size = 6) + 
+  scale_fill_gradientn(colours=brewer.pal(9, "Greys"), name="RONA") +
+  coord_fixed(1.3) +
+  scale_x_continuous(limits = c(-125, -109.75), breaks = seq(-125, -109.75, by = 5)) + ylim(32.5, 46.25) +
+  #xlim(c(-125, -112.5)) +
+  xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 30) + 
+  theme(
+    panel.grid.major = element_blank(), # Removes major grid lines
+    panel.grid.minor = element_blank(), # Removes minor grid lines
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.5)) + # Keeps outer rectangle
+  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.79, 0.77), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
 
 
@@ -474,6 +490,22 @@ ggplot(data = west_coast) +
   theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.745, 0.77), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
 
+pdf("output/figures/genomic_offset/Baypass_scaled_ssp245_rona_map_grey_wider.pdf", width = 7.05, height = 6.5)
+ggplot(data = west_coast) + 
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
+  geom_point(data = rona.scaled.ssp245.output, aes(x = Long, y = Lat, fill = rona.scaled), shape = 21, size = 6) + 
+  scale_fill_gradientn(colours=brewer.pal(9, "Greys"), name="RONA", breaks = c(0.082, 0.084, 0.086)) +
+  coord_fixed(1.3) +
+  scale_x_continuous(limits = c(-125, -109.75), breaks = seq(-125, -109.75, by = 5)) + ylim(32.5, 46.25) +
+  #xlim(c(-125, -112.5)) +
+  xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 30) + 
+  theme(
+    panel.grid.major = element_blank(), # Removes major grid lines
+    panel.grid.minor = element_blank(), # Removes minor grid lines
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.5)) + # Keeps outer rectangle
+  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.79, 0.77), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+dev.off()
+
 # ================================================================================== #
 # ================================================================================== #
 
@@ -733,6 +765,22 @@ ggplot(data = west_coast) +
     panel.grid.minor = element_blank(), # Removes minor grid lines
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.5)) + # Keeps outer rectangle
   theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.745, 0.77), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+dev.off()
+
+pdf("output/figures/genomic_offset/Baypass_scaled_ssp119_rona_map_grey_wider.pdf", width = 7.05, height = 6.5)
+ggplot(data = west_coast) + 
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "white", color = "black") + 
+  geom_point(data = rona.scaled.ssp119.output, aes(x = Long, y = Lat, fill = rona.scaled), shape = 21, size = 6) + 
+  scale_fill_gradientn(colours=brewer.pal(9, "Greys"), name="RONA") +
+  coord_fixed(1.3) +
+  scale_x_continuous(limits = c(-125, -109.75), breaks = seq(-125, -109.75, by = 5)) + ylim(32.5, 46.25) +
+  #xlim(c(-125, -112.5)) +
+  xlab("Longitude") + ylab("Latitude") + theme_linedraw(base_size = 30) + 
+  theme(
+    panel.grid.major = element_blank(), # Removes major grid lines
+    panel.grid.minor = element_blank(), # Removes minor grid lines
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.5)) + # Keeps outer rectangle
+  theme(legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.79, 0.77), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
 
 # ================================================================================== #
