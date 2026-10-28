@@ -133,7 +133,7 @@ pdf("output/figures/LFMM_analyses/LFMM_zscore_99.9perc_abiotic.pdf", width = 9, 
 ggplot(summary_abiotic_sigSNPs, aes(x = abs_zscore_quant_99.9, y = reorder(variable_full_name_edit, abs_zscore_quant_99.9))) + 
   geom_point(size = 8) + 
   labs(x = expression("99.9% Percentile " * abs(z)), y = "") +
-  xlim(0, 8) +
+  xlim(0, 10.5) +
   theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
 dev.off()
 
@@ -221,7 +221,7 @@ pdf("output/figures/LFMM_analyses/LFMM_zscore_99.9perc_biotic_Mcali.pdf", width 
 ggplot(summary_biotic_Mcali_sigSNPs, aes(x = abs_zscore_quant_99.9, y = reorder(variable_full_name_edit, abs_zscore_quant_99.9))) + 
   geom_point(size = 8) + 
   labs(x = expression("99.9% Percentile " * abs(z)), y = "") +
-  xlim(0, 6.5) +
+  xlim(0, 7) +
   theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
 dev.off()
 
@@ -308,7 +308,7 @@ pdf("output/figures/LFMM_analyses/LFMM_zscore_99.9perc_biotic_MARINe.pdf", width
 ggplot(summary_biotic_MARINe_sigSNPs, aes(x = abs_zscore_quant_99.9, y = reorder(variable_full_name_edit, abs_zscore_quant_99.9))) + 
   geom_point(size = 8) + 
   labs(x = expression("99.9% Percentile " * abs(z)), y = "") +
-  xlim(0, 12.5) +
+  xlim(0, 20) +
   theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
 dev.off()
 
@@ -332,7 +332,7 @@ pdf("output/figures/LFMM_analyses/LFMM_zscore_99.9perc_biotic.pdf", width = 9, h
 ggplot(summary_biotic, aes(x = abs_zscore_quant_99.9, y = reorder(variable_full_name_edit, abs_zscore_quant_99.9))) + 
   geom_point(size = 8) + 
   labs(x = expression("99.9% Percentile " * abs(z)), y = "") +
-  xlim(0, 12.5) +
+  xlim(0, 20) +
   theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
 dev.off()
 
