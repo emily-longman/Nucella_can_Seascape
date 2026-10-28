@@ -41,6 +41,15 @@ var = as.character(args[1]) #Environmental variable
 
 # ================================================================================== #
 
+# Load SNP metadata
+
+# Read in SNP data
+snp.meta <- read.table("data/processed/baypass/input_files/snpdet", header=F)
+# Re-name snp metadata
+colnames(snp.meta) <- c("chr", "pos", "allele1", "allele2")
+
+# ================================================================================== #
+
 # Read in Baypass files
 
 # Load BF output for 5 replicate Baypass runs
