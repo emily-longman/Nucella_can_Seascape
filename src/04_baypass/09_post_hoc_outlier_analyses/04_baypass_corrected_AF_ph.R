@@ -41,7 +41,7 @@ snp.meta <- snp.meta %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 # Read in Baypass mean pH  files
 
-# Load BF output for 5 replicate Baypass runs
+# Load corrected allele freq output for 5 replicate Baypass runs
 baypass.ph <- foreach(i=1:5, .combine = rbind)%do%{
     message(i)
     tmp <- fread(paste("data/processed/baypass/abiotic/ph_mean/NC_abiotic_ph_mean_run", i, "_summary_yij_pij.out", sep=""))

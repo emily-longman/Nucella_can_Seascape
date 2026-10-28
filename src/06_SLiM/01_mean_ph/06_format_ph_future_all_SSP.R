@@ -106,7 +106,7 @@ dev.off()
 ph_ssp585_sites5 <- ph_ssp585_sites %>% filter(location == "FC" | location == "ARA" | location == "CBL" | location == "BMR" | location == "STR")
 pred_ssp585sites5 <- pred_ssp585 %>% filter(Site == "FC" | Site == "ARA" | Site == "CBL" | Site == "BMR" | Site == "STR")
 # Graph
-pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_ssp585_sub_5pop.pdf", width = 5.08, height = 3)
+pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_ssp585_sub_5pop.pdf", width = 5.98, height = 3)
 ggplot(ph_ssp585_sites5, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 5, shape = 16, alpha = 0.9) +
     geom_line(data = pred_ssp585sites5, aes(x = year, y = ph, color = Site), linewidth = 1)+
     #geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
@@ -221,7 +221,7 @@ dev.off()
 ph_ssp245_sites5 <- ph_ssp245_sites %>% filter(location == "FC" | location == "ARA" | location == "CBL" | location == "BMR" | location == "STR")
 pred_ssp245sites5 <- pred_ssp245 %>% filter(Site == "FC" | Site == "ARA" | Site == "CBL" | Site == "BMR" | Site == "STR")
 # Graph
-pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_ssp245_sub_5pop.pdf", width = 5.08, height = 3)
+pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_ssp245_sub_5pop.pdf", width = 5.98, height = 3)
 ggplot(ph_ssp245_sites5, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 5, shape = 16, alpha = 0.9) +
     geom_line(data = pred_ssp245sites5, aes(x = year, y = ph, color = Site), linewidth = 1)+
     #geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 
@@ -336,7 +336,7 @@ dev.off()
 ph_ssp119_sites5 <- ph_ssp119_sites %>% filter(location == "FC" | location == "ARA" | location == "CBL" | location == "BMR" | location == "STR")
 pred_ssp119sites5 <- pred_ssp119 %>% filter(Site == "FC" | Site == "ARA" | Site == "CBL" | Site == "BMR" | Site == "STR")
 # Graph
-pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_ssp119_sub_5pop.pdf", width = 5.08, height = 3)
+pdf("output/figures/SLiM/ph_future/pH_future_Bio_oracle_ssp119_sub_5pop.pdf", width = 5.98, height = 3)
 ggplot(ph_ssp119_sites5, aes(x = decade+2020, y = ph_mean, color = location)) + geom_point(size = 5, shape = 16, alpha = 0.9) +
     geom_line(data = pred_ssp119sites5, aes(x = year, y = ph, color = Site), linewidth = 1)+
     #geom_abline(data = ph_future_lm, aes(slope = slope, intercept = intercept, color = Site)) + 

@@ -659,3 +659,14 @@ ggplot(future_sim_north_SSP585_summary_melt, aes(y = perc, x = m_scientific, sha
     guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
     theme(legend.position = "none")
 dev.off()
+
+pdf("output/figures/SLiM/ph_future/AF_FC_pops_vary_m_SSP585_arrived_common_legend.pdf", width = 6, height = 3)
+ggplot(future_sim_north_SSP585_summary_melt, aes(y = perc, x = m_scientific, shape = type)) + 
+    geom_point(position = position_dodge(width = 0.6), size = 6, color = mycolors_sub5[1]) +
+    #scale_fill_manual(values =  mycolors_sub5[1]) + scale_color_manual(values =  mycolors_sub5[1]) + 
+    scale_x_discrete(labels = fancy_scientific) + 
+    scale_y_continuous(limits=c(-5, 105), breaks = c(0, 50, 100))+
+    labs(x = "Migration Rate", y = "% Sims") + theme_linedraw(base_size = 30) + 
+    guides(fill = guide_legend(reverse = TRUE), color = guide_legend(reverse = TRUE)) + 
+    theme(legend.position = c(0.79, 0.72), legend.title = element_blank(), legend.text = element_text(size = 20), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"), legend.margin = margin(5, 5, 5, 5))
+dev.off()
