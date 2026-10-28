@@ -30,8 +30,8 @@ library(RColorBrewer)
 # Generate output directories
 
 # Figure directory
-out_fig_dir <- paste("output/figures/baypass")
-if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
+out_data_dir <- paste("data/processed/baypass/enrichment")
+if (!dir.exists(out_data_dir)) {dir.create(out_data_dir)}
 
 # ================================================================================== #
 
@@ -69,10 +69,6 @@ bf_real_sum <- bf_real %>% group_by(chr, pos, allele1, allele2, MRK) %>%
     reframe(bf_db.mean = mean(bf_db), bf_db.median = median(bf_db),
             bf_db.var=var(bf_db), eBPis.mean=mean(eBPis), eBPis.median=median(eBPis), eBPis.var=var(eBPis))
 
-
-# Save
-save(bf_real_sum, file=paste0("data/processed/baypass/abiotic/bf.", sub("_", ".", var),".sum.Rdata"))
-
 # ================================================================================== #
 
 # Read in Baypass POD files
@@ -96,7 +92,7 @@ bf_5POD_quant <- bf_POD %>% group_by(rep) %>% reframe(bf_db = quantile(bf_db, c(
 bf_5POD_thr <- bf_5POD_quant %>% group_by(thr) %>% summarize(bf_db.mean=mean(bf_db))
 
 # Save
-save(bf_5POD_thr, file=paste0("data/processed/baypass/abiotic/", var, "_5POD_thr.Rdata"))
+save(bf_5POD_thr, file=paste0("data/processed/baypass/abiotic/bf_", var, "_5POD_thr.Rdata"))
 
 # ================================================================================== #
 
@@ -118,7 +114,7 @@ bf_enrich <- bf_real_sum %>%
     ) %>% as.data.frame()
 
 # Save
-save(bf_enrich, file=paste0("data/processed/baypass/abiotic/bf.enrichment.", sub("_", ".", var),".sum.Rdata"))
+save(bf_enrich, file=paste0("data/processed/baypass/enrichment/bf_", var, "_enrichment.Rdata"))
 
 # ================================================================================== E#
 
@@ -140,4 +136,4 @@ bf_real_enrichment <- bf_real %>% group_by(rep) %>%
         )
 
 # Save
-save(bf_real_enrichment, file=paste0("data/processed/baypass/abiotic/bf.fold.enrichment.", sub("_", ".", var),".sum.Rdata"))
+save(bf_real_enrichment, file=paste0("data/processed/baypass/enrichment/bf_", var,"_fold_enrichment.Rdata"))
