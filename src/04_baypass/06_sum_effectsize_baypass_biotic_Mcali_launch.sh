@@ -20,7 +20,7 @@
 #SBATCH --mem=200G 
 
 # Submit job array
-#SBATCH --array=1,3,4
+#SBATCH --array=1-4
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -46,7 +46,7 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 #--------------------------------------------------------------------------------
 
 # Guide file 
-ECOL_VARIABLES=$WORKING_FOLDER/guide_files/Seascape_vars_names_biotic_Mcali_short.txt
+ECOL_VARIABLES=$WORKING_FOLDER/guide_files/Seascape_vars_names_biotic_Mcali_short2.txt
 
 #Example: -- the headers are just for descriptive purposes. The actual file has no headers. 
 # Env variable name   
