@@ -111,7 +111,8 @@ summary_abiotic_sigSNPs <- foreach(i = vars_abiotic, .combine = "rbind")%do%{
         max_abs_zscore =  max(abs(tmp$o.zscores)),
         abs_zscore_quant_95 = q[1],
         abs_zscore_quant_99 = q[2],
-        abs_zscore_quant_99.5 = q[3]
+        abs_zscore_quant_99.5 = q[3],
+        abs_zscore_quant_99.9 = q[4]
     )
 }
 
@@ -129,7 +130,7 @@ dev.off()
 
 # Graph z scores for 99.9%
 pdf("output/figures/LFMM_analyses/LFMM_zscore_99.9perc_abiotic.pdf", width = 9, height = 5.5)
-ggplot(summary_abiotic_sigSNPs, aes(x = abs_zscore_quant_99.5, y = reorder(variable_full_name_edit, abs_zscore_quant_99.5))) + 
+ggplot(summary_abiotic_sigSNPs, aes(x = abs_zscore_quant_99.9, y = reorder(variable_full_name_edit, abs_zscore_quant_99.9))) + 
   geom_point(size = 8) + 
   labs(x = expression("99.9% Percentile " * abs(z)), y = "") +
   xlim(0, 8) +
@@ -197,7 +198,8 @@ summary_biotic_Mcali_sigSNPs <- foreach(i = vars_Mcali, .combine = "rbind")%do%{
         max_abs_zscore =  max(abs(tmp$o.zscores)),
         abs_zscore_quant_95 = q[1],
         abs_zscore_quant_99 = q[2],
-        abs_zscore_quant_99.5 = q[3]
+        abs_zscore_quant_99.5 = q[3],
+        abs_zscore_quant_99.9 = q[4]
     )
 }
 
@@ -216,7 +218,7 @@ dev.off()
 
 # Graph z scores for 99.9%
 pdf("output/figures/LFMM_analyses/LFMM_zscore_99.9perc_biotic_Mcali.pdf", width = 9, height = 3.5)
-ggplot(summary_biotic_Mcali_sigSNPs, aes(x = abs_zscore_quant_99.5, y = reorder(variable_full_name_edit, abs_zscore_quant_99.5))) + 
+ggplot(summary_biotic_Mcali_sigSNPs, aes(x = abs_zscore_quant_99.9, y = reorder(variable_full_name_edit, abs_zscore_quant_99.9))) + 
   geom_point(size = 8) + 
   labs(x = expression("99.9% Percentile " * abs(z)), y = "") +
   xlim(0, 6.5) +
@@ -283,7 +285,8 @@ summary_biotic_MARINe_sigSNPs <- foreach(i = vars_MARINe, .combine = "rbind")%do
         max_abs_zscore =  max(abs(tmp$o.zscores)),
         abs_zscore_quant_95 = q[1],
         abs_zscore_quant_99 = q[2],
-        abs_zscore_quant_99.5 = q[3]
+        abs_zscore_quant_99.5 = q[3],
+        abs_zscore_quant_99.9 = q[4]
     )
 }
 
@@ -302,7 +305,7 @@ dev.off()
 
 # Graph z scores for 99.9%
 pdf("output/figures/LFMM_analyses/LFMM_zscore_99.9perc_biotic_MARINe.pdf", width = 9, height = 6.5)
-ggplot(summary_biotic_MARINe_sigSNPs, aes(x = abs_zscore_quant_99.5, y = reorder(variable_full_name_edit, abs_zscore_quant_99.5))) + 
+ggplot(summary_biotic_MARINe_sigSNPs, aes(x = abs_zscore_quant_99.9, y = reorder(variable_full_name_edit, abs_zscore_quant_99.9))) + 
   geom_point(size = 8) + 
   labs(x = expression("99.9% Percentile " * abs(z)), y = "") +
   xlim(0, 12.5) +
@@ -326,7 +329,7 @@ dev.off()
 
 # Graph z scores for 99.9%
 pdf("output/figures/LFMM_analyses/LFMM_zscore_99.9perc_biotic.pdf", width = 9, height = 9)
-ggplot(summary_biotic, aes(x = abs_zscore_quant_99.5, y = reorder(variable_full_name_edit, abs_zscore_quant_99.5))) + 
+ggplot(summary_biotic, aes(x = abs_zscore_quant_99.9, y = reorder(variable_full_name_edit, abs_zscore_quant_99.9))) + 
   geom_point(size = 8) + 
   labs(x = expression("99.9% Percentile " * abs(z)), y = "") +
   xlim(0, 12.5) +
