@@ -103,8 +103,9 @@ bf_enrich <- bf_real_sum %>%
     summarize(
     var = var,
     n = dim(bf_real_sum)[1],
-    count_POD = sum(bf_db.mean > bf_5POD_thr$bf_db.mean[which(bf_5POD_thr$thr == 0.999)]),
-    enrichment_POD = sum(bf_db.mean > bf_5POD_thr$bf_db.mean[which(bf_5POD_thr$thr == 0.999)]),
+    count_95POD = sum(bf_db.mean > bf_5POD_thr$bf_db.mean[which(bf_5POD_thr$thr == 0.95)]),
+    count_99POD = sum(bf_db.mean > bf_5POD_thr$bf_db.mean[which(bf_5POD_thr$thr == 0.99)]),
+    count_99.9POD = sum(bf_db.mean > bf_5POD_thr$bf_db.mean[which(bf_5POD_thr$thr == 0.999)]),
     mean_BF_95POD_sig = mean(bf_db.mean[which(bf_db.mean > bf_5POD_thr$bf_db.mean[which(bf_5POD_thr$thr == 0.95)])]),
     mean_BF_99POD_sig = mean(bf_db.mean[which(bf_db.mean > bf_5POD_thr$bf_db.mean[which(bf_5POD_thr$thr == 0.99)])]),
     mean_BF_99.9POD_sig = mean(bf_db.mean[which(bf_db.mean > bf_5POD_thr$bf_db.mean[which(bf_5POD_thr$thr == 0.999)])]),
