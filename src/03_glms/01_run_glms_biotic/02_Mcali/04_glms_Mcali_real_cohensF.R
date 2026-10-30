@@ -47,7 +47,7 @@ w = as.numeric(args[1]) # Chunk: this is the chunk (1000 chunks each with 19 sca
 # Load data
 
 # Load txt file with scaffold names
-scaffold.names.df <- read.csv(paste("data/processed/glms/scaffold.names", w, "txt", sep = "."), sep = " ", header=F)
+scaffold.names.df <- read.csv(paste("data/processed/glms/glms_chunk_analysis_Mcali/scaffold.names", w, "txt", sep = "."), sep = " ", header=F)
 scaffold.names <- scaffold.names.df$V1
 
 # Load M californianus shell thickness data

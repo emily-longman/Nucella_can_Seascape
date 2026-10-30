@@ -31,7 +31,7 @@
 
 #--------------------------------------------------------------------------------
 
-# This script will run the accompanying 0r_glms_Mcali_real_cohensF.R script. 
+# This script will run the accompanying 04_glms_Mcali_real_cohensF.R script. 
 # For efficiency, there are 5 R scripts separating GLMs with the real data and chunks of the permutations. Note: walltimes vary depending on if running real data versus permutations.
 # This will run glms and look at the association of the allele frequencies of the outlier SNPs and the Marine biotic data.
 
@@ -67,7 +67,7 @@ guide_file=$WORKING_FOLDER/guide_files/scaffold_names_guide_file_array.txt
 # Determine partition to process 
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/glms
+cd $WORKING_FOLDER/data/processed/glms/glms_chunk_analysis_Mcali
 
 # Echo slurm array task ID
 echo ${SLURM_ARRAY_TASK_ID}
@@ -108,7 +108,7 @@ Rscript $SCRIPT_FOLDER/04_glms_Mcali_real_cohensF.R "${SLURM_ARRAY_TASK_ID}"
 #--------------------------------------------------------------------------------
 
 # Remove temporary scaffold guide file
-rm scaffold.names.${SLURM_ARRAY_TASK_ID}.txt
+rm $WORKING_FOLDER/data/processed/glms/glms_chunk_analysis_Mcali/scaffold.names.${SLURM_ARRAY_TASK_ID}.txt
 
 # Say done
 echo "done"
