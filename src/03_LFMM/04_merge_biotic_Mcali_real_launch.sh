@@ -17,10 +17,13 @@
 #SBATCH --time=01:00:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=50G 
+#SBATCH --mem=500G 
+
+# Submit job array
+#SBATCH --array=1-4
 
 # Name output of this job using %x=job-name and %j=job-id
-#SBATCH --output=./slurmOutput/%x.%j.out
+#SBATCH --output=./slurmOutput/%x.%A_%a.out
 
 # Receive emails when job begins and ends or fails
 #SBATCH --mail-type=ALL
@@ -42,8 +45,31 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 #--------------------------------------------------------------------------------
 
+# Guide file 
+ECOL_VARIABLES=$WORKING_FOLDER/guide_files/Seascape_vars_names_biotic_Mcali.txt
+
+#Example: -- the headers are just for descriptive purposes. The actual file has no headers. 
+# Env variable name   
+# thetao_max
+#...    
+
+#--------------------------------------------------------------------------------
+
+# Determine the ecological variable to process
+
+# Echo slurm array task ID
+echo ${SLURM_ARRAY_TASK_ID}
+
+# Using the guide file, extract the scaffold names associated based on the Slurm array task ID for a given partition
+i=`sed -n ${SLURM_ARRAY_TASK_ID}p $ECOL_VARIABLES`
+
+# State ecological variable
+echo ${i}
+
+#--------------------------------------------------------------------------------
+
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/04_merge_biotic_Mcali_real.R
+Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/04_merge_biotic_Mcali_real.R "${i}"
 
 #--------------------------------------------------------------------------------
 
