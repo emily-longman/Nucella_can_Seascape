@@ -65,7 +65,7 @@ guide_file=$WORKING_FOLDER/guide_files/scaffold_names_guide_file_array.txt
 # Determine partition to process - Note: chunk 17 does not have any SNPs in it for this dataset
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/glms
+cd $WORKING_FOLDER/data/processed/glms/glms_chunk_analysis_marine
 
 # Echo slurm array task ID
 echo ${SLURM_ARRAY_TASK_ID}
@@ -106,7 +106,7 @@ Rscript $SCRIPT_FOLDER/04_glms_MARINe_real_cohensF.R "${SLURM_ARRAY_TASK_ID}"
 #--------------------------------------------------------------------------------
 
 # Remove temporary scaffold guide file
-rm scaffold.names.${SLURM_ARRAY_TASK_ID}.txt
+rm $WORKING_FOLDER/data/processed/glms/glms_chunk_analysis_marine/scaffold.names.${SLURM_ARRAY_TASK_ID}.txt
 
 # Say done
 echo "done"
