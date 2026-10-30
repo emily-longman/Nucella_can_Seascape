@@ -90,6 +90,5 @@ LFMM_real_sum <- LFMM_real %>% group_by(chr, pos, RefAllele, AltAllele, rs.id, S
 
 # ================================================================================== #
 
-
 # Save output
-save(LFMM_real_sum, file = paste0("data/processed/LFMM_analyses/LFMM_real_abiotic", var, ".RData"))
+save(LFMM_real_sum, file = paste0("data/processed/LFMM_analyses/LFMM_real_", var, ".RData"))
