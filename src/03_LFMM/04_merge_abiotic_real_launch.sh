@@ -17,7 +17,7 @@
 #SBATCH --time=01:00:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
-#SBATCH --mem=50G 
+#SBATCH --mem=200G 
 
 # Submit job array
 #SBATCH --array=1-9
@@ -69,7 +69,7 @@ echo ${i}
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/04_merge_abiotic_real.R ${i}
+Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/04_merge_abiotic_real.R "${i}"
 
 #--------------------------------------------------------------------------------
 
