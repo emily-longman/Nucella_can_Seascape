@@ -69,7 +69,7 @@ guide_file=$WORKING_FOLDER/guide_files/scaffold_names_guide_file_array.txt
 # Determine partition to process 
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/GEA/glms
+cd $WORKING_FOLDER/data/processed/glms
 
 # Echo slurm array task ID
 echo ${SLURM_ARRAY_TASK_ID}
