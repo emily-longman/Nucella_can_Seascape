@@ -49,9 +49,6 @@ w = as.numeric(args[1]) # Chunk: this is the chunk (1000 chunks each with 19 sca
 scaffold.names.df <- read.csv(paste("data/processed/glms/scaffold.names", w, "txt", sep = "."), sep = " ", header=F)
 scaffold.names <- scaffold.names.df$V1
 
-# Load SNPs of interest (baypass POD outlier SNPs - 3,095 SNPs SNPs)
-#baypass_POD_sig_SNPs <- read.table("data/processed/outlier_analyses/baypass/POD/baypass_POD_sig_SNPs_threshold_0.01", header=T)
-
 # Load M californianus shell thickness data
 Mcalifornianus_data <- read.csv("data/processed/enviro_data/Mcali_thk/Mcalifornianus_data_clean_18pop.csv", header=T)
 
@@ -71,9 +68,6 @@ names(Mcalifornianus_data)[names(Mcalifornianus_data) == "Site.Code"] <- "sample
 
 # Join M. californianus dataframe and PCA dataframe
 Mcalifornianus_data <- dplyr::left_join(Mcalifornianus_data, pca.df, by = "sampleId")
-
-# Create SNP_id column for outlier SNP list
-#baypass_POD_sig_SNPs <- baypass_POD_sig_SNPs %>% mutate(SNP_id = paste(chr, pos, sep = "_"))
 
 # Extract SNP data from GDS
 snp.dt <- data.table(
