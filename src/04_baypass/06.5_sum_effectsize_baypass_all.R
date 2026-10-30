@@ -87,6 +87,37 @@ ggplot(bf_enrich_all, aes(x = BF_quant_99.9, y = reorder(variable_full_name_edit
 dev.off()
 
 # ================================================================================== #
+# ================================================================================== #
+
+# Compare baypass with LFMM
+BayPass_LFMM_summary <- left_join(bf_enrich_all, LFMM_summary)
+BayPass_LFMM_summary$Variable <- as.factor(BayPass_LFMM_summary$Variable)
+BayPass_LFMM_summary$shape <- as.factor(c(rep("C", 5), "T", rep("C", 12), "T",rep("C", 7)))
+
+# Graph
+pdf("output/figures/Baypass_LFMM_quant_99.9.pdf", width = 7, height = 6)
+ggplot(BayPass_LFMM_summary, aes(x = BF_quant_99.9, y = abs_zscore_quant_99.9, color = Variable, shape = shape)) + 
+    geom_point(size = 8) + 
+    scale_color_manual(values = c("#d2931f", "purple")) + 
+    labs(x = expression("BF 99.9% Percentile"), y = expression("99.9% Percentile " * abs(z))) + 
+    guides(shape = "none") +
+    scale_x_continuous(limits = c(5,14)) + scale_y_continuous(limits = c(0,20)) +
+    theme_linedraw(base_size=30) + theme( legend.position = c(0.8, 0.75), legend.background = element_rect(fill = "white", color = "black", linewidth = 0.5,), legend.title = element_blank())
+dev.off()
+pdf("output/figures/Baypass_LFMM_quant_99.9.pdf", width = 7, height = 6)
+ggplot(BayPass_LFMM_summary, aes(y = BF_quant_99.9, x = abs_zscore_quant_99.9, color = Variable, shape = shape)) + 
+    geom_point(size = 8) + 
+    scale_color_manual(values = c("#d2931f", "purple")) + 
+    labs(y = expression("BF 99.9% Percentile"), x = expression("99.9% Percentile " * abs(z))) + 
+    guides(shape = "none") +
+    scale_y_continuous(limits = c(5,14)) + scale_x_continuous(limits = c(0,20)) +
+    theme_linedraw(base_size=30) + theme( legend.position = c(0.8, 0.75), legend.background = element_rect(fill = "white", color = "black", linewidth = 0.5,), legend.title = element_blank())
+dev.off()
+
+
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
 
 # Read in fold enrichment files
 
