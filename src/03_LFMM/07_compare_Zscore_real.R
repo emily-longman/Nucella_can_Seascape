@@ -106,8 +106,12 @@ summary_abiotic_sigSNPs <- foreach(i = vars_abiotic, .combine = "rbind")%do%{
     data.frame(
         variable = i, 
         n_sig = sum(tmp$o.pvalues < 0.05),
-        mean_abs_zscore = mean(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.05)])),
-        median_abs_zscore = median(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.05)])),
+        mean_abs_zscore_0.05 = mean(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.05)])),
+        median_abs_zscore_0.05 = median(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.05)])),
+        mean_abs_zscore_0.01 = mean(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.01)])),
+        median_abs_zscore_0.01 = median(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.01)])),
+        mean_abs_zscore_0.001 = mean(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.001)])),
+        median_abs_zscore_0.001 = median(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.001)])),
         max_abs_zscore =  max(abs(tmp$o.zscores)),
         abs_zscore_quant_95 = q[1],
         abs_zscore_quant_99 = q[2],
@@ -119,9 +123,17 @@ summary_abiotic_sigSNPs <- foreach(i = vars_abiotic, .combine = "rbind")%do%{
 # Join with full names
 summary_abiotic_sigSNPs <- left_join(summary_abiotic_sigSNPs, var_full_names, by="variable")
 
+# Graph z scores for p<0.001
+pdf("output/figures/LFMM_analyses/LFMM_zscore_pval0.001_abiotic.pdf", width = 9, height = 5.5)
+ggplot(summary_abiotic_sigSNPs, aes(x = mean_abs_zscore_0.001, y = reorder(variable_full_name_edit, mean_abs_zscore_0.001))) + 
+  geom_point(size = 8) + 
+  labs(x = expression("Mean " * abs(z)* " for p<0.001"), y = "") +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
+dev.off()
+
 # Graph z scores for p<0.05
 pdf("output/figures/LFMM_analyses/LFMM_zscore_pval0.05_abiotic.pdf", width = 9, height = 5.5)
-ggplot(summary_abiotic_sigSNPs, aes(x = mean_abs_zscore, y = reorder(variable_full_name_edit, mean_abs_zscore))) + 
+ggplot(summary_abiotic_sigSNPs, aes(x = mean_abs_zscore_0.05, y = reorder(variable_full_name_edit, mean_abs_zscore_0.05))) + 
   geom_point(size = 8) + 
   labs(x = expression("Mean " * abs(z)* " for p<0.05"), y = "") +
   xlim(0, 5.5) +
@@ -193,8 +205,12 @@ summary_biotic_Mcali_sigSNPs <- foreach(i = vars_Mcali, .combine = "rbind")%do%{
     data.frame(
         variable = i, 
         n_sig = sum(tmp$o.pvalues < 0.05),
-        mean_abs_zscore = mean(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.05)])),
-        median_abs_zscore = median(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.05)])),
+        mean_abs_zscore_0.05 = mean(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.05)])),
+        median_abs_zscore_0.05 = median(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.05)])),
+        mean_abs_zscore_0.01 = mean(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.01)])),
+        median_abs_zscore_0.01 = median(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.01)])),
+        mean_abs_zscore_0.001 = mean(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.001)])),
+        median_abs_zscore_0.001 = median(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.001)])),
         max_abs_zscore =  max(abs(tmp$o.zscores)),
         abs_zscore_quant_95 = q[1],
         abs_zscore_quant_99 = q[2],
@@ -203,13 +219,20 @@ summary_biotic_Mcali_sigSNPs <- foreach(i = vars_Mcali, .combine = "rbind")%do%{
     )
 }
 
-
 # Join with full names
 summary_biotic_Mcali_sigSNPs <- left_join(summary_biotic_Mcali_sigSNPs, var_full_names, by="variable")
 
+# Graph z scores for p<0.001
+pdf("output/figures/LFMM_analyses/LFMM_zscore_pval0.001_biotic_Mcali.pdf", width = 9, height = 5.5)
+ggplot(summary_biotic_Mcali_sigSNPs, aes(x = mean_abs_zscore_0.001, y = reorder(variable_full_name_edit, mean_abs_zscore_0.001))) + 
+  geom_point(size = 8) + 
+  labs(x = expression("Mean " * abs(z)* " for p<0.001"), y = "") +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
+dev.off()
+
 # Graph z scores for p<0.05
 pdf("output/figures/LFMM_analyses/LFMM_zscore_pval0.05_biotic_Mcali.pdf", width = 9, height = 3.5)
-ggplot(summary_biotic_Mcali_sigSNPs, aes(x = mean_abs_zscore, y = reorder(variable_full_name_edit, mean_abs_zscore))) + 
+ggplot(summary_biotic_Mcali_sigSNPs, aes(x = mean_abs_zscore_0.05, y = reorder(variable_full_name_edit, mean_abs_zscore_0.05))) + 
   geom_point(size = 8) + 
   labs(x = expression("Mean " * abs(z)* " for p<0.05"), y = "") +
   xlim(0, 4.5) +
@@ -280,8 +303,12 @@ summary_biotic_MARINe_sigSNPs <- foreach(i = vars_MARINe, .combine = "rbind")%do
     data.frame(
         variable = i, 
         n_sig = sum(tmp$o.pvalues < 0.05),
-        mean_abs_zscore = mean(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.05)])),
-        median_abs_zscore = median(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.05)])),
+        mean_abs_zscore_0.05 = mean(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.05)])),
+        median_abs_zscore_0.05 = median(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.05)])),
+        mean_abs_zscore_0.01 = mean(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.01)])),
+        median_abs_zscore_0.01 = median(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.01)])),
+        mean_abs_zscore_0.001 = mean(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.001)])),
+        median_abs_zscore_0.001 = median(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.001)])),
         max_abs_zscore =  max(abs(tmp$o.zscores)),
         abs_zscore_quant_95 = q[1],
         abs_zscore_quant_99 = q[2],
@@ -290,13 +317,20 @@ summary_biotic_MARINe_sigSNPs <- foreach(i = vars_MARINe, .combine = "rbind")%do
     )
 }
 
-
 # Join with full names
 summary_biotic_MARINe_sigSNPs <- left_join(summary_biotic_MARINe_sigSNPs, var_full_names, by="variable")
 
+# Graph z scores for p<0.001
+pdf("output/figures/LFMM_analyses/LFMM_zscore_pval0.001_biotic_MARINe.pdf", width = 9, height = 5.5)
+ggplot(summary_biotic_MARINe_sigSNPs, aes(x = mean_abs_zscore_0.001, y = reorder(variable_full_name_edit, mean_abs_zscore_0.001))) + 
+  geom_point(size = 8) + 
+  labs(x = expression("Mean " * abs(z)* " for p<0.001"), y = "") +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
+dev.off()
+
 # Graph z scores for p<0.05
 pdf("output/figures/LFMM_analyses/LFMM_zscore_pval0.05_biotic_MARINe.pdf", width = 9, height = 6.5)
-ggplot(summary_biotic_MARINe_sigSNPs, aes(x = mean_abs_zscore, y = reorder(variable_full_name_edit, mean_abs_zscore))) + 
+ggplot(summary_biotic_MARINe_sigSNPs, aes(x = mean_abs_zscore_0.05, y = reorder(variable_full_name_edit, mean_abs_zscore_0.05))) + 
   geom_point(size = 8) + 
   labs(x = expression("Mean " * abs(z)* " for p<0.05"), y = "") +
   xlim(0, 3) +
@@ -315,12 +349,19 @@ dev.off()
 # ================================================================================== #
 
 # Join biotic datasets
-summary_biotic <- rbind(summary_biotic_Mcali_sigSNPs, summary_biotic_MARINe_sigSNPs)
+summary_biotic_sigSNPs <- rbind(summary_biotic_Mcali_sigSNPs, summary_biotic_MARINe_sigSNPs)
 
+# Graph z scores for p<0.001
+pdf("output/figures/LFMM_analyses/LFMM_zscore_pval0.001_biotic.pdf", width = 9, height = 9)
+ggplot(summary_biotic_sigSNPs, aes(x = mean_abs_zscore_0.001, y = reorder(variable_full_name_edit, mean_abs_zscore_0.001))) + 
+  geom_point(size = 8) + 
+  labs(x = expression("Mean " * abs(z)* " for p<0.001"), y = "") +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
+dev.off()
 
 # Graph z scores for p<0.05
 pdf("output/figures/LFMM_analyses/LFMM_zscore_pval0.05_biotic.pdf", width = 9, height = 9)
-ggplot(summary_biotic, aes(x = mean_abs_zscore, y = reorder(variable_full_name_edit, mean_abs_zscore))) + 
+ggplot(summary_biotic_sigSNPs, aes(x = mean_abs_zscore_0.05, y = reorder(variable_full_name_edit, mean_abs_zscore_0.05))) + 
   geom_point(size = 8) + 
   labs(x = expression("Mean " * abs(z)* " for p<0.05"), y = "") +
   xlim(0, 4.5) +
@@ -329,7 +370,7 @@ dev.off()
 
 # Graph z scores for 99.9%
 pdf("output/figures/LFMM_analyses/LFMM_zscore_99.9perc_biotic.pdf", width = 9, height = 9)
-ggplot(summary_biotic, aes(x = abs_zscore_quant_99.9, y = reorder(variable_full_name_edit, abs_zscore_quant_99.9))) + 
+ggplot(summary_biotic_sigSNPs, aes(x = abs_zscore_quant_99.9, y = reorder(variable_full_name_edit, abs_zscore_quant_99.9))) + 
   geom_point(size = 8) + 
   labs(x = expression("99.9% Percentile " * abs(z)), y = "") +
   xlim(0, 20) +
@@ -338,5 +379,7 @@ dev.off()
 
 # ================================================================================== #
 
-# Save output
-save(summary, file = "data/processed/LFMM_analyses/LFMM_summary_abiotic.RData")
+# Join full dataset
+LFMM_summary <- rbind(summary_abiotic_sigSNPs, summary_biotic_sigSNPs)
+# Save
+save(LFMM_summary, file = "data/processed/LFMM_analyses/LFMM_summary.RData")

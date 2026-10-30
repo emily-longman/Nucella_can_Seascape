@@ -188,4 +188,23 @@ ggplot(summary_biotic, aes(x = reorder(variable_full_name_italics, mean_rr_log2)
 dev.off()
 
 
+# For graphing make species names italics
+summary_biotic$variable_full_name_italics <- c("*B. glandula* (hm)", "*B. glandula* (m)", "*C. dalli* (hm)", "*C. dalli* (m)",
+"*M. californianus* (hm)", "*M. californianus* (m)", "*M. trossulus* (hm)", "*M. trossulus* (m)", 
+"*N. canaliculata* (hm)", "*N. canaliculata* (m)","*N. ostrina* (hm)", "*N. ostrina* (m)", 
+"*P. ochraceus* (hm)", "*P. ochraceus* (m)", "STI (m)", "Mussel thk (m)", "Mussel max thk (m)", "Mussel min thk (m)")
+
+# Graph relative rate of model enrichment for biotic - mean and 2*sd
+pdf("output/figures/glms/model_enrichment/GLM_Biotic_rr_sum_alt_italics_alt.pdf", width = 8, height = 7.28)
+ggplot(summary_biotic, aes(x = reorder(variable_full_name_italics, mean_rr_log2), y = mean_rr_log2)) + 
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
+   geom_point(size = 8, color = "darkgrey") + 
+  scale_color_identity() +
+  ylim(-0.27, 0.369) +
+  labs(x = "", y = expression(Log[2]*(RR~Enrichment))) +
+  coord_flip() +
+  theme_linedraw(base_size=30) + theme(legend.position = "none", plot.title = element_text(hjust = 0.5, margin = margin(b = -1)), axis.text.y = element_markdown(size = 20))
+dev.off()
+
+
 

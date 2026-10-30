@@ -184,6 +184,16 @@ ggplot(data = west_coast) +
   guides(shape = "none")
 dev.off()
 
+sites$site.abrev <- factor(sites$site.abrev, levels = lat)
+# Graph PC1 vs latitude
+pdf("output/figures/PC_lat.pdf", width = 8, height = 6)
+ggplot(data = sites, aes(x = latitude, y = PC1, fill = factor(site.abrev))) +
+  geom_vline(xintercept = 36.800739, linetype = "dashed") + 
+  geom_point(size = 8, shape = 21) +
+  scale_fill_manual(values = mycolors) +
+  xlab("Latitude") + ylab("PC1") + theme_classic(base_size = 30) + theme(legend.position = "none", panel.grid = element_blank())
+dev.off()
+
 
 # Graph as sf object to include a scale bar
 library(sf)
