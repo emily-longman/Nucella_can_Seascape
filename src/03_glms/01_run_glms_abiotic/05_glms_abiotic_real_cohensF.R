@@ -175,13 +175,11 @@ glm.model.output =
           b_enviro = last(t1.dem.env$coef),
           se_enviro = last(t1.dem.env$se),
           p_lrt = anovaFun(t1.dem, t1.dem.env),
-          R2.dem = (1 - t1.dem$deviance / t1.dem$null.deviance), #pseudo-R2
-          R2.dem.env = (1 - t1.dem.env$deviance / t1.dem.env$null.deviance), #pseudo-R2
-          f2 = (R2.dem.env - R2.dem) / (1 - R2.dem.env),
-          f2.simp = ((t1.dem$deviance - t1.dem.env$deviance) / t1.dem.env$deviance)) #Both models have the same null deviance so can simplify f2
+          R2.dem = (1 - t1.dem$deviance / t1.dem$null.deviance),
+          R2.dem.env = (1 - t1.dem.env$deviance / t1.dem.env$null.deviance),
+          f2 = ((t1.dem$deviance - t1.dem.env$deviance) / t1.dem.env$deviance))
       } # End for enviro var
 
-      
     return(real_estimates)
   }
 
