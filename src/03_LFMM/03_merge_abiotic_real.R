@@ -68,27 +68,11 @@ LFMM_real <- foreach(w=file_names_v, .combine="rbind", .errorhandling = "remove"
     # Add column with variable
     tmp$var = var
 
-    # Add column with variable
-    tmp %<>% mutate(run = w) %>% mutate(run = str_remove(run, pattern = paste0("data/processed/LFMM_analyses/real/pv_", var, "run_")))
-
-    # Remove end of var name
-    tmp %<>% mutate(run = str_remove(run, pattern = ".RData"))
-
-    # Create columns specifying perm versus real
-    tmp$data = "real"
-
     # Return output
     tmp
 }
 
 # ================================================================================== #
 
-# Summarize across the 5 runs
-LFMM_real_sum <- LFMM_real %>% group_by(chr, pos, RefAllele, AltAllele, rs.id, SNP_id, var) %>%
-    reframe(o.pvalues.mean = mean(o.pvalues), o.pvalues.median = median(o.pvalues), o.pvalues.var = var(o.pvalues), 
-            o.zscores.mean = mean(o.zscores), o.zscores.median = median(o.zscores), o.zscores.var = var(o.zscores))
-
-# ================================================================================== #
-
 # Save output
-save(LFMM_real_sum, file = paste0("data/processed/LFMM_analyses/LFMM_real_", var, ".RData"))
+save(LFMM_real, file = paste0("data/processed/LFMM_analyses/LFMM_", var, ".RData"))

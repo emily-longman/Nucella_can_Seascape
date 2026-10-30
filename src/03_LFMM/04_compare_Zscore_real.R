@@ -33,8 +33,8 @@ var_full_names <- read.csv("guide_files/Seascape_vars_full_names.csv", header=T)
 # ================================================================================== #
 
 # Create list of file names for real data
-file_names = as.list(dir(path = 'data/processed/LFMM_analyses/', pattern = "LFMM_real_*"))
-file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/LFMM_analyses/', x))))
+file_names = as.list(dir(path = 'data/processed/LFMM_analyses/real/', pattern = "pv_*"))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/LFMM_analyses/real/', x))))
 
 # Read all the files and add a column with the chunk
 LFMM_real_all <- foreach(w=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
@@ -46,8 +46,6 @@ LFMM_real_all <- foreach(w=file_names_v, .combine="rbind", .errorhandling = "rem
     o
 }
 
-# ================================================================================== #
-# ================================================================================== #
 # ================================================================================== #
 
 # List of variables
@@ -63,6 +61,7 @@ summary_all_sigSNPs <- foreach(i = vars, .combine = "rbind")%do%{
     # Make table
     data.frame(
         variable = i, 
+        n_tot = dim(tmp)[1],
         n_sig_0.05 = sum(tmp$o.pvalues.mean < 0.05),
         n_sig_0.01 = sum(tmp$o.pvalues.mean < 0.01),
         n_sig_0.001 = sum(tmp$o.pvalues.mean < 0.001),
@@ -71,7 +70,7 @@ summary_all_sigSNPs <- foreach(i = vars, .combine = "rbind")%do%{
         mean_abs_zscore_0.01 = mean(abs(tmp$o.zscores.mean[which(tmp$o.pvalues.mean < 0.01)])),
         median_abs_zscore_0.01 = median(abs(tmp$o.zscores.mean[which(tmp$o.pvalues.mean < 0.01)])),
         mean_abs_zscore_0.001 = mean(abs(tmp$o.zscores.mean[which(tmp$o.pvalues.mean < 0.001)])),
-        median_abs_zscore_0.001 = median(abs(tmp$o.zscores.mean[which(tmp$v < 0.001)])),
+        median_abs_zscore_0.001 = median(abs(tmp$o.zscores.mean[which(tmp$o.pvalues.mean < 0.001)])),
         max_abs_zscore =  max(abs(tmp$o.zscores.mean)),
         abs_zscore_quant_95 = q[1],
         abs_zscore_quant_99 = q[2],
@@ -84,27 +83,28 @@ summary_all_sigSNPs <- foreach(i = vars, .combine = "rbind")%do%{
 summary_sigSNPs <- left_join(summary_all_sigSNPs, var_full_names, by="variable")
 
 # Graph z scores for p<0.001
-pdf("output/figures/LFMM_analyses/LFMM_zscore_pval0.001_abiotic.pdf", width = 9, height = 5.5)
-ggplot(summary_abiotic_sigSNPs, aes(x = mean_abs_zscore_0.001, y = reorder(variable_full_name_edit, mean_abs_zscore_0.001))) + 
+pdf("output/figures/LFMM_analyses/LFMM_zscore_pval0.001_all_5run.pdf", width = 9, height = 12)
+ggplot(summary_sigSNPs, aes(x = mean_abs_zscore_0.001, y = reorder(variable_full_name_edit, mean_abs_zscore_0.001))) + 
   geom_point(size = 8) + 
+  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
   labs(x = expression("Mean " * abs(z)* " for p<0.001"), y = "") +
-  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22)) 
 dev.off()
 
 # Graph z scores for p<0.05
-pdf("output/figures/LFMM_analyses/LFMM_zscore_pval0.05_abiotic.pdf", width = 9, height = 5.5)
-ggplot(summary_abiotic_sigSNPs, aes(x = mean_abs_zscore_0.05, y = reorder(variable_full_name_edit, mean_abs_zscore_0.05))) + 
+pdf("output/figures/LFMM_analyses/LFMM_zscore_pval0.05_all_5run.pdf", width = 9, height = 12)
+ggplot(summary_sigSNPs, aes(x = mean_abs_zscore_0.05, y = reorder(variable_full_name_edit, mean_abs_zscore_0.05))) + 
   geom_point(size = 8) + 
+  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
   labs(x = expression("Mean " * abs(z)* " for p<0.05"), y = "") +
-  xlim(0, 5.5) +
   theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
 dev.off()
 
 # Graph z scores for 99.9%
-pdf("output/figures/LFMM_analyses/LFMM_zscore_99.9perc_abiotic.pdf", width = 9, height = 5.5)
-ggplot(summary_abiotic_sigSNPs, aes(x = abs_zscore_quant_99.9, y = reorder(variable_full_name_edit, abs_zscore_quant_99.9))) + 
+pdf("output/figures/LFMM_analyses/LFMM_zscore_99.9perc_all_5run.pdf", width = 9, height = 12)
+ggplot(summary_sigSNPs, aes(x = abs_zscore_quant_99.9, y = reorder(variable_full_name_edit, abs_zscore_quant_99.9))) + 
   geom_point(size = 8) + 
+  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
   labs(x = expression("99.9% Percentile " * abs(z)), y = "") +
-  xlim(0, 10.5) +
   theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
 dev.off()
