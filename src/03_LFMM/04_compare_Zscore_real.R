@@ -30,21 +30,7 @@ library(magrittr)
 # Load seascape var full names
 var_full_names <- read.csv("guide_files/Seascape_vars_full_names.csv", header=T)
 
-# ================================================================================== #
-
-# Create list of file names for real data
-file_names = as.list(dir(path = 'data/processed/LFMM_analyses/', pattern = "pv_*"))
-file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/LFMM_analyses/real/', x))))
-
-# Read all the files and add a column with the chunk
-LFMM_real_all <- foreach(w=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
-    # State which file loading
-    message(w)
-    # Load file
-    o = get(load(w))
-    # Return output
-    o
-}
+# Load LFMM results
 
 # ================================================================================== #
 

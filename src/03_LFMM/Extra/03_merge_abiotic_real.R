@@ -44,14 +44,14 @@ if (!dir.exists(out_fig_dir)) {dir.create(out_fig_dir)}
 
 # ================================================================================== #
 
-# Extract p-value for each environmental variable - real
+# Extract p-value for each environmental variable - abiotic
 
 # Snp info
 load("data/processed/LFMM_analyses/snp.info.Rdata")
 str(snp.info)
 
 # Create list of file names for real data
-file_names = as.list(dir(path = 'data/processed/LFMM_analyses/real/', pattern = paste0("pv_", var, "run_*")))
+file_names = as.list(dir(path = 'data/processed/LFMM_analyses/real/', pattern = paste0("pv_", var)))
 file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/LFMM_analyses/real/', x))))
 
 # Read all the files and add a column with the chunk
