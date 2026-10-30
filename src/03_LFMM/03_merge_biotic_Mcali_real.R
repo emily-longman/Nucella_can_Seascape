@@ -75,4 +75,4 @@ LFMM_real <- foreach(w=file_names_v, .combine="rbind", .errorhandling = "remove"
 # ================================================================================== #
 
 # Save output
-save(LFMM_real_sum, file = paste0("data/processed/LFMM_analyses/LFMM_", var, ".RData"))
+save(LFMM_real, file = paste0("data/processed/LFMM_analyses/LFMM_", var, ".RData"))
