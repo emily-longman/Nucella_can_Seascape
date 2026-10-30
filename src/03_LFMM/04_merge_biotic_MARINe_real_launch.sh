@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=merge_real_biotic_MARINe
+#SBATCH --job-name=LFMM_merge_real_biotic_MARINe
 
 # Specify partition
 #SBATCH --partition=general

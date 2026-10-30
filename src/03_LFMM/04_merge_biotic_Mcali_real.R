@@ -63,7 +63,7 @@ LFMM_real <- foreach(w=file_names_v, .combine="rbind", .errorhandling = "remove"
     str(o)
 
     # Extract p-values and zscores per SNP
-    tmp <- data.frame(snp.info, o$pvalues, o$zscores)
+    tmp <- data.frame(snp.info.18pop, o$pvalues, o$zscores)
 
     # Add column with variable
     tmp$var = var
