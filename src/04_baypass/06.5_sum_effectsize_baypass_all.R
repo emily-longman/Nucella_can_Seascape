@@ -51,6 +51,7 @@ bf_enrich_all$Variable <- as.factor(bf_enrich_all$Variable)
 
 # ================================================================================== #
 
+# Graph
 pdf("output/figures/baypass/Baypass_BF_count_95POD.pdf", width = 9, height = 12)
 ggplot(bf_enrich_all, aes(x = count_95POD, y = reorder(variable_full_name_edit, count_95POD))) + 
     facet_wrap(~Variable, ncol = 1, scales = "free_y") + 

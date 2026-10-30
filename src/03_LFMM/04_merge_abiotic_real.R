@@ -30,6 +30,12 @@ library(LEA)
 
 # ================================================================================== #
 
+# Specify arguments
+args = commandArgs(trailingOnly=TRUE)
+var = as.character(args[1]) #Environmental variable
+
+# ================================================================================== #
+
 # Generate output directories
 out_dir <- paste("data/processed/LFMM_analyses")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
@@ -45,11 +51,8 @@ load("data/processed/LFMM_analyses/snp.info.Rdata")
 str(snp.info)
 
 # Create list of file names for real data
-file_names = as.list(dir(path = 'data/processed/LFMM_analyses/real/', pattern = "pv_*"))
+file_names = as.list(dir(path = 'data/processed/LFMM_analyses/real/', pattern = paste0("pv_", var, "run_*")))
 file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/LFMM_analyses/real/', x))))
-
-# Extract just abiotic
-file_names_v <- file_names_v[c(5,18,21,22,23,24,25,26,27)]
 
 # Read all the files and add a column with the chunk
 LFMM_real <- foreach(w=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
@@ -63,18 +66,30 @@ LFMM_real <- foreach(w=file_names_v, .combine="rbind", .errorhandling = "remove"
     tmp <- data.frame(snp.info, o$pvalues, o$zscores)
 
     # Add column with variable
-    tmp %<>% mutate(var = w) %>% mutate(var = str_remove(var, pattern = "data/processed/LFMM_analyses/real/pv_*"))
+    tmp$var = var
+
+    # Add column with variable
+    tmp %<>% mutate(run = w) %>% mutate(run = str_remove(run, pattern = paste0("data/processed/LFMM_analyses/real/pv_", var, "run_")))
 
     # Remove end of var name
-    tmp %<>% mutate(var = str_remove(var, pattern = ".RData"))
+    tmp %<>% mutate(run = str_remove(run, pattern = ".RData"))
 
     # Create columns specifying perm versus real
     tmp$data = "real"
-    tmp$perm = 0
 
     # Return output
     tmp
 }
 
+# ================================================================================== #
+
+# Summarize across the 5 runs
+LFMM_real_sum <- LFMM_real %>% group_by(chr, pos, RefAllele, AltAllele, rs.id, SNP_id, var) %>%
+    reframe(o.pvalues.mean = mean(o.pvalues), o.pvalues.median = median(o.pvalues), o.pvalues.var = var(o.pvalues), 
+            o.zscores.mean = mean(o.zscores), o.zscores.median = median(o.zscores), o.zscores.var = var(o.zscores))
+
+# ================================================================================== #
+
+
 # Save output
-save(LFMM_real, file = "data/processed/LFMM_analyses/LFMM_real_abiotic.RData")
+save(LFMM_real_sum, file = paste0("data/processed/LFMM_analyses/LFMM_real_abiotic", var, ".RData"))
