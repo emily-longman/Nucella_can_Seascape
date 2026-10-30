@@ -197,7 +197,7 @@ glm.model.output =
 # Generate folders and save output
 
 # Folder name
-folder_name <- paste("data/processed/glms/glms_chunk_analysis_marine/real")
+folder_name <- paste("data/processed/glms/glms_chunk_analysis_marine/cohensF")
 if (!dir.exists(folder_name)) {dir.create(folder_name)}
 
 # Save file for chunk w
