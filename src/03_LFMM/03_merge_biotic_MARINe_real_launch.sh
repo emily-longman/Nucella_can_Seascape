@@ -69,7 +69,7 @@ echo ${i}
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/04_merge_biotic_MARINe_real.R "${i}"
+Rscript --vanilla $WORKING_FOLDER/src/03_LFMM/03_merge_biotic_MARINe_real.R "${i}"
 
 #--------------------------------------------------------------------------------
 

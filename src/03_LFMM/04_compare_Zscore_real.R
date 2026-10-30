@@ -33,7 +33,7 @@ var_full_names <- read.csv("guide_files/Seascape_vars_full_names.csv", header=T)
 # ================================================================================== #
 
 # Create list of file names for real data
-file_names = as.list(dir(path = 'data/processed/LFMM_analyses/real/', pattern = "pv_*"))
+file_names = as.list(dir(path = 'data/processed/LFMM_analyses/', pattern = "pv_*"))
 file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0('data/processed/LFMM_analyses/real/', x))))
 
 # Read all the files and add a column with the chunk
