@@ -17,12 +17,12 @@ rm(list=ls())
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'plyr', 'foreach', 'pooldata'))
+#install.packages(c('data.table', 'tidyverse', 'plyr', 'foreach', 'poolfstat'))
 library(data.table)
 library(tidyverse)
 library(plyr)
 library(foreach)
-library(pooldata)
+library(poolfstat)
 
 # ================================================================================== #
 
