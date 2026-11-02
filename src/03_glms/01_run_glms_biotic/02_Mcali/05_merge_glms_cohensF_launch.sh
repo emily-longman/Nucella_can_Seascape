@@ -49,7 +49,7 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/03_glms/01_run_glms_biotic/01_Mcali/05_merge_glms_cohensF.R
+Rscript --vanilla $WORKING_FOLDER/src/03_glms/01_run_glms_biotic/02_Mcali/05_merge_glms_cohensF.R
 
 #--------------------------------------------------------------------------------
 
