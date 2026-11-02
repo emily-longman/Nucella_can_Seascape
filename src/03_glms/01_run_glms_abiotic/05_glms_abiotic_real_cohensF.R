@@ -192,7 +192,7 @@ folder_name <- paste("data/processed/glms/glms_chunk_analysis_abiotic/cohensF")
 if (!dir.exists(folder_name)) {dir.create(folder_name)}
 
 # Save file for chunk w
-file_name <- paste("GLM_MARINe_chunk_", w, sep = "")
+file_name <- paste("GLM_abiotic_chunk_", w, sep = "")
 save(glm.model.output, file = paste(folder_name, "/" , file_name, ".Rdata", sep = "") )
 
 message("done")

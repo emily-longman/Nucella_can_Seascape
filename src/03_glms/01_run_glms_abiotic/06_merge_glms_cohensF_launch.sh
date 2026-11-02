@@ -46,6 +46,3 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 Rscript --vanilla $WORKING_FOLDER/src/03_glms/01_run_glms_abiotic/06_merge_glms_cohensF.R
 
 #--------------------------------------------------------------------------------
-
-# Say done
-echo "done"

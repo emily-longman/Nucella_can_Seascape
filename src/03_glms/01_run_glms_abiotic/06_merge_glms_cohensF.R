@@ -52,7 +52,7 @@ pooldata.snp.info <- pooldata.snp.info %>%
 # Load and merge data
 
 # Create list of file names
-file_names = as.list(dir(path = "data/processed/glms/glms_chunk_analysis_abiotic/cohensF", pattern = "GLM_MARINe_chunk_*"))
+file_names = as.list(dir(path = "data/processed/glms/glms_chunk_analysis_abiotic/cohensF", pattern = "GLM_abiotic_chunk_*"))
 file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("data/processed/glms/glms_chunk_analysis_abiotic/cohensF/"), x))))
 
 # Check number of files
@@ -66,7 +66,7 @@ glm.model.collated =  foreach(i=file_names_v, .combine="rbind", .errorhandling =
     o = get(load(i))
 
         # Add column with identifier
-    o %>% mutate(chunk = i) %>% mutate(chunk = str_remove(chunk, pattern = "data/processed/glms/glms_chunk_analysis_abiotic/cohensF/GLM_MARINe_chunk_")) -> tmp
+    o %>% mutate(chunk = i) %>% mutate(chunk = str_remove(chunk, pattern = "data/processed/glms/glms_chunk_analysis_abiotic/cohensF/GLM_abiotic_chunk_")) -> tmp
 
     # Remove end of chunk name
     tmp <- tmp %>% mutate(chunk = str_remove(chunk, pattern = ".Rdata"))
