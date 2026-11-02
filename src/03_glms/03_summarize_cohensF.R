@@ -17,12 +17,13 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'dplyr', 'foreach', 'RColorBrewer', 'ggtext))
+#install.packages(c('data.table', 'tidyverse', 'dplyr', 'foreach', 'magrittr', 'RColorBrewer', 'ggtext))
 library(data.table)
 library(tidyverse)
 library(dplyr)
 library(foreach)
-libray(RColorBrewer)
+library(magrittr)
+library(RColorBrewer)
 library(ggtext)
 
 # ================================================================================== #
@@ -41,14 +42,14 @@ var_full_names <- read.csv("guide_files/Seascape_vars_full_names.csv", header=T)
 # Load and merge data
 
 # Create list of file names
-file_names = as.list(dir(path = "data/processed/glms/cohensF", pattern = "glm_cohensF_*"))
+file_names = as.list(dir(path = "data/processed/glms/RDR", pattern = "glm_RDR_*"))
 file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("data/processed/glms/cohensF/"), x))))
 
 # Check number of files
 length(file_names_v)
 
 # Read all the files and add a column with the chunk
-cohensF =  foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
+RDR =  foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%do%{  
     # State which file loading
     message(i)
     # Load file
@@ -59,50 +60,53 @@ cohensF =  foreach(i=file_names_v, .combine="rbind", .errorhandling = "remove")%
 }
 
 # Check structure
-str(cohensF)
+str(RDR)
+
+# Change f2 to RDR
+names(RDR)[names(RDR) == "f2"] <- "RDR"
 
 # ================================================================================== #
 
 # List of variables
-vars <- unique(cohensF$variable)
+vars <- unique(RDR$variable)
 
 # Calc summary stats
 effectsize_sum <- foreach(i = vars, .combine = "rbind")%do%{
     # Extract for just one var
-    tmp <- cohensF %>% filter(variable == i)
+    tmp <- RDR %>% filter(variable == i)
     # Summarize
-    q <- quantile(tmp$f2, probs = c(0.9, 0.95, 0.99, 0.995, 0.999), na.rm = T)
-    q_log_pos <- quantile(log(tmp$f2[tmp$f2 > 0]), probs = c(0.9, 0.95, 0.99, 0.995, 0.999), na.rm = T)
+    q <- quantile(tmp$RDR, probs = c(0.9, 0.95, 0.99, 0.995, 0.999), na.rm = T)
+    q_log_pos <- quantile(log(tmp$RDR[tmp$RDR > 0]), probs = c(0.9, 0.95, 0.99, 0.995, 0.999), na.rm = T)
     
     # Make table
     data.frame(
         variable = i,
         n_tot = dim(tmp)[1],
-        sum_f2_neg = sum(tmp$f2 < 0),
-        sum_f2_0 = sum(tmp$f2 == 0),
+        sum_RDR_neg = sum(tmp$RDR < 0),
+        sum_RDR_0 = sum(tmp$RDR == 0),
         n_sig_0.05 = sum(tmp$p_lrt < 0.05),
         n_sig_0.01 = sum(tmp$p_lrt < 0.01),
         n_sig_0.001 = sum(tmp$p_lrt < 0.01/dim(tmp)[1]),
-        mean_f2_0.05 = mean(tmp$f2[which(tmp$p_lrt < 0.05)]),
-        median_f2_0.05 = median(tmp$f2[which(tmp$p_lrt < 0.05)]),
-        mean_f2_0.01 = mean(tmp$f2[which(tmp$p_lrt < 0.01)]),
-        median_f2_0.01 = median(tmp$f2[which(tmp$p_lrt < 0.01)]),
-        mean_f2_0.001 = mean(tmp$f2[which(tmp$p_lrt < 0.001)]),
-        median_f2_0.001 = median(tmp$f2[which(tmp$p_lrt < 0.001)]),
-        mean_f2 =  mean(tmp$f2),
-        median_f2 =  median(tmp$f2),
-        mean_pos_f2 =  mean(tmp$f2[tmp$f2 > 0]),
-        median_pos_f2 =  median(tmp$f2[tmp$f2 > 0]),
-        f2_quant_90 = q[1],
-        f2_quant_95 = q[2],
-        f2_quant_99 = q[3],
-        f2_quant_99.5 = q[4],
-        f2_quant_99.9 = q[5],
-        log_pos_f2_quant_90 = q_log_pos[1],
-        log_pos_f2_quant_95 = q_log_pos[2],
-        log_pos_f2_quant_99 = q_log_pos[3],
-        log_pos_f2_quant_99.5 = q_log_pos[4],
-        log_pos_f2_quant_99.9 = q_log_pos[5]
+        mean_RDR_0.05 = mean(tmp$RDR[which(tmp$p_lrt < 0.05)]),
+        median_RDR_0.05 = median(tmp$RDR[which(tmp$p_lrt < 0.05)]),
+        mean_RDR_0.01 = mean(tmp$RDR[which(tmp$p_lrt < 0.01)]),
+        median_RDR_0.01 = median(tmp$RDR[which(tmp$p_lrt < 0.01)]),
+        mean_RDR_0.001 = mean(tmp$RDR[which(tmp$p_lrt < 0.001)]),
+        median_RDR_0.001 = median(tmp$RDR[which(tmp$p_lrt < 0.001)]),
+        mean_RDR =  mean(tmp$RDR),
+        median_RDR =  median(tmp$RDR),
+        mean_pos_RDR =  mean(tmp$RDR[tmp$RDR > 0]),
+        median_pos_RDR =  median(tmp$RDR[tmp$RDR > 0]),
+        RDR_quant_90 = q[1],
+        RDR_quant_95 = q[2],
+        RDR_quant_99 = q[3],
+        RDR_quant_99.5 = q[4],
+        RDR_quant_99.9 = q[5],
+        log_pos_RDR_quant_90 = q_log_pos[1],
+        log_pos_RDR_quant_95 = q_log_pos[2],
+        log_pos_RDR_quant_99 = q_log_pos[3],
+        log_pos_RDR_quant_99.5 = q_log_pos[4],
+        log_pos_RDR_quant_99.9 = q_log_pos[5]
     )
 }
 
@@ -114,116 +118,116 @@ effectsize_sum <- left_join(effectsize_sum, var_full_names, by="variable")
 # Graph LFMM results
 
 
-# Graph f2 scores for p<0.05
-pdf("output/figures/glms/glm_mean_f2_pval0.05_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = mean_f2_0.05, y = reorder(variable_full_name_edit, mean_f2_0.05))) + 
+# Graph RDR scores for p<0.05
+pdf("output/figures/glms/glm_mean_RDR_pval0.05_all.pdf", width = 9, height = 12)
+ggplot(effectsize_sum, aes(x = mean_RDR_0.05, y = reorder(variable_full_name_edit, mean_RDR_0.05))) + 
   geom_point(size = 8) + 
   facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("Mean " * f2 * " for p<0.05"), y = "") +
+  labs(x = expression("Mean " * RDR * " for p<0.05"), y = "") +
   theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
 dev.off()
-pdf("output/figures/glms/glm_median_f2_pval0.05_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = median_f2_0.05, y = reorder(variable_full_name_edit, median_f2_0.05))) + 
+pdf("output/figures/glms/glm_median_RDR_pval0.05_all.pdf", width = 9, height = 12)
+ggplot(effectsize_sum, aes(x = median_RDR_0.05, y = reorder(variable_full_name_edit, median_RDR_0.05))) + 
   geom_point(size = 8) + 
   facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("Mean " * f2 * " for p<0.05"), y = "") +
+  labs(x = expression("Mean " * RDR * " for p<0.05"), y = "") +
   theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
-dev.off()# Graph f2 scores for p<0.01
-pdf("output/figures/glms/glm_mean_f2_pval0.01_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = mean_f2_0.01, y = reorder(variable_full_name_edit, mean_f2_0.01))) + 
+dev.off()# Graph RDR scores for p<0.01
+pdf("output/figures/glms/glm_mean_RDR_pval0.01_all.pdf", width = 9, height = 12)
+ggplot(effectsize_sum, aes(x = mean_RDR_0.01, y = reorder(variable_full_name_edit, mean_RDR_0.01))) + 
   geom_point(size = 8) + 
   facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("Mean " * f2 * " for p<0.01"), y = "") +
-  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
-dev.off()
-pdf("output/figures/glms/glm_median_f2_pval0.01_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = median_f2_0.01, y = reorder(variable_full_name_edit, median_f2_0.01))) + 
-  geom_point(size = 8) + 
-  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("Mean " * f2 * " for p<0.01"), y = "") +
+  labs(x = expression("Mean " * RDR * " for p<0.01"), y = "") +
   theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
 dev.off()
-# Graph f2 scores for p<0.001
-pdf("output/figures/glms/glm_mean_f2_pval0.001_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = mean_f2_0.001, y = reorder(variable_full_name_edit, mean_f2_0.001))) + 
+pdf("output/figures/glms/glm_median_RDR_pval0.01_all.pdf", width = 9, height = 12)
+ggplot(effectsize_sum, aes(x = median_RDR_0.01, y = reorder(variable_full_name_edit, median_RDR_0.01))) + 
   geom_point(size = 8) + 
   facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("Mean " * f2 * " for p<0.001"), y = "") +
+  labs(x = expression("Mean " * RDR * " for p<0.01"), y = "") +
   theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
 dev.off()
-pdf("output/figures/glms/glm_median_f2_pval0.001_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = median_f2_0.001, y = reorder(variable_full_name_edit, median_f2_0.001))) + 
+# Graph RDR scores for p<0.001
+pdf("output/figures/glms/glm_mean_RDR_pval0.001_all.pdf", width = 9, height = 12)
+ggplot(effectsize_sum, aes(x = mean_RDR_0.001, y = reorder(variable_full_name_edit, mean_RDR_0.001))) + 
   geom_point(size = 8) + 
   facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("Mean " * f2 * " for p<0.001"), y = "") +
+  labs(x = expression("Mean " * RDR * " for p<0.001"), y = "") +
   theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
 dev.off()
-
-
-# Graph f2 scores for 95%
-pdf("output/figures/glms/glm_f2_95perc_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = f2_quant_95, y = reorder(variable_full_name_edit, f2_quant_95))) + 
+pdf("output/figures/glms/glm_median_RDR_pval0.001_all.pdf", width = 9, height = 12)
+ggplot(effectsize_sum, aes(x = median_RDR_0.001, y = reorder(variable_full_name_edit, median_RDR_0.001))) + 
   geom_point(size = 8) + 
   facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("95% Percentile " * f2), y = "") +
-  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
-dev.off()
-# Graph f2 scores for 99.9%
-pdf("output/figures/glms/glm_f2_99.9perc_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = f2_quant_99.9, y = reorder(variable_full_name_edit, f2_quant_99.9))) + 
-  geom_point(size = 8) + 
-  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("99.9% Percentile " * f2), y = "") +
+  labs(x = expression("Mean " * RDR * " for p<0.001"), y = "") +
   theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
 dev.off()
 
-# Graph log of pos f2 scores for 95%
-pdf("output/figures/glms/glm_log_pos_f2_95perc_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = log_pos_f2_quant_95, y = reorder(variable_full_name_edit, log_pos_f2_quant_95))) + 
+
+# Graph RDR scores for 95%
+pdf("output/figures/glms/glm_RDR_95perc_all.pdf", width = 9, height = 12)
+ggplot(effectsize_sum, aes(x = RDR_quant_95, y = reorder(variable_full_name_edit, RDR_quant_95))) + 
   geom_point(size = 8) + 
   facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("95% Percentile (log" * f2 *")"), y = "") +
+  labs(x = expression("95% Percentile " * RDR), y = "") +
   theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
-dev.off()# Graph log pos f2 scores for 99.9%
-pdf("output/figures/glms/glm_log_pos_f2_99.9perc_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = log_pos_f2_quant_99.9, y = reorder(variable_full_name_edit, log_pos_f2_quant_99.9))) + 
+dev.off()
+# Graph RDR scores for 99.9%
+pdf("output/figures/glms/glm_RDR_99.9perc_all.pdf", width = 9, height = 12)
+ggplot(effectsize_sum, aes(x = RDR_quant_99.9, y = reorder(variable_full_name_edit, RDR_quant_99.9))) + 
   geom_point(size = 8) + 
   facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("99.9% Percentile log( " * f2 *")"), y = "") +
+  labs(x = expression("99.9% Percentile " * RDR), y = "") +
   theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
 dev.off()
 
-# Graph median f2
-pdf("output/figures/glms/glm_median_pos_f2_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = median_pos_f2, y = reorder(variable_full_name_edit, median_pos_f2))) + 
+# Graph log of pos RDR scores for 95%
+pdf("output/figures/glms/glm_log_pos_RDR_95perc_all.pdf", width = 9, height = 12)
+ggplot(effectsize_sum, aes(x = log_pos_RDR_quant_95, y = reorder(variable_full_name_edit, log_pos_RDR_quant_95))) + 
   geom_point(size = 8) + 
   facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("Median pos" * f2), y = "") +
+  labs(x = expression("95% Percentile (log" * RDR *")"), y = "") +
   theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
-dev.off()
-# Graph mean f2
-pdf("output/figures/glms/glm_mean_pos_f2_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = mean_pos_f2, y = reorder(variable_full_name_edit, mean_pos_f2))) + 
+dev.off()# Graph log pos RDR scores for 99.9%
+pdf("output/figures/glms/glm_log_pos_RDR_99.9perc_all.pdf", width = 9, height = 12)
+ggplot(effectsize_sum, aes(x = log_pos_RDR_quant_99.9, y = reorder(variable_full_name_edit, log_pos_RDR_quant_99.9))) + 
   geom_point(size = 8) + 
   facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("Mean pos" * f2), y = "") +
+  labs(x = expression("99.9% Percentile log( " * RDR *")"), y = "") +
   theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
 dev.off()
 
-# Graph median f2
-pdf("output/figures/glms/glm_median_f2_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = median_f2, y = reorder(variable_full_name_edit, median_f2))) + 
+# Graph median RDR
+pdf("output/figures/glms/glm_median_pos_RDR_all.pdf", width = 9, height = 12)
+ggplot(effectsize_sum, aes(x = median_pos_RDR, y = reorder(variable_full_name_edit, median_pos_RDR))) + 
   geom_point(size = 8) + 
   facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("Median " * f2), y = "") +
+  labs(x = expression("Median pos" * RDR), y = "") +
   theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
 dev.off()
-# Graph mean f2
-pdf("output/figures/glms/glm_mean_f2_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = mean_f2, y = reorder(variable_full_name_edit, mean_f2))) + 
+# Graph mean RDR
+pdf("output/figures/glms/glm_mean_pos_RDR_all.pdf", width = 9, height = 12)
+ggplot(effectsize_sum, aes(x = mean_pos_RDR, y = reorder(variable_full_name_edit, mean_pos_RDR))) + 
   geom_point(size = 8) + 
   facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("Mean " * f2), y = "") +
+  labs(x = expression("Mean pos" * RDR), y = "") +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
+dev.off()
+
+# Graph median RDR
+pdf("output/figures/glms/glm_median_RDR_all.pdf", width = 9, height = 12)
+ggplot(effectsize_sum, aes(x = median_RDR, y = reorder(variable_full_name_edit, median_RDR))) + 
+  geom_point(size = 8) + 
+  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
+  labs(x = expression("Median " * RDR), y = "") +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
+dev.off()
+# Graph mean RDR
+pdf("output/figures/glms/glm_mean_RDR_all.pdf", width = 9, height = 12)
+ggplot(effectsize_sum, aes(x = mean_RDR, y = reorder(variable_full_name_edit, mean_RDR))) + 
+  geom_point(size = 8) + 
+  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
+  labs(x = expression("Mean " * RDR), y = "") +
   theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
 dev.off()
 
@@ -243,8 +247,8 @@ summary_biotic <- read.csv("data/processed/glms/glms_summary/Biotic_vars_rr_sum.
 summary_F <- left_join(summary, effectsize_sum)
 
 # Graph relative rate of model enrichment for all vars - mean and 2*sd
-pdf("output/figures/glms/GLM_F2_rr.pdf", width = 15, height = 12)
-ggplot(summary_F, aes(x = reorder(variable_full_name_edit, mean_rr_log2), y = mean_rr_log2, color = median_pos_f2)) + 
+pdf("output/figures/glms/GLM_RDR_rr.pdf", width = 15, height = 12)
+ggplot(summary_F, aes(x = reorder(variable_full_name_edit, mean_rr_log2), y = mean_rr_log2, color = median_pos_RDR)) + 
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
   geom_point(size = 8) + 
   scale_color_gradientn(colours = brewer.pal(9, "Blues")[2:9]) +
@@ -264,11 +268,11 @@ summary_F$variable_full_name_italics <- c("*B. glandula* (hmean)", "*B. glandula
 "O2 (mean)", "pH (mean)", "pH (min)", "Salinity (mean)", "SST (max)", "SST (mean)", "SST (min)", "SST (range)")
 
 # Graph relative rate of model enrichment for all vars - mean and 2*sd
-pdf("output/figures/glms/GLM_F2_rr.pdf", width = 8, height = 12)
-ggplot(summary_F, aes(x = reorder(variable_full_name_italics, mean_rr_log2), y = mean_rr_log2, color = median_pos_f2)) + 
+pdf("output/figures/glms/GLM_RDR_rr.pdf", width = 8, height = 12)
+ggplot(summary_F, aes(x = reorder(variable_full_name_italics, mean_rr_log2), y = mean_rr_log2, color = median_pos_RDR)) + 
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
   geom_point(size = 8) + 
-  scale_color_gradientn(colours = brewer.pal(9, "Blues")[2:9], name = "f²", breaks = c(0.04, 0.10, 0.16)) +
+  scale_color_gradientn(colours = brewer.pal(9, "Blues")[2:9], name = "Effect size", breaks = c(0.04, 0.10, 0.16)) +
   facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
   ylim(-0.27, 0.369) +
   labs( x = "", y = expression(Log[2]*(RR~Enrichment))) +
@@ -276,15 +280,15 @@ ggplot(summary_F, aes(x = reorder(variable_full_name_italics, mean_rr_log2), y =
   theme_linedraw(base_size=30) + theme(axis.text.y = element_markdown(size = 20), legend.position = c(0.3, 0.8), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
 
-# Range of f2 values
-f2_limits <- range(summary_F$median_pos_f2, na.rm = TRUE)
+# Range of RDR values
+RDR_limits <- range(summary_F$median_pos_RDR, na.rm = TRUE)
 
 # Graph relative rate of model enrichment for all vars - mean and 2*sd
-pdf("output/figures/glms/GLM_F2_rr_abiotic.pdf", width = 8.8398, height = 5.75)
-ggplot(summary_F[which(summary_F$Variable == "Abiotic"),], aes(x = reorder(variable_full_name_italics, mean_rr_log2), y = mean_rr_log2, color = median_pos_f2)) + 
+pdf("output/figures/glms/GLM_RDR_rr_abiotic.pdf", width = 8.8398, height = 5.75)
+ggplot(summary_F[which(summary_F$Variable == "Abiotic"),], aes(x = reorder(variable_full_name_italics, mean_rr_log2), y = mean_rr_log2, color = median_pos_RDR)) + 
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
   geom_point(size = 8) + 
-  scale_color_gradientn(colours = brewer.pal(9, "Blues")[2:9], limits = f2_limits, name = "f²", breaks = c(0.04, 0.10, 0.16)) +
+  scale_color_gradientn(colours = brewer.pal(9, "Blues")[2:9], limits = RDR_limits, name = "Effect size", breaks = c(0.04, 0.10, 0.16)) +
   ylim(-0.27, 0.369) +
   labs(title="Abiotic Variables", x = "", y = expression(Log[2]*(RR~Enrichment))) +
   coord_flip() +
@@ -292,11 +296,11 @@ ggplot(summary_F[which(summary_F$Variable == "Abiotic"),], aes(x = reorder(varia
   theme(axis.text.y = element_markdown(size = 22), plot.title = element_text(hjust = 0.5, margin = margin(b = -1)), 
   legend.title = element_text(size = 24), legend.text = element_text(size = 20), legend.position = c(0.22, 0.68), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
-pdf("output/figures/glms/GLM_F2_rr_abiotic_nolegend.pdf", width = 8.8401, height = 5.75)
-ggplot(summary_F[which(summary_F$Variable == "Abiotic"),], aes(x = reorder(variable_full_name_italics, mean_rr_log2), y = mean_rr_log2, color = median_pos_f2)) + 
+pdf("output/figures/glms/GLM_RDR_rr_abiotic_nolegend.pdf", width = 8.8401, height = 5.75)
+ggplot(summary_F[which(summary_F$Variable == "Abiotic"),], aes(x = reorder(variable_full_name_italics, mean_rr_log2), y = mean_rr_log2, color = median_pos_RDR)) + 
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
   geom_point(size = 8) + 
-  scale_color_gradientn(colours = brewer.pal(9, "Blues")[2:9], limits = f2_limits, name = "f²", breaks = c(0.04, 0.10, 0.16)) +
+  scale_color_gradientn(colours = brewer.pal(9, "Blues")[2:9], limits = RDR_limits, name = "Effect size", breaks = c(0.04, 0.10, 0.16)) +
   ylim(-0.27, 0.369) +
   labs(title="Abiotic Variables", x = "", y = expression(Log[2]*(RR~Enrichment))) +
   coord_flip() +
@@ -305,11 +309,11 @@ ggplot(summary_F[which(summary_F$Variable == "Abiotic"),], aes(x = reorder(varia
 dev.off()
 
 # Graph relative rate of model enrichment for all vars - mean and 2*sd
-pdf("output/figures/glms/GLM_F2_rr_biotic.pdf", width = 10, height = 9.5)
-ggplot(summary_F[which(summary_F$Variable == "Biotic"),], aes(x = reorder(variable_full_name_italics, mean_rr_log2), y = mean_rr_log2, color = median_pos_f2)) + 
+pdf("output/figures/glms/GLM_RDR_rr_biotic.pdf", width = 10, height = 9.5)
+ggplot(summary_F[which(summary_F$Variable == "Biotic"),], aes(x = reorder(variable_full_name_italics, mean_rr_log2), y = mean_rr_log2, color = median_pos_RDR)) + 
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
   geom_point(size = 8) + 
-  scale_color_gradientn(colours = brewer.pal(9, "Blues")[2:9], limits = f2_limits, name = expression("median " * italic(f)^2), breaks = c(0.04, 0.10, 0.16)) +
+  scale_color_gradientn(colours = brewer.pal(9, "Blues")[2:9], limits = RDR_limits, name = "Effect size", breaks = c(0.04, 0.10, 0.16)) +
   ylim(-0.27, 0.369) +
   labs(title="Biotic Variables", x = "", y = expression(Log[2]*(RR~Enrichment))) +
   coord_flip() +

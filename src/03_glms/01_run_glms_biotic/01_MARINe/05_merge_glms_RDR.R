@@ -93,4 +93,4 @@ str(glm.model.collated.filt)
 # ================================================================================== #
 
 # Save merged data
-save(glm.model.collated.filt, file = "data/processed/glms/RDR/glm_cohensF_filt_marine.Rdata")
+save(glm.model.collated.filt, file = "data/processed/glms/RDR/glm_RDR_filt_marine.Rdata")
