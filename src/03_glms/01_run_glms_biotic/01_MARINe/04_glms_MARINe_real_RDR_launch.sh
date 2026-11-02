@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_marine_cohensF
+#SBATCH --job-name=glms_marine_RDR
 
 # Specify partition
 #SBATCH --partition=general
@@ -93,15 +93,15 @@ fi
 cd $WORKING_FOLDER/data/processed/glms/glms_chunk_analysis_marine
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "cohensF" ]
-then echo "Working cohensF folder exist"; echo "Let's move on."; date
-else echo "Working cohensF folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/glms/glms_chunk_analysis_marine/cohensF; date
+if [ -d "RDR" ]
+then echo "Working RDR folder exist"; echo "Let's move on."; date
+else echo "Working RDR folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/glms/glms_chunk_analysis_marine/RDR; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript $SCRIPT_FOLDER/04_glms_MARINe_real_cohensF.R "${SLURM_ARRAY_TASK_ID}"
+Rscript $SCRIPT_FOLDER/04_glms_MARINe_real_RDR.R "${SLURM_ARRAY_TASK_ID}"
 
 #--------------------------------------------------------------------------------
 

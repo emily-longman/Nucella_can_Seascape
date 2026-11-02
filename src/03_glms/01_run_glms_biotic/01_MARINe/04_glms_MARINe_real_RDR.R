@@ -184,7 +184,7 @@ glm.model.output =
           p_lrt = anovaFun(t1.dem, t1.dem.env),
           R2.dem = (1 - t1.dem$deviance / t1.dem$null.deviance),
           R2.dem.env = (1 - t1.dem.env$deviance / t1.dem.env$null.deviance),
-          f2 = ((t1.dem$deviance - t1.dem.env$deviance) / t1.dem.env$deviance))
+          RDR = ((t1.dem$deviance - t1.dem.env$deviance) / t1.dem.env$deviance))
       } # End for enviro var
 
       
@@ -196,7 +196,7 @@ glm.model.output =
 # Generate folders and save output
 
 # Folder name
-folder_name <- paste("data/processed/glms/glms_chunk_analysis_marine/cohensF")
+folder_name <- paste("data/processed/glms/glms_chunk_analysis_marine/RDR")
 if (!dir.exists(folder_name)) {dir.create(folder_name)}
 
 # Save file for chunk w

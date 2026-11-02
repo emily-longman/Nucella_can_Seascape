@@ -198,7 +198,7 @@ summary_biotic$variable_full_name_italics <- c("*B. glandula* (hm)", "*B. glandu
 pdf("output/figures/glms/model_enrichment/GLM_Biotic_rr_sum_alt_italics_alt.pdf", width = 8, height = 7.28)
 ggplot(summary_biotic, aes(x = reorder(variable_full_name_italics, mean_rr_log2), y = mean_rr_log2)) + 
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
-   geom_point(size = 8, color = "darkgrey") + 
+  geom_point(size = 8, color = "darkgrey") + 
   scale_color_identity() +
   ylim(-0.27, 0.369) +
   labs(x = "", y = expression(Log[2]*(RR~Enrichment))) +

@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=merge_glms_abiotic_cohensF
+#SBATCH --job-name=merge_glms_marine_RDR
 
 # Specify partition
 #SBATCH --partition=general
@@ -28,7 +28,7 @@
 
 #--------------------------------------------------------------------------------
 
-# This script will run the accompanying 06_merge_glms_cohensF.R script. 
+# This script will run the accompanying 05_merge_glms_RDR.R script. 
 
 # Load modules 
 module load gcc/13.3.0
@@ -40,9 +40,13 @@ module load R/4.4.1
 
 # WORKING_FOLDER is the core folder where this pipeline is being run.
 WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
+
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/03_glms/01_run_glms_abiotic/06_merge_glms_cohensF.R
+Rscript --vanilla $WORKING_FOLDER/src/03_glms/01_run_glms_biotic/01_MARINe/05_merge_glms_RDR.R
 
 #--------------------------------------------------------------------------------
+
+# Say done
+echo "done"

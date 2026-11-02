@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=merge_glms_mcali_cohensF
+#SBATCH --job-name=merge_glms_abiotic_RDR
 
 # Specify partition
 #SBATCH --partition=general
@@ -14,7 +14,7 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=05:00:00 
+#SBATCH --time=30:00:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
 #SBATCH --mem=500G 
@@ -28,7 +28,7 @@
 
 #--------------------------------------------------------------------------------
 
-# This script will run the accompanying 05_merge_glms_cohensF.R script. 
+# This script will run the accompanying 06_merge_glms_cohensF.R script. 
 
 # Load modules 
 module load gcc/13.3.0
@@ -40,18 +40,9 @@ module load R/4.4.1
 
 # WORKING_FOLDER is the core folder where this pipeline is being run.
 WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
-
 #--------------------------------------------------------------------------------
-
-#for f in *MARINe*; do
-#    mv "$f" "${f/MARINe/Mcali}"
-#done
-
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/03_glms/01_run_glms_biotic/02_Mcali/05_merge_glms_cohensF.R
+Rscript --vanilla $WORKING_FOLDER/src/03_glms/01_run_glms_abiotic/06_merge_glms_RDR.R
 
 #--------------------------------------------------------------------------------
-
-# Say done
-echo "done"

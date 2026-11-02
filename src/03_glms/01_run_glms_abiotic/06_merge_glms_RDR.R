@@ -27,7 +27,7 @@ library(poolfstat)
 # ================================================================================== #
 
 # Generate output directories
-out_dir <- paste("data/processed/glms/cohensF")
+out_dir <- paste("data/processed/glms/RDR")
 if (!dir.exists(out_dir)) {dir.create(out_dir)}
 
 # ================================================================================== #
@@ -52,8 +52,8 @@ pooldata.snp.info <- pooldata.snp.info %>%
 # Load and merge data
 
 # Create list of file names
-file_names = as.list(dir(path = "data/processed/glms/glms_chunk_analysis_abiotic/cohensF", pattern = "GLM_abiotic_chunk_*"))
-file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("data/processed/glms/glms_chunk_analysis_abiotic/cohensF/"), x))))
+file_names = as.list(dir(path = "data/processed/glms/glms_chunk_analysis_abiotic/RDR", pattern = "GLM_abiotic_chunk_*"))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("data/processed/glms/glms_chunk_analysis_abiotic/RDR/"), x))))
 
 # Check number of files
 length(file_names_v)
@@ -65,8 +65,8 @@ glm.model.collated =  foreach(i=file_names_v, .combine="rbind", .errorhandling =
     # Load file
     o = get(load(i))
 
-        # Add column with identifier
-    o %>% mutate(chunk = i) %>% mutate(chunk = str_remove(chunk, pattern = "data/processed/glms/glms_chunk_analysis_abiotic/cohensF/GLM_abiotic_chunk_")) -> tmp
+    # Add column with identifier
+    o %>% mutate(chunk = i) %>% mutate(chunk = str_remove(chunk, pattern = "data/processed/glms/glms_chunk_analysis_abiotic/RDR/GLM_abiotic_chunk_")) -> tmp
 
     # Remove end of chunk name
     tmp <- tmp %>% mutate(chunk = str_remove(chunk, pattern = ".Rdata"))
@@ -93,4 +93,4 @@ str(glm.model.collated.filt)
 # ================================================================================== #
 
 # Save merged data
-save(glm.model.collated.filt, file = "data/processed/glms/cohensF/glm_cohensF_filt_abiotic.Rdata")
+save(glm.model.collated.filt, file = "data/processed/glms/RDR/glm_cohensF_filt_abiotic.Rdata")

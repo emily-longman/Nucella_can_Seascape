@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=glms_Mcali_cohensF
+#SBATCH --job-name=glms_abiotic_RDR
 
 # Specify partition
 #SBATCH --partition=general
@@ -20,7 +20,7 @@
 #SBATCH --mem=30G 
 
 # Submit job array
-#SBATCH --array=501-996%150 #1-500%100 #1-996%100
+#SBATCH --array=1-996%100
 
 # Name output of this job using %x=job-name and %j=job-id
 #SBATCH --output=./slurmOutput/%x.%A_%a.out
@@ -31,9 +31,7 @@
 
 #--------------------------------------------------------------------------------
 
-# This script will run the accompanying 04_glms_Mcali_real_cohensF.R script. 
-# For efficiency, there are 5 R scripts separating GLMs with the real data and chunks of the permutations. Note: walltimes vary depending on if running real data versus permutations.
-# This will run glms and look at the association of the allele frequencies of the outlier SNPs and the Marine biotic data.
+# This script will run the accompanying 05_glms_abiotic_real_RDR.R scripts. 
 
 # Load modules 
 module load gcc/13.3.0
@@ -47,7 +45,7 @@ module load R/4.4.1
 WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 
 # Script folder.
-SCRIPT_FOLDER=$WORKING_FOLDER/src/03_glms/01_run_glms_biotic/02_Mcali
+SCRIPT_FOLDER=$WORKING_FOLDER/src/03_glms/01_run_glms_abiotic
 
 #--------------------------------------------------------------------------------
 
@@ -64,10 +62,10 @@ guide_file=$WORKING_FOLDER/guide_files/scaffold_names_guide_file_array.txt
 
 #--------------------------------------------------------------------------------
 
-# Determine partition to process 
+# Determine partition to process - Note: chunk 17 does not have any SNPs in it for this dataset
 
 # Change directory
-cd $WORKING_FOLDER/data/processed/glms/glms_chunk_analysis_Mcali
+cd $WORKING_FOLDER/data/processed/glms/glms_chunk_analysis_abiotic
 
 # Echo slurm array task ID
 echo ${SLURM_ARRAY_TASK_ID}
@@ -86,29 +84,29 @@ cat scaffold.names.${SLURM_ARRAY_TASK_ID}.txt
 cd $WORKING_FOLDER/data/processed/glms
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "glms_chunk_analysis_Mcali" ]
-then echo "Working glms_chunk_analysis_Mcali folder exist"; echo "Let's move on."; date
-else echo "Working glms_chunk_analysis_Mcali folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/glms/glms_chunk_analysis_Mcali; date
+if [ -d "glms_chunk_analysis_abiotic" ]
+then echo "Working glms_chunk_analysis_abiotic folder exist"; echo "Let's move on."; date
+else echo "Working glms_chunk_analysis_abiotic folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/glms/glms_chunk_analysis_abiotic; date
 fi
 
 # Move to working directory
-cd $WORKING_FOLDER/data/processed/glms/glms_chunk_analysis_Mcali
+cd $WORKING_FOLDER/data/processed/glms/glms_chunk_analysis_abiotic
 
 # This part of the script will check and generate, if necessary, all of the output folders used in the script
-if [ -d "cohensF" ]
-then echo "Working cohensF folder exist"; echo "Let's move on."; date
-else echo "Working cohensF folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/glms/glms_chunk_analysis_Mcali/cohensF; date
+if [ -d "RDR" ]
+then echo "Working RDR folder exist"; echo "Let's move on."; date
+else echo "Working RDR folder doesnt exist. Let's fix that."; mkdir $WORKING_FOLDER/data/processed/glms/glms_chunk_analysis_abiotic/RDR; date
 fi
 
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript $SCRIPT_FOLDER/04_glms_Mcali_real_cohensF.R "${SLURM_ARRAY_TASK_ID}"
+Rscript $SCRIPT_FOLDER/05_glms_abiotic_real_RDR.R "${SLURM_ARRAY_TASK_ID}"
 
 #--------------------------------------------------------------------------------
 
 # Remove temporary scaffold guide file
-rm $WORKING_FOLDER/data/processed/glms/glms_chunk_analysis_Mcali/scaffold.names.${SLURM_ARRAY_TASK_ID}.txt
+rm $WORKING_FOLDER/data/processed/glms/glms_chunk_analysis_abiotic/scaffold.names.${SLURM_ARRAY_TASK_ID}.txt
 
 # Say done
 echo "done"

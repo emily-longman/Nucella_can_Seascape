@@ -5,7 +5,7 @@
 # Request cluster resources ----------------------------------------------------
 
 # Name this job
-#SBATCH --job-name=merge_glms_marine_cohensF
+#SBATCH --job-name=merge_glms_mcali_RDR
 
 # Specify partition
 #SBATCH --partition=general
@@ -14,7 +14,7 @@
 #SBATCH --nodes=1 
 
 # Reserve walltime -- hh:mm:ss --30 hrs max
-#SBATCH --time=30:00:00 
+#SBATCH --time=05:00:00 
 
 # Request memory for the entire job -- you can request --mem OR --mem-per-cpu
 #SBATCH --mem=500G 
@@ -44,7 +44,7 @@ WORKING_FOLDER=/gpfs2/scratch/elongman/Nucella_can_Seascape
 #--------------------------------------------------------------------------------
 
 # Run R script
-Rscript --vanilla $WORKING_FOLDER/src/03_glms/01_run_glms_biotic/01_MARINe/05_merge_glms_cohensF.R
+Rscript --vanilla $WORKING_FOLDER/src/03_glms/01_run_glms_biotic/02_Mcali/05_merge_glm_RDR.R
 
 #--------------------------------------------------------------------------------
 
