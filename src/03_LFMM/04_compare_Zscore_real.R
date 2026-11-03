@@ -17,13 +17,14 @@ setwd(root_path)
 # ================================================================================== #
 
 # Load packages
-#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'poolfstat', 'magrittr'))
+#install.packages(c('data.table', 'tidyverse', 'foreach', 'dplyr', 'poolfstat', 'magrittr', 'ggtext'))
 library(data.table)
 library(tidyverse)
 library(foreach)
 library(dplyr)
 library(poolfstat)
 library(magrittr)
+library(ggtext)
 
 # ================================================================================== #
 
@@ -37,7 +38,7 @@ str(LFMM_all)
 # ================================================================================== #
 
 # List of variables
-vars <- unique(var_full_names$variable)
+vars <- unique(LFMM_all$var)
 
 # Calc summary stats
 summary_all_sigSNPs <- foreach(i = vars, .combine = "rbind")%do%{
@@ -59,7 +60,6 @@ summary_all_sigSNPs <- foreach(i = vars, .combine = "rbind")%do%{
         median_abs_zscore_0.01 = median(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.01)])),
         mean_abs_zscore_0.001 = mean(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.001)])),
         median_abs_zscore_0.001 = median(abs(tmp$o.zscores[which(tmp$o.pvalues < 0.001)])),
-        max_abs_zscore =  max(abs(tmp$o.zscores)),
         abs_zscore_quant_95 = q[1],
         abs_zscore_quant_99 = q[2],
         abs_zscore_quant_99.5 = q[3],
@@ -70,26 +70,40 @@ summary_all_sigSNPs <- foreach(i = vars, .combine = "rbind")%do%{
 # Join with full names
 summary_sigSNPs <- left_join(summary_all_sigSNPs, var_full_names, by="variable")
 
+# Write output
+write.csv(summary_sigSNPs, "data/processed/LFMM_analyses/summary_sigSNPs.csv")
+
 # ================================================================================== #
+
+# For graphing make species names italics
+summary_sigSNPs$variable_full_name_italics <- 
+c("SST (max)", "SST (min)", "SST (range)", "SST (mean)", 
+"Chlorophyll (mean)", "O2 (mean)", "pH (min)", "pH (mean)", "Salinity (mean)",
+"*B. glandula* (mean)", "*B. glandula* (hmean)", "*C. dalli* (mean)", "*C. dalli* (hmean)",
+"*M. californianus* (mean)", "*M. californianus* (hmean)", "*M. trossulus* (mean)", "*M. trossulus* (hmean)", 
+"*N. canaliculata* (mean)", "*N. canaliculata* (hmean)","*N. ostrina* (mean)", "*N. ostrina* (hmean)", 
+"*P. ochraceus* (mean)", "*P. ochraceus* (hmean)",  "STI (mean)", "Cross-sectional thk (mean)", "Max thk (mean)", "Min thk (mean)")
 
 # Graph LFMM results
 
 # Graph z scores for p<0.001
-pdf("output/figures/LFMM_analyses/LFMM_zscore_pval0.001_all.pdf", width = 9, height = 12)
-ggplot(summary_sigSNPs, aes(x = mean_abs_zscore_0.001, y = reorder(variable_full_name_edit, mean_abs_zscore_0.001))) + 
+pdf("output/figures/LFMM_analyses/LFMM_zscore_pval0.001_all.pdf", width = 12, height = 12)
+ggplot(summary_sigSNPs, aes(x = mean_abs_zscore_0.001, y = reorder(variable_full_name_italics, mean_abs_zscore_0.001))) + 
   geom_point(size = 8) + 
   facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
   labs(x = expression("Mean " * abs(z)* " for p<0.001"), y = "") +
-  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
+  xlim(0.4, 9) +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_markdown(size = 22))
 dev.off()
 
 # Graph z scores for 99.9%
-pdf("output/figures/LFMM_analyses/LFMM_zscore_99.9perc_all.pdf", width = 9, height = 12)
-ggplot(summary_sigSNPs, aes(x = abs_zscore_quant_99.9, y = reorder(variable_full_name_edit, abs_zscore_quant_99.9))) + 
+pdf("output/figures/LFMM_analyses/LFMM_zscore_99.9perc_all.pdf", width = 12, height = 12)
+ggplot(summary_sigSNPs, aes(x = abs_zscore_quant_99.9, y = reorder(variable_full_name_italics, abs_zscore_quant_99.9))) + 
   geom_point(size = 8) + 
   facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
   labs(x = expression("99.9% Percentile " * abs(z)), y = "") +
-  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
+  xlim(0.85, 19.5) +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_markdown(size = 22))
 dev.off()
 
 

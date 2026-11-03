@@ -1,4 +1,4 @@
-# Summarize cohensF
+# Summarize relative deviance reduction
 
 # Clear memory
 rm(list=ls())
@@ -43,7 +43,7 @@ var_full_names <- read.csv("guide_files/Seascape_vars_full_names.csv", header=T)
 
 # Create list of file names
 file_names = as.list(dir(path = "data/processed/glms/RDR", pattern = "glm_RDR_*"))
-file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("data/processed/glms/cohensF/"), x))))
+file_names_v = as.vector(unlist(lapply(file_names, function(x) paste0(paste("data/processed/glms/RDR/"), x))))
 
 # Check number of files
 length(file_names_v)
@@ -115,54 +115,7 @@ effectsize_sum <- left_join(effectsize_sum, var_full_names, by="variable")
 
 # ================================================================================== #
 
-# Graph LFMM results
-
-
-# Graph RDR scores for p<0.05
-pdf("output/figures/glms/glm_mean_RDR_pval0.05_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = mean_RDR_0.05, y = reorder(variable_full_name_edit, mean_RDR_0.05))) + 
-  geom_point(size = 8) + 
-  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("Mean " * RDR * " for p<0.05"), y = "") +
-  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
-dev.off()
-pdf("output/figures/glms/glm_median_RDR_pval0.05_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = median_RDR_0.05, y = reorder(variable_full_name_edit, median_RDR_0.05))) + 
-  geom_point(size = 8) + 
-  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("Mean " * RDR * " for p<0.05"), y = "") +
-  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
-dev.off()# Graph RDR scores for p<0.01
-pdf("output/figures/glms/glm_mean_RDR_pval0.01_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = mean_RDR_0.01, y = reorder(variable_full_name_edit, mean_RDR_0.01))) + 
-  geom_point(size = 8) + 
-  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("Mean " * RDR * " for p<0.01"), y = "") +
-  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
-dev.off()
-pdf("output/figures/glms/glm_median_RDR_pval0.01_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = median_RDR_0.01, y = reorder(variable_full_name_edit, median_RDR_0.01))) + 
-  geom_point(size = 8) + 
-  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("Mean " * RDR * " for p<0.01"), y = "") +
-  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
-dev.off()
-# Graph RDR scores for p<0.001
-pdf("output/figures/glms/glm_mean_RDR_pval0.001_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = mean_RDR_0.001, y = reorder(variable_full_name_edit, mean_RDR_0.001))) + 
-  geom_point(size = 8) + 
-  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("Mean " * RDR * " for p<0.001"), y = "") +
-  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
-dev.off()
-pdf("output/figures/glms/glm_median_RDR_pval0.001_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = median_RDR_0.001, y = reorder(variable_full_name_edit, median_RDR_0.001))) + 
-  geom_point(size = 8) + 
-  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("Mean " * RDR * " for p<0.001"), y = "") +
-  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
-dev.off()
-
+# Graph effect size results
 
 # Graph RDR scores for 95%
 pdf("output/figures/glms/glm_RDR_95perc_all.pdf", width = 9, height = 12)
@@ -214,29 +167,9 @@ ggplot(effectsize_sum, aes(x = mean_pos_RDR, y = reorder(variable_full_name_edit
   theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
 dev.off()
 
-# Graph median RDR
-pdf("output/figures/glms/glm_median_RDR_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = median_RDR, y = reorder(variable_full_name_edit, median_RDR))) + 
-  geom_point(size = 8) + 
-  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("Median " * RDR), y = "") +
-  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
-dev.off()
-# Graph mean RDR
-pdf("output/figures/glms/glm_mean_RDR_all.pdf", width = 9, height = 12)
-ggplot(effectsize_sum, aes(x = mean_RDR, y = reorder(variable_full_name_edit, mean_RDR))) + 
-  geom_point(size = 8) + 
-  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  labs(x = expression("Mean " * RDR), y = "") +
-  theme_linedraw(base_size=30) + theme(axis.text.y = element_text(size = 22))
-dev.off()
-
-
-
-
 # ================================================================================== #
-# ================================================================================== #
-# ================================================================================== #
+
+# Join with relative rate of enrichment
 
 # Add model enrichment
 summary <- read.csv("data/processed/glms/glms_summary/All_vars_rr_sum.csv", header = T)
@@ -246,20 +179,6 @@ summary_biotic <- read.csv("data/processed/glms/glms_summary/Biotic_vars_rr_sum.
 # Join
 summary_F <- left_join(summary, effectsize_sum)
 
-# Graph relative rate of model enrichment for all vars - mean and 2*sd
-pdf("output/figures/glms/GLM_RDR_rr.pdf", width = 15, height = 12)
-ggplot(summary_F, aes(x = reorder(variable_full_name_edit, mean_rr_log2), y = mean_rr_log2, color = median_pos_RDR)) + 
-  geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
-  geom_point(size = 8) + 
-  scale_color_gradientn(colours = brewer.pal(9, "Blues")[2:9]) +
-  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  ylim(-0.27, 0.369) +
-  labs( x = "", y = expression(Log[2]*(RR~Enrichment))) +
-  coord_flip() +
-  theme_linedraw(base_size=30) 
-dev.off()
-
-
 # For graphing make species names italics
 summary_F$variable_full_name_italics <- c("*B. glandula* (hmean)", "*B. glandula* (mean)", "*C. dalli* (hmean)", "*C. dalli* (mean)",
 "*M. californianus* (hmean)", "*M. californianus* (mean)", "*M. trossulus* (hmean)", "*M. trossulus* (mean)", 
@@ -267,29 +186,46 @@ summary_F$variable_full_name_italics <- c("*B. glandula* (hmean)", "*B. glandula
 "*P. ochraceus* (hmean)", "*P. ochraceus* (mean)", "Chlorophyll (mean)", "STI (mean)", "Cross-sectional thk (mean)", "Max thk (mean)", "Min thk (mean)",
 "O2 (mean)", "pH (mean)", "pH (min)", "Salinity (mean)", "SST (max)", "SST (mean)", "SST (min)", "SST (range)")
 
-# Graph relative rate of model enrichment for all vars - mean and 2*sd
-pdf("output/figures/glms/GLM_RDR_rr.pdf", width = 8, height = 12)
+# Graph relative rate of model enrichment for all vars - mean and 1*sd
+pdf("output/figures/glms/GLM_RDR_rr_1sd.pdf", width = 12, height = 12)
 ggplot(summary_F, aes(x = reorder(variable_full_name_italics, mean_rr_log2), y = mean_rr_log2, color = median_pos_RDR)) + 
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
+  geom_errorbar(aes(ymin=mean_rr_log2-sd_rr_log2, ymax=mean_rr_log2+sd_rr_log2), color = "black")+ 
   geom_point(size = 8) + 
-  scale_color_gradientn(colours = brewer.pal(9, "Blues")[2:9], name = "Effect size", breaks = c(0.04, 0.10, 0.16)) +
+  scale_color_gradientn(colours = brewer.pal(9, "Blues")[2:9], name = "Effect size", ) +
   facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
-  ylim(-0.27, 0.369) +
+  #ylim(-0.27, 0.369) +
   labs( x = "", y = expression(Log[2]*(RR~Enrichment))) +
   coord_flip() +
-  theme_linedraw(base_size=30) + theme(axis.text.y = element_markdown(size = 20), legend.position = c(0.3, 0.8), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_markdown(size = 20), legend.position = c(0.2, 0.87), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
+
+# Graph relative rate of model enrichment for all vars - mean and 2*sd
+pdf("output/figures/glms/GLM_RDR_rr_2sd.pdf", width = 12, height = 12)
+ggplot(summary_F, aes(x = reorder(variable_full_name_italics, mean_rr_log2), y = mean_rr_log2, color = median_pos_RDR)) + 
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
+  geom_errorbar(aes(ymin=mean_rr_log2-2*sd_rr_log2, ymax=mean_rr_log2+2*sd_rr_log2), color = "black") +
+  geom_point(size = 8) +  
+  scale_color_gradientn(colours = brewer.pal(9, "Blues")[2:9], name = "Effect size", ) +
+  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
+  #ylim(-0.27, 0.369) +
+  labs( x = "", y = expression(Log[2]*(RR~Enrichment))) +
+  coord_flip() +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_markdown(size = 20), legend.position = c(0.2, 0.87), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
+dev.off()
+
 
 # Range of RDR values
 RDR_limits <- range(summary_F$median_pos_RDR, na.rm = TRUE)
 
-# Graph relative rate of model enrichment for all vars - mean and 2*sd
+# Graph relative rate of model enrichment for all vars - mean and sd
 pdf("output/figures/glms/GLM_RDR_rr_abiotic.pdf", width = 8.8398, height = 5.75)
 ggplot(summary_F[which(summary_F$Variable == "Abiotic"),], aes(x = reorder(variable_full_name_italics, mean_rr_log2), y = mean_rr_log2, color = median_pos_RDR)) + 
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
+  geom_errorbar(aes(ymin=mean_rr_log2-sd_rr_log2, ymax=mean_rr_log2+sd_rr_log2), color = "black") +
   geom_point(size = 8) + 
   scale_color_gradientn(colours = brewer.pal(9, "Blues")[2:9], limits = RDR_limits, name = "Effect size", breaks = c(0.04, 0.10, 0.16)) +
-  ylim(-0.27, 0.369) +
+  ylim(-0.38, 0.49) +
   labs(title="Abiotic Variables", x = "", y = expression(Log[2]*(RR~Enrichment))) +
   coord_flip() +
   theme_linedraw(base_size=30) + 
@@ -299,25 +235,58 @@ dev.off()
 pdf("output/figures/glms/GLM_RDR_rr_abiotic_nolegend.pdf", width = 8.8401, height = 5.75)
 ggplot(summary_F[which(summary_F$Variable == "Abiotic"),], aes(x = reorder(variable_full_name_italics, mean_rr_log2), y = mean_rr_log2, color = median_pos_RDR)) + 
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
+  geom_errorbar(aes(ymin=mean_rr_log2-sd_rr_log2, ymax=mean_rr_log2+sd_rr_log2), color = "black") +
   geom_point(size = 8) + 
   scale_color_gradientn(colours = brewer.pal(9, "Blues")[2:9], limits = RDR_limits, name = "Effect size", breaks = c(0.04, 0.10, 0.16)) +
-  ylim(-0.27, 0.369) +
+  ylim(-0.38, 0.49) +
   labs(title="Abiotic Variables", x = "", y = expression(Log[2]*(RR~Enrichment))) +
   coord_flip() +
   theme_linedraw(base_size=30) + 
   theme(axis.text.y = element_markdown(size = 22), plot.title = element_text(hjust = 0.5, margin = margin(b = -1)), legend.position = "none")
 dev.off()
 
-# Graph relative rate of model enrichment for all vars - mean and 2*sd
+# Graph relative rate of model enrichment for all vars - mean and sd
 pdf("output/figures/glms/GLM_RDR_rr_biotic.pdf", width = 10, height = 9.5)
 ggplot(summary_F[which(summary_F$Variable == "Biotic"),], aes(x = reorder(variable_full_name_italics, mean_rr_log2), y = mean_rr_log2, color = median_pos_RDR)) + 
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
+  geom_errorbar(aes(ymin=mean_rr_log2-sd_rr_log2, ymax=mean_rr_log2+sd_rr_log2), color = "black") +
   geom_point(size = 8) + 
   scale_color_gradientn(colours = brewer.pal(9, "Blues")[2:9], limits = RDR_limits, name = "Effect size", breaks = c(0.04, 0.10, 0.16)) +
-  ylim(-0.27, 0.369) +
+  ylim(-0.38, 0.49) +
   labs(title="Biotic Variables", x = "", y = expression(Log[2]*(RR~Enrichment))) +
   coord_flip() +
   theme_linedraw(base_size=30) + 
   theme(axis.text.y = element_markdown(size = 22), plot.title = element_text(hjust = 0.5, margin = margin(b = -1)), 
   legend.title = element_text(size = 28), legend.text = element_text(size = 24), legend.position = c(0.77, 0.17), legend.background = element_rect(color = "black", fill = "white", linewidth = 0.5, linetype = "solid"))
 dev.off()
+pdf("output/figures/glms/GLM_RDR_rr_biotic_nolegend.pdf", width = 10, height = 9.5)
+ggplot(summary_F[which(summary_F$Variable == "Biotic"),], aes(x = reorder(variable_full_name_italics, mean_rr_log2), y = mean_rr_log2, color = median_pos_RDR)) + 
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
+  geom_errorbar(aes(ymin=mean_rr_log2-sd_rr_log2, ymax=mean_rr_log2+sd_rr_log2), color = "black") +
+  geom_point(size = 8) + 
+  scale_color_gradientn(colours = brewer.pal(9, "Blues")[2:9], limits = RDR_limits, name = "Effect size", breaks = c(0.04, 0.10, 0.16)) +
+  ylim(-0.38, 0.49) +
+  labs(title="Biotic Variables", x = "", y = expression(Log[2]*(RR~Enrichment))) +
+  coord_flip() +
+  theme_linedraw(base_size=30) + 
+  theme(axis.text.y = element_markdown(size = 22), plot.title = element_text(hjust = 0.5, margin = margin(b = -1)), legend.position = "none")
+dev.off()
+
+# ================================================================================== #
+# ================================================================================== #
+# ================================================================================== #
+
+# Subset LFMM
+summary_sigSNPs_sub <- summary_sigSNPs[,c(1,14,15)]
+
+# Graph GLM RDR vs LFMM z-score metric
+effect_GLM_LFMM <- left_join(effectsize_sum, summary_sigSNPs_sub)
+effect_GLM_LFMM$top <- c(rep("C", 7), "T", rep("C", 16), "T", "C", "C")
+
+# Graph relative rate of model enrichment for all vars - mean and 2*sd
+pdf("output/figures/glms/GLM_RDR_LFMM.pdf", width = 11, height = 8)
+ggplot(effect_GLM_LFMM, aes(x = median_pos_RDR, y = abs_zscore_quant_99.9, color = Variable, shape = top)) + 
+  geom_point(size = 8) + 
+  theme_linedraw(base_size=30) 
+dev.off()
+

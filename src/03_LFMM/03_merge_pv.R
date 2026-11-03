@@ -28,7 +28,6 @@ library(magrittr)
 #BiocManager::install("LEA")
 library(LEA)
 
-
 # ================================================================================== #
 
 # Generate output directories
@@ -69,11 +68,12 @@ LFMM_real_abiotic <- foreach(w=abiotic_vars, .combine="rbind", .errorhandling = 
     tmp <- data.frame(snp.info, o$pvalues, o$zscores)
 
     # Add column with variable
-    tmp$var = var
+    tmp$var = w
 
     # Return output
     tmp
 }
+
 # ================================================================================== #
 
 # Extract p-value for each environmental variable - biotic MARINe
@@ -94,7 +94,7 @@ LFMM_real_biotic_MARINe <- foreach(w=biotic_MARINe_vars, .combine="rbind", .erro
     tmp <- data.frame(snp.info.16pop, o$pvalues, o$zscores)
 
     # Add column with variable
-    tmp$var = var
+    tmp$var = w
 
     # Return output
     tmp
@@ -120,7 +120,7 @@ LFMM_real_biotic_Mcali <- foreach(w=biotic_Mcali_vars, .combine="rbind", .errorh
     tmp <- data.frame(snp.info.18pop, o$pvalues, o$zscores)
 
     # Add column with variable
-    tmp$var = var
+    tmp$var = w
 
     # Return output
     tmp
