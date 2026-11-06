@@ -76,7 +76,7 @@ alpha.Mcali.top.outlier <- left_join(alpha.Mcali.top.outlier, Mcali)
 # Join with PC1 data
 alpha.Mcali.top.outlier <- left_join(alpha.Mcali.top.outlier, PC1)
 
-# Calculate correlation coefficient between mean pH and the residuals from an AF model that accounted for PC1 (i.e., demography)
+# Calculate correlation coefficient between shell thk and the residuals from an AF model that accounted for PC1 (i.e., demography)
 baypass.cor.Mcali.out.PC1.lat <- foreach(i=1:length(unique(alpha.Mcali.top.outlier$SNP_id)), .combine = "rbind", .errorhandling = "remove")%do%{
     
     # Extract rows associated with SNP

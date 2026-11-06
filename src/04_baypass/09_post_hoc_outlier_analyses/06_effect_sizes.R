@@ -56,13 +56,13 @@ load("data/processed/baypass/abiotic/baypass.ph.sum.RData")
 load("data/processed/baypass/biotic/baypass.Mcali.sum.RData")
 
 # Load bio-oracle environmental data
-bio_oracle_sites_2010 <- read.csv("data/processed/GEA/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", header=T)
+bio_oracle_sites_2010 <- read.csv("data/processed/enviro_data/Bio-oracle/bio_oracle_sites_2010.csv", header=T)
 # Extract just mean pH and rename location to Site
 ph <- bio_oracle_sites_2010[,c(1,2,3,11,13)]
 ph <- ph %>% rename(Site = location)
 
 # Load M californianus shell thickness data
-Mcalifornianus_data <- read.csv("data/processed/GEA/enviro_data/Mcali_thk/Mcalifornianus_data_clean_18pop.csv", header=T)
+Mcalifornianus_data <- read.csv("data/processed/enviro_data/Mcali_thk/Mcalifornianus_data_clean_18pop.csv", header=T)
 Mcali <- Mcalifornianus_data[,c(1,3,4,7)]
 Mcali <- Mcali %>% rename(Site = Site.Code, latitude = Latitude, longitude = Longitude)
 

@@ -113,6 +113,9 @@ effectsize_sum <- foreach(i = vars, .combine = "rbind")%do%{
 # Join with full names
 effectsize_sum <- left_join(effectsize_sum, var_full_names, by="variable")
 
+# Write output
+write.csv(effectsize_sum, "data/processed/glms/effectsize_sum.csv")
+
 # ================================================================================== #
 
 # Graph effect size results

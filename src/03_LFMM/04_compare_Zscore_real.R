@@ -95,6 +95,32 @@ ggplot(summary_sigSNPs, aes(x = mean_abs_zscore_0.001, y = reorder(variable_full
   xlim(0.4, 9) +
   theme_linedraw(base_size=30) + theme(axis.text.y = element_markdown(size = 22))
 dev.off()
+pdf("output/figures/LFMM_analyses/LFMM_zscore_pval0.01_all.pdf", width = 12, height = 12)
+ggplot(summary_sigSNPs, aes(x = mean_abs_zscore_0.01, y = reorder(variable_full_name_italics, mean_abs_zscore_0.01))) + 
+  geom_point(size = 8) + 
+  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
+  labs(x = expression("Mean " * abs(z)* " for p<0.01"), y = "") +
+  xlim(0.4, 7) +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_markdown(size = 22))
+dev.off()
+
+# Graph median z scores for p<0.001
+pdf("output/figures/LFMM_analyses/LFMM_medzscore_pval0.001_all.pdf", width = 12, height = 12)
+ggplot(summary_sigSNPs, aes(x = median_abs_zscore_0.001, y = reorder(variable_full_name_italics, median_abs_zscore_0.001))) + 
+  geom_point(size = 8) + 
+  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
+  labs(x = expression("Median " * abs(z)* " for p<0.001"), y = "") +
+  xlim(0.4, 9) +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_markdown(size = 22))
+dev.off()
+pdf("output/figures/LFMM_analyses/LFMM_medzscore_pval0.01_all.pdf", width = 12, height = 12)
+ggplot(summary_sigSNPs, aes(x = median_abs_zscore_0.01, y = reorder(variable_full_name_italics, median_abs_zscore_0.01))) + 
+  geom_point(size = 8) + 
+  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
+  labs(x = expression("Median " * abs(z)* " for p<0.01"), y = "") +
+  xlim(0.4, 7) +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_markdown(size = 22))
+dev.off()
 
 # Graph z scores for 99.9%
 pdf("output/figures/LFMM_analyses/LFMM_zscore_99.9perc_all.pdf", width = 12, height = 12)
@@ -105,6 +131,27 @@ ggplot(summary_sigSNPs, aes(x = abs_zscore_quant_99.9, y = reorder(variable_full
   xlim(0.85, 19.5) +
   theme_linedraw(base_size=30) + theme(axis.text.y = element_markdown(size = 22))
 dev.off()
+
+
+# Graph z scores for 99%
+pdf("output/figures/LFMM_analyses/LFMM_zscore_99perc_all.pdf", width = 12, height = 12)
+ggplot(summary_sigSNPs, aes(x = abs_zscore_quant_99, y = reorder(variable_full_name_italics, abs_zscore_quant_99))) + 
+  geom_point(size = 8) + 
+  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
+  labs(x = expression("99% Percentile " * abs(z)), y = "") +
+  xlim(0.45, 10) +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_markdown(size = 22))
+dev.off()
+# Graph z scores for 95%
+pdf("output/figures/LFMM_analyses/LFMM_zscore_95perc_all.pdf", width = 12, height = 12)
+ggplot(summary_sigSNPs, aes(x = abs_zscore_quant_95, y = reorder(variable_full_name_italics, abs_zscore_quant_95))) + 
+  geom_point(size = 8) + 
+  facet_grid(Variable ~ ., scales = "free_y", space = "free_y") +
+  labs(x = expression("95% Percentile " * abs(z)), y = "") +
+  xlim(0.45, 6) +
+  theme_linedraw(base_size=30) + theme(axis.text.y = element_markdown(size = 22))
+dev.off()
+
 
 
 # Split up by abiotic and biotic
