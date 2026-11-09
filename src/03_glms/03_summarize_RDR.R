@@ -274,22 +274,3 @@ ggplot(summary_F[which(summary_F$Variable == "Biotic"),], aes(x = reorder(variab
   theme_linedraw(base_size=30) + 
   theme(axis.text.y = element_markdown(size = 22), plot.title = element_text(hjust = 0.5, margin = margin(b = -1)), legend.position = "none")
 dev.off()
-
-# ================================================================================== #
-# ================================================================================== #
-# ================================================================================== #
-
-# Subset LFMM
-summary_sigSNPs_sub <- summary_sigSNPs[,c(1,14,15)]
-
-# Graph GLM RDR vs LFMM z-score metric
-effect_GLM_LFMM <- left_join(effectsize_sum, summary_sigSNPs_sub)
-effect_GLM_LFMM$top <- c(rep("C", 7), "T", rep("C", 16), "T", "C", "C")
-
-# Graph relative rate of model enrichment for all vars - mean and 2*sd
-pdf("output/figures/glms/GLM_RDR_LFMM.pdf", width = 11, height = 8)
-ggplot(effect_GLM_LFMM, aes(x = median_pos_RDR, y = abs_zscore_quant_99.9, color = Variable, shape = top)) + 
-  geom_point(size = 8) + 
-  theme_linedraw(base_size=30) 
-dev.off()
-

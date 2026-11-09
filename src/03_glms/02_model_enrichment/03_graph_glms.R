@@ -194,13 +194,27 @@ summary_biotic$variable_full_name_italics <- c("*B. glandula* (hm)", "*B. glandu
 "*N. canaliculata* (hm)", "*N. canaliculata* (m)","*N. ostrina* (hm)", "*N. ostrina* (m)", 
 "*P. ochraceus* (hm)", "*P. ochraceus* (m)", "STI (m)", "Mussel thk (m)", "Mussel max thk (m)", "Mussel min thk (m)")
 
-# Graph relative rate of model enrichment for biotic - mean and 2*sd
+# Graph relative rate of model enrichment for biotic 
 pdf("output/figures/glms/model_enrichment/GLM_Biotic_rr_sum_alt_italics_alt.pdf", width = 8, height = 7.28)
 ggplot(summary_biotic, aes(x = reorder(variable_full_name_italics, mean_rr_log2), y = mean_rr_log2)) + 
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
   geom_point(size = 8, color = "darkgrey") + 
   scale_color_identity() +
   ylim(-0.27, 0.369) +
+  labs(x = "", y = expression(Log[2]*(RR~Enrichment))) +
+  coord_flip() +
+  theme_linedraw(base_size=30) + theme(legend.position = "none", plot.title = element_text(hjust = 0.5, margin = margin(b = -1)), axis.text.y = element_markdown(size = 20))
+dev.off()
+
+
+# Graph relative rate of model enrichment for biotic - mean and 2*sd
+pdf("output/figures/glms/model_enrichment/GLM_Biotic_rr_sum_alt_italics_alt_errorbars.pdf", width = 8, height = 7.28)
+ggplot(summary_biotic, aes(x = reorder(variable_full_name_italics, mean_rr_log2), y = mean_rr_log2)) + 
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") + 
+  geom_point(size = 8, color = "black") + 
+  geom_errorbar(aes(ymin=mean_rr_log2-sd_rr_log2, ymax=mean_rr_log2+sd_rr_log2), color = "black") +
+  scale_color_identity() +
+  ylim(-0.34, 0.41) +
   labs(x = "", y = expression(Log[2]*(RR~Enrichment))) +
   coord_flip() +
   theme_linedraw(base_size=30) + theme(legend.position = "none", plot.title = element_text(hjust = 0.5, margin = margin(b = -1)), axis.text.y = element_markdown(size = 20))
