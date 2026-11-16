@@ -10,7 +10,7 @@ The bioinformatics pipeline was completed on the Vermont Advanced Computing Cent
 
 1) What are the abiotic and biotic drivers of geographic patterns of adaptive genomic variation in a low dispersing marine species?
 2) What are the genomic bases underlying patterns of local adaptation to varying selection pressures? 
-3) Will future environmental change erode existing patterns of local adaptation, or can populations maintain adaptation through evolutionary responses? 
+3) Will predicted future environmental change result in maladaptation, or can allele frequencies at adaptive loci change quickly enough to keep pace? 
 
 ## File Structure
 
@@ -24,10 +24,10 @@ The files for this project are organized in the file structure presented below. 
     - 01_ecological_data/
     - 02_demography/
     - 03_glms/
+    - 03_LFMM/
     - 04_baypass/
-    - 05_outlier_analyses/
-    - 06_genomic_offest/
-    - 07_SLiM/
+    - 05_genomic_offest/
+    - 06_SLiM/
  - output/
      - figures/
      - tables/
