@@ -8,13 +8,13 @@ The bioinformatics pipeline was completed on the Vermont Advanced Computing Cent
 
 ### Research Questions
 
-1) What are the abiotic and biotic drivers of geographic patterns of adaptive genomic variation in a low dispersing marine species?
+1) What are the abiotic and biotic drivers of geographic patterns of adaptive genomic variation in a low-dispersing marine species?
 2) What are the genomic bases underlying patterns of local adaptation to varying selection pressures? 
 3) Will predicted future environmental change result in maladaptation, or can allele frequencies at adaptive loci change quickly enough to keep pace? 
 
 ## File Structure
 
-The files for this project are organized in the file structure presented below. All metadata and array guide files are in the "guide_files" directory. The raw data associated with this project are: (1) a previously published VCF of Pool-Seq data from 19 *N. canaliculata* populations, which can be found on [Zenodo](https://zenodo.org/records/18623551), (2) the *N. canaliculata* reference genome, which can be obtained from [NCBI](https://www.ncbi.nlm.nih.gov/), (3) data on the abundance/density of species that interact with *N. canaliculata* from [MARINe](https://marine.ucsc.edu/), and (4) *M. californianus* shell morphology data, which was generated as part of this project and can be found on Zenodo. All subsequent files and directories are generated therein. 
+The files for this project are organized in the file structure presented below. All metadata and array guide files are in the "guide_files" directory. The raw data associated with this project are: (1) a previously published VCF of Pool-Seq data from 19 *N. canaliculata* populations, which can be found on [Zenodo](https://zenodo.org/records/18623551), (2) the *N. canaliculata* reference genome, which can be obtained from [NCBI](https://www.ncbi.nlm.nih.gov/), (3) data on the abundance/density of species that interact with *N. canaliculata* from [MARINe](https://marine.ucsc.edu/), and (4) *M. californianus* shell morphology data, which was generated as part of this project and can be found on [Zenodo](https://zenodo.org/records/21983860). All subsequent files and directories are generated therein. 
 
  - data/
      - raw/
