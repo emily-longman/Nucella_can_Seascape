@@ -1,8 +1,8 @@
-# Revealing the abiotic and biotic drivers of past and future local adaptation in a coastal dogwhelk
+# Abiotic and biotic drivers of local adaptation and evaluation of future genomic vulnerability in a coastal dogwhelk
 
 ## Project Summary
 
-We integrate population genomic data with multiple ecological datasets to determine the ecological stressors most strongly associated with adaptive genomic variation in the channeled dogwhelk, *Nucella canaliculata*, as well as uncover their genetic bases. Our ecological datasets include climatic data on oceanic conditions ([Bio-Oracle](https://www.bio-oracle.org/)), biotic data on the abundance of *N. canaliculata* prey, competitors, and predators from a large-scale monitoring program on Pacific Coast rocky shores (i.e., [MARINe](https://marine.ucsc.edu/): Multi-Agency Rocky Intertidal Network), and a new dataset on the shell traits of the rocky shore mussel *Mytilus californianus*. Leveraging the signals of local adaptation identified, we used genomic offset analyses and population genetic simulations to predict the vulnerability of populations to ocean acidification. 
+We integrated population genomic data with multiple ecological datasets to determine the ecological stressors most strongly associated with adaptive genomic variation in the channeled dogwhelk, *Nucella canaliculata*, as well as uncover their genetic bases. Our ecological datasets included climatic data on oceanic conditions ([Bio-Oracle](https://www.bio-oracle.org/)), biotic data on the abundance of *N. canaliculata* prey, competitors, and predators from a large-scale monitoring program on Pacific Coast rocky shores (i.e., [MARINe](https://marine.ucsc.edu/): Multi-Agency Rocky Intertidal Network), and a new dataset on the shell traits of the rocky shore mussel *Mytilus californianus*. Leveraging the signals of local adaptation identified, we used genomic offset analyses and population genetic simulations to predict the vulnerability of populations to ocean acidification. 
 
 The bioinformatics pipeline was completed on the Vermont Advanced Computing Center ([VACC](https://www.uvm.edu/vacc)).
 
@@ -14,7 +14,7 @@ The bioinformatics pipeline was completed on the Vermont Advanced Computing Cent
 
 ## File Structure
 
-The files for this project are organized in the file structure presented below. All metadata and array guide files are in the "guide_files" directory. The raw data associated with this project are: (1) a previously published VCF of pool-seq data from 19 *N. canaliculata* populations, which can be found on [Zenodo](https://zenodo.org/records/18623551), (2) the *N. canaliculata* reference genome, which can be obtained from [NCBI](https://www.ncbi.nlm.nih.gov/), (3) data on the abundance/density of species that interact with *N. canaliculata* from [MARINe](https://marine.ucsc.edu/), and (4) *M. californianus* shell morphology data, which was generated as part of this project and can be found on Zenodo. All subsequent directories are generated therein. 
+The files for this project are organized in the file structure presented below. All metadata and array guide files are in the "guide_files" directory. The raw data associated with this project are: (1) a previously published VCF of pool-seq data from 19 *N. canaliculata* populations, which can be found on [Zenodo](https://zenodo.org/records/18623551), (2) the *N. canaliculata* reference genome, which can be obtained from [NCBI](https://www.ncbi.nlm.nih.gov/), (3) data on the abundance/density of species that interact with *N. canaliculata* from [MARINe](https://marine.ucsc.edu/), and (4) *M. californianus* shell morphology data, which was generated as part of this project and can be found on Zenodo. All subsequent files and directories are generated therein. 
 
  - data/
      - raw/
@@ -48,7 +48,7 @@ We extracted decadal environmental data for the 19 *N. canaliculata* field sites
 
 ### 02 - Biotic
 
-There were two sets of biotic data. The first was abundance/density data of interacting species (prey, competitors, and predators) from [MARINe](https://marine.ucsc.edu/), 16 of which field sites match the *N. canaliculata* populations. The second is data on the shell morphology of the mussel prey species *Mytilus californianus*, which is a foundation species on rocky shores along the west coast of North America. This latter dataset includes 18 field sites. Mussels for these collections were performed in the same wave-exposed location that the *N. canaliculata* were collected.
+We used two biotic datasets. The first was abundance/density data of interacting species (prey, competitors, and predators) from [MARINe](https://marine.ucsc.edu/), 16 of which field sites match the *N. canaliculata* populations. The second is data on the shell morphology of the mussel prey species *Mytilus californianus*, which is a foundation species on rocky shores along the west coast of North America. This latter dataset includes 18 field sites. Mussels were collected from the same wave-exposed location that the *N. canaliculata* were sampled, with dogwhelk and mussel sampling occurring concurrently.
 
 01_summarize_graph_MARINe.R - Filter the abundance/density data to the focal *N. canaliculata* field sites and summarize the data.
 
@@ -58,7 +58,7 @@ There were two sets of biotic data. The first was abundance/density data of inte
 
 Filter the Pool-Seq [dataset](https://zenodo.org/records/18623551) from [Longman et al. (2026)](https://royalsocietypublishing.org/rspb/article/293/2070/20253148/481573/Geographic-divergence-in-population-genomics-and) and perform population structure analyses. 
 
-01_pca_poolfstat.R - Use [poolfstat](https://cran.r-project.org/web/packages/poolfstat/index.html) to fiter the VCF, creating a poolobject with ~8M SNPs. Subsequently, perform a PCA on the Pool-seq dataset.
+01_pca_poolfstat.R - Use [poolfstat](https://cran.r-project.org/web/packages/poolfstat/index.html) to filter the VCF, creating a poolobject with ~8M SNPs. Subsequently, perform a PCA on the Pool-seq dataset.
 
 ## Part 3 - Model selection to compare the association of ecological stressors with genomic variation (03_glms)
 
@@ -78,7 +78,7 @@ We used effective-coverage-weighted generalized linear models (GLMs) to identify
 
 - 01_MARINe
 
-    - 01_glms_MARINe_launch.sh and 01_glms_MARINe_*.R - Use GLMs to assess associations between allele frequencies (chunked based on the scaffold guide file) and biotic [MARINe](https://marine.ucsc.edu/) variables. For efficiency, there are 5 R scripts, one that performs GLMs with the real ecological variables and four scripts that performs GLMs with the permuted variables. Note the different walltime for the real data versus permutations.
+    - 01_glms_MARINe_launch.sh and 01_glms_MARINe_*.R - Use GLMs to assess associations between allele frequencies (chunked based on the scaffold guide file) and biotic [MARINe](https://marine.ucsc.edu/) variables. For efficiency, there are 5 R scripts, one that performs GLMs with the real ecological variables and four scripts that perform GLMs with permuted variables. Note the different walltime for the real data versus permutations.
     - 02_extract_glms_launch.sh and 02_extract_glms.R- Extract the data for each MARINe variable from the GLM outputs.
     - 03_merge_glms_launch.sh and 03_merge_glms.R - Merge all of the GLM outputs for each MARINe variable.
     - 04_glms_MARINe_real_RDR_launch.sh and 05_glms_MARINe_real_RDR.R - Calculate relative deviance reduction (RDR) per SNP per MARINe variable.
@@ -86,7 +86,7 @@ We used effective-coverage-weighted generalized linear models (GLMs) to identify
 
 - 02_Mcali
 
-    - 01_glms_Mcali_launch.sh and 01_glms_Mcali_*.R - Use GLMs to assess associations between allele frequencies (chunked based on the scaffold guide file) and the mussel morphology variables. For efficiency, there are 5 R scripts, one that performs GLMs with the real data and four scripts that performs GLMs with the permuted variables. Note the different walltime for the real data versus permutations.
+    - 01_glms_Mcali_launch.sh and 01_glms_Mcali_*.R - Use GLMs to assess associations between allele frequencies (chunked based on the scaffold guide file) and the mussel morphology variables. For efficiency, there are 5 R scripts, one that performs GLMs with the real data and four scripts that perform GLMs with permuted variables. Note the different walltime for the real data versus permutations.
     - 02_extract_glms_launch.sh and 02_extract_glms.R - Extract the data for each mussel morphology variable from the GLM outputs.
     - 03_merge_glms_launch.sh and 03_merge_glms.R- Merge all of the GLM outputs for each mussel morphology variable.
     - 04_glms_Mcali_real_RDR_launch.sh and 05_glms_Mcali_real_RDR.R - Calculate relative deviance reduction (RDR) per SNP per mussel morphology variable.
@@ -101,7 +101,7 @@ We used effective-coverage-weighted generalized linear models (GLMs) to identify
 
 03_summarize_RDR.R: Summarize the relative deviance reduction for all ecological variables and graph all GLM results.
 
-## Part 3 - Compare SNP effect sizes using Latent Factor Mixed Models (03_LFMM)
+## Part 4 - Compare SNP effect sizes using Latent Factor Mixed Models (03_LFMM)
 
 As an independent assessment of the strength of the associations of the ecological variables with genome-wide genetic variation, we performed latent factor mixed model (LFMM) analyses using lfmm2 in the [LEA](https://www.bioconductor.org/packages/devel/bioc/vignettes/LEA/inst/doc/LEA.pdf) R package.
 
@@ -112,7 +112,7 @@ As an independent assessment of the strength of the associations of the ecologic
 - 03_merge_pv.R - Merge the output files for all of the ecological variables.
 - 04_compare_Zscore_real.R - Summarize and graph the 99th percentile of the absolute value of the z-score distribution per ecological variable.
 
-## Part 4 - Identify outlier loci for top abiotic and biotic variable using Baypass (04_baypass)
+## Part 5 - Identify outlier loci for top abiotic and biotic variable using Baypass (04_baypass)
 
 To identify outlier loci associated with mean pH and mussel shell thickness we performed genotype-environment association scans while simultaneously accounting for demographic history using [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public). 
 
@@ -160,7 +160,7 @@ To identify outlier loci associated with mean pH and mussel shell thickness we p
 - 07_ph_AF_cor.R - Calculate Pearson’s Correlation between the residual structure of the top 51 outlier loci associated with mean pH and a random sample of 1,000 SNPs.
 
 
-## Part 5 - Genomic offset analyses (05_genomic_offset)
+## Part 6 - Genomic offset analyses (05_genomic_offset)
 
 Calculate genome-wide geometric genomic offset using [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public) based on scaled future projections of mean pH from [Bio-Oracle](https://www.bio-oracle.org/) across the range of IPCC emissions scenarios.
 
@@ -168,7 +168,7 @@ Calculate genome-wide geometric genomic offset using [BayPass](https://forge.inr
 
 02_Baypass_GO_mean_ph_scaled_allSSP.R - Perform genomic offset analyses for the 19 populations based on changes in mean pH.
 
-## Part 6 - Population genetic simulation using SLiM (06_SLiM)
+## Part 7 - Population genetic simulation using SLiM (06_SLiM)
 
 We performed population genetic simulations using [SLiM](https://github.com/MesserLab/SLiM) to contextualize the patterns of local adaptation. To do so, we created single locus population genetic simulations using a Wright-Fisher model based on the top outlier loci associated with both mean pH and mussel shell thickness. In the models, we calculated population-level selection using a sigmoidal function, with multiple parameters that dictate the structure of the curves. We used Approximate Bayesian Computation [ABC](https://cran.r-project.org/web/packages/abc/index.html) to perform multivariate parameter estimation between the simulations and real data. Note: for both selective forces, scripts 01-05 were used iteratively for parameter optimization. 
 
