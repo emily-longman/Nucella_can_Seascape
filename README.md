@@ -26,7 +26,7 @@ The files for this project are organized in the file structure presented below. 
     - 03_glms/
     - 03_LFMM/
     - 04_baypass/
-    - 05_genomic_offest/
+    - 05_genomic_offset/
     - 06_SLiM/
  - output/
      - figures/
@@ -38,7 +38,7 @@ To identify which ecological selective forces are driving patterns of adaptive v
 
 ### 01 - Abiotic
 
-We extracted decadal environmental data for the 19 *N. canaliculata* field sites from [Bio-Oracle](https://www.bio-oracle.org/) (spatial resolution = 0.05 degrees). Our variables of interest were: sea surface temperature (mean, max, min, range, 2010-2019), pH (mean, min, 2010-2018), O2 (mean, 2010-2018), salinity (mean, 2010-2019), and chlorophyll (mean, 2010-2018). For each variable we also extracted future data (2020-2100 under the SSP5-8.5 scenario). Note: the multiple iterations of the three focal scripts were for graphical purposes. 
+We extracted decadal environmental data for the 19 *N. canaliculata* field sites from [Bio-Oracle](https://www.bio-oracle.org/) (spatial resolution = 0.05 degrees). Our variables of interest were: sea surface temperature (mean, max, min, range, 2010-2019), pH (mean, min, 2010-2018), O2 (mean, 2010-2018), salinity (mean, 2010-2019), and chlorophyll (mean, 2010-2018). For each variable we also extracted future data (2020-2100) across a range of IPCC emission scenarios. Note: the multiple iterations of the three focal scripts were for graphical purposes. 
 
 01_extract_bio-oracle.R - Extract present and future environmental data for a large geographic region along the eastern Pacific coastline.
 
@@ -48,7 +48,7 @@ We extracted decadal environmental data for the 19 *N. canaliculata* field sites
 
 ### 02 - Biotic
 
-We used two biotic datasets. The first was abundance/density data of interacting species (prey, competitors, and predators) from [MARINe](https://marine.ucsc.edu/), 16 of which field sites match the *N. canaliculata* populations. The second is data on the shell morphology of the mussel prey species *Mytilus californianus*, which is a foundation species on rocky shores along the west coast of North America. This latter dataset includes 18 field sites. Mussels were collected from the same wave-exposed location that the *N. canaliculata* were sampled, with dogwhelk and mussel sampling occurring concurrently.
+We used two biotic datasets. The first dataset was abundance/density data of interacting species (prey, competitors, and predators) from [MARINe](https://marine.ucsc.edu/). 16 of the MARINe sites match the locations of the *N. canaliculata* populations. The second dataset was data on the shell morphology of the mussel prey species *Mytilus californianus*, which is a foundation species on rocky shores along the west coast of North America. This latter dataset includes 18 field sites. Mussels were collected from the same wave-exposed location that the *N. canaliculata* were sampled, with dogwhelk and mussel sampling occurring concurrently.
 
 01_summarize_graph_MARINe.R - Filter the abundance/density data to the focal *N. canaliculata* field sites and summarize the data.
 
@@ -68,27 +68,27 @@ We used effective-coverage-weighted generalized linear models (GLMs) to identify
 
 - 01_chunks_pt1.txt - Interactive session to make a list of the scaffold names present in the genome.
 - 01_chunks_pt2.R - Create a guide file, which chunks the list of scaffold names.
-- 02_glms_bio-oracle_launch.sh and 02_glms_bio-oracle.R - Use GLMs to assess associations between allele frequencies (chunked based on the scaffold lists created in the previous scripts) and abiotic [Bio-Oracle](https://www.bio-oracle.org/) variables 
+- 02_glms_bio-oracle_launch.sh and 02_glms_bio-oracle.R - Use GLMs to assess associations between allele frequencies (chunked based on the scaffold lists created in the previous scripts) and abiotic [Bio-Oracle](https://www.bio-oracle.org/) variables. 
 - 03_extract_glms_launch.sh and 03_extract_glms.R - Extract the data for each abiotic variable from the GLM outputs.
 - 04_merge_glms_launch.sh and 04_merge_glms.R - Merge all of the GLM outputs for each abiotic variable.
-- 05_glms_abiotic_real_RDR_launch.sh and 05_glms_abiotic_real_RDR.R - Calculate relative deviance reduction (RDR) per SNP per abiotic variable
+- 05_glms_abiotic_real_RDR_launch.sh and 05_glms_abiotic_real_RDR.R - Calculate relative deviance reduction (RDR) per SNP per abiotic variable.
 - 06_merge_glms_RDR_launch.sh and 06_merge_glms_RDR.R - Merge all of the RDR outputs for each abiotic variable.
 
 01_run_glms_biotic:
 
-- 01_MARINe
+- 01_MARINe:
 
     - 01_glms_MARINe_launch.sh and 01_glms_MARINe_*.R - Use GLMs to assess associations between allele frequencies (chunked based on the scaffold guide file) and biotic [MARINe](https://marine.ucsc.edu/) variables. For efficiency, there are 5 R scripts, one that performs GLMs with the real ecological variables and four scripts that perform GLMs with permuted variables. Note the different walltime for the real data versus permutations.
-    - 02_extract_glms_launch.sh and 02_extract_glms.R- Extract the data for each MARINe variable from the GLM outputs.
+    - 02_extract_glms_launch.sh and 02_extract_glms.R - Extract the data for each MARINe variable from the GLM outputs.
     - 03_merge_glms_launch.sh and 03_merge_glms.R - Merge all of the GLM outputs for each MARINe variable.
     - 04_glms_MARINe_real_RDR_launch.sh and 05_glms_MARINe_real_RDR.R - Calculate relative deviance reduction (RDR) per SNP per MARINe variable.
     - 05_merge_glms_RDR_launch.sh and 06_merge_glms_RDR.R - Merge all of the RDR outputs for each MARINe variable.
 
-- 02_Mcali
+- 02_Mcali:
 
     - 01_glms_Mcali_launch.sh and 01_glms_Mcali_*.R - Use GLMs to assess associations between allele frequencies (chunked based on the scaffold guide file) and the mussel morphology variables. For efficiency, there are 5 R scripts, one that performs GLMs with the real data and four scripts that perform GLMs with permuted variables. Note the different walltime for the real data versus permutations.
     - 02_extract_glms_launch.sh and 02_extract_glms.R - Extract the data for each mussel morphology variable from the GLM outputs.
-    - 03_merge_glms_launch.sh and 03_merge_glms.R- Merge all of the GLM outputs for each mussel morphology variable.
+    - 03_merge_glms_launch.sh and 03_merge_glms.R - Merge all of the GLM outputs for each mussel morphology variable.
     - 04_glms_Mcali_real_RDR_launch.sh and 05_glms_Mcali_real_RDR.R - Calculate relative deviance reduction (RDR) per SNP per mussel morphology variable.
     - 05_merge_glms_RDR_launch.sh and 06_merge_glms_RDR.R - Merge all of the RDR outputs for each mussel morphology variable.
 
@@ -99,9 +99,9 @@ We used effective-coverage-weighted generalized linear models (GLMs) to identify
 - 02_model_enrichment_launch.sh and 02_model_enrichment.R - For each variable, summarize the permutations and perform model enrichment.
 - 03_graph_glms.R - Graph the GLM results. 
 
-03_summarize_RDR.R: Summarize the relative deviance reduction for all ecological variables and graph all GLM results.
+03_summarize_RDR.R - Summarize the relative deviance reduction for all ecological variables and graph all GLM results.
 
-## Part 4 - Compare SNP effect sizes using Latent Factor Mixed Models (03_LFMM)
+## Part 4 - Compare SNP effect sizes using Latent Factor Mixed Models (04_LFMM)
 
 As an independent assessment of the strength of the associations of the ecological variables with genome-wide genetic variation, we performed latent factor mixed model (LFMM) analyses using lfmm2 in the [LEA](https://www.bioconductor.org/packages/devel/bioc/vignettes/LEA/inst/doc/LEA.pdf) R package.
 
@@ -112,11 +112,11 @@ As an independent assessment of the strength of the associations of the ecologic
 - 03_merge_pv.R - Merge the output files for all of the ecological variables.
 - 04_compare_Zscore_real.R - Summarize and graph the 99th percentile of the absolute value of the z-score distribution per ecological variable.
 
-## Part 5 - Identify outlier loci for top abiotic and biotic variable using Baypass (04_baypass)
+## Part 5 - Identify outlier loci for the top abiotic and biotic variable using BayPass (05_baypass)
 
-To identify outlier loci associated with mean pH and mussel shell thickness, we performed genotype-environment association scans while simultaneously accounting for demographic history using [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public). 
+To identify outlier loci associated with mean pH and mussel cross-sectional shell thickness, we performed genotype-environment association scans while simultaneously accounting for demographic history using [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public). 
 
-01_format_baypass.R - Use [poolfstat](https://cran.r-project.org/web/packages/poolfstat/index.html) to generate the Baypass input files for the entire 19 population dataset, as well as the 18 population subset used in the mussel shell thickness analyses.
+01_format_baypass.R - Use [poolfstat](https://cran.r-project.org/web/packages/poolfstat/index.html) to generate the BayPass input files for the entire 19 population dataset, as well as the 18 population subset used in the mussel shell thickness analyses.
 
 02_generate_omega.sh and 02_generate_omega_subset18pop.sh - Use [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public) to generate the omega relatedness matrix for the appropriate number of populations.
 
@@ -124,7 +124,7 @@ To identify outlier loci associated with mean pH and mussel shell thickness, we 
 
 03_baypass_ph_mean.sh - Perform 5 runs of [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public) using mean pH data as a covariate. 
 
-04_PODs.R and 04_PODs_subset_18pop.R - Use [poolfstat](https://cran.r-project.org/web/packages/poolfstat/index.html) to create 10 pseudo-observed datasets (PODs).
+04_PODs.R and 04_PODs_subset_18pop.R - Use [poolfstat](https://cran.r-project.org/web/packages/poolfstat/index.html) to create 10 pseudo-observed datasets (PODs) for the entire 19 population dataset, as well as the 18 population subset.
 
 05_GEA_PODs:  
 
@@ -134,9 +134,7 @@ To identify outlier loci associated with mean pH and mussel shell thickness, we 
 
 06_summarize_graph_baypass_pH_shellthk.R - Analyze the BayPass data for both ecological variables.
 
-07_annotate_SNPs_Mcali.R - Annotate the outlier SNPs associated with mussel cross-sectional shell thickness using [SnpEff](https://pcingola.github.io/SnpEff/).
-
-07_annotate_SNPs_ph_mean.R - Annotate the outlier SNPs associated with mean pH using [SnpEff](https://pcingola.github.io/SnpEff/).
+07_annotate_SNPs_ph_mean.R and 07_annotate_SNPs_Mcali.R - Annotate the outlier SNPs associated with mussel cross-sectional shell thickness  and mean pH using [SnpEff](https://pcingola.github.io/SnpEff/).
 
 08_window_rnp_100kb: 
 
@@ -160,17 +158,17 @@ To identify outlier loci associated with mean pH and mussel shell thickness, we 
 - 07_ph_AF_cor.R - Calculate Pearson’s Correlation between the residual structure of the top 51 outlier loci associated with mean pH and a random sample of 1,000 SNPs.
 
 
-## Part 6 - Genomic offset analyses (05_genomic_offset)
+## Part 6 - Genomic offset analyses (06_genomic_offset)
 
-Calculate genome-wide genomic offset using [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public) based on scaled future projections of mean pH from [Bio-Oracle](https://www.bio-oracle.org/) across the range of IPCC emissions scenarios. This analysis quantified the risk of nonadaptedness (RONA), which represents the average change in allele frequency required to match future conditions, based on scaled values of mean pH.
+Calculate genome-wide genomic offset using [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public) based on scaled future projections of mean pH from [Bio-Oracle](https://www.bio-oracle.org/) across the range of IPCC emissions scenarios. This analysis quantified the risk of nonadaptedness (RONA), which represents the average change in allele frequency required to match future conditions.
 
 01_scale_mean_ph_allSSP.R - Scale mean pH for current and future data.
 
 02_Baypass_GO_mean_ph_scaled_allSSP.R - Perform genomic offset analyses for the 19 populations based on changes in mean pH.
 
-## Part 7 - Population genetic simulation using SLiM (06_SLiM)
+## Part 7 - Population genetic simulation using SLiM (07_SLiM)
 
-We performed population genetic simulations using [SLiM](https://github.com/MesserLab/SLiM) to contextualize the patterns of local adaptation. To do so, we created single locus population genetic simulations using a Wright-Fisher model based on the top outlier loci associated with both mean pH and mussel shell thickness. In the models, we calculated population-level selection using a sigmoidal function, with multiple parameters that dictate the structure of the curves. We used Approximate Bayesian Computation [ABC](https://cran.r-project.org/web/packages/abc/index.html) to perform multivariate parameter estimation between the simulations and real data. Note: for both selective forces, scripts 01-05 were used iteratively for parameter optimization. 
+We performed population genetic simulations using [SLiM](https://github.com/MesserLab/SLiM) to contextualize the patterns of local adaptation. To do so, we created single locus population genetic simulations using a Wright-Fisher model based on the top outlier loci associated with both mean pH and mussel shell thickness. In the models, we calculated population-level selection using a sigmoidal function, with multiple parameters that dictate the structure of the curves. We used Approximate Bayesian Computation ([ABC](https://cran.r-project.org/web/packages/abc/index.html)) to perform multivariate parameter estimation between the simulations and real data. Note: for both selective forces, scripts 01-05 were used iteratively for parameter optimization. 
 
 To determine the adaptive potential of populations to ocean acidification, we assessed how genetic diversity would change with declining pH across IPCC emissions scenarios.
 
