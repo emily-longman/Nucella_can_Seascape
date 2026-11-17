@@ -180,7 +180,7 @@ To determine the adaptive potential of populations to ocean acidification, we as
 - 04_ABC_realData.R - Calculate the summary statistics for ABC for the real data.
 - 05_ABC_analysis_LOclinEst.R - Perform ABC analysis. 
 - 06_format_ph_future_all_SSP.R - Use Bio-Oracle mean pH data for 2020-2100 to generate population regression equations.
-- 07_ph_future_slim_launch_all_SSP.sh and 07_ph_future_SSP*.slim - Perform population genetic simulation for 2020-2100. Populations were started at the empirical allele frequencies and the pH regression equations were used to calculate yearly population-level selection coefficients. Simulations were run for all 5 IPCC emissions scenarios.
+- 07_ph_future_slim_launch_all_SSP.sh and 07_ph_future_SSP*.slim - Perform population genetic simulations for 2020-2100. Populations were started at the empirical allele frequencies and the pH regression equations were used to calculate yearly population-level selection coefficients. Simulations were run for all 5 IPCC emissions scenarios.
 - 08_analyze_ph_future_all_SSP.R - Compile simulations and graph output. 
 - 09_ph_future_vary_m_SSP*_launch.sh and 09_ph_future_vary_m_SSP**.slim - Perform simulations with varying migration rates for all 5 IPCC emissions scenarios. 
 - 10_analyze_ph_future_vary_m_all_SSP.R - Analyze and graph the output of the population genetic simulations generated in the previous scripts.
