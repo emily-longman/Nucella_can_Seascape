@@ -14,7 +14,7 @@ The bioinformatics pipeline was completed on the Vermont Advanced Computing Cent
 
 ## File Structure
 
-The files for this project are organized in the file structure presented below. All metadata and array guide files are in the "guide_files" directory. The raw data associated with this project are: (1) a previously published VCF of pool-seq data from 19 *N. canaliculata* populations, which can be found on [Zenodo](https://zenodo.org/records/18623551), (2) the *N. canaliculata* reference genome, which can be obtained from [NCBI](https://www.ncbi.nlm.nih.gov/), (3) data on the abundance/density of species that interact with *N. canaliculata* from [MARINe](https://marine.ucsc.edu/), and (4) *M. californianus* shell morphology data, which was generated as part of this project and can be found on Zenodo. All subsequent files and directories are generated therein. 
+The files for this project are organized in the file structure presented below. All metadata and array guide files are in the "guide_files" directory. The raw data associated with this project are: (1) a previously published VCF of Pool-Seq data from 19 *N. canaliculata* populations, which can be found on [Zenodo](https://zenodo.org/records/18623551), (2) the *N. canaliculata* reference genome, which can be obtained from [NCBI](https://www.ncbi.nlm.nih.gov/), (3) data on the abundance/density of species that interact with *N. canaliculata* from [MARINe](https://marine.ucsc.edu/), and (4) *M. californianus* shell morphology data, which was generated as part of this project and can be found on Zenodo. All subsequent files and directories are generated therein. 
 
  - data/
      - raw/
@@ -58,7 +58,7 @@ We used two biotic datasets. The first was abundance/density data of interacting
 
 Filter the Pool-Seq [dataset](https://zenodo.org/records/18623551) from [Longman et al. (2026)](https://royalsocietypublishing.org/rspb/article/293/2070/20253148/481573/Geographic-divergence-in-population-genomics-and) and perform population structure analyses. 
 
-01_pca_poolfstat.R - Use [poolfstat](https://cran.r-project.org/web/packages/poolfstat/index.html) to filter the VCF, creating a poolobject with ~8M SNPs. Subsequently, perform a PCA on the Pool-seq dataset.
+01_pca_poolfstat.R - Use [poolfstat](https://cran.r-project.org/web/packages/poolfstat/index.html) to filter the VCF, creating a poolobject with ~8M SNPs. Subsequently, perform a PCA on the Pool-Seq dataset.
 
 ## Part 3 - Model selection to compare the association of ecological stressors with genomic variation (03_glms)
 
@@ -114,7 +114,7 @@ As an independent assessment of the strength of the associations of the ecologic
 
 ## Part 5 - Identify outlier loci for top abiotic and biotic variable using Baypass (04_baypass)
 
-To identify outlier loci associated with mean pH and mussel shell thickness we performed genotype-environment association scans while simultaneously accounting for demographic history using [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public). 
+To identify outlier loci associated with mean pH and mussel shell thickness, we performed genotype-environment association scans while simultaneously accounting for demographic history using [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public). 
 
 01_format_baypass.R - Use [poolfstat](https://cran.r-project.org/web/packages/poolfstat/index.html) to generate the Baypass input files for the entire 19 population dataset, as well as the 18 population subset used in the mussel shell thickness analyses.
 
@@ -124,7 +124,7 @@ To identify outlier loci associated with mean pH and mussel shell thickness we p
 
 03_baypass_ph_mean.sh - Perform 5 runs of [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public) using mean pH data as a covariate. 
 
-04_PODs.R and 04_PODs_subset_18pop.R - Use [poolfstat](https://cran.r-project.org/web/packages/poolfstat/index.html) to create 10 pseudo-observed dataset (PODs).
+04_PODs.R and 04_PODs_subset_18pop.R - Use [poolfstat](https://cran.r-project.org/web/packages/poolfstat/index.html) to create 10 pseudo-observed datasets (PODs).
 
 05_GEA_PODs:  
 
@@ -141,8 +141,8 @@ To identify outlier loci associated with mean pH and mussel shell thickness we p
 08_window_rnp_100kb: 
 
 - 01_generate_window.R - Create 100kb windows for the genome scan.
-- 02_baypass_window_rnp_Mcali_launch.sh and 02_baypass_window_rnp_Mcali.R - Perform a window scan to identify regions with the genome that are enriched with outlier SNPs associated with mussel shell thickness.
-- 02_baypass_window_rnp_ph_mean_launch.sh and 02_baypass_window_rnp_ph_mean.R - Perform a window scan to identify regions with the genome that are enriched with outlier SNPs associated with mean pH.
+- 02_baypass_window_rnp_Mcali_launch.sh and 02_baypass_window_rnp_Mcali.R - Perform a window scan to identify regions within the genome that are enriched with outlier SNPs associated with mussel shell thickness.
+- 02_baypass_window_rnp_ph_mean_launch.sh and 02_baypass_window_rnp_ph_mean.R - Perform a window scan to identify regions within the genome that are enriched with outlier SNPs associated with mean pH.
 - 03_graph_win_Mcali.R - Graph the window scan output for mussel shell thickness.
 - 03_graph_win_ph_mean.R - Graph the window scan output for mean pH.
 - 04_graph_ph_mean_outliers_win.R - For the top outlier window that is enriched with SNPs associated with mean pH, analyze and graph Bayes Factors and genetic differentiation (XTX). Additionally, graph allele frequencies for the SNPs with the highest association values.
@@ -162,7 +162,7 @@ To identify outlier loci associated with mean pH and mussel shell thickness we p
 
 ## Part 6 - Genomic offset analyses (05_genomic_offset)
 
-Calculate genome-wide geometric genomic offset using [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public) based on scaled future projections of mean pH from [Bio-Oracle](https://www.bio-oracle.org/) across the range of IPCC emissions scenarios.
+Calculate genome-wide genomic offset using [BayPass](https://forge.inrae.fr/mathieu.gautier/baypass_public) based on scaled future projections of mean pH from [Bio-Oracle](https://www.bio-oracle.org/) across the range of IPCC emissions scenarios. This analysis quantified the risk of nonadaptedness (RONA), which represents the average change in allele frequency required to match future conditions, based on scaled values of mean pH.
 
 01_scale_mean_ph_allSSP.R - Scale mean pH for current and future data.
 
@@ -172,13 +172,13 @@ Calculate genome-wide geometric genomic offset using [BayPass](https://forge.inr
 
 We performed population genetic simulations using [SLiM](https://github.com/MesserLab/SLiM) to contextualize the patterns of local adaptation. To do so, we created single locus population genetic simulations using a Wright-Fisher model based on the top outlier loci associated with both mean pH and mussel shell thickness. In the models, we calculated population-level selection using a sigmoidal function, with multiple parameters that dictate the structure of the curves. We used Approximate Bayesian Computation [ABC](https://cran.r-project.org/web/packages/abc/index.html) to perform multivariate parameter estimation between the simulations and real data. Note: for both selective forces, scripts 01-05 were used iteratively for parameter optimization. 
 
-To determine the adaptive potential of populations to ocean acidification, we assessed how genetic diversity would change with declining pH across the range of IPCC emissions scenarios.
+To determine the adaptive potential of populations to ocean acidification, we assessed how genetic diversity would change with declining pH across IPCC emissions scenarios.
 
 01_mean_ph:
  
 - 01_guide_file.R - Create a guide file of the parameters. 
 - 02_ph.slim and 02_ph_launch_slim.sh - For the parameters in the guide file, use SLiM to perform population genetic simulations for an array of parameters.
-- 03_ABC_SimData_luanch.R and 03_ABC_SimData.R - Calculate the summary statistics for ABC for the simulated data.
+- 03_ABC_SimData_launch.R and 03_ABC_SimData.R - Calculate the summary statistics for ABC for the simulated data.
 - 04_ABC_realData.R - Calculate the summary statistics for ABC for the real data.
 - 05_ABC_analysis_LOclinEst.R - Perform ABC analysis. 
 - 06_format_ph_future_all_SSP.R - Use Bio-Oracle mean pH data for 2020-2100 to generate population regression equations.
@@ -190,7 +190,7 @@ To determine the adaptive potential of populations to ocean acidification, we as
 02_Mcali:
 
 - 01_guide_file.R - Create a guide file of the parameters. 
-- 02_ph_launch_slim.sh and 02_ph.slim - For the parameters in the guide file, use SLiM to perform population genetic simulations for an array of parameters.
+- 02_Mcali_launch_slim.sh and 02_Mcali.slim - For the parameters in the guide file, use SLiM to perform population genetic simulations for an array of parameters.
 - 03_ABC_SimData_launch.sh and 03_ABC_SimData.R - Calculate the summary statistics for ABC for the simulated data.
 - 04_ABC_realData.R - Calculate the summary statistics for ABC for the real data.
 - 05_ABC_analysis_LOclinEst.R - Perform ABC analysis. 
